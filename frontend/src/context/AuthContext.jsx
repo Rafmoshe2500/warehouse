@@ -69,14 +69,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const isAdmin = user?.role === 'admin' || user?.role === 'superadmin';
+  const isAdmin = user?.role === 'admin' || user?.role === 'superadmin' || user?.permissions?.includes('admin');
   const isSuperAdmin = user?.role === 'superadmin';
+
+  const hasPermission = (permission) => {
+    if (isSuperAdmin) return true;
+    return user?.permissions?.includes(permission) || false;
+  };
 
   const value = {
     user,
     isAuthenticated,
     isAdmin,
     isSuperAdmin,
+    permissions: user?.permissions || [],
+    hasPermission,
     loading,
     login,
     domainLogin,

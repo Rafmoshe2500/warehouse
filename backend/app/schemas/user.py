@@ -4,21 +4,20 @@ from datetime import datetime
 from enum import Enum
 
 
-class UserRole(str, Enum):
-    SUPERADMIN = "superadmin"
-    ADMIN = "admin"
-    USER = "user"
+from app.core.constants import UserRole, Permission
 
 
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=4)
     role: UserRole = UserRole.USER
+    permissions: Optional[list[str]] = []
 
 
 class UserUpdate(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=50)
     role: Optional[UserRole] = None
+    permissions: Optional[list[str]] = None
     is_active: Optional[bool] = None
 
 
@@ -26,6 +25,7 @@ class UserResponse(BaseModel):
     id: str
     username: str
     role: str
+    permissions: list[str] = []
     is_active: bool
     created_at: datetime
     updated_at: datetime

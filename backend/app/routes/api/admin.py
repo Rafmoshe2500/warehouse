@@ -6,7 +6,12 @@ from app.services.user_service import UserService
 from app.services.audit_service import AuditService
 from app.core.security import get_current_user, require_admin
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+# All routes in this router require admin permissions
+router = APIRouter(
+    prefix="/admin",
+    tags=["Admin"],
+    dependencies=[Depends(require_admin)]
+)
 
 
 def get_user_service():

@@ -4,6 +4,7 @@ import Button from '../../common/Button/Button';
 import './InventoryHeader.css';
 
 const InventoryHeader = ({
+  canEdit = false,
   selectedItems = [],
   showFilters = false,
   uploadingExcel = false,
@@ -20,13 +21,17 @@ const InventoryHeader = ({
   return (
     <div className="inventory-header">
       <div className="action-buttons">
-        <Button variant="secondary" onClick={onUploadClick} disabled={uploadingExcel} className="btn-icon">
-          <FiUpload /> {uploadingExcel ? 'טוען...' : 'יבוא אקסל'}
-        </Button>
+        {canEdit && (
+          <>
+            <Button variant="secondary" onClick={onUploadClick} disabled={uploadingExcel} className="btn-icon">
+              <FiUpload /> {uploadingExcel ? 'טוען...' : 'יבוא אקסל'}
+            </Button>
 
-        <Button variant="secondary" onClick={onImportProjectsClick} disabled={uploadingExcel} className="btn-icon">
-          <FiUpload /> העלאת שריונים
-        </Button>
+            <Button variant="secondary" onClick={onImportProjectsClick} disabled={uploadingExcel} className="btn-icon">
+              <FiUpload /> העלאת שריונים
+            </Button>
+          </>
+        )}
 
         <Button variant="secondary" onClick={onExportClick} className="btn-icon">
           <FiDownload /> ייצוא
@@ -41,28 +46,32 @@ const InventoryHeader = ({
           <FiFilter /> {showFilters ? 'הסתר פילטר' : 'הצג פילטר'}
         </Button>
 
-        <Button onClick={onAddClick} className="btn-icon">
-          <FiPlus /> הוסף פריט
-        </Button>
-        <Button 
-          variant="secondary" 
-          onClick={onBulkEdit} 
-          disabled={selectedItems.length === 0}
-          className="btn-icon"
-          title={selectedItems.length === 0 ? "סמן פריטים לעריכה" : "ערוך פריטים מסומנים"}
-        >
-          <FiEdit2 /> עריכה {selectedItems.length > 0 && `(${selectedItems.length})`}
-        </Button>
+        {canEdit && (
+          <>
+            <Button onClick={onAddClick} className="btn-icon">
+              <FiPlus /> הוסף פריט
+            </Button>
+            <Button 
+              variant="secondary" 
+              onClick={onBulkEdit} 
+              disabled={selectedItems.length === 0}
+              className="btn-icon"
+              title={selectedItems.length === 0 ? "סמן פריטים לעריכה" : "ערוך פריטים מסומנים"}
+            >
+              <FiEdit2 /> עריכה {selectedItems.length > 0 && `(${selectedItems.length})`}
+            </Button>
 
-        <Button 
-          variant="danger" 
-          onClick={onBulkDelete} 
-          disabled={selectedItems.length === 0}
-          className="btn-icon"
-          title={selectedItems.length === 0 ? "סמן פריטים למחיקה" : "מחק פריטים מסומנים"}
-        >
-          <FiTrash2 /> מחק {selectedItems.length > 0 && `(${selectedItems.length})`}
-        </Button>
+            <Button 
+              variant="danger" 
+              onClick={onBulkDelete} 
+              disabled={selectedItems.length === 0}
+              className="btn-icon"
+              title={selectedItems.length === 0 ? "סמן פריטים למחיקה" : "מחק פריטים מסומנים"}
+            >
+              <FiTrash2 /> מחק {selectedItems.length > 0 && `(${selectedItems.length})`}
+            </Button>
+          </>
+        )}
         <div className="divider-vertical"></div>
       
       </div>

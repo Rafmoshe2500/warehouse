@@ -68,6 +68,38 @@ AdminRoute.propTypes = {
   children: PropTypes.node.isRequired
 };
 
+const PermissionRoute = ({ children, permission }) => {
+  const { isAuthenticated, hasPermission, loading } = useAuth();
+
+  if (loading) {
+    return <Spinner size="large" text="טוען..." />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  // Check for exact permission
+  let allowed = hasPermission(permission);
+
+  // If not found, and we are asking for read-only access, check if we have read-write access
+  if (!allowed && permission.endsWith(':ro')) {
+      const rwPermission = permission.replace(':ro', ':rw');
+      allowed = hasPermission(rwPermission);
+  }
+
+  if (!allowed) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return children;
+};
+
+PermissionRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+  permission: PropTypes.string.isRequired
+};
+
 const AppRouter = () => {
   const { isAuthenticated, loading } = useAuth();
 
@@ -102,9 +134,9 @@ const AppRouter = () => {
           <Route
             path="/inventory"
             element={
-              <PrivateRoute>
+              <PermissionRoute permission="inventory:ro">
                 <InventoryPage />
-              </PrivateRoute>
+              </PermissionRoute>
             }
           />
           <Route
@@ -150,9 +182,9 @@ const AppRouter = () => {
           <Route
             path="/procurement"
             element={
-              <PrivateRoute>
+              <PermissionRoute permission="procurement:ro">
                 <ProcurementPage />
-              </PrivateRoute>
+              </PermissionRoute>
             }
           />
           <Route path="/" element={<Navigate to="/dashboard" />} />

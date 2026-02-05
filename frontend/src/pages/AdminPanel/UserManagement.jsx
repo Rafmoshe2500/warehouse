@@ -8,6 +8,7 @@ import { useToast } from '../../hooks/useToast';
 import Spinner from '../../components/common/Spinner/Spinner';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
 import adminService from '../../api/services/adminService';
+import UserForm from '../../components/admin/UserForm';
 import './UserManagement.css';
 
 const UserManagement = ({ isEmbedded = false }) => {
@@ -16,18 +17,11 @@ const UserManagement = ({ isEmbedded = false }) => {
   const { toasts, removeToast, success, error } = useToast();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [creating, setCreating] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [deleteReason, setDeleteReason] = useState('');
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    role: 'user',
-    is_active: true
-  });
 
   useEffect(() => {
     fetchUsers();
@@ -46,42 +40,28 @@ const UserManagement = ({ isEmbedded = false }) => {
 
   const handleCreateClick = () => {
     setSelectedUser(null);
-    setFormData({ username: '', password: '', role: 'user', is_active: true });
     setShowCreateModal(true);
   };
 
   const handleEditClick = (user) => {
     setSelectedUser(user);
-    setFormData({
-      username: user.username,
-      password: '', // Don't show password
-      role: user.role,
-      is_active: user.is_active
-    });
     setShowCreateModal(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setCreating(true);
-    
+  const handleUserSubmit = async (userData) => {
     try {
       if (selectedUser) {
-        const updateData = { ...formData };
-        if (!updateData.password) delete updateData.password; // Only send if changed
-        
-        await adminService.updateUser(selectedUser.id, updateData);
+        await adminService.updateUser(selectedUser.id, userData);
         success('משתמש עודכן בהצלחה');
       } else {
-        await adminService.createUser(formData);
+        await adminService.createUser(userData);
         success('משתמש נוצר בהצלחה!');
       }
       setShowCreateModal(false);
       fetchUsers();
     } catch (err) {
-      error(err.response?.data?.detail || (selectedUser ? 'שגיאה בעדכון משתמש' : 'שגיאה ביצירת משתמש'));
-    } finally {
-      setCreating(false);
+      // Rethrow to let UserForm handle the error display
+      throw err;
     }
   };
 
@@ -201,84 +181,11 @@ const UserManagement = ({ isEmbedded = false }) => {
 
       {/* Create/Edit User Modal */}
       {showCreateModal && (
-        <div className="modal-overlay" onClick={() => !creating && setShowCreateModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>{selectedUser ? 'עריכת משתמש' : 'יצירת משתמש חדש'}</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <Input
-                  label="שם משתמש"
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  required
-                  minLength={3}
-                  disabled={creating || (selectedUser && true)} // Disable username edit if desired, or allow it
-                />
-              </div>
-
-              <div className="form-group">
-                <Input
-                  label={selectedUser ? "סיסמה (השאר ריק ללא שינוי)" : "סיסמה"}
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required={!selectedUser}
-                  minLength={4}
-                  disabled={creating}
-                />
-              </div>
-
-              <div className="form-group">
-                <Select
-                  label="תפקיד"
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  disabled={creating}
-                  options={[
-                    { value: 'user', label: 'User' },
-                    ...(isSuperAdmin ? [{ value: 'admin', label: 'Admin' }] : [])
-                  ]}
-                />
-              </div>
-
-              {selectedUser && (
-                 <div className="form-group">
-                    <label className="checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={formData.is_active}
-                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                        disabled={creating}
-                      />
-                      משתמש פעיל
-                    </label>
-                 </div>
-              )}
-
-              <div className="modal-actions">
-                {creating ? (
-                  <div className="modal-spinner">
-                    <Spinner size="small" text={selectedUser ? "מעדכן..." : "יוצר..."} />
-                  </div>
-                ) : (
-                  <>
-                    <Button type="submit" variant="primary">
-                      {selectedUser ? 'עדכן משתמש' : 'צור משתמש'}
-                    </Button>
-                    <Button 
-                      type="button" 
-                      variant="secondary"
-                      onClick={() => setShowCreateModal(false)}
-                    >
-                      ביטול
-                    </Button>
-                  </>
-                )}
-              </div>
-            </form>
-          </div>
-        </div>
+        <UserForm
+          user={selectedUser}
+          onSubmit={handleUserSubmit}
+          onCancel={() => setShowCreateModal(false)}
+        />
       )}
 
       {/* Delete User Modal */}

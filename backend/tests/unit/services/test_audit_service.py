@@ -5,6 +5,7 @@ Tests high-level audit logging operations.
 import pytest
 from app.services.audit_service import AuditService
 from app.schemas.audit import AuditAction, AuditLogCreate
+from app.core.constants import UserRole
 
 
 class TestAuditService:
@@ -20,7 +21,7 @@ class TestAuditService:
         log_id = await audit_service.log_user_action(
             action=AuditAction.ITEM_CREATE,
             actor="admin_user",
-            actor_role="admin",
+            actor_role=UserRole.ADMIN,
             target_resource="item",
             resource_id="123",
             details="Test log"
@@ -41,7 +42,7 @@ class TestAuditService:
             await audit_service.log_user_action(
                 action=AuditAction.ITEM_UPDATE,
                 actor="user",
-                actor_role="user",
+                actor_role=UserRole.USER,
                 details=f"Log {i}"
             )
         
@@ -55,7 +56,7 @@ class TestAuditService:
         log_data = AuditLogCreate(
             action=AuditAction.UNDO,
             actor="sys",
-            actor_role="admin",
+            actor_role=UserRole.ADMIN,
             details="Manual undo log"
         )
         

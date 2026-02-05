@@ -10,8 +10,21 @@ const LoginPage = () => {
   const [authMode, setAuthMode] = useState(null); // null = selection, 'local' = local form, 'domain' = domain
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login, domainLogin, isAuthenticated } = useAuth();
+  const { login, domainLogin, isAuthenticated, isAdmin, hasPermission } = useAuth();
   const navigate = useNavigate();
+
+  const getRedirectPath = () => {
+    // If user has ONLY procurement permissions (no admin, no inventory), go to procurement
+    const hasInventory = hasPermission('inventory:ro') || hasPermission('inventory:rw');
+    const hasProcurement = hasPermission('procurement:ro') || hasPermission('procurement:rw');
+    
+    if (!isAdmin && !hasInventory && hasProcurement) {
+      return '/procurement';
+    }
+    
+    // Default to dashboard for everyone else
+    return '/dashboard';
+  };
 
   const handleLogin = async (username, password) => {
     setLoading(true);
@@ -29,7 +42,7 @@ const LoginPage = () => {
   // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate('/inventory');
+      navigate(getRedirectPath());
     }
   }, [isAuthenticated, navigate]);
 
@@ -49,7 +62,7 @@ const LoginPage = () => {
       }
 
       await domainLogin(adfsUsername); // שימוש בפונקציה מה-Context
-      navigate('/inventory');
+      // Redirect will be handled by useEffect
     } catch (error) {
        console.error("Domain login failed:", error);
        setError('התחברות דומיין נכשלה: ' + (error.response?.data?.detail || error.message));

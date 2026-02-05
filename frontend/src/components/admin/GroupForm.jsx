@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Select } from '../common';
+import PermissionSelector from './PermissionSelector';
 import './GroupForm.css';
 
 const GroupForm = ({ group, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
         name: '',
         role: 'user',
+        permissions: [],
         is_active: true,
     });
     const [error, setError] = useState('');
@@ -16,6 +18,7 @@ const GroupForm = ({ group, onSubmit, onCancel }) => {
             setFormData({
                 name: group.name || '',
                 role: group.role || 'user',
+                permissions: group.permissions || [],
                 is_active: group.is_active !== false,
             });
         }
@@ -85,19 +88,10 @@ const GroupForm = ({ group, onSubmit, onCancel }) => {
                         </div>
                     )}
 
-                    <div className="group-form__field">
-                        <Select
-                            label="תפקיד"
-                            id="role"
-                            name="role"
-                            value={formData.role || 'user'}
-                            onChange={handleChange}
-                            options={[
-                                { value: 'user', label: 'משתמש' },
-                                { value: 'admin', label: 'מנהל' }
-                            ]}
-                        />
-                    </div>
+                    <PermissionSelector
+                        selectedPermissions={formData.permissions}
+                        onChange={(newPermissions) => setFormData({ ...formData, permissions: newPermissions })}
+                    />
 
                     <div className="group-form__actions">
                         <Button type="submit" variant="primary" disabled={loading}>

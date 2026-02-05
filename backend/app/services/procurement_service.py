@@ -4,6 +4,7 @@ from fastapi import HTTPException, UploadFile
 import uuid
 import logging
 
+from app.core.constants import UserRole
 from app.db.repositories.procurement_repository import ProcurementRepository
 from app.services.s3_service import S3Service
 from app.services.audit_service import AuditService
@@ -37,7 +38,7 @@ class ProcurementService:
     
     def can_edit_procurement(self, user_role: str) -> bool:
         """Check if user can edit procurement (admin or superadmin)"""
-        return user_role in ["admin", "superadmin"]
+        return user_role in [UserRole.ADMIN, UserRole.SUPERADMIN]
     
     async def create_order(
         self,
@@ -72,7 +73,7 @@ class ProcurementService:
             await self.audit_service.log_user_action(
                 action=AuditAction.PROCUREMENT_CREATE,
                 actor=created_by,
-                actor_role="admin",  # Assuming admin created it
+                actor_role=UserRole.ADMIN,  # Assuming admin created it
                 target_resource="procurement_order",
                 resource_id=created_order["id"],
                 changes=order_dict

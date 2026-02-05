@@ -5,7 +5,7 @@ import { useAuth } from '../../../context/AuthContext';
 import './Navigation.css';
 
 const Navigation = () => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, hasPermission } = useAuth();
 
   return (
     <nav className="navigation">
@@ -20,45 +20,53 @@ const Navigation = () => {
           <span>דשבורד</span>
         </NavLink>
 
-        <NavLink
-          to="/inventory"
-          className={({ isActive }) =>
-            `navigation__link ${isActive ? 'navigation__link--active' : ''}`
-          }
-        >
-          <FiPackage size={20} />
-          <span>מלאי</span>
-        </NavLink>
+        {(hasPermission('inventory:ro') || hasPermission('inventory:rw')) && (
+          <NavLink
+            to="/inventory"
+            className={({ isActive }) =>
+              `navigation__link ${isActive ? 'navigation__link--active' : ''}`
+            }
+          >
+            <FiPackage size={20} />
+            <span>מלאי</span>
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/procurement"
-          className={({ isActive }) =>
-            `navigation__link ${isActive ? 'navigation__link--active' : ''}`
-          }
-        >
-          <FiShoppingCart size={20} />
-          <span>ניהול רכש</span>
-        </NavLink>
+        {(hasPermission('procurement:ro') || hasPermission('procurement:rw')) && (
+          <NavLink
+            to="/procurement"
+            className={({ isActive }) =>
+              `navigation__link ${isActive ? 'navigation__link--active' : ''}`
+            }
+          >
+            <FiShoppingCart size={20} />
+            <span>ניהול רכש</span>
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/stale"
-          className={({ isActive }) =>
-            `navigation__link ${isActive ? 'navigation__link--active' : ''}`
-          }
-        >
-          <FiClock size={20} />
-          <span>פריטים ישנים</span>
-        </NavLink>
+        {(hasPermission('inventory:ro') || hasPermission('inventory:rw')) && (
+          <NavLink
+            to="/stale"
+            className={({ isActive }) =>
+              `navigation__link ${isActive ? 'navigation__link--active' : ''}`
+            }
+          >
+            <FiClock size={20} />
+            <span>פריטים ישנים</span>
+          </NavLink>
+        )}
 
-        <NavLink
-          to="/logs"
-          className={({ isActive }) =>
-            `navigation__link ${isActive ? 'navigation__link--active' : ''}`
-          }
-        >
-          <FiActivity size={20} />
-          <span>לוג פעולות</span>
-        </NavLink>
+        {(isAdmin || hasPermission('inventory:ro') || hasPermission('inventory:rw')) && (
+          <NavLink
+            to="/logs"
+            className={({ isActive }) =>
+              `navigation__link ${isActive ? 'navigation__link--active' : ''}`
+            }
+          >
+            <FiActivity size={20} />
+            <span>לוג פעולות</span>
+          </NavLink>
+        )}
 
         {isAdmin && (
           <NavLink

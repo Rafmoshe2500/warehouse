@@ -7,12 +7,14 @@ class GroupCreate(BaseModel):
     """Schema for creating a new group - no password required"""
     name: str = Field(..., min_length=2, max_length=100)
     role: Optional[str] = "user"
+    permissions: Optional[list[str]] = []
 
 
 class GroupUpdate(BaseModel):
     """Schema for updating a group"""
     name: Optional[str] = Field(None, min_length=2, max_length=100)
     role: Optional[str] = None
+    permissions: Optional[list[str]] = None
     is_active: Optional[bool] = None
 
 
@@ -21,6 +23,7 @@ class GroupResponse(BaseModel):
     id: str
     name: str
     role: str = "user"
+    permissions: list[str] = []
     is_active: bool
     created_at: datetime
     updated_at: datetime

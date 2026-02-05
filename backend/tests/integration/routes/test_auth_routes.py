@@ -1,6 +1,7 @@
 import pytest
 from datetime import datetime
 from app.core.password import hash_password
+from app.core.constants import UserRole
 
 @pytest.mark.asyncio
 class TestAuthRoutes:
@@ -12,7 +13,7 @@ class TestAuthRoutes:
         await test_db["test_users"].insert_one({
             "username": "api_user",
             "password_hash": hash_password("api_pass"),
-            "role": "admin",
+            "role": UserRole.ADMIN,
             "is_active": True
         })
         
@@ -31,7 +32,7 @@ class TestAuthRoutes:
         assert response.status_code == 200
         data = response.json()
         assert data["username"] == "test_user"
-        assert data["role"] == "admin"
+        assert data["role"] == UserRole.ADMIN
 
     async def test_logout_route(self, async_client):
         """POST /auth/logout - Logout user."""
@@ -52,7 +53,7 @@ class TestAuthRoutes:
             "_id": u_id,
             "username": "test_user",
             "password_hash": hash_password("old_api_pass"),
-            "role": "admin",
+            "role": UserRole.ADMIN,
             "is_active": True,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
@@ -62,7 +63,7 @@ class TestAuthRoutes:
         from app.core.security import get_current_user
         from app.main import app
         async def mock_get_current_user():
-            return {"sub": "test_user", "username": "test_user", "role": "admin", "user_id": str(u_id)}
+            return {"sub": "test_user", "username": "test_user", "role": UserRole.ADMIN, "user_id": str(u_id)}
         app.dependency_overrides[get_current_user] = mock_get_current_user
         
         pwd_data = {

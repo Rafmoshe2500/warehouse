@@ -4,9 +4,14 @@ import { Button } from '../common';
 import { useAuth } from '../../context/AuthContext';
 import './ProcurementTable.css';
 
-const ProcurementTable = ({ orders, onEdit, onDelete, onManageFiles, onHistory }) => {
-  const { isAdmin, isSuperAdmin } = useAuth();
-  const canEdit = isAdmin || isSuperAdmin;
+const ProcurementTable = ({ 
+  orders, 
+  onEdit, 
+  onDelete, 
+  onManageFiles, 
+  onHistory,
+  canEdit = false
+}) => {
 
   return (
     <div className="procurement-table-container">

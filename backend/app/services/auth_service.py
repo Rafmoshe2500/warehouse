@@ -29,12 +29,13 @@ class AuthService:
         if not verify_password(login_data.password, user.get("password_hash", "")):
             raise UnauthorizedException()
 
-        # Create token with role
+        # Create token with role and permissions
         access_token = create_access_token(
             data={
                 "sub": login_data.username,
                 "username": login_data.username,
                 "role": user.get("role", "user"),
+                "permissions": user.get("permissions", []),
                 "user_id": user.get("id")
             },
             expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -68,28 +69,25 @@ class AuthService:
         all_app_groups = all_app_groups_result.get("groups", [])
         
         # 3. בדיקת חיתוך (Intersection) - האם למשתמש יש קבוצה שקיימת במערכת
-        # נניח ששמות הקבוצות ב-DB זהים לשמות ב-ADFS
-        valid_group = None
-        for group in all_app_groups:
-             if group.get("name") in user_adfs_groups:
-                 valid_group = group
-                 break
+        # נאסוף את כל ההרשאות מכל הקבוצות המתאימות
+        matched_groups = [g for g in all_app_groups if g.get("name") in user_adfs_groups]
         
-        if not valid_group:
+        if not matched_groups:
              raise UnauthorizedException("אין לך הרשאות גישה למערכת (לא נמצאה קבוצה מתאימה)")
 
-        # 4. יצירת טוקן
-        # במקרה של דומיין, נשתמש ב-Valid Group Role או User Role דיפולטיבי
-        # כרגע נניח שכל המשתמשים דרך דומיין הם במעמד 'user' או שנגדיר אחרת
-        # אפשר להוסיף לוגיקה שקובעת ROLE לפי הקבוצה
+        # Aggregate permissions from all groups
+        all_permissions = set()
+        for group in matched_groups:
+            all_permissions.update(group.get("permissions", []))
         
+        # 4. יצירת טוקן
         access_token = create_access_token(
             data={
                 "sub": username,
                 "username": username,
-                "role": "user", # או role אחר אם יש לוגיקה מיוחדת
-                "login_source": "domain",
-                "group_id": valid_group.get("id")
+                "role": "user",
+                "permissions": list(all_permissions),
+                "login_source": "domain"
             },
             expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         )

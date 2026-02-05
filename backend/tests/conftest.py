@@ -22,6 +22,7 @@ from fastapi.testclient import TestClient
 from app.config import settings
 from app.db.mongodb import MongoDB
 from app.main import app
+from app.core.constants import UserRole, Permission
 
 
 # ========== Test Configuration ==========
@@ -161,7 +162,8 @@ def mock_admin_user() -> dict:
     return {
         "sub": "admin",
         "username": "admin",
-        "role": "admin",
+        "role": UserRole.ADMIN,
+        "permissions": [Permission.ADMIN, Permission.INVENTORY_RW, Permission.PROCUREMENT_RW],
         "user_id": "admin_123"
     }
 
@@ -172,7 +174,7 @@ def mock_superadmin_user() -> dict:
     return {
         "sub": "superadmin",
         "username": "superadmin",
-        "role": "superadmin",
+        "role": UserRole.SUPERADMIN,
         "user_id": "superadmin_123"
     }
 
@@ -183,7 +185,8 @@ def mock_regular_user() -> dict:
     return {
         "sub": "user1",
         "username": "user1",
-        "role": "user",
+        "role": UserRole.USER,
+        "permissions": [],
         "user_id": "user_123"
     }
 
@@ -203,7 +206,8 @@ async def async_client(mock_mongodb) -> AsyncGenerator[AsyncClient, None]:
         return {
             "sub": "test_user",
             "username": "test_user",
-            "role": "admin",
+            "role": UserRole.ADMIN,
+            "permissions": [Permission.ADMIN, Permission.INVENTORY_RW, Permission.PROCUREMENT_RW],
             "user_id": "test_user_123"
         }
     
@@ -225,7 +229,7 @@ async def async_client_superadmin(mock_mongodb) -> AsyncGenerator[AsyncClient, N
         return {
             "sub": "superadmin",
             "username": "superadmin",
-            "role": "superadmin",
+            "role": UserRole.SUPERADMIN,
             "user_id": "superadmin_123"
         }
     
@@ -247,7 +251,7 @@ async def async_client_user(mock_mongodb) -> AsyncGenerator[AsyncClient, None]:
         return {
             "sub": "regular_user",
             "username": "regular_user", 
-            "role": "user",
+            "role": UserRole.USER,
             "user_id": "user_123"
         }
     
@@ -310,7 +314,7 @@ def sample_user_data() -> dict:
     return {
         "username": "testuser",
         "password_hash": hash_password("testpassword123"),
-        "role": "user",
+        "role": UserRole.USER,
         "is_active": True,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
@@ -323,7 +327,7 @@ def sample_audit_data() -> dict:
     return {
         "action": "item_create",
         "actor": "test_user",
-        "actor_role": "admin",
+        "actor_role": UserRole.ADMIN,
         "target_resource": "item",
         "resource_id": "item_123",
         "details": "Created test item",

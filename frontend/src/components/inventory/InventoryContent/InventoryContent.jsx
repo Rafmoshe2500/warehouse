@@ -5,6 +5,7 @@ import Spinner from '../../common/Spinner/Spinner';
 import './InventoryContent.css';
 
 const InventoryContent = ({
+  canEdit = false,
   data = {},
   selection = {},
   sorting = {},
@@ -72,6 +73,7 @@ const InventoryContent = ({
         contentMaxHeight="calc(100vh - 320px)"
       >
         <ItemTable
+          canEdit={canEdit}
           items={displayItems}
           selection={{ selectedItems, setSelectedItems, onSelectItem, onSelectAll }}
           sorting={{ sortConfig, onSort }}

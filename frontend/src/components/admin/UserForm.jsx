@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../common';
+import PermissionSelector from './PermissionSelector';
 import './UserForm.css';
 
 const UserForm = ({ user, onSubmit, onCancel }) => {
@@ -7,6 +8,7 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
         username: '',
         password: '',
         role: 'user',
+        permissions: [],
         is_active: true,
     });
     const [error, setError] = useState('');
@@ -18,6 +20,7 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
                 username: user.username || '',
                 password: '',
                 role: user.role || 'user',
+                permissions: user.permissions || [],
                 is_active: user.is_active !== false,
             });
         }
@@ -95,18 +98,10 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
                         />
                     </div>
 
-                    <div className="user-form__field">
-                        <label htmlFor="role">תפקיד</label>
-                        <select
-                            id="role"
-                            name="role"
-                            value={formData.role}
-                            onChange={handleChange}
-                        >
-                            <option value="user">משתמש רגיל</option>
-                            <option value="admin">אדמין</option>
-                        </select>
-                    </div>
+                    <PermissionSelector
+                        selectedPermissions={formData.permissions}
+                        onChange={(newPermissions) => setFormData({ ...formData, permissions: newPermissions })}
+                    />
 
                     {user && (
                         <div className="user-form__field user-form__field--checkbox">

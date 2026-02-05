@@ -12,7 +12,7 @@ import procurementService from '../../api/services/procurementService';
 import './ProcurementPage.css';
 
 const ProcurementPage = () => {
-  const { isAdmin, isSuperAdmin } = useAuth();
+  const { isAdmin, isSuperAdmin, hasPermission } = useAuth();
   const { toasts, removeToast, success, error } = useToast();
   
   const [orders, setOrders] = useState([]);
@@ -38,7 +38,7 @@ const ProcurementPage = () => {
   // Tab state: 'process' (default) or 'completed'
   const [activeTab, setActiveTab] = useState('process');
 
-  const canEdit = isAdmin || isSuperAdmin;
+  const canEdit = hasPermission('procurement:rw');
 
   useEffect(() => {
     fetchOrders();
@@ -253,6 +253,7 @@ const ProcurementPage = () => {
         <>
           <ProcurementTable
             orders={orders}
+            canEdit={canEdit}
             onEdit={openEditModal}
             onDelete={openDeleteModal}
             onManageFiles={openFilesModal}
@@ -284,6 +285,7 @@ const ProcurementPage = () => {
         onClose={() => setIsFilesModalOpen(false)}
         order={selectedOrderForFiles}
         onFileChange={handleFileChange}
+        canEdit={canEdit}
       />
 
       <DeleteConfirmModal

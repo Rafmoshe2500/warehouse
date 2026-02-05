@@ -8,13 +8,33 @@ from datetime import datetime
 
 from app.schemas.audit import AuditLogsListResponse, AuditAction, AuditLogCreate
 from app.services.audit_service import AuditService
+from app.core.exceptions import ForbiddenException
 from app.core.security import require_admin, get_current_user
+from app.core.constants import UserRole, Permission
 
 router = APIRouter(prefix="/audit", tags=["Audit"])
 
 
 def get_audit_service():
     return AuditService()
+
+
+async def require_audit_access(current_user: dict = Depends(get_current_user)):
+    """
+    Allow access to Admins, SuperAdmins, OR users with inventory permissions.
+    """
+    role = current_user.get("role")
+    permissions = current_user.get("permissions", [])
+
+    # Allow admins/superadmins
+    if role in [UserRole.ADMIN, UserRole.SUPERADMIN] or Permission.ADMIN in permissions:
+        return current_user
+
+    # Allow inventory users
+    if Permission.INVENTORY_RO in permissions or Permission.INVENTORY_RW in permissions:
+        return current_user
+
+    raise ForbiddenException("אין הרשאה לצפייה בלוגים")
 
 
 @router.get("/logs", response_model=AuditLogsListResponse)
@@ -29,7 +49,7 @@ async def get_audit_logs(
     search: Optional[str] = Query(None, description="Free text search"),
     start_date: Optional[datetime] = Query(None, description="Filter by start date"),
     end_date: Optional[datetime] = Query(None, description="Filter by end date"),
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(require_audit_access),
     audit_service: AuditService = Depends(get_audit_service)
 ):
     """

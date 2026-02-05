@@ -50,6 +50,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
     return {
         "username": current_user.get("sub"),
         "role": current_user.get("role", "user"),
+        "permissions": current_user.get("permissions", []),
         "user_id": current_user.get("user_id")
     }
 

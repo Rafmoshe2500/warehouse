@@ -60,6 +60,7 @@ class GroupService:
         group_doc = {
             "name": group_data.name,
             "role": group_data.role,
+            "permissions": group_data.permissions or [],
             "is_active": True,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
@@ -116,6 +117,10 @@ class GroupService:
         if update_data.role is not None:
             update_dict["role"] = update_data.role
             changes["role"] = {"old": existing.get("role"), "new": update_data.role}
+            
+        if update_data.permissions is not None:
+            update_dict["permissions"] = update_data.permissions
+            changes["permissions"] = {"old": existing.get("permissions", []), "new": update_data.permissions}
             
         if update_data.is_active is not None:
             update_dict["is_active"] = update_data.is_active

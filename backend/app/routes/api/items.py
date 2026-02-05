@@ -5,16 +5,21 @@ from app.schemas.item import ItemCreate, ItemUpdate, BulkUpdate, ItemsListRespon
 from app.schemas.auth import DeleteRequest
 from app.services.item_service import ItemService
 from app.dependencies import get_item_service
-from app.core.security import get_current_user, require_admin
+from app.core.security import get_current_user, require_admin, require_permission
+from app.core.constants import Permission
 from app.core.exceptions import DeleteConfirmationException
 
 router = APIRouter(prefix="/items", tags=["Items"])
 
 
+inventory_ro = require_permission(Permission.INVENTORY_RO)
+inventory_rw = require_permission(Permission.INVENTORY_RW)
+
+
 @router.get("", response_model=ItemsListResponse)
 async def get_items(
         filter_params: ItemFilter = Depends(),
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(inventory_ro),
         item_service: ItemService = Depends(get_item_service)
 ):
     """קבלת כל הפריטים עם פילטור, חיפוש ומיון"""
@@ -26,7 +31,7 @@ async def get_stale_items(
         days: int = Query(30, ge=1),
         page: int = Query(1, ge=1),
         limit: int = Query(30, ge=1, le=1000),
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(inventory_ro),
         item_service: ItemService = Depends(get_item_service)
 ):
     """קבלת פריטים שלא עודכנו זמן רב (ברירת מחדל: 30 יום)"""
@@ -38,7 +43,7 @@ async def create_item(
         item: ItemCreate,
         undo_log_id: Optional[str] = Query(None),
         is_undo: bool = Query(False),
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(inventory_rw),
         item_service: ItemService = Depends(get_item_service)
 ):
     """הוספת פריט חדש"""
@@ -55,7 +60,7 @@ async def update_item_field(
         update: ItemUpdate,
         undo_log_id: Optional[str] = Query(None),
         is_undo: bool = Query(False),
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(inventory_rw),
         item_service: ItemService = Depends(get_item_service)
 ):
     """עדכון שדה בודד בפריט"""
@@ -65,7 +70,7 @@ async def update_item_field(
 @router.post("/bulk-update")
 async def bulk_update_items(
         update: BulkUpdate,
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(inventory_rw),
         item_service: ItemService = Depends(get_item_service)
 ):
     """עדכון מרובה"""
@@ -86,7 +91,7 @@ async def fix_reserved_stock(
 async def delete_item(
         item_id: str,
         delete_request: DeleteRequest,
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(inventory_rw),
         item_service: ItemService = Depends(get_item_service)
 ):
     return await item_service.delete_item(
@@ -99,7 +104,7 @@ async def delete_item(
 @router.post("/bulk-delete")
 async def bulk_delete_items(
         delete_request: DeleteRequest,
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(inventory_rw),
         item_service: ItemService = Depends(get_item_service)
 ):
     """מחיקת מספר פריטים"""

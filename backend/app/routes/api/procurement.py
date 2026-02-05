@@ -3,7 +3,8 @@ from fastapi.responses import StreamingResponse
 from io import BytesIO
 from typing import Optional, List
 
-from app.core.security import get_current_user
+from app.core.security import get_current_user, require_permission
+from app.core.constants import Permission
 from app.services.procurement_service import ProcurementService
 from app.schemas.procurement import (
     ProcurementOrderCreate,
@@ -14,6 +15,10 @@ from app.schemas.procurement import (
 )
 
 router = APIRouter(prefix="/procurement", tags=["procurement"])
+
+
+procurement_ro = require_permission(Permission.PROCUREMENT_RO)
+procurement_rw = require_permission(Permission.PROCUREMENT_RW)
 
 
 def get_procurement_service() -> ProcurementService:
@@ -30,7 +35,7 @@ async def get_orders(
     # Use generic Query for list: ?status_in=a&status_in=b
     status_in: Optional[List[str]] = Query(None),
     status_ne: Optional[str] = None,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(procurement_ro),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
     print(f"DEBUG ROUTE: status_in={status_in}, status_ne={status_ne}")
@@ -55,7 +60,7 @@ async def get_orders(
 @router.post("/orders", response_model=ProcurementOrderResponse)
 async def create_order(
     order_data: ProcurementOrderCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(procurement_rw),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
     """Create new procurement order (admin+ only)"""
@@ -75,7 +80,7 @@ async def create_order(
 @router.get("/orders/{order_id}", response_model=ProcurementOrderResponse)
 async def get_order(
     order_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(procurement_ro),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
     """Get procurement order by ID (all authenticated users)"""
@@ -86,7 +91,7 @@ async def get_order(
 async def update_order(
     order_id: str,
     update_data: ProcurementOrderUpdate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(procurement_rw),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
     """Update procurement order (admin+ only)"""
@@ -104,7 +109,7 @@ async def update_order(
 @router.delete("/orders/{order_id}")
 async def delete_order(
     order_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(procurement_rw),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
     """Delete procurement order (admin+ only)"""
@@ -119,7 +124,7 @@ async def delete_order(
 async def upload_file(
     order_id: str,
     file: UploadFile = File(...),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(procurement_rw),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
     """Upload file to procurement order (admin+ only)"""
@@ -138,7 +143,7 @@ async def upload_file(
 async def download_file(
     order_id: str,
     file_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(procurement_ro),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
     """Download file from procurement order (all authenticated users)"""
@@ -160,7 +165,7 @@ async def download_file(
 async def delete_file(
     order_id: str,
     file_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(procurement_rw),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
     """Delete file from procurement order (admin+ only)"""

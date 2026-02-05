@@ -6,13 +6,10 @@ import procurementService from '../../api/services/procurementService';
 import './ProcurementFilesModal.css';
 import { useToast } from '../../hooks/useToast';
 
-const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange }) => {
-  const { isAdmin, isSuperAdmin } = useAuth();
+const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit = false }) => {
   const { error, success } = useToast();
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
-
-  const canEdit = isAdmin || isSuperAdmin;
 
   const handleUpload = async (file) => {
     setUploading(true);

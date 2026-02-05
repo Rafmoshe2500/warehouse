@@ -9,6 +9,7 @@ import io
 
 from app.services.procurement_service import ProcurementService
 from app.schemas.procurement import ProcurementOrderCreate, ProcurementOrderUpdate
+from app.core.constants import UserRole
 
 
 class TestProcurementService:
@@ -71,7 +72,7 @@ class TestProcurementService:
         
         update_data = ProcurementOrderUpdate(quantity=50)
         result = await procurement_service.update_order(
-            created["id"], update_data, user_role="admin", username=mock_admin_user["username"]
+            created["id"], update_data, user_role=UserRole.ADMIN, username=mock_admin_user["username"]
         )
         
         assert result["quantity"] == 50
@@ -83,7 +84,7 @@ class TestProcurementService:
         from fastapi import HTTPException
         with pytest.raises(HTTPException) as exc:
             await procurement_service.update_order(
-                "some-id", ProcurementOrderUpdate(quantity=5), user_role="user"
+                "some-id", ProcurementOrderUpdate(quantity=5), user_role=UserRole.USER
             )
         assert exc.value.status_code == 403
 
@@ -100,7 +101,7 @@ class TestProcurementService:
         )
         
         await procurement_service.delete_order(
-            created["id"], user_role="admin", username=mock_admin_user["username"]
+            created["id"], user_role=UserRole.ADMIN, username=mock_admin_user["username"]
         )
         
         # Verify gone
@@ -139,7 +140,7 @@ class TestProcurementService:
         mock_file.file = io.BytesIO(b"dummy pdf content")
         
         result = await procurement_service.upload_file(
-            created["id"], mock_file, uploaded_by="admin", user_role="admin"
+            created["id"], mock_file, uploaded_by="admin", user_role=UserRole.ADMIN
         )
         
         assert result["file_id"] == "file_123"

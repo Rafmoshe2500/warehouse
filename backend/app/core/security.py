@@ -5,7 +5,9 @@ from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 
 from app.config import settings
+from app.config import settings
 from app.core.exceptions import UnauthorizedException, ForbiddenException
+from app.core.constants import UserRole, Permission
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 
@@ -51,9 +53,11 @@ async def get_current_user(
 async def require_admin(
         current_user: dict = Depends(get_current_user)
 ) -> dict:
-    """וידוא שהמשתמש הוא אדמין או סופר-אדמין"""
+    """וידוא שהמשתמש הוא אדמין או סופר-אדמין או בעל הרשאת אדמין"""
     user_role = current_user.get("role")
-    if user_role not in ["admin", "superadmin"]:
+    user_permissions = current_user.get("permissions", [])
+    
+    if user_role not in [UserRole.ADMIN, UserRole.SUPERADMIN] and Permission.ADMIN not in user_permissions:
         raise ForbiddenException("נדרשות הרשאות אדמין")
     return current_user
 
@@ -62,9 +66,34 @@ async def require_superadmin(
         current_user: dict = Depends(get_current_user)
 ) -> dict:
     """וידוא שהמשתמש הוא סופר-אדמין בלבד"""
-    if current_user.get("role") != "superadmin":
+    if current_user.get("role") != UserRole.SUPERADMIN:
         raise ForbiddenException("נדרשות הרשאות SuperAdmin")
     return current_user
+
+
+def require_permission(permission: str):
+    """Dependency factory to require a specific permission."""
+    async def permission_dependency(
+        current_user: dict = Depends(get_current_user)
+    ) -> dict:
+        user_role = current_user.get("role")
+        user_permissions = current_user.get("permissions", [])
+        
+        # SuperAdmin has all permissions
+        if user_role == UserRole.SUPERADMIN:
+            return current_user
+            
+        if permission not in user_permissions:
+            # Check for implied permissions (RW implies RO)
+            if permission.endswith(":ro"):
+                rw_permission = permission.replace(":ro", ":rw")
+                if rw_permission in user_permissions:
+                    return current_user
+            
+            raise ForbiddenException(f"נדרשת הרשאה: {permission}")
+        return current_user
+    
+    return permission_dependency
 
 
 def verify_delete_password(password: str) -> bool:

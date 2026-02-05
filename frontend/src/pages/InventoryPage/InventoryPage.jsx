@@ -7,6 +7,7 @@ import { useExcelManager } from '../../hooks/useExcelManager';
 import { useInventoryModals } from '../../hooks/useInventoryModals';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useInlineAddItem } from '../../hooks/useInlineAddItem';
+import { useAuth } from '../../context/AuthContext';
 import excelService from '../../api/services/excelService';
 
 // Components
@@ -27,6 +28,8 @@ const InventoryPage = () => {
   const { addToast, toasts, removeToast } = useToast();
   const { currentPage, itemsPerPage, goToPage, setItemsPerPage } = usePagination(1, 25);
   const { uploadingExcel, setUploadingExcel, showExportModal, fileInputRef, handleUploadClick } = useExcelManager();
+  const { hasPermission } = useAuth();
+  const canEdit = hasPermission('inventory:rw');
   const modals = useInventoryModals();
 
   const loadItemsRef = useRef(loadItems);
@@ -321,6 +324,7 @@ const InventoryPage = () => {
     <div className="inventory-page">
       <div className="page-layout">
         <InventoryHeader
+          canEdit={canEdit}
           selectedItems={selectedItems}
           showFilters={showFilters}
           uploadingExcel={uploadingExcel}
@@ -336,6 +340,7 @@ const InventoryPage = () => {
         />
 
         <InventoryContent
+          canEdit={canEdit}
           data={{ items, totalItems, loading, error }}
           selection={{
             selectedItems,

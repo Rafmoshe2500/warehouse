@@ -2,7 +2,7 @@
 Integration tests for Admin API routes.
 """
 import pytest
-from app.schemas.user import UserRole
+from app.core.constants import UserRole
 
 @pytest.mark.asyncio
 class TestAdminRoutes:

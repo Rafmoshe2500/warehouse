@@ -6,7 +6,8 @@ import logging
 
 from app.db.mongodb import MongoDB
 from app.core.password import hash_password, verify_password
-from app.schemas.user import UserCreate, UserUpdate, UserRole
+from app.core.constants import UserRole, Permission
+from app.schemas.user import UserCreate, UserUpdate
 from app.schemas.audit import AuditAction
 from app.core.exceptions import NotFoundException, BadRequestException
 
@@ -125,6 +126,7 @@ class UserService:
             "username": user_data.username,
             "password_hash": hash_password(user_data.password),
             "role": user_data.role.value,
+            "permissions": user_data.permissions or [],
             "is_active": True,
             "created_by": created_by,
             "created_at": datetime.utcnow(),
@@ -246,6 +248,13 @@ class UserService:
             }
             update_dict["role"] = update_data.role.value
         
+        if update_data.permissions is not None:
+            changes["permissions"] = {
+                "old": existing.get("permissions", []),
+                "new": update_data.permissions
+            }
+            update_dict["permissions"] = update_data.permissions
+
         if update_data.is_active is not None:
             changes["is_active"] = {
                 "old": existing.get("is_active"),
@@ -442,6 +451,7 @@ class UserService:
             "username": username,
             "password_hash": hash_password(password),
             "role": UserRole.SUPERADMIN.value,
+            "permissions": [Permission.ADMIN.value, Permission.INVENTORY_RW.value, Permission.PROCUREMENT_RW.value],
             "is_active": True,
             "created_by": "system",
             "created_at": datetime.utcnow(),

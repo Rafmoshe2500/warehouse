@@ -16,6 +16,7 @@ import { TableCell, ContextMenu, FloatingToolbar, SelectionIndicator } from '../
 import './ItemTable.css';
 
 const ItemTable = ({
+  canEdit = false,
   items,
   selection = {},
   sorting = {},
@@ -169,6 +170,8 @@ const ItemTable = ({
 
   // Double-click handler for cells
   const handleCellDoubleClick = async (item, field, value) => {
+    if (!canEdit) return; // Prevent editing for RO users
+
     if (IMMUTABLE_FIELDS.includes(field)) {
       try {
         const textToCopy = formatCellValue(value);
@@ -444,12 +447,14 @@ const ItemTable = ({
       </table>
 
       {/* Floating Toolbar - Undo/Redo */}
-      <FloatingToolbar
-        canUndo={canUndo}
-        canRedo={canRedo}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-      />
+      {canEdit && (
+        <FloatingToolbar
+          canUndo={canUndo}
+          canRedo={canRedo}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
+        />
+      )}
 
       {/* Multi-cell selection indicator */}
       <SelectionIndicator count={selectedCells.length} />
@@ -459,8 +464,8 @@ const ItemTable = ({
         position={contextMenu}
         selectedItemsCount={selectedItems.length}
         selectedCellsCount={selectedCells.length}
-        onEdit={onBulkEdit}
-        onDelete={onBulkDelete}
+        onEdit={canEdit ? onBulkEdit : null}
+        onDelete={canEdit ? onBulkDelete : null}
         onCopy={copySelectedCells}
         onClose={closeContextMenu}
       />
