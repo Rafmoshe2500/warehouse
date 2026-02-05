@@ -1,22 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FiActivity } from 'react-icons/fi';
-import analyticsService from '../../../api/services/analyticsService';
+import { useAnalytics } from '../../../hooks/useAnalytics';
 
 const ActivityStatsCard = () => {
-    const [activityStats, setActivityStats] = useState(null);
     const [activityDays, setActivityDays] = useState(7);
-
-    useEffect(() => {
-        const fetchActivity = async () => {
-            try {
-                const data = await analyticsService.getActivityStats(activityDays);
-                setActivityStats(data);
-            } catch (err) {
-                console.error('Failed to fetch activity stats', err);
-            }
-        };
-        fetchActivity();
-    }, [activityDays]);
+    const { useActivityStats } = useAnalytics();
+    const { data: activityStats } = useActivityStats(activityDays);
 
     return (
         <div className="activity-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

@@ -9,10 +9,8 @@ import { Spinner } from './components/common';
 // Lazy load page components for code splitting
 const LoginPage = lazy(() => import('./pages/LoginPage/LoginPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage/DashboardPage'));
-const InventoryPage = lazy(() => import('./pages/InventoryPage/InventoryPage'));
-const LogsPage = lazy(() => import('./pages/LogsPage/LogsPage'));
+const InventoryTabbedPage = lazy(() => import('./pages/InventoryPage/InventoryTabbedPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage/AdminPage'));
-const StaleItemsPage = lazy(() => import('./pages/StaleItemsPage/StaleItemsPage'));
 
 // Admin Panel pages
 const AccessControlPage = lazy(() => import('./pages/AdminPanel/AccessControlPage'));
@@ -135,24 +133,8 @@ const AppRouter = () => {
             path="/inventory"
             element={
               <PermissionRoute permission="inventory:ro">
-                <InventoryPage />
+                <InventoryTabbedPage />
               </PermissionRoute>
-            }
-          />
-          <Route
-            path="/stale"
-            element={
-              <PrivateRoute>
-                <StaleItemsPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/logs"
-            element={
-              <PrivateRoute>
-                <LogsPage />
-              </PrivateRoute>
             }
           />
           <Route

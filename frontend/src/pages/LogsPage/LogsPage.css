@@ -1,9 +1,21 @@
 .logs-page {
   padding: 1.5rem;
   direction: rtl;
-  height: calc(100vh - 140px);
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   max-width: var(--page-max-width);
   margin: 0 auto;
+}
+
+.logs-page-embedded {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  direction: rtl;
+  min-height: 0;
 }
 
 .logs-page__loading {

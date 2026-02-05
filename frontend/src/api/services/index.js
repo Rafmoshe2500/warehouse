@@ -54,21 +54,14 @@ export const createServices = (apiClient, options = {}) => {
     onError: options.onError || null,
   };
 
-  const cachingServiceOptions = {
-    defaultTtl: options.defaultTtl || 5 * 60 * 1000,
-    maxSize: options.maxSize || 10 * 1024 * 1024,
-    logger: options.logger || console,
-  };
-
   return {
     // API Services
     itemService: require('./itemService').createItemService(apiClient),
     excelService: require('./excelService').createExcelService(apiClient),
     logService: require('./logService').createLogService(apiClient),
     authService: require('./authService').createAuthService(apiClient),
-    
+
     // Utility Services
     errorService: require('./errorService').createErrorService(errorServiceOptions),
-    cachingService: require('./cachingService').createCachingService(cachingServiceOptions),
   };
 };

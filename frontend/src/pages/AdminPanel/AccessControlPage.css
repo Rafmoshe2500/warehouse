@@ -27,40 +27,6 @@
     margin-bottom: 2rem;
 }
 
-.access-tabs {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 1px;
-}
-
-.tab-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1rem 1.5rem;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent; /* Reserve space */
-    color: var(--text-secondary);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin-bottom: -3px; /* Align with border */
-}
-
-.tab-btn:hover {
-    color: var(--primary-color);
-    background: rgba(0, 0, 0, 0.02);
-    border-radius: 8px 8px 0 0;
-}
-
-.tab-btn.active {
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
-}
 
 .access-content {
     background: var(--bg-card); /* Ensure better contrast if needed, or transparent */

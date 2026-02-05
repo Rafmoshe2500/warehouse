@@ -40,38 +40,6 @@
   min-width: 200px;
 }
 
-.access-tabs {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.tab-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 1.5rem;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--text-secondary);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: -1px;
-}
-
-.tab-btn:hover {
-  color: var(--accent-primary);
-  background: rgba(0, 0, 0, 0.02);
-}
-
-.tab-btn.active {
-  color: var(--accent-primary);
-  border-bottom: 2px solid var(--accent-primary);
-}
 
 .loading-container {
   display: flex;

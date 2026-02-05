@@ -198,7 +198,7 @@ const ProcurementPage = () => {
         )}
       </div>
 
-      <div className="access-tabs" style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)' }}>
+      <div className="access-tabs">
         <button 
           className={`tab-btn ${activeTab === 'process' ? 'active' : ''}`}
           onClick={() => handleTabChange('process')}

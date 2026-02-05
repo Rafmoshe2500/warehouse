@@ -3,10 +3,11 @@ import ItemTable from '../ItemTable/ItemTable';
 import { Pagination, ScrollableTableLayout } from '../../common';
 import Spinner from '../../common/Spinner/Spinner';
 import './InventoryContent.css';
+import { useItems } from '../../../hooks/useItems';
 
 const InventoryContent = ({
   canEdit = false,
-  data = {},
+  queryParams = null, // New prop instead of data
   selection = {},
   sorting = {},
   filtering = {},
@@ -14,18 +15,18 @@ const InventoryContent = ({
   editing = {},
   onBulkEdit,
   onBulkDelete,
-  // Props להוספה
   isAdding,
   newRowData,
   onNewRowChange,
   onSaveNew,
   onCancelNew,
-  // Prop להודעות
   onShowToast,
-  // Prop לשחזור פריטים
-  onRestoreItems
+  onRestoreItems,
+  // Prop for embedded mode
+  isEmbedded = false
 }) => {
-  const { items = [], totalItems = 0, loading = false, error = null } = data;
+  // Fetch data directly using the hook and passed params
+  const { items = [], totalItems = 0, loading = false, error = null } = useItems(queryParams);
   const { selectedItems = [], setSelectedItems, onSelectItem, onSelectAll } = selection;
   const { sortConfig, onSort } = sorting;
   const { filters = {}, showFilters = false, onChange: onFilterChange } = filtering;
@@ -59,18 +60,15 @@ const InventoryContent = ({
     <div className="inventory-content">
       <ScrollableTableLayout
         pagination={
-          totalItems > 0 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={totalItems}
-              limit={itemsPerPage}
-              onPageChange={goToPage}
-              onItemsPerPageChange={setItemsPerPage}
-            />
-          )
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            limit={itemsPerPage}
+            onPageChange={goToPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
         }
-        contentMaxHeight="calc(100vh - 320px)"
       >
         <ItemTable
           canEdit={canEdit}

@@ -1,34 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { Button } from '../../components/common';
 import { useToast } from '../../hooks/useToast';
 import Spinner from '../../components/common/Spinner/Spinner';
 import GroupForm from '../../components/admin/GroupForm';
-import groupService from '../../api/services/groupService'; // Assuming this service exists or I need to create it? I saw groups.py backend but need to check frontend service.
-import './UserManagement.css'; // Reusing user management styles for consistency
+import { useGroups } from '../../hooks/useGroups'; // Import hook
+import './UserManagement.css'; 
 
 const GroupManagement = () => {
-    const { success, error } = useToast();
-    const [groups, setGroups] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { success, error: toastError } = useToast();
+    
+    // Use React Query Hook
+    const { 
+        groups, 
+        loading, 
+        error: loadError,
+        createGroup, 
+        updateGroup, 
+        deleteGroup 
+    } = useGroups();
+
     const [showModal, setShowModal] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    useEffect(() => {
-        fetchGroups();
-    }, []);
-
-    const fetchGroups = async () => {
-        try {
-            const data = await groupService.getGroups();
-            setGroups(data.groups);
-        } catch (err) {
-            error('שגיאה בטעינת קבוצות');
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Initial load error handling
+    if (loadError) {
+        toastError('שגיאה בטעינת קבוצות');
+    }
 
     const handleCreate = () => {
         setSelectedGroup(null);
@@ -48,27 +47,25 @@ const GroupManagement = () => {
     const handleSubmit = async (formData) => {
         try {
             if (selectedGroup) {
-                await groupService.updateGroup(selectedGroup.id, formData);
+                await updateGroup({ id: selectedGroup.id, data: formData });
                 success('הקבוצה עודכנה בהצלחה');
             } else {
-                await groupService.createGroup(formData);
+                await createGroup(formData);
                 success('קבוצה חדשה נוצרה בהצלחה');
             }
             setShowModal(false);
-            fetchGroups();
         } catch (err) {
-            error(err.response?.data?.detail || 'שגיאה בשמירת הקבוצה');
+            toastError(err.response?.data?.detail || 'שגיאה בשמירת הקבוצה');
         }
     };
 
     const handleDeleteConfirm = async () => {
         try {
-            await groupService.deleteGroup(selectedGroup.id, 'Deleted by admin'); // Hardcoded reason for now or add input
+            await deleteGroup({ id: selectedGroup.id, reason: 'Deleted by admin' }); 
             success('הקבוצה נמחקה בהצלחה');
             setShowDeleteModal(false);
-            fetchGroups();
         } catch (err) {
-            error('שגיאה במחיקת הקבוצה');
+            toastError('שגיאה במחיקת הקבוצה');
         }
     };
 

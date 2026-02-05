@@ -1,42 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowRight, FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
-import { Button, Input, Select } from '../../components/common';
+import { Button } from '../../components/common';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
+import { useUsers } from '../../hooks/useUsers'; // Import hook
 import Spinner from '../../components/common/Spinner/Spinner';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
-import adminService from '../../api/services/adminService';
 import UserForm from '../../components/admin/UserForm';
 import './UserManagement.css';
 
 const UserManagement = ({ isEmbedded = false }) => {
   const navigate = useNavigate();
   const { isSuperAdmin } = useAuth();
-  const { toasts, removeToast, success, error } = useToast();
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { toasts, removeToast, success, error: toastError } = useToast();
+  
+  // Use React Query Hook
+  const { 
+    users, 
+    loading, 
+    error: loadError,
+    createUser, 
+    updateUser, 
+    deleteUser 
+  } = useUsers();
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [deleteReason, setDeleteReason] = useState('');
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      const data = await adminService.getUsers();
-      setUsers(data.users);
-    } catch (err) {
-      error('שגיאה בטעינת משתמשים');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Handle load error
+  if (loadError) {
+      toastError('שגיאה בטעינת משתמשים');
+  }
 
   const handleCreateClick = () => {
     setSelectedUser(null);
@@ -51,14 +50,13 @@ const UserManagement = ({ isEmbedded = false }) => {
   const handleUserSubmit = async (userData) => {
     try {
       if (selectedUser) {
-        await adminService.updateUser(selectedUser.id, userData);
+        await updateUser({ id: selectedUser.id, data: userData });
         success('משתמש עודכן בהצלחה');
       } else {
-        await adminService.createUser(userData);
+        await createUser(userData);
         success('משתמש נוצר בהצלחה!');
       }
       setShowCreateModal(false);
-      fetchUsers();
     } catch (err) {
       // Rethrow to let UserForm handle the error display
       throw err;
@@ -72,19 +70,18 @@ const UserManagement = ({ isEmbedded = false }) => {
 
   const handleDeleteConfirm = async () => {
     if (!deleteReason.trim()) {
-      error('נא להזין סיבה למחיקה');
+      toastError('נא להזין סיבה למחיקה');
       return;
     }
 
     try {
-      await adminService.deleteUser(userToDelete.id, deleteReason);
-      fetchUsers();
+      await deleteUser({ id: userToDelete.id, reason: deleteReason });
       success('משתמש נמחק בהצלחה');
       setShowDeleteModal(false);
       setUserToDelete(null);
       setDeleteReason('');
     } catch (err) {
-      error(err.response?.data?.detail || 'שגיאה במחיקת משתמש');
+      toastError(err.response?.data?.detail || 'שגיאה במחיקת משתמש');
     }
   };
 

@@ -1,46 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { useItems } from '../../hooks/useItems';
+import PropTypes from 'prop-types';
+import { useStaleItems } from '../../hooks/useStaleItems';
 import { useToast } from '../../hooks/useToast';
-import itemService from '../../api/services/itemService';
+
 import ItemTable from '../../components/inventory/ItemTable/ItemTable';
 import { usePagination } from '../../hooks/usePagination';
 import { ScrollableTableLayout, Pagination } from '../../components/common';
 import './StaleItemsPage.css';
 
-const StaleItemsPage = () => {
-    const [items, setItems] = useState([]);
-    const [totalItems, setTotalItems] = useState(0);
-    const [loading, setLoading] = useState(false);
+const StaleItemsPage = ({ isEmbedded = false }) => {
+    // 1. UI State
     const [days, setDays] = useState(30);
+    const [selectedItems, setSelectedItems] = useState([]);
     
-    const { addToast } = useToast();
+    // 2. Pagination
     const { currentPage, itemsPerPage, goToPage, setItemsPerPage } = usePagination(1, 25);
+    const { addToast } = useToast();
+
+    // 3. React Query Data Fetching
+    const { 
+        items, 
+        totalItems, 
+        loading, 
+        error: loadError,
+        updateStaleItem 
+    } = useStaleItems(days, currentPage, itemsPerPage);
 
     useEffect(() => {
-        loadStaleItems();
-    }, [currentPage, itemsPerPage, days]);
-
-    const loadStaleItems = async () => {
-        setLoading(true);
-        try {
-            const data = await itemService.getStaleItems(days, currentPage, itemsPerPage);
-            setItems(data.items || []);
-            setTotalItems(data.total || 0);
-        } catch (err) {
-            console.error(err);
+        if (loadError) {
             addToast('שגיאה בטעינת פריטים ישנים', 'error');
-        } finally {
-            setLoading(false);
         }
-    };
+    }, [loadError, addToast]);
 
-    const [selectedItems, setSelectedItems] = useState([]);
-
+    // 4. Handlers
     const handleEditCell = async (itemId, field, value) => {
         try {
-            await itemService.updateItem(itemId, field, value);
+            await updateStaleItem({ itemId, field, value });
             addToast('הפריט עודכן בהצלחה', 'success');
-            loadStaleItems();
+            // No manual reload needed!
         } catch (err) {
             console.error(err);
             addToast('שגיאה בעדכון פריט', 'error');
@@ -64,7 +61,7 @@ const StaleItemsPage = () => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     return (
-        <div className="stale-items-page">
+        <div className={isEmbedded ? "stale-items-page-embedded" : "stale-items-page"}>
             <ScrollableTableLayout
                 header={
                     <div className="stale-items-header">
@@ -83,18 +80,15 @@ const StaleItemsPage = () => {
                     </div>
                 }
                 pagination={
-                    totalPages > 0 && (
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            totalItems={totalItems}
-                            limit={itemsPerPage}
-                            onPageChange={goToPage}
-                            onItemsPerPageChange={setItemsPerPage}
-                        />
-                    )
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        totalItems={totalItems}
+                        limit={itemsPerPage}
+                        onPageChange={goToPage}
+                        onItemsPerPageChange={setItemsPerPage}
+                    />
                 }
-                contentMaxHeight="calc(100vh - 350px)"
             >
                 <ItemTable 
                     items={items}
@@ -111,5 +105,8 @@ const StaleItemsPage = () => {
     );
 };
 
-export default StaleItemsPage;
+StaleItemsPage.propTypes = {
+  isEmbedded: PropTypes.bool
+};
 
+export default StaleItemsPage;

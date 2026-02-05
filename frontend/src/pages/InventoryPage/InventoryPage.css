@@ -1,5 +1,5 @@
 .inventory-page {
-  height: calc(100vh - 80px); /* Fixed height for sticky header support */
+  height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -7,6 +7,16 @@
   max-width: var(--page-max-width);
   margin: 0 auto;
   direction: rtl;
+  min-height: 0; /* Important for flex children */
+}
+
+.inventory-page-embedded {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  direction: rtl;
+  min-height: 0; /* Important for flex children */
 }
 
 .inventory-page__header {

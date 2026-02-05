@@ -10,19 +10,21 @@ const LoginPage = () => {
   const [authMode, setAuthMode] = useState(null); // null = selection, 'local' = local form, 'domain' = domain
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login, domainLogin, isAuthenticated, isAdmin, hasPermission } = useAuth();
+  const { login, isAuthenticated, isAdmin, hasPermission } = useAuth();
   const navigate = useNavigate();
 
   const getRedirectPath = () => {
-    // If user has ONLY procurement permissions (no admin, no inventory), go to procurement
-    const hasInventory = hasPermission('inventory:ro') || hasPermission('inventory:rw');
-    const hasProcurement = hasPermission('procurement:ro') || hasPermission('procurement:rw');
-    
-    if (!isAdmin && !hasInventory && hasProcurement) {
-      return '/procurement';
+    // 1. Admins and Inventory Managers go to Dashboard
+    if (isAdmin || hasPermission('inventory:ro') || hasPermission('inventory:rw')) {
+      return '/inventory'; // Also covers users with BOTH inventory and procurement
     }
     
-    // Default to dashboard for everyone else
+    // 2. Procurement ONLY users go to Procurement
+    if (hasPermission('procurement:ro') || hasPermission('procurement:rw')) {
+      return '/procurement';
+    }
+
+    // 3. Fallback
     return '/dashboard';
   };
 
@@ -31,7 +33,7 @@ const LoginPage = () => {
     setError('');
 
     try {
-      await login(username, password); 
+      await login({ username, password }); 
       // Navigation will be handled by the useEffect below
     } catch (err) {
       setError(err.response?.data?.detail || 'שגיאה בהתחברות');
@@ -47,25 +49,16 @@ const LoginPage = () => {
   }, [isAuthenticated, navigate]);
 
   const handleDomainLogin = async () => {
+    // בלוגיקה החדשה, התחברות לדומיין מבוצעת על ידי הפניה לשרת (או ל-ADFS).
+    // אם זו הדמיה ללא שרת אמיתי, הקוד הבא מדמה את התהליך:
     try {
-      // TODO: שילוב ספריית ADFS
-      // 1. קריאה לספרייה שלך שמבצעת Redirect ל-ADFS
-      // 2. קבלת הטוקן וחילוץ שם המשתמש
-      
-      const adfsUsername = "user_from_adfs_placeholder"; // החלף משתנה זה בערך האמיתי מהספרייה (למשל מהטוקן)
-      
-      console.log("Starting domain login for:", adfsUsername);
-
-      if (!adfsUsername) {
-          setError("נכשל בחילוץ משתמש מה-ADFS");
-          return;
-      }
-
-      await domainLogin(adfsUsername); // שימוש בפונקציה מה-Context
-      // Redirect will be handled by useEffect
+        const hashToken = "simulation_token_123"; 
+        // בחיים האמיתיים: window.location.href = 'YOUR_ADFS_URL';
+        // בהדמיה: מרעננים את הדף עם הטוקן כאילו חזרנו מה-ADFS
+        window.location.search = `?hashToken=${hashToken}`;
     } catch (error) {
        console.error("Domain login failed:", error);
-       setError('התחברות דומיין נכשלה: ' + (error.response?.data?.detail || error.message));
+       setError('התחברות דומיין נכשלה');
     }
   };
 

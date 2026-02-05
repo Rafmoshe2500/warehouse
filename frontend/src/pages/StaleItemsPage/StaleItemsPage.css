@@ -1,9 +1,21 @@
 .stale-items-page {
     padding: 2rem;
     height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     direction: rtl;
     max-width: var(--page-max-width);
     margin: 0 auto;
+}
+
+.stale-items-page-embedded {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    direction: rtl;
+    min-height: 0;
 }
 
 .stale-items-header {

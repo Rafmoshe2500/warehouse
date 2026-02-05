@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FiPackage, FiActivity, FiUsers, FiClock, FiPieChart, FiShoppingCart } from 'react-icons/fi';
+import { FiPackage, FiUsers, FiPieChart, FiShoppingCart } from 'react-icons/fi';
 import { useAuth } from '../../../context/AuthContext';
 import './Navigation.css';
 
@@ -44,29 +44,6 @@ const Navigation = () => {
           </NavLink>
         )}
 
-        {(hasPermission('inventory:ro') || hasPermission('inventory:rw')) && (
-          <NavLink
-            to="/stale"
-            className={({ isActive }) =>
-              `navigation__link ${isActive ? 'navigation__link--active' : ''}`
-            }
-          >
-            <FiClock size={20} />
-            <span>פריטים ישנים</span>
-          </NavLink>
-        )}
-
-        {(isAdmin || hasPermission('inventory:ro') || hasPermission('inventory:rw')) && (
-          <NavLink
-            to="/logs"
-            className={({ isActive }) =>
-              `navigation__link ${isActive ? 'navigation__link--active' : ''}`
-            }
-          >
-            <FiActivity size={20} />
-            <span>לוג פעולות</span>
-          </NavLink>
-        )}
 
         {isAdmin && (
           <NavLink

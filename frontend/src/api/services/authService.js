@@ -24,6 +24,17 @@ export const createAuthService = (apiClient) => {
     },
 
     /**
+     * Login via Domain (ADFS) hash token
+     * 
+     * @param {string} hashToken - The token received from ADFS
+     * @returns {Promise} Login response
+     */
+    domainLogin: async (hashToken) => {
+      const response = await apiClient.post(API_ENDPOINTS.DOMAIN_LOGIN, { token: hashToken });
+      return response.data;
+    },
+
+    /**
      * Logout current user
      * 
      * @returns {Promise} Logout response

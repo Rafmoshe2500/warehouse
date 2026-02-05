@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FiBox, FiPackage, FiHash, FiMapPin } from 'react-icons/fi';
-import analyticsService from '../../api/services/analyticsService';
 import Spinner from '../../components/common/Spinner/Spinner';
+import { useAnalytics } from '../../hooks/useAnalytics';
 
 // Dashboard Components
 import StatCard from '../../components/dashboard/StatCard';
@@ -16,30 +16,11 @@ import LocationChart from '../../components/dashboard/charts/LocationChart';
 import './DashboardPage.css';
 
 const DashboardPage = () => {
-
-
-    const [stats, setStats] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchDashboardStats = async () => {
-            try {
-                const data = await analyticsService.getDashboardStats();
-                setStats(data);
-            } catch (err) {
-                setError('Failed to fetch dashboard stats.');
-                console.error('Error fetching dashboard stats:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchDashboardStats();
-    }, []);
+    const { useDashboardStats } = useAnalytics();
+    const { data: stats, isLoading: loading, error } = useDashboardStats();
 
     if (loading) return <div className="loading-container"><Spinner size="large" text="טוען נתונים..." /></div>;
-    if (error) return <div className="loading-container" style={{color: 'red'}}>{error}</div>;
+    if (error) return <div className="loading-container" style={{color: 'red'}}>שגיאה בטעינת הנתונים</div>;
 
     return (
         <div className="dashboard-page">
@@ -71,6 +52,7 @@ const DashboardPage = () => {
                     color="amber"
                 />
             </div>
+
 
             {/* First Row - Project Distribution & Target Sites */}
             <div className="charts-grid">

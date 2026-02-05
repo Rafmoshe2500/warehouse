@@ -5,34 +5,25 @@ import Input from '../../common/Input/Input';
 import Button from '../../common/Button/Button';
 import Spinner from '../../common/Spinner/Spinner';
 import { CustomTooltip } from '../Tooltips';
-import analyticsService from '../../../api/services/analyticsService';
+import { useAnalytics } from '../../../hooks/useAnalytics';
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6'];
 
 const ItemSearchChart = () => {
     const [catalogNumber, setCatalogNumber] = useState('');
-    const [itemStats, setItemStats] = useState(null);
-    const [itemLoading, setItemLoading] = useState(false);
-    const [itemError, setItemError] = useState(null);
-    const [searchedCatalog, setSearchedCatalog] = useState('');
+    const [searchQuery, setSearchQuery] = useState(''); // State for the actual query to trigger hook
+    
+    // Hook handles fetching based on searchQuery
+    const { useItemProjectStats } = useAnalytics();
+    const { 
+        data: itemStats, 
+        isLoading: itemLoading, 
+        error: itemError 
+    } = useItemProjectStats(searchQuery);
 
-    const handleItemSearch = async () => {
+    const handleItemSearch = () => {
         if (!catalogNumber.trim()) return;
-        
-        setItemLoading(true);
-        setItemError(null);
-        setItemStats(null);
-        setSearchedCatalog(catalogNumber);
-
-        try {
-            const data = await analyticsService.getItemProjectStats(catalogNumber);
-            setItemStats(data);
-        } catch (err) {
-            console.error(err);
-            setItemError('שגיאה בחיפוש מק"ט או לא נמצאו נתונים');
-        } finally {
-            setItemLoading(false);
-        }
+        setSearchQuery(catalogNumber);
     };
 
     return (
@@ -109,7 +100,7 @@ const ItemSearchChart = () => {
                     )
                 ) : (
                     <div className="no-data">
-                        {searchedCatalog ? 'לא נמצאו נתונים' : 'חפש מק"ט כדי לראות התפלגות'}
+                        {searchQuery ? 'לא נמצאו נתונים' : 'חפש מק"ט כדי לראות התפלגות'}
                     </div>
                 )}
             </div>

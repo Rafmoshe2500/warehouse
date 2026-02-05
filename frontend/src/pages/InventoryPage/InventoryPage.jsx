@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { useItems } from '../../hooks/useItems';
 import { useToast } from '../../hooks/useToast';
 import { usePagination } from '../../hooks/usePagination';
@@ -19,71 +20,51 @@ import ToastContainer from '../../components/common/Toast/ToastContainer';
 
 import './InventoryPage.css';
 
-const InventoryPage = () => {
-  const {
-    items, totalItems, loading, error,
-    createItem, updateItem, bulkUpdate, deleteItem, bulkDelete, loadItems, restoreItems
-  } = useItems();
-
+const InventoryPage = ({ isEmbedded = false }) => {
+  // 1. Core Hooks & State
   const { addToast, toasts, removeToast } = useToast();
-  const { currentPage, itemsPerPage, goToPage, setItemsPerPage } = usePagination(1, 25);
-  const { uploadingExcel, setUploadingExcel, showExportModal, fileInputRef, handleUploadClick } = useExcelManager();
   const { hasPermission } = useAuth();
   const canEdit = hasPermission('inventory:rw');
   const modals = useInventoryModals();
-
-  const loadItemsRef = useRef(loadItems);
-
-  // UI State
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [showFilters, setShowFilters] = useState(false);
-
-  // Filters & Sorting
-  const [filters, setFilters] = useState({});
-  const [sortConfig, setSortConfig] = useState({ key: 'updated_at', direction: 'desc' });
-
-  // Debounced filters
-  const debouncedFilters = useDebounce(filters, 500);
-
   const location = useLocation();
   
-  // Search state - Initialize from URL if exists
+  // 2. Pagination & UI State
+  const { currentPage, itemsPerPage, goToPage, setItemsPerPage } = usePagination(1, 25);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({});
+  const [sortConfig, setSortConfig] = useState({ key: 'updated_at', direction: 'desc' });
+  
   const [searchQuery, setSearchQuery] = useState(() => {
     const params = new URLSearchParams(location.search);
     return params.get('search') || '';
   });
 
-  // Update ref when loadItems changes
-  useEffect(() => {
-    loadItemsRef.current = loadItems;
-  }, [loadItems]);
+  // 3. Derived State
+  const debouncedFilters = useDebounce(filters, 500);
+  const { uploadingExcel, setUploadingExcel, showExportModal, fileInputRef, handleUploadClick } = useExcelManager();
 
-  // Fetch items
-  useEffect(() => {
-    const params = {
-      page: currentPage,
-      limit: itemsPerPage,
-      search: searchQuery,
-      sort_by: sortConfig.key,
-      sort_order: sortConfig.direction,
-      ...debouncedFilters
-    };
-    loadItemsRef.current(params);
-  }, [currentPage, itemsPerPage, searchQuery, debouncedFilters, sortConfig]);
+  // 4. Query Params Construction
+  const queryParams = {
+    page: currentPage,
+    limit: itemsPerPage,
+    search: searchQuery,
+    sort_by: sortConfig.key,
+    sort_order: sortConfig.direction,
+    ...debouncedFilters
+  };
 
-  // --- Inline Add Hook ---
+  // 5. Data Fetching (React Query)
+  const {
+    items, totalItems, loading, error,
+    createItem, updateItem, bulkUpdate, deleteItem, bulkDelete, restoreItems,
+    loadItems // Mapped to refetch
+  } = useItems(queryParams);
+  
+  // 6. Inline Add Logic
   const handleAddItemSuccess = async () => {
       addToast('פריט נוצר בהצלחה', 'success');
-      // Refresh list
-      const params = {
-        page: 1,
-        limit: itemsPerPage,
-        search: searchQuery,
-        sort_by: sortConfig.key,
-        sort_order: sortConfig.direction,
-        ...debouncedFilters
-      };
-      await loadItemsRef.current(params);
+      // React Query auto-invalidates, but valid to reset page
       goToPage(1);
   };
 
@@ -91,6 +72,13 @@ const InventoryPage = () => {
       addToast(msg, 'error');
   };
 
+  const inlineAdd = useInlineAddItem(
+    createItem, 
+    handleAddItemSuccess,
+    handleAddItemError
+  );
+  
+  // Destructure inline add - kept separate to match existing pattern if needed, or structured here
   const { 
     isAdding, 
     newRowData, 
@@ -98,10 +86,11 @@ const InventoryPage = () => {
     cancelAdd: handleCancelNew, 
     handleNewRowChange, 
     saveNewItem: handleSaveNewItem 
-  } = useInlineAddItem(createItem, handleAddItemSuccess, handleAddItemError);
+  } = inlineAdd;
 
 
   // ============ EXISTING HANDLERS ============
+
   const handleSaveItemModal = async (data) => {
     try {
       if (modals.editingItem) {
@@ -109,15 +98,6 @@ const InventoryPage = () => {
         addToast('הפריט עודכן בהצלחה', 'success');
       }
       modals.closeItemForm();
-      const params = {
-        page: currentPage,
-        limit: itemsPerPage,
-        search: searchQuery,
-        sort_by: sortConfig.key,
-        sort_order: sortConfig.direction,
-        ...debouncedFilters
-      };
-      await loadItemsRef.current(params);
     } catch (err) {
       const message = err.response?.data?.detail || 'שגיאה בעדכון';
       addToast(message, 'error');
@@ -149,15 +129,6 @@ const InventoryPage = () => {
 
       addToast('המחיקה בוצעה בהצלחה (Ctrl+Z לביטול)', 'success');
       modals.closeDelete();
-      const params = {
-        page: currentPage,
-        limit: itemsPerPage,
-        search: searchQuery,
-        sort_by: sortConfig.key,
-        sort_order: sortConfig.direction,
-        ...debouncedFilters
-      };
-      await loadItemsRef.current(params);
     } catch (err) {
       addToast('שגיאה במחיקה', 'error');
     }
@@ -178,15 +149,6 @@ const InventoryPage = () => {
       addToast('עדכון מרובה בוצע בהצלחה', 'success');
       setSelectedItems([]);
       modals.closeBulkEdit();
-      const params = {
-        page: currentPage,
-        limit: itemsPerPage,
-        search: searchQuery,
-        sort_by: sortConfig.key,
-        sort_order: sortConfig.direction,
-        ...debouncedFilters
-      };
-      await loadItemsRef.current(params);
     } catch (err) {
       console.error(err);
       addToast('שגיאה בעדכון מרובה', 'error');
@@ -209,16 +171,7 @@ const InventoryPage = () => {
     try {
       await updateItem(itemId, field, value, isUndo);
       addToast('הפריט עודכן בהצלחה', 'success');
-      // עדכון שקט
-      const params = {
-        page: currentPage,
-        limit: itemsPerPage,
-        search: searchQuery,
-        sort_by: sortConfig.key,
-        sort_order: sortConfig.direction,
-        ...debouncedFilters
-      };
-      await loadItemsRef.current(params);
+      // No manual reload needed
     } catch (err) {
       addToast('שגיאה בעדכון הפריט', 'error');
     }
@@ -275,15 +228,8 @@ const InventoryPage = () => {
         }
       }
 
-      const params = {
-        page: 1,
-        limit: itemsPerPage,
-        search: searchQuery,
-        sort_by: sortConfig.key,
-        sort_order: sortConfig.direction,
-        ...debouncedFilters
-      };
-      await loadItemsRef.current(params);
+      // Invalidate queries instead of manual reload
+      await loadItems(); // loadItems is now refetch
       goToPage(1);
     } catch (err) {
       addToast(err.response?.data?.detail || 'שגיאה ביבוא מאקסל', 'error');
@@ -321,61 +267,52 @@ const InventoryPage = () => {
   };
 
   return (
-    <div className="inventory-page">
-      <div className="page-layout">
-        <InventoryHeader
-          canEdit={canEdit}
-          selectedItems={selectedItems}
-          showFilters={showFilters}
-          uploadingExcel={uploadingExcel}
-          searchQuery={searchQuery}
-          onSearch={handleSearch}
-          onFilterToggle={handleFilterToggle}
-          onUploadClick={handleStandardImportClick}
-          onImportProjectsClick={handleProjectImportClick}
-          onExportClick={handleExportRequest}
-          onAddClick={handleStartAdd} 
-          onBulkEdit={handleBulkEditClick}
-          onBulkDelete={() => modals.openDeleteConfirm(null, '', true)}
-        />
+    <div className={isEmbedded ? "inventory-page-embedded" : "inventory-page"}>
+      <InventoryHeader
+        canEdit={canEdit}
+        selectedItems={selectedItems}
+        showFilters={showFilters}
+        uploadingExcel={uploadingExcel}
+        searchQuery={searchQuery}
+        onSearch={handleSearch}
+        onFilterToggle={handleFilterToggle}
+        onUploadClick={handleStandardImportClick}
+      />
+      
+      <InventoryContent
+        canEdit={canEdit}
+        isEmbedded={isEmbedded}
+        queryParams={queryParams} // New prop
+        // data prop removed
+        selection={{
+          selectedItems,
+          setSelectedItems,
+          onSelectItem: handleSelectItem,
+          onSelectAll: handleSelectAll
+        }}
+        sorting={{ sortConfig, onSort: handleSort }}
+        filtering={{ filters, showFilters, onChange: handleFilterChange }}
+        pagination={{ currentPage, itemsPerPage, goToPage, setItemsPerPage }}
+        editing={{ onEdit: handleEditCell }}
+        onBulkEdit={handleBulkEditClick}
+        onBulkDelete={() => modals.openDeleteConfirm(null, '', true)}
 
-        <InventoryContent
-          canEdit={canEdit}
-          data={{ items, totalItems, loading, error }}
-          selection={{
-            selectedItems,
-            setSelectedItems,
-            onSelectItem: handleSelectItem,
-            onSelectAll: handleSelectAll
-          }}
-          sorting={{ sortConfig, onSort: handleSort }}
-          filtering={{ filters, showFilters, onChange: handleFilterChange }}
-          pagination={{ currentPage, itemsPerPage, goToPage, setItemsPerPage }}
-          editing={{ onEdit: handleEditCell }}
-          onBulkEdit={handleBulkEditClick}
-          onBulkDelete={() => modals.openDeleteConfirm(null, '', true)}
+        /* Inline Add Props */
+        isAdding={inlineAdd.isAdding}
+        newRowData={inlineAdd.newRowData}
+        onNewRowChange={inlineAdd.handleNewRowChange}
+        onSaveNew={inlineAdd.saveNewItem}
+        onCancelNew={inlineAdd.cancelAdd}
 
-          /* Props hooks */
-          isAdding={isAdding}
-          newRowData={newRowData}
-          onNewRowChange={handleNewRowChange}
-          onSaveNew={handleSaveNewItem}
-          onCancelNew={handleCancelNew}
+        onShowToast={addToast}
+        onRestoreItems={restoreItems}
+      />
 
-          onShowToast={addToast}
-          onRestoreItems={restoreItems}
-        />
-      </div>
 
       <InventoryModals
-        isItemFormOpen={modals.isItemFormOpen}
-        onCloseItemForm={modals.closeItemForm}
+        modals={modals}
         onSaveItem={handleSaveItemModal}
-        editingItem={modals.editingItem}
-        isDeleteOpen={modals.isDeleteOpen}
-        onCloseDelete={modals.closeDelete}
         onConfirmDelete={handleConfirmDelete}
-        deletingItemName={modals.deletingItemName}
         deletingItemCount={modals.isDeletingMultiple ? selectedItems.length : 1}
         isDeletingMultiple={modals.isDeletingMultiple}
         isBulkEditOpen={modals.isBulkEditOpen}

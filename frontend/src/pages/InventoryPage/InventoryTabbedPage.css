@@ -1,0 +1,24 @@
+.inventory-tabbed-page {
+  padding: 2rem;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  direction: rtl;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.inventory-tab-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Critical for flex children with overflow */
+}
+
+.inventory-tab-content > * {
+  flex: 1;
+  min-height: 0; /* Critical for nested flex layouts */
+  overflow: hidden;
+}

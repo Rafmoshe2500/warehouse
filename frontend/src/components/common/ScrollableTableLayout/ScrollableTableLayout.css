@@ -1,7 +1,9 @@
 .scrollable-table-layout {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  min-height: 0; /* Critical for consistency in nested flex layouts */
+  width: 100%;
   gap: 1.5rem;
   direction: rtl;
 }
