@@ -1,0 +1,82 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.input-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  direction: rtl;
+  text-align: right;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.input-required {
+  color: var(--accent-danger);
+  margin-right: 0.25rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  direction: rtl;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  backdrop-filter: blur(10px);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: var(--input-bg-focus);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow), 0 0 20px var(--input-focus-glow);
+}
+
+.input--error {
+  border-color: var(--accent-danger);
+}
+
+.input--error:focus {
+  box-shadow: 0 0 0 3px var(--input-error-shadow), 0 0 20px var(--input-error-glow);
+}
+
+.input--disabled {
+  background: var(--input-bg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.input-error-message {
+  font-size: 0.75rem;
+  color: var(--accent-danger);
+  direction: rtl;
+  text-align: right;
+  font-weight: 500;
+}
+
+/* Select styling */
+select.input {
+  cursor: pointer;
+  appearance: none;
+  background-image: var(--select-arrow);
+  background-repeat: no-repeat;
+  background-position: left 1rem center;
+  padding-left: 3rem;
+}
+
+select.input:focus {
+  background-image: var(--select-arrow-focus);
+}

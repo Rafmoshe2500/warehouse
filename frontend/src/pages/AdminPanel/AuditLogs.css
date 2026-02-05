@@ -1,0 +1,154 @@
+.audit-logs {
+  height: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding-top: 2rem; /* Added space from top navigation */
+}
+
+.audit-logs-header-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-bottom: 1rem;
+}
+
+.audit-logs-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.audit-logs-filters-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: nowrap; /* Force single line */
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow-x: auto; /* Handle overflow gracefully */
+}
+
+.filter-select,
+.filter-input {
+  min-width: 150px;
+}
+
+.filter-actions-btn {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  padding-bottom: 2px;
+  flex-shrink: 0;
+}
+
+/* Force inputs to be horizontal and not full width */
+.audit-logs-filters-row .input-wrapper,
+.audit-logs-filters-row .select-wrapper {
+  width: auto;
+  min-width: 150px;
+  flex: 1;
+}
+
+.audit-logs-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-height: 200px;
+}
+
+.audit-timeline-wrapper {
+  padding: 0 1rem;
+}
+
+/* Table Styles - Preserved for potential revert */
+.logs-table-container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: scroll;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.logs-table thead {
+  background: var(--bg-tertiary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logs-table th {
+  padding: 1rem;
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.logs-table td {
+  padding: 1rem;
+  text-align: right;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.logs-table tbody tr:hover {
+  background: var(--bg-tertiary);
+}
+
+.no-logs {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.action-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.action-create { background: #2ecc71; color: white; }
+.action-update { background: #3498db; color: white; }
+.action-delete { background: #e74c3c; color: white; }
+.action-login { background: #9b59b6; color: white; }
+.action-password { background: #f1c40f; color: black; }
+.action-other { background: #95a5a6; color: white; }
+
+.role-mini {
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.ip-cell {
+  font-family: monospace;
+  direction: ltr;
+  text-align: left !important;
+}
+
+.role-badge-mini {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.05);
+  margin-right: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+  color: var(--text-secondary);
+}

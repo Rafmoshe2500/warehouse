@@ -1,0 +1,57 @@
+.stale-items-page {
+    padding: 2rem;
+    height: calc(100vh - 80px);
+    direction: rtl;
+    max-width: var(--page-max-width);
+    margin: 0 auto;
+}
+
+.stale-items-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.stale-items-header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.days-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.days-input {
+    width: 70px;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.days-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--input-focus-shadow);
+}
+
+.days-input:hover {
+    border-color: var(--accent-primary);
+}
+

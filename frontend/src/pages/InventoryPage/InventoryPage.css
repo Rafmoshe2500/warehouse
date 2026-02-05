@@ -1,0 +1,310 @@
+.inventory-page {
+  height: calc(100vh - 80px); /* Fixed height for sticky header support */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 2rem;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  direction: rtl;
+}
+
+.inventory-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.inventory-page__header-main {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.inventory-page__header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* אינדיקטור בחירה - Badge Style */
+.inventory-page__selection-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--accent-primary);
+  border-radius: 10px;
+  animation: fadeInScale 0.3s ease;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.inventory-page__selection-badge-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  background: var(--accent-primary);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: white;
+  padding: 0 0.5rem;
+}
+
+.inventory-page__selection-badge-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.inventory-page__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* כפתורי Bulk Actions */
+.inventory-page__bulk-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: slideInDown 0.4s ease;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* כפתור עריכה מרובה */
+.inventory-page__bulk-btn--edit {
+  background: var(--accent-primary);
+  color: white;
+  border: 2px solid var(--accent-primary);
+}
+
+.inventory-page__bulk-btn--edit:hover {
+  background: transparent;
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.inventory-page__bulk-btn--edit:active {
+  transform: translateY(0);
+}
+
+/* כפתור מחיקה מרובה */
+.inventory-page__bulk-btn--delete {
+  background: var(--accent-danger);
+  color: white;
+  border: 2px solid var(--accent-danger);
+}
+
+.inventory-page__bulk-btn--delete:hover {
+  background: transparent;
+  color: var(--accent-danger);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.inventory-page__bulk-btn--delete:active {
+  transform: translateY(0);
+}
+
+.inventory-page__error {
+  padding: 2rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--accent-danger);
+  border-radius: 12px;
+  color: #fca5a5;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .inventory-page__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inventory-page__header-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .inventory-page__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .inventory-page__actions button,
+  .inventory-page__bulk-btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .inventory-page {
+    padding: 1rem;
+  }
+
+  .inventory-page__header {
+    padding: 1.5rem;
+  }
+
+  .inventory-page__header h1 {
+    font-size: 1.5rem;
+  }
+
+  .inventory-page__actions {
+    flex-direction: column;
+  }
+
+  .inventory-page__actions button,
+  .inventory-page__bulk-btn {
+    width: 100%;
+  }
+}
+/* --- Inline Creation Row (שורה חדשה) --- */
+.new-item-row {
+  background-color: var(--bg-tertiary);
+  border-bottom: 2px solid var(--accent-primary);
+  border-left: 3px solid var(--accent-primary);
+  animation: fadeIn 0.3s ease-in;
+  transition: all 0.2s ease;
+}
+
+.new-item-row:hover {
+  background-color: var(--bg-secondary);
+}
+
+.new-item-row td {
+  padding: 0.5rem;
+  vertical-align: middle;
+}
+
+/* שדות הקלט בשורה החדשה */
+.new-item-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #333333);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-sm, 4px);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.new-item-input::placeholder {
+  color: var(--text-muted, #94a3b8);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.new-item-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow);
+  background-color: var(--bg-primary);
+}
+
+/* כפתורי פעולה קטנים (שמור/בטל) */
+.new-item-actions-cell {
+  white-space: nowrap;
+}
+
+.action-btn-mini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md, 6px);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: transparent;
+}
+
+/* כפתור שמירה - ירוק */
+.action-btn-mini.save {
+  color: var(--accent-success);
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.action-btn-mini.save:hover {
+  background-color: var(--accent-success);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* כפתור ביטול - אדום */
+.action-btn-mini.cancel {
+  color: var(--accent-danger);
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.action-btn-mini.cancel:hover {
+  background-color: var(--accent-danger);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* אנימציית כניסה */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}

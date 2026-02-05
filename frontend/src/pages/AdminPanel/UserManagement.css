@@ -1,0 +1,380 @@
+.user-management {
+  padding: 2rem;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+}
+
+.user-management .user-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.user-management .user-management-header h1 {
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.user-management .back-btn {
+  padding: 0.55rem 1rem;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.user-management .back-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+}
+
+.user-management .create-user-btn {
+  padding: 0.55rem 1rem;
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.user-management .create-user-btn:hover {
+  filter: brightness(0.9);
+  transform: translateY(-2px);
+}
+
+.user-management .create-user-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.user-management .user-management-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.user-management .users-table-container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-management .users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-management .users-table thead {
+  background: var(--bg-tertiary);
+}
+
+.user-management .users-table th {
+  padding: 1rem;
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.user-management .users-table td {
+  padding: 1rem;
+  text-align: right;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.user-management .users-table tbody tr:hover {
+  background: var(--bg-tertiary);
+}
+
+.user-management .role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.user-management .role-superadmin {
+  background: #ff6b6b;
+  color: white;
+}
+
+.user-management .role-admin {
+  background: #4ecdc4;
+  color: white;
+}
+
+.user-management .role-user {
+  background: #95a5a6;
+  color: white;
+}
+
+.user-management .status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.user-management .status-badge.active {
+  background: #2ecc71;
+  color: white;
+}
+
+.user-management .status-badge.inactive {
+  background: #e74c3c;
+  color: white;
+}
+
+.user-management .actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.user-management .icon-btn {
+  padding: 0.4rem 0.8rem;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-management .icon-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.user-management .delete-btn {
+  background: var(--accent-danger);
+  color: white;
+}
+
+.user-management .delete-btn:hover {
+  background: var(--accent-danger);
+  color: white;
+  filter: brightness(0.9);
+  border-color: transparent;
+}
+
+/* Modal styles - Scoped where possible, but Modals are often portals. 
+   Assuming Modal content is inside .user-management wrapper or similar context, 
+   but usually Modals are high level. 
+   However, styling internal elements like .form-group usually works if the modal content has a specific class.
+   The UserManagement component wraps Modal content in .modal-content but not necessarily .user-management.
+   We will keep modal styles less scoped or global if they are generic, OR better: use specific classes.
+   Here they seem to rely on generic classes (.modal-content, .btn-primary).
+   We will prefix what we can, but be careful.
+*/
+
+.user-management .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--overlay-medium);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.user-management .modal-content {
+  background: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.user-management .modal-content h2 {
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.user-management .delete-warning {
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--warning-bg, rgba(255, 193, 7, 0.1));
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+}
+
+.user-management .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.user-management .checkbox-label:hover {
+  border-color: var(--accent-primary);
+}
+
+.user-management .checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+.user-management .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.user-management .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.user-management .form-group input,
+.user-management .form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  transition: border-color 0.3s ease;
+}
+
+.user-management .form-group input:focus,
+.user-management .form-group select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.user-management .form-group input:disabled,
+.user-management .form-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.user-management .modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.user-management .modal-spinner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+/* These generic buttons inside UserManagement need scoping to not affect others if they are global classes */
+.user-management .btn-primary {
+  padding: 0.55rem 1rem;
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-management .btn-primary:hover {
+  filter: brightness(0.9);
+}
+
+.user-management .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.user-management .btn-secondary {
+  padding: 0.55rem 1rem;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-management .btn-secondary:hover {
+  background: var(--bg-secondary);
+  color: var(--accent-primary);
+}
+
+.user-management .btn-danger {
+  padding: 0.55rem 1rem;
+  background: var(--accent-danger);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-management .btn-danger:hover {
+  filter: brightness(0.9);
+}
+
+/* Dark mode adjustments - Scoped */
+[data-theme="dark"] .user-management .users-table-container {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .user-management .modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] .user-management .modal-content {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .user-management .delete-warning {
+  background: rgba(255, 193, 7, 0.15);
+}

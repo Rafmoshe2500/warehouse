@@ -1,0 +1,159 @@
+.procurement-table-container {
+  overflow-x: auto;
+  overflow-y: auto;
+  flex: 1; /* Take remaining space */
+  min-height: 0; /* Critical for flex child scrolling */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  position: relative; /* Context for sticky */
+}
+
+.procurement-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.procurement-table th,
+.procurement-table td {
+  padding: 1rem;
+  text-align: right;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.procurement-table th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 1px 0 var(--border-color); /* Separator line that sticks */
+}
+
+.procurement-table tr:hover {
+  background: var(--hover-bg);
+}
+
+.desc-col {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.status-dot.green {
+  background: #10b981;
+  box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+}
+
+.status-dot.red {
+  background: #ef4444;
+}
+
+.files-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.2s;
+}
+
+.files-btn:hover {
+  background: var(--hover-bg);
+  border-color: var(--primary-color);
+}
+
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.table-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+  font-size: 1.1rem;
+}
+
+.table-action-btn:hover {
+  background: var(--hover-bg);
+}
+
+.edit-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.history-btn:hover {
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.status-waiting_emf, .status-waiting_bom {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+}
+
+.status-ordered {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+}
+
+.status-received {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+}
+
+[data-theme='dark'] .status-waiting_emf, 
+[data-theme='dark'] .status-waiting_bom {
+    background: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+}
+
+[data-theme='dark'] .status-ordered {
+    background: rgba(59, 130, 246, 0.25);
+    color: #60a5fa;
+}
+
+[data-theme='dark'] .status-received {
+    background: rgba(16, 185, 129, 0.25);
+    color: #34d399;
+}

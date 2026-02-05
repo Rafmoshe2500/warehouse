@@ -1,0 +1,74 @@
+.select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.select-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+}
+
+.select-required {
+  color: #ef4444;
+  margin-right: 0.25rem;
+}
+
+.select-container {
+    position: relative;
+    width: 100%;
+}
+
+.select-input {
+  width: 100%;
+  padding: 0.75rem;
+  padding-left: 2.5rem; 
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: var(--input-bg, #fff);
+  color: var(--text-primary, #111);
+  transition: all 0.2s;
+  appearance: none;
+  cursor: pointer;
+}
+
+/* RTL: Text is right aligned, Arrow should be on the left */
+.select-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--text-secondary, #6b7280);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 1rem; 
+}
+
+.select-input:focus {
+  outline: none;
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.select--error {
+  border-color: #ef4444;
+}
+
+.select--disabled {
+  background-color: var(--bg-secondary, #f3f4f6);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.select--placeholder {
+    color: var(--text-secondary, #9ca3af);
+}
+
+.select-error-message {
+  font-size: 0.85rem;
+  color: #ef4444;
+}

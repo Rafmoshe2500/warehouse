@@ -1,0 +1,132 @@
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--toast-bg);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  border: 1px solid;
+  min-width: 320px;
+  max-width: 500px;
+  box-shadow: var(--toast-shadow);
+  animation: slideInFromBottom 0.3s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toast::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  animation: progress 5s linear;
+}
+
+@keyframes progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0;
+  }
+}
+
+.toast__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast__message {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-line;
+  direction: rtl;
+}
+
+.toast__close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.toast__close:hover {
+  background: var(--toast-close-hover-bg);
+  color: var(--text-primary);
+}
+
+/* Success */
+.toast--success {
+  border-color: var(--toast-success-border);
+}
+
+.toast--success::before {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.toast--success .toast__icon {
+  color: var(--accent-success);
+}
+
+/* Error */
+.toast--error {
+  border-color: var(--toast-error-border);
+}
+
+.toast--error::before {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.toast--error .toast__icon {
+  color: var(--accent-danger);
+}
+
+/* Info */
+.toast--info {
+  border-color: var(--toast-info-border);
+}
+
+.toast--info::before {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+}
+
+.toast--info .toast__icon {
+  color: var(--accent-primary);
+}
+
+/* Warning */
+.toast--warning {
+  border-color: var(--toast-warning-border);
+}
+
+.toast--warning::before {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.toast--warning .toast__icon {
+  color: var(--accent-warning);
+}

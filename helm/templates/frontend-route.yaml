@@ -1,0 +1,17 @@
+{{- if .Values.frontend.route.enabled -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}-frontend
+  labels:
+    app: {{ .Release.Name }}-frontend
+spec:
+  host: {{ .Values.frontend.route.host }}
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-frontend
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+{{- end }}

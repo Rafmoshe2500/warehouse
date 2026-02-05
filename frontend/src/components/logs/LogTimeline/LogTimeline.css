@@ -1,0 +1,171 @@
+.log-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  direction: rtl;
+}
+
+.log-item {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--log-item-bg);
+  backdrop-filter: blur(20px);
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  border-right: 3px solid;
+  transition: all 0.2s ease;
+  border: 1px solid var(--log-item-border);
+  font-size: 0.8rem;
+  user-select: text;
+}
+
+.log-item:hover {
+  background: var(--log-item-bg-hover);
+  transform: translateX(-2px);
+}
+
+.log-item--success {
+  border-right-color: var(--accent-success);
+}
+
+.log-item--info {
+  border-right-color: var(--accent-primary);
+}
+
+.log-item--danger {
+  border-right-color: var(--accent-danger);
+}
+
+.log-item--undo {
+  border-right-color: #f59e0b;
+}
+
+.log-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+.log-item--success .log-item__icon {
+  background: var(--log-icon-success-bg);
+  color: var(--log-icon-success-color);
+}
+
+.log-item--info .log-item__icon {
+  background: var(--log-icon-info-bg);
+  color: var(--log-icon-info-color);
+}
+
+.log-item--danger .log-item__icon {
+  background: var(--log-icon-danger-bg);
+  color: var(--log-icon-danger-color);
+}
+
+.log-item--undo .log-item__icon {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.log-item__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.log-item__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.log-item__action {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.log-item__user {
+  padding: 0.1rem 0.4rem;
+  background: var(--log-user-bg);
+  border-radius: 6px;
+  font-size: 0.7rem;
+  color: var(--log-user-color);
+  font-weight: 500;
+}
+
+.log-item__time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-right: auto;
+}
+
+.log-item__detail {
+  color: var(--log-detail-color);
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+.log-item__detail strong {
+  color: var(--log-detail-strong-color);
+  font-weight: 600;
+}
+
+.log-item__changes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+}
+
+.log-item__change {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.35rem;
+  background: var(--log-change-bg);
+  border-radius: 6px;
+  color: var(--log-change-color);
+}
+
+.log-item__change strong {
+  color: var(--log-detail-strong-color);
+}
+
+.log-item__change .old-value {
+  color: var(--log-old-value-color);
+  text-decoration: line-through;
+}
+
+.log-item__change .new-value {
+  color: var(--log-new-value-color);
+  font-weight: 600;
+}
+
+.log-timeline__empty {
+  padding: 3rem;
+  text-align: center;
+  background: var(--log-item-bg);
+  border-radius: 12px;
+  border: 1px solid var(--log-item-border);
+}
+
+.log-timeline__empty p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.role-badge-mini {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.05);
+  margin-right: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+  color: var(--text-secondary);
+}

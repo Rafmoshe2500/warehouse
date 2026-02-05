@@ -1,0 +1,29 @@
+# Default values for warehouse.
+
+backend:
+  replicaCount: 1
+  image:
+    repository: registry.gitlab.com/username/project/backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    mongodbUrl: "mongodb://user:pass@mongo-service:27017"
+    dbName: "warehouse"
+  resources: {}
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: registry.gitlab.com/username/project/frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 80
+  route:
+    enabled: true
+    host: "warehouse.example.com"
+  resources: {}

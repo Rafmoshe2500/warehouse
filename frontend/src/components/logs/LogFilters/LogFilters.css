@@ -1,0 +1,66 @@
+.log-filters {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  background: var(--filters-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid var(--filters-border);
+  margin-bottom: 1.25rem;
+  direction: rtl;
+  box-shadow: var(--filters-shadow);
+}
+
+.log-filters__field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.log-filters__field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.log-filters__select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  direction: rtl;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  appearance: none;
+  background-image: var(--select-arrow);
+  background-repeat: no-repeat;
+  background-position: left 1rem center;
+  padding-left: 3rem;
+}
+
+.log-filters__select option {
+  padding: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.log-filters__select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background-color: var(--input-bg-focus);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow), 0 0 20px var(--input-focus-glow);
+  background-image: var(--select-arrow-focus);
+}
+
+.log-filters__actions {
+  display: flex;
+  gap: 0.75rem;
+}

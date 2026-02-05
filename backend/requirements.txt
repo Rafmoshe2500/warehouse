@@ -1,0 +1,18 @@
+fastapi
+uvicorn[standard]
+motor
+pydantic
+pydantic-settings
+python-multipart
+boto3
+pandas
+openpyxl
+httpx
+pytest
+pytest-asyncio
+
+# Code Quality
+mypy
+black
+isort
+pylint

@@ -1,0 +1,18 @@
+/* Simple CSS Reset */
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, button, input, select, textarea {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+button {
+  background: none;
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

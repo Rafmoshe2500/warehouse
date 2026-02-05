@@ -1,0 +1,68 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  # Update these with actual registry details
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  BACKEND_IMAGE: $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA
+  FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA
+
+# Build Backend
+build-backend:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd backend
+    - docker build -t $BACKEND_IMAGE .
+    - docker push $BACKEND_IMAGE
+
+# Build Frontend
+build-frontend:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd frontend
+    - docker build -t $FRONTEND_IMAGE .
+    - docker push $FRONTEND_IMAGE
+
+# Test Backend
+test-backend:
+  stage: test
+  image: python:3.10
+  variables:
+    # Use service if available or assume localhost if running with runner network settings
+    # For CI, we often use a service for MongoDB, but here we run against a real separate DB or standard service.
+    # To use a temporary separate mongo container in CI:
+    MONGODB_URL: "mongodb://mongo:27017"
+    DB_NAME: "warehouse_test"
+  services:
+    - mongo:latest
+  script:
+    - cd backend
+    - pip install -r requirements.txt
+    - pytest tests/
+
+# Deploy to OpenShift
+deploy:
+  stage: deploy
+  image: dtzar/helm-kubectl:latest
+  script:
+    - helm upgrade --install warehouse ./helm \
+      --set backend.image.repository=$CI_REGISTRY_IMAGE/backend \
+      --set backend.image.tag=$CI_COMMIT_SHA \
+      --set frontend.image.repository=$CI_REGISTRY_IMAGE/frontend \
+      --set frontend.image.tag=$CI_COMMIT_SHA \
+      --namespace my-project
+  only:
+    - main
+    - master

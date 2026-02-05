@@ -1,0 +1,28 @@
+.logs-page {
+  padding: 1.5rem;
+  direction: rtl;
+  height: calc(100vh - 140px);
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+}
+
+.logs-page__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
+}
+
+.logs-page__error {
+  padding: 2rem;
+  background: rgba(239, 68, 68, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  color: #fca5a5;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.2);
+  margin: 2rem;
+}
+

@@ -1,0 +1,85 @@
+.scrollable-table-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 1.5rem;
+  direction: rtl;
+}
+
+/* Fixed Header Section */
+.scrollable-table-layout__header {
+  flex-shrink: 0;
+}
+
+/* Scrollable Content Area */
+.scrollable-table-layout__content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto; /* Allow horizontal scroll for wide tables */
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  position: relative;
+}
+
+/* Custom Scrollbar Styling */
+.scrollable-table-layout__content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollable-table-layout__content::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  margin: 8px 0;
+}
+
+.scrollable-table-layout__content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-primary), rgba(79, 70, 229, 0.7));
+  border-radius: 8px;
+  border: 2px solid var(--bg-tertiary);
+  transition: background 0.3s ease;
+}
+
+.scrollable-table-layout__content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent-primary), var(--accent-primary));
+  box-shadow: 0 0 8px rgba(79, 70, 229, 0.4);
+}
+
+/* Fixed Pagination Footer */
+.scrollable-table-layout__footer {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+/* Ensure smooth scrolling */
+.scrollable-table-layout__content {
+  scroll-behavior: smooth;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .scrollable-table-layout {
+    gap: 1rem;
+  }
+
+  .scrollable-table-layout__content {
+    border-radius: 12px;
+  }
+}
+
+/* Light mode adjustments */
+[data-theme="light"] .scrollable-table-layout__content {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .scrollable-table-layout__content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+[data-theme="light"] .scrollable-table-layout__content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4f46e5, rgba(79, 70, 229, 0.7));
+  border-color: #f1f5f9;
+}

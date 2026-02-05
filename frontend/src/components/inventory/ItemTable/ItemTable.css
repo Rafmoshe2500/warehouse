@@ -1,0 +1,619 @@
+.item-table-container {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  user-select: none;
+  outline: none;
+}
+
+
+
+.item-table-container:focus {
+  outline: none;
+}
+
+.item-table th {
+  position: sticky;
+  top: 0;
+  z-index: 20; /* Higher than frozen cols default */
+  background: var(--bg-tertiary);
+  box-shadow: 0 1px 0 var(--border-color); /* Bottom border fix */
+}
+
+thead .th-frozen {
+  position: sticky;
+  right: 0;
+  z-index: 30 !important; /* Must be higher than normal headers */
+  background: var(--bg-tertiary);
+}
+
+thead .th-checkbox.th-frozen {
+  right: 0;
+  min-width: 50px;
+  z-index: 31 !important;
+}
+
+thead .col-catalog_number.th-frozen {
+  right: 50px;
+  z-index: 30 !important;
+}
+
+thead .col-serial.th-frozen {
+  right: 170px;
+  z-index: 30 !important;
+}
+
+tbody td.th-frozen {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: var(--bg-secondary);
+}
+
+tbody td.th-checkbox.th-frozen,
+tbody td:first-child.th-frozen {
+  right: 0;
+  z-index: 2;
+}
+
+tbody .col-catalog_number.th-frozen {
+  right: 50px;
+}
+
+tbody .col-serial.th-frozen {
+  right: 170px;
+}
+
+tbody tr:hover td.th-frozen {
+  background: var(--bg-primary);
+}
+
+tbody tr.row-selected td.th-frozen {
+  background: var(--bg-tertiary);
+}
+
+.th-frozen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -4px;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to left, var(--border-subtle), transparent);
+  pointer-events: none;
+}
+
+
+
+.sortable-header {
+  position: relative;
+}
+
+.floating-toolbar {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 100;
+  padding: 8px;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.button-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color);
+  margin: 0 4px;
+}
+
+.reset-columns-btn {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* === Cell Focus Indicator (Keyboard Navigation) === */
+.item-table__cell--focused {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -2px;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* Light mode focus */
+[data-theme="light"] .item-table__cell--focused {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+/* שיפור scrollbar */
+.item-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.item-table-container::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+.item-table-container::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.item-table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+.item-table {
+  width: 100%;
+  border-collapse: collapse;
+  direction: rtl;
+}
+
+.nexus-round-filter-btn {
+  position: sticky;
+  top: 12px;
+  left: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.9), rgba(79, 70, 229, 0.8));
+  border: 2px solid rgba(79, 70, 229, 0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+  font-size: 1.2rem;
+  z-index: 10;
+  padding: 0;
+  margin: 0;
+}
+
+.nexus-round-filter-btn:hover {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 1), rgba(79, 70, 229, 0.9));
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+  transform: translateY(-2px);
+}
+
+.nexus-round-filter-btn.active {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 1), rgba(79, 70, 229, 0.95));
+  border-color: rgba(79, 70, 229, 0.8);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15), 0 8px 24px rgba(79, 70, 229, 0.4);
+}
+
+/* אינדיקטור פריטים נבחרים */
+.selected-items-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.05));
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+}
+
+.selected-count {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2196f3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.selected-count::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #2196f3;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.clear-selection-btn {
+  background: transparent;
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  color: #2196f3;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.clear-selection-btn:hover {
+  background: rgba(33, 150, 243, 0.1);
+  border-color: #2196f3;
+  transform: scale(1.05);
+}
+
+.item-table thead {
+  background: var(--bg-tertiary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.item-table th {
+  padding: 1.25rem 1rem;
+  text-align: right;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.item-table tbody tr {
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.2s ease;
+  min-height: 50px;
+}
+
+.item-table tbody tr:hover {
+  background: var(--bg-tertiary);
+}
+
+.item-table td {
+  padding: 0.875rem 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.item-table__checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--accent-primary);
+  margin: 0 auto;
+}
+
+/* --- Filter Row Design --- */
+.filter-row {
+  background-color: rgba(79, 70, 229, 0.05);
+  border-bottom: 1px solid rgba(79, 70, 229, 0.2);
+  border-top: 1px solid rgba(79, 70, 229, 0.2);
+}
+
+/* אנימציה לפתיחה */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-cell {
+  padding: 1rem 0.5rem !important;
+  vertical-align: middle;
+}
+
+.filter-cell-empty {
+  background-color: transparent;
+}
+
+/* Styling for Input components inside filter row */
+.filter-cell .input-wrapper {
+  gap: 0;
+  margin: 0;
+}
+
+.filter-cell .input-label {
+  display: none;
+}
+
+.filter-cell .input {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  margin: 0;
+}
+
+/* --- Column Sizing --- */
+.item-table th,
+.item-table td {
+  white-space: nowrap;
+}
+
+/* הגדרת min-width ספציפי לכל עמודה */
+.item-table th.col-serial,
+.item-table td.col-serial {
+  min-width: 120px;
+}
+
+.item-table th.col-catalog_number,
+.item-table td.col-catalog_number {
+  min-width: 120px;
+}
+
+.item-table th.col-manufacturer,
+.item-table td.col-manufacturer {
+  min-width: 150px;
+}
+
+.item-table th.col-location,
+.item-table td.col-location {
+  min-width: 140px;
+}
+
+.item-table th.col-current_stock,
+.item-table td.col-current_stock {
+  min-width: 90px;
+  text-align: center;
+}
+
+.item-table th.col-reserved_stock,
+.item-table td.col-reserved_stock {
+  min-width: 140px;
+  text-align: right;
+  white-space: pre-wrap !important;
+  line-height: 1.4;
+}
+
+.item-table th.col-warranty_expiry,
+.item-table td.col-warranty_expiry {
+  min-width: 120px;
+}
+
+.item-table th.col-description,
+.item-table td.col-description,
+.item-table th.col-notes,
+.item-table td.col-notes,
+.item-table th.col-purpose,
+.item-table td.col-purpose {
+  width: auto;
+  white-space: normal;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+/* וודא שיש מעבר חלק של צבעים בשורות */
+.item-table tbody tr {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/*
+  הגדרת צבע רקע זהה גם למצב hover וגם למצב selected.
+  השתמשתי ב-#f1f5f9 (אפור בהיר מאוד ומודרני).
+  אתה יכול לשנות את קוד הצבע לכל צבע אחר שמתאים לעיצוב שלך.
+*/
+.item-table tbody tr:hover {
+  background: var(--bg-primary);
+}
+
+.item-table tbody tr.row-selected {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.sortable-header {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sortable-header:hover {
+  background: var(--bg-tertiary);
+}
+
+.sortable-header .th-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: space-between;
+}
+
+/* Edit Mode */
+.item-table__edit-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.item-table__edit-input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--primary-color, #2196f3);
+  border-radius: 4px;
+  font-size: inherit;
+}
+
+.item-table__edit-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.item-table__edit-btn {
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.item-table__edit-btn.save {
+  background-color: #4caf50;
+}
+
+.item-table__edit-btn.cancel {
+  background-color: #f44336;
+}
+
+.item-table__cell--immutable {
+  color: var(--text-muted, #999);
+  cursor: default;
+}
+
+.item-table__cell--editable {
+  cursor: pointer;
+}
+
+/* תא רגיל */
+.item-table__cell {
+  padding: 0.75rem;
+  border-radius: 6px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+/* תא ניתן לעריכה */
+.item-table__cell--editable {
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.item-table__cell--editable:hover {
+  background: var(--bg-primary);
+  border-color: var(--border-color);
+}
+
+.item-table__cell--editable:active {
+  background: var(--bg-primary);
+  border-color: var(--accent-primary);
+}
+
+.item-table__cell--immutable:hover::after {
+  opacity: 0.5;
+}
+
+
+
+
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .item-table {
+    font-size: 0.85rem;
+  }
+
+  .item-table th,
+  .item-table td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .item-table__cell {
+    padding: 0.5rem;
+  }
+}
+
+/* === Multi-Cell Selection === */
+.item-table__cell--multi-selected {
+  background: rgba(102, 126, 234, 0.2) !important;
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+[data-theme="light"] .item-table__cell--multi-selected {
+  background: rgba(102, 126, 234, 0.15) !important;
+}
+
+/* Selection indicator */
+.selection-indicator {
+  position: fixed;
+  bottom: 24px;
+  left: 80px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  z-index: 100;
+  animation: slideUp 0.3s ease-out;
+  backdrop-filter: blur(10px);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Table Tags */
+.table-tags-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.table-tag {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.table-tag-more {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    align-self: center;
+}

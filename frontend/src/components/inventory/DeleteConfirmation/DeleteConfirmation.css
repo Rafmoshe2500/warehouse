@@ -1,0 +1,154 @@
+.delete-confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  direction: rtl;
+}
+
+/* אייקון אזהרה */
+.delete-confirmation__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  background: rgba(239, 68, 68, 0.1);
+  border: 2px solid var(--accent-danger);
+  border-radius: 50%;
+  color: var(--accent-danger);
+  animation: pulseIcon 2s ease-in-out infinite;
+}
+
+@keyframes pulseIcon {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+}
+
+/* הודעה */
+.delete-confirmation__message {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+}
+
+.delete-confirmation__message p {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.delete-confirmation__warning {
+  margin-top: 0.5rem !important;
+  font-size: 0.875rem !important;
+  color: var(--accent-danger) !important;
+  font-weight: 700 !important;
+}
+
+/* טופס */
+.delete-confirmation__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.delete-confirmation__label {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.delete-confirmation__textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  resize: vertical;
+  min-height: 80px;
+  box-sizing: border-box;
+}
+
+.delete-confirmation__textarea:focus {
+  outline: none;
+  border-color: var(--accent-danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.delete-confirmation__textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.delete-confirmation__error {
+  color: var(--accent-danger);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* רמז */
+.delete-confirmation__hint {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+}
+
+.delete-confirmation__hint strong {
+  color: var(--accent-danger);
+  font-weight: 700;
+}
+
+/* Footer */
+.delete-confirmation__footer {
+  display: flex;
+  gap: 0.75rem;
+  direction: rtl;
+}
+
+.delete-confirmation__footer button {
+  flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .delete-confirmation__icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .delete-confirmation__icon svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .delete-confirmation__message p {
+    font-size: 0.9rem;
+  }
+
+  .delete-confirmation__footer {
+    flex-direction: column;
+  }
+
+  .delete-confirmation__footer button {
+    width: 100%;
+  }
+}
