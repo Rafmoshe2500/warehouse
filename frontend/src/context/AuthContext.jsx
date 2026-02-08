@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo, useCallback } from 'react';
 import { useAuthQuery } from '../hooks/useAuthQuery';
 
 const AuthContext = createContext(null);
@@ -15,22 +15,23 @@ export const AuthProvider = ({ children }) => {
   const isAdmin = user?.role === 'admin' || user?.role === 'superadmin' || user?.permissions?.includes('admin');
   const isSuperAdmin = user?.role === 'superadmin';
 
-  const hasPermission = (permission) => {
+  const hasPermission = useCallback((permission) => {
     if (isSuperAdmin) return true;
     return user?.permissions?.includes(permission) || false;
-  };
+  }, [user?.permissions, isSuperAdmin]);
 
-  const value = {
+  // Memoize only the stable values, not the mutation functions
+  const value = useMemo(() => ({
     user,
     isAuthenticated,
     isAdmin,
     isSuperAdmin,
     permissions: user?.permissions || [],
     hasPermission,
-    loading: isLoading, // Keeping 'loading' name for compatibility
-    login,
-    logout,
-  };
+    loading: isLoading,
+    login, // Mutation functions - intentionally not in deps
+    logout, // Mutation functions - intentionally not in deps
+  }), [user, isAuthenticated, isAdmin, isSuperAdmin, hasPermission, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
       // Optional: Render a global loading spinner here if you want to block the app until auth is checked

@@ -220,11 +220,18 @@ const InventoryPage = ({ isEmbedded = false }) => {
         addToast(result.message, 'success');
       } else {
         result = await excelService.importExcel(file);
+        
+        // Build message
         let message = `יבוא הושלם! נוצרו: ${result.added}, עודכנו: ${result.updated}`;
         if (result.skipped > 0) message += `, דולגו: ${result.skipped}`;
-        addToast(message, 'success');
+        
+        // If there are errors, show warning with combined message
         if (result.errors && result.errors.length > 0) {
-          addToast(`שימו לב: היו שגיאות ב-${result.errors.length} שורות`, 'warning');
+          message += `. שימו לב: היו שגיאות ב-${result.errors.length} שורות`;
+          addToast(message, 'warning');
+        } else {
+          // No errors - show success
+          addToast(message, 'success');
         }
       }
 
@@ -277,6 +284,11 @@ const InventoryPage = ({ isEmbedded = false }) => {
         onSearch={handleSearch}
         onFilterToggle={handleFilterToggle}
         onUploadClick={handleStandardImportClick}
+        onExportClick={handleExportRequest}
+        onAddClick={handleStartAdd}
+        onBulkEdit={handleBulkEditClick}
+        onBulkDelete={() => modals.openDeleteConfirm(null, '', true)}
+        onImportProjectsClick={handleProjectImportClick}
       />
       
       <InventoryContent
@@ -310,15 +322,24 @@ const InventoryPage = ({ isEmbedded = false }) => {
 
 
       <InventoryModals
-        modals={modals}
+        // Item Form Modal
+        isItemFormOpen={modals.isItemFormOpen}
+        onCloseItemForm={modals.closeItemForm}
+        editingItem={modals.editingItem}
         onSaveItem={handleSaveItemModal}
+        // Delete Confirmation Modal
+        isDeleteOpen={modals.isDeleteOpen}
+        onCloseDelete={modals.closeDelete}
         onConfirmDelete={handleConfirmDelete}
+        deletingItemName={modals.deletingItemName}
         deletingItemCount={modals.isDeletingMultiple ? selectedItems.length : 1}
         isDeletingMultiple={modals.isDeletingMultiple}
+        // Bulk Edit Modal
         isBulkEditOpen={modals.isBulkEditOpen}
         onCloseBulkEdit={modals.closeBulkEdit}
         onConfirmBulkEdit={handleConfirmBulkEdit}
         selectedCount={selectedItems.length}
+        // Export Modal
         showExportModal={modals.showExportModal}
         onCloseExport={modals.closeExport}
         onExecuteExport={handleExecuteExport}

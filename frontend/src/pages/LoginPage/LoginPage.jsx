@@ -13,7 +13,7 @@ const LoginPage = () => {
   const { login, isAuthenticated, isAdmin, hasPermission } = useAuth();
   const navigate = useNavigate();
 
-  const getRedirectPath = () => {
+  const getRedirectPath = React.useCallback(() => {
     // 1. Admins and Inventory Managers go to Dashboard
     if (isAdmin || hasPermission('inventory:ro') || hasPermission('inventory:rw')) {
       return '/inventory'; // Also covers users with BOTH inventory and procurement
@@ -26,7 +26,7 @@ const LoginPage = () => {
 
     // 3. Fallback
     return '/dashboard';
-  };
+  }, [isAdmin, hasPermission]);
 
   const handleLogin = async (username, password) => {
     setLoading(true);
@@ -46,7 +46,7 @@ const LoginPage = () => {
     if (isAuthenticated) {
       navigate(getRedirectPath());
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, getRedirectPath]);
 
   const handleDomainLogin = async () => {
     // בלוגיקה החדשה, התחברות לדומיין מבוצעת על ידי הפניה לשרת (או ל-ADFS).

@@ -1,17 +1,26 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Optional
 from datetime import datetime
 from enum import Enum
 
 
-from app.core.constants import UserRole, Permission
+from app.core.constants import UserRole, Permission, UserType
 
 
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
-    password: str = Field(..., min_length=4)
+    password: Optional[str] = Field(None, min_length=4)
+    user_type: UserType = UserType.LOCAL
     role: UserRole = UserRole.USER
     permissions: Optional[list[str]] = []
+    
+    @validator('password')
+    def validate_password(cls, v, values):
+        if values.get('user_type') == UserType.LOCAL and not v:
+            raise ValueError('Password is required for local users')
+        if values.get('user_type') == UserType.ACTIVE_DIRECTORY and v:
+            raise ValueError('Password should not be provided for AD users')
+        return v
 
 
 class UserUpdate(BaseModel):
@@ -19,12 +28,14 @@ class UserUpdate(BaseModel):
     role: Optional[UserRole] = None
     permissions: Optional[list[str]] = None
     is_active: Optional[bool] = None
+    user_type: Optional[UserType] = None
 
 
 class UserResponse(BaseModel):
     id: str
     username: str
     role: str
+    user_type: str
     permissions: list[str] = []
     is_active: bool
     created_at: datetime

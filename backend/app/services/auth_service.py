@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import Response
+from fastapi import Response, Request
 
 from app.config import settings
 from app.core.security import create_access_token
@@ -8,12 +8,13 @@ from app.core.password import verify_password
 from app.schemas.auth import LoginRequest, DomainLoginRequest
 from app.services.group_service import GroupService
 from app.services.user_service import UserService
-
+from app.services.adfs_service import ADFSService
 
 class AuthService:
     def __init__(self):
         self.user_service = UserService()
         self.group_service = GroupService()
+        self.adfs_service = ADFSService()
 
     async def login(self, login_data: LoginRequest, response: Response):
         """התחברות למערכת"""
@@ -53,40 +54,81 @@ class AuthService:
 
         return {"access_token": access_token, "token_type": "bearer"}
 
-    async def domain_login(self, login_data: DomainLoginRequest, response: Response):
-        """התחברות דומיין (ADFS)"""
-        username = login_data.username
+    async def domain_login(self, login_data: DomainLoginRequest, response: Response, request: Request):
+        """התחברות דומיין (ADFS) - with existing user check"""
+        hashed_token = login_data.hashed_token
         
-        # 1. קבלת קבוצות המשתמש מה-ADFS (לוגיקה חיצונית/STUB)
-        # TODO: כאן אתה מממש את הלוגיקה שלך לקבלת הקבוצות של המשתמש מה-ADFS
-        user_adfs_groups = await self._get_user_groups_from_adfs_stub(username)
+        # 1. Get token and user info from ADFS
+        token = await self.adfs_service.get_token_from_hashed_token(hashed_token, request)
+        user_information = await self.adfs_service.get_user_information(token)
         
-        if not user_adfs_groups:
-             raise UnauthorizedException("לא נמצאו קבוצות למשתמש זה")
-
-        # 2. קבלת כל הקבוצות הקיימות במערכת
-        all_app_groups_result = await self.group_service.get_groups()
-        all_app_groups = all_app_groups_result.get("groups", [])
+        if not user_information:
+            raise UnauthorizedException("Failed to get user information from ADFS")
         
-        # 3. בדיקת חיתוך (Intersection) - האם למשתמש יש קבוצה שקיימת במערכת
-        # נאסוף את כל ההרשאות מכל הקבוצות המתאימות
-        matched_groups = [g for g in all_app_groups if g.get("name") in user_adfs_groups]
+        username = user_information.get("sAMAccountName")
+        if not username:
+            raise UnauthorizedException("Username not found in ADFS response")
         
-        if not matched_groups:
-             raise UnauthorizedException("אין לך הרשאות גישה למערכת (לא נמצאה קבוצה מתאימה)")
-
-        # Aggregate permissions from all groups
-        all_permissions = set()
-        for group in matched_groups:
-            all_permissions.update(group.get("permissions", []))
+        # 2. Check if user already exists in our system
+        existing_user = await self.user_service.get_user_by_username(username)
         
-        # 4. יצירת טוקן
+        if existing_user:
+            # User exists - validate they're an AD user and use their permissions
+            if existing_user.get("user_type") != "ad":
+                raise UnauthorizedException("User exists but is not an AD user")
+            
+            if not existing_user.get("is_active", True):
+                raise UnauthorizedException("User account is disabled")
+            
+            permissions = existing_user.get("permissions", [])
+            role = existing_user.get("role", "user")
+            
+            # Update last login
+            await self.user_service.update_last_login(username)
+            
+        else:
+            # New user - fetch from AD groups and auto-create
+            user_ad_groups = user_information.get("groups", [])
+            
+            if not user_ad_groups:
+                raise UnauthorizedException("No AD groups found for user")
+            
+            # Get all system groups
+            all_app_groups_result = await self.group_service.get_groups()
+            all_app_groups = all_app_groups_result.get("groups", [])
+            
+            # Match groups using O(N+M) hash set approach
+            user_group_names = {g.lower() for g in user_ad_groups}
+            matched_groups = [
+                g for g in all_app_groups 
+                if g.get("name", "").lower() in user_group_names
+            ]
+            
+            if not matched_groups:
+                raise UnauthorizedException("No matching groups found - access denied")
+            
+            # Aggregate permissions from all matched groups
+            all_permissions = set()
+            for group in matched_groups:
+                all_permissions.update(group.get("permissions", []))
+            
+            permissions = list(all_permissions)
+            role = "user"
+            
+            # Auto-create AD user
+            await self.user_service.create_ad_user(
+                username=username,
+                permissions=permissions,
+                role=role
+            )
+        
+        # 3. Create access token
         access_token = create_access_token(
             data={
                 "sub": username,
                 "username": username,
-                "role": "user",
-                "permissions": list(all_permissions),
+                "role": role,
+                "permissions": permissions,
                 "login_source": "domain"
             },
             expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -107,12 +149,10 @@ class AuthService:
     async def _get_user_groups_from_adfs_stub(self, username: str) -> list[str]:
         """
         פונקציית עזר מדמה קבלת קבוצות.
-        TODO: כאן תוסיף את הלוגיקה האמיתית שלך.
-        אפשר לקרוא ל-API חיצוני, לפתוח קובץ, או להשתמש בספרייה שלך.
+        כרגע מחזיר רשימה פיקטיבית לבדיקה.
         """
-        # כרגע מחזיר רשימה פיקטיבית לבדיקה
         print(f"Fetching groups for user: {username}")
-        return ["Users", "Admins", "WarehouseTeam"] # דוגמה לקבוצות שחוזרות
+        return ["Users", "Admins", "WarehouseTeam"]
 
     async def logout(self, response: Response):
         """התנתקות"""

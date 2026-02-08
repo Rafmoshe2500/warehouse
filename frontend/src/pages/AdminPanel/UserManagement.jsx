@@ -33,9 +33,11 @@ const UserManagement = ({ isEmbedded = false }) => {
   const [deleteReason, setDeleteReason] = useState('');
 
   // Handle load error
-  if (loadError) {
+  React.useEffect(() => {
+    if (loadError) {
       toastError('שגיאה בטעינת משתמשים');
-  }
+    }
+  }, [loadError, toastError]);
 
   const handleCreateClick = () => {
     setSelectedUser(null);
@@ -131,6 +133,7 @@ const UserManagement = ({ isEmbedded = false }) => {
           <thead>
             <tr>
               <th>שם משתמש</th>
+              <th>סוג משתמש</th>
               <th>תפקיד</th>
               <th>סטטוס</th>
               <th>נוצר על ידי</th>
@@ -142,6 +145,11 @@ const UserManagement = ({ isEmbedded = false }) => {
             {users.map(user => (
               <tr key={user.id}>
                 <td>{user.username}</td>
+                <td>
+                  <span className={`status-badge ${user.user_type === 'ad' ? 'ad-user' : 'local-user'}`}>
+                    {user.user_type === 'ad' ? 'Active Directory' : 'מקומי'}
+                  </span>
+                </td>
                 <td>{getRoleBadge(user.role)}</td>
                 <td>
                   <span className={`status-badge ${user.is_active ? 'active' : 'inactive'}`}>

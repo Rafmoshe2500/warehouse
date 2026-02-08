@@ -7,6 +7,7 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
+        user_type: 'local',
         role: 'user',
         permissions: [],
         is_active: true,
@@ -19,6 +20,7 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
             setFormData({
                 username: user.username || '',
                 password: '',
+                user_type: user.user_type || 'local',
                 role: user.role || 'user',
                 permissions: user.permissions || [],
                 is_active: user.is_active !== false,
@@ -42,8 +44,8 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
         try {
             const submitData = { ...formData };
 
-            // Don't send empty password on edit
-            if (user && !submitData.password) {
+            // Don't send empty password on edit or for AD users
+            if ((user && !submitData.password) || submitData.user_type === 'ad') {
                 delete submitData.password;
             }
 
@@ -83,20 +85,36 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
                     </div>
 
                     <div className="user-form__field">
-                        <label htmlFor="password">
-                            סיסמה {user && '(השאר ריק לשמירת הסיסמה הנוכחית)'}
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={formData.password}
+                        <label htmlFor="user_type">סוג משתמש</label>
+                        <select
+                            id="user_type"
+                            name="user_type"
+                            value={formData.user_type}
                             onChange={handleChange}
-                            required={!user}
-                            minLength={4}
-                            placeholder={user ? '••••••••' : 'הכנס סיסמה'}
-                        />
+                            disabled={!!user}
+                        >
+                            <option value="local">משתמש מקומי</option>
+                            <option value="ad">Active Directory</option>
+                        </select>
                     </div>
+
+                    {formData.user_type === 'local' && (
+                        <div className="user-form__field">
+                            <label htmlFor="password">
+                                סיסמה {user && '(השאר ריק לשמירת הסיסמה הנוכחית)'}
+                            </label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required={!user && formData.user_type === 'local'}
+                                minLength={4}
+                                placeholder={user ? '••••••••' : 'הכנס סיסמה'}
+                            />
+                        </div>
+                    )}
 
                     <PermissionSelector
                         selectedPermissions={formData.permissions}

@@ -95,7 +95,7 @@ class ExcelService:
                             actor=user,
                             actor_role="unknown",
                             target_resource="item",
-                            resource_id=str(created_item["id"]),
+                            resource_id=str(created_item["_id"]),
                             changes=record,
                             details="נוסף מאקסל (לפי סריאלי)"
                         )
@@ -106,8 +106,8 @@ class ExcelService:
                     location = record.get('location', '').strip()
 
                     if not catalog_number:
-                        # שורה בלי סריאלי ובלי מק"ט - מדלגים או שגיאה
-                        errors.append(f"שורה {index}: חסר מזהה (סריאלי או מק\"ט)")
+                        # שורה בלי סריאלי ובלי מק"ט - מדלגים בשקט (כנראה שורת עיצוב)
+                        skipped_count += 1
                         continue
 
                     # מחפשים לפי מק"ט + מיקום
@@ -150,7 +150,7 @@ class ExcelService:
                             actor=user,
                             actor_role="unknown",
                             target_resource="item",
-                            resource_id=str(created_item["id"]),
+                            resource_id=str(created_item["_id"]),
                             changes=record,
                             details=f"נוסף מאקסל (מק\"ט במיקום {location})"
                         )

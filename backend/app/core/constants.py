@@ -6,6 +6,12 @@ class UserRole(str, Enum):
     USER = "user"
 
 
+class UserType(str, Enum):
+    LOCAL = "local"
+    ACTIVE_DIRECTORY = "ad"
+
+
+
 class Permission(str, Enum):
     INVENTORY_RO = "inventory:ro"
     INVENTORY_RW = "inventory:rw"

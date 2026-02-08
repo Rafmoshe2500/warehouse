@@ -5,7 +5,7 @@ Tests user management, permissions, and password hashing.
 import pytest
 from app.services.user_service import UserService
 from app.schemas.user import UserCreate, UserUpdate
-from app.core.constants import UserRole
+from app.core.constants import UserRole, UserType
 from app.core.exceptions import NotFoundException, BadRequestException
 
 
@@ -23,7 +23,8 @@ class TestUserService:
         user_data = UserCreate(
             username="newuser",
             password="password123",
-            role=UserRole.USER
+            role=UserRole.USER,
+            user_type=UserType.LOCAL
         )
         
         result = await user_service.create_user(
@@ -43,7 +44,7 @@ class TestUserService:
     @pytest.mark.asyncio
     async def test_create_duplicate_user_fails(self, user_service, mock_admin_user):
         """Test that creating a user with existing username fails."""
-        user_data = UserCreate(username="dup", password="password123", role=UserRole.USER)
+        user_data = UserCreate(username="dup", password="password123", role=UserRole.USER, user_type=UserType.LOCAL)
         await user_service.create_user(user_data, mock_admin_user["username"], UserRole.ADMIN)
         
         with pytest.raises(BadRequestException) as exc:
@@ -55,7 +56,7 @@ class TestUserService:
         """Test updating user fields."""
         # Create
         created = await user_service.create_user(
-            UserCreate(username="update_me", password="password123", role=UserRole.USER),
+            UserCreate(username="update_me", password="password123", role=UserRole.USER, user_type=UserType.LOCAL),
             mock_admin_user["username"], UserRole.ADMIN
         )
         user_id = created["id"]
@@ -102,7 +103,7 @@ class TestUserService:
     async def test_delete_user(self, user_service, mock_admin_user):
         """Test deleting a user."""
         created = await user_service.create_user(
-            UserCreate(username="delete_me", password="password123", role=UserRole.USER),
+            UserCreate(username="delete_me", password="password123", role=UserRole.USER, user_type=UserType.LOCAL),
             mock_admin_user["username"], UserRole.ADMIN
         )
         user_id = created["id"]
@@ -125,7 +126,7 @@ class TestUserService:
         """Test user changing their own password."""
         username = "pwd_user"
         created = await user_service.create_user(
-            UserCreate(username=username, password="old_password", role=UserRole.USER),
+            UserCreate(username=username, password="old_password", role=UserRole.USER, user_type=UserType.LOCAL),
             mock_admin_user["username"], UserRole.ADMIN
         )
         user_id = created["id"]

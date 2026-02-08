@@ -124,7 +124,7 @@ class UserService:
         
         user_doc = {
             "username": user_data.username,
-            "password_hash": hash_password(user_data.password),
+            "user_type": user_data.user_type.value,
             "role": user_data.role.value,
             "permissions": user_data.permissions or [],
             "is_active": True,
@@ -133,6 +133,10 @@ class UserService:
             "updated_at": datetime.utcnow(),
             "last_login": None
         }
+        
+        # Only hash password for local users
+        if user_data.user_type == "local" and user_data.password:
+            user_doc["password_hash"] = hash_password(user_data.password)
         
         result = await collection.insert_one(user_doc)
         user_doc["id"] = str(result.inserted_id)
@@ -481,3 +485,58 @@ class UserService:
             "admins": admins,
             "regular_users": regular_users
         }
+    
+    async def create_ad_user(
+        self,
+        username: str,
+        permissions: list[str],
+        role: str = "user",
+        audit_service=None
+    ) -> dict:
+        """
+        Create AD user without password (auto-created during domain login).
+        
+        Args:
+            username: AD username
+            permissions: Aggregated permissions from AD groups
+            role: User role (default: user)
+            audit_service: Optional audit service for logging
+            
+        Returns:
+            Created user data
+        """
+        collection = self._get_collection()
+        
+        user_doc = {
+            "username": username,
+            "user_type": "ad",
+            "role": role,
+            "permissions": permissions,
+            "is_active": True,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow(),
+            "created_by": "system_ad_auto",
+            "last_login": datetime.utcnow()  # Set to now since they just logged in
+        }
+        
+        result = await collection.insert_one(user_doc)
+        user_doc["id"] = str(result.inserted_id)
+        user_doc.pop("_id", None)
+        
+        # Audit log
+        if audit_service:
+            try:
+                await audit_service.log_user_action(
+                    action=AuditAction.USER_CREATE,
+                    actor="system_ad",
+                    actor_role="system",
+                    target_user=username,
+                    target_role=role,
+                    target_resource="user",
+                    details=f"Auto-created from AD login"
+                )
+            except Exception as e:
+                logger.error(f"Failed to create audit log: {e}")
+        
+        logger.info(f"AD user auto-created: {username}")
+        return user_doc

@@ -14,7 +14,8 @@ class TestAuthRoutes:
             "username": "api_user",
             "password_hash": hash_password("api_pass"),
             "role": UserRole.ADMIN,
-            "is_active": True
+            "is_active": True,
+            "user_type": "local"
         })
         
         login_data = {"username": "api_user", "password": "api_pass"}
@@ -56,7 +57,8 @@ class TestAuthRoutes:
             "role": UserRole.ADMIN,
             "is_active": True,
             "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "updated_at": datetime.utcnow(),
+            "user_type": "local"
         })
         
         # Override mock current user to have real ID

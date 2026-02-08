@@ -19,7 +19,8 @@ class TestAdminRoutes:
         user_data = {
             "username": "api_new_user",
             "password": "password123",
-            "role": UserRole.USER.value
+            "role": UserRole.USER.value,
+            "user_type": "local"
         }
         response = await async_client.post("/api/admin/users", json=user_data)
         
@@ -38,7 +39,8 @@ class TestAdminRoutes:
             "role": "user",
             "is_active": True,
             "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "updated_at": datetime.utcnow(),
+            "user_type": "local"
         })
         
         response = await async_client.put(f"/api/admin/users/{str(u_id)}", json={"username": "updated_name"})
@@ -56,7 +58,8 @@ class TestAdminRoutes:
             "role": "user",
             "is_active": True,
             "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "updated_at": datetime.utcnow(),
+            "user_type": "local"
         })
         
         # Need at least one other admin to avoid "cannot delete last admin" error
@@ -65,7 +68,8 @@ class TestAdminRoutes:
             "role": "admin",
             "is_active": True,
             "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "updated_at": datetime.utcnow(),
+            "user_type": "local"
         })
         
         response = await async_client.request(

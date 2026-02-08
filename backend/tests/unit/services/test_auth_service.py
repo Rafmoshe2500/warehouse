@@ -29,7 +29,8 @@ class TestAuthService:
             "username": "tester",
             "password_hash": hash_password("secret"),
             "role": "admin",
-            "is_active": True
+            "is_active": True,
+            "user_type": "local"
         })
         
         mock_response = MagicMock(spec=Response)
@@ -54,7 +55,8 @@ class TestAuthService:
         await users.insert_one({
             "username": "tester",
             "password_hash": hash_password("correct"),
-            "is_active": True
+            "is_active": True,
+            "user_type": "local"
         })
         
         login_data = LoginRequest(username="tester", password="wrong")
@@ -69,7 +71,8 @@ class TestAuthService:
         await users.insert_one({
             "username": "inactive",
             "password_hash": hash_password("pass"),
-            "is_active": False
+            "is_active": False,
+            "user_type": "local"
         })
         
         login_data = LoginRequest(username="inactive", password="pass")
