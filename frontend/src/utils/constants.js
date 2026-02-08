@@ -38,35 +38,13 @@ export const ACTION_TYPES = {
 };
 
 export const ACTION_LABELS = {
-  create: 'יצירה',
-  update: 'עדכון',
-  delete: 'מחיקה',
-  bulk_update: 'עדכון מרובה',
-  bulk_delete: 'מחיקה מרובה',
-  delete_all: 'מחיקת הכל',
-  import: 'יבוא',
+  // Basic item operations for filter dropdown
+  item_create: 'יצירה',
+  item_delete: 'מחיקה',
+  item_update: 'עדכון',
+  item_import: 'יבוא אקסל',
   undo: 'ביטול פעולה',
-  item_create: 'יצירת פריט',
-  item_update: 'עדכון פריט',
-  item_delete: 'מחיקת פריט',
-  item_bulk_update: 'עדכון פריט מרובה',
-  item_bulk_delete: 'מחיקת פריט מרובה',
-  item_import: 'יבוא פריטים',
-  user_create: 'יצירת משתמש',
-  user_update: 'עדכון משתמש',
-  user_delete: 'מחיקת משתמש',
-  user_login: 'התחברות',
-  user_logout: 'התנתקות',
-  password_change: 'שינוי סיסמה',
-  role_change: 'שינוי תפקיד',
-  group_create: 'יצירת קבוצה',
-  group_update: 'עדכון קבוצה',
-  group_delete: 'מחיקת קבוצה',
-  procurement_create: 'יצירת הזמנה',
-  procurement_update: 'עדכון הזמנה',
-  procurement_delete: 'מחיקת הזמנה',
-  procurement_file_upload: 'העלאת קובץ',
-  procurement_file_delete: 'מחיקת קובץ',
+  redo: 'שחזור פעולה',
 };
 
 export const EDITABLE_FIELDS = [
@@ -83,5 +61,11 @@ export const EDITABLE_FIELDS = [
 ];
 
 export const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 50, 100];
+
+export const ROLE_LABELS = {
+  admin: 'מנהל',
+  user: 'משתמש',
+  superadmin: 'סופר-אדמין',
+};
 
 export const DATE_FORMAT = 'YYYY-MM-DD';

@@ -79,6 +79,7 @@ export const useUndoRedo = (callbacks, maxEditHistory = 20, maxDeleteHistory = 1
         if (onCreateUndoLog) {
             try {
                 await onCreateUndoLog('edit', {
+                    itemId: lastAction.itemId,
                     field: lastAction.field,
                     from: lastAction.newValue,
                     to: lastAction.previousValue
@@ -119,7 +120,8 @@ export const useUndoRedo = (callbacks, maxEditHistory = 20, maxDeleteHistory = 1
                 const count = lastAction.deletedItems.length;
                 await onCreateUndoLog('delete', {
                     count,
-                    isBulk: lastAction.type === ACTION_TYPES.BULK_DELETE
+                    isBulk: lastAction.type === ACTION_TYPES.BULK_DELETE,
+                    deletedItems: lastAction.deletedItems
                 });
             } catch (err) {
                 console.error('Failed to create undo log:', err);

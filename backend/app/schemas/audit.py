@@ -53,6 +53,7 @@ class AuditLogCreate(BaseModel):
     # Target Resource (generic)
     target_resource: Optional[str] = None  # e.g., "procurement_order"
     resource_id: Optional[str] = None  # ID of the resource
+    target_resource_name: Optional[str] = None  # Human readable name of the resource (e.g. Item Name)
     
     changes: Optional[Dict[str, Any]] = None  # What changed (for updates)
     reason: Optional[str] = None  # Reason for action (especially for deletes)
@@ -72,6 +73,7 @@ class AuditLogResponse(BaseModel):
     target_role: Optional[str] = None
     target_resource: Optional[str] = None
     resource_id: Optional[str] = None
+    target_resource_name: Optional[str] = None
     changes: Optional[Dict[str, Any]] = None
     reason: Optional[str] = None
     details: Optional[str] = None

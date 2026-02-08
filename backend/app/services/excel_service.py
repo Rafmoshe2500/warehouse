@@ -76,6 +76,7 @@ class ExcelService:
                                 actor_role="unknown", # Assuming user ID passed
                                 target_resource="item",
                                 resource_id=str(existing_item["_id"]),
+                                target_resource_name=record.get('catalog_number') or record.get('description') or "Unknown Item",
                                 changes=changes,
                                 details="עדכון מאקסל (ללא הערות/יעוד)"
                             )
@@ -96,6 +97,7 @@ class ExcelService:
                             actor_role="unknown",
                             target_resource="item",
                             resource_id=str(created_item["_id"]),
+                            target_resource_name=record.get('catalog_number') or record.get('description') or "Unknown Item",
                             changes=record,
                             details="נוסף מאקסל (לפי סריאלי)"
                         )
@@ -132,6 +134,7 @@ class ExcelService:
                                 actor_role="unknown",
                                 target_resource="item",
                                 resource_id=str(existing_item["_id"]),
+                                target_resource_name=existing_item.get('catalog_number') or "Unknown Item",
                                 changes={'current_stock': {'old': old_stock, 'new': new_stock}},
                                 details=f"עדכון כמות במיקום {location}"
                             )
@@ -151,6 +154,7 @@ class ExcelService:
                             actor_role="unknown",
                             target_resource="item",
                             resource_id=str(created_item["_id"]),
+                            target_resource_name=record.get('catalog_number') or "Unknown Item",
                             changes=record,
                             details=f"נוסף מאקסל (מק\"ט במיקום {location})"
                         )
@@ -167,6 +171,7 @@ class ExcelService:
                 actor_role="unknown",
                 target_resource="item",
                 resource_id="BULK_IMPORT",
+                target_resource_name="Excel Import Summary",
                 details=f"יבוא מאקסל: {added_count} נוספו, {updated_count} עודכנו",
                 changes={"total_rows": len(records), "added": added_count, "updated": updated_count}
             )

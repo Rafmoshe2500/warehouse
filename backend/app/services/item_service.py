@@ -202,34 +202,40 @@ class ItemService:
     # --- Private Logging Helpers ---
 
     async def _log_creation(self, user: Dict[str, Any], item: dict):
+        resource_name = item.get("catalog_number") or item.get("description") or "Unknown Item"
         await self.audit_service.log_user_action(
             action=AuditAction.ITEM_CREATE,
             actor=self._get_username(user),
             actor_role=self._get_role(user),
             target_resource="item",
             resource_id=str(item.get("_id")),
+            target_resource_name=resource_name,
             changes={"name": item.get("name"), "description": item.get("description")},
             details="נוסף פריט חדש למלאי"
         )
 
     async def _log_update(self, user: Dict[str, Any], item: dict, details: str, changes: Dict):
+        resource_name = item.get("catalog_number") or item.get("description") or "Unknown Item"
         await self.audit_service.log_user_action(
             action=AuditAction.ITEM_UPDATE,
             actor=self._get_username(user),
             actor_role=self._get_role(user),
             target_resource="item",
             resource_id=str(item.get("_id")),
+            target_resource_name=resource_name,
             changes=changes,
             details=details
         )
 
     async def _log_deletion(self, user: Dict[str, Any], item: dict, details: str):
+        resource_name = item.get("catalog_number") or item.get("description") or "Unknown Item"
         await self.audit_service.log_user_action(
             action=AuditAction.ITEM_DELETE,
             actor=self._get_username(user),
             actor_role=self._get_role(user),
             target_resource="item",
             resource_id=str(item.get("_id")),
+            target_resource_name=resource_name,
             changes={"name": item.get("name"), "description": item.get("description")},
             details=details
         )

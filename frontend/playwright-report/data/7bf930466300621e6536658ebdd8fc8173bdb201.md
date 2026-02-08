@@ -1,0 +1,83 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e7]
+        - generic [ref=e9]:
+          - heading "890Warehouse" [level=1] [ref=e10]
+          - text: Next-Gen Warehouse Management
+      - generic [ref=e11]:
+        - button "עבור למצב בהיר" [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+        - generic [ref=e19]:
+          - img [ref=e21]
+          - generic [ref=e24]: admin
+        - button "יציאה" [ref=e25] [cursor=pointer]:
+          - img [ref=e27]
+          - generic [ref=e30]: יציאה
+  - navigation [ref=e31]:
+    - generic [ref=e32]:
+      - link "דשבורד" [ref=e33] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e34]
+        - generic [ref=e37]: דשבורד
+      - link "מלאי" [ref=e38] [cursor=pointer]:
+        - /url: /inventory
+        - img [ref=e39]
+        - generic [ref=e43]: מלאי
+      - link "ניהול רכש" [active] [ref=e44] [cursor=pointer]:
+        - /url: /procurement
+        - img [ref=e45]
+        - generic [ref=e49]: ניהול רכש
+      - link "ניהול מערכת" [ref=e50] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e51]
+        - generic [ref=e56]: ניהול מערכת
+  - generic [ref=e57]:
+    - button "הזמנה חדשה" [ref=e59] [cursor=pointer]:
+      - img [ref=e61]
+      - generic [ref=e62]: הזמנה חדשה
+    - generic [ref=e63]:
+      - button "בתהליך" [ref=e64] [cursor=pointer]:
+        - img [ref=e65]
+        - text: בתהליך
+      - button "הסתיים" [ref=e68] [cursor=pointer]:
+        - img [ref=e69]
+        - text: הסתיים
+    - generic [ref=e73]:
+      - textbox "חפש לפי מק\"ט..." [ref=e75]
+      - textbox "חפש לפי יצרן..." [ref=e77]
+      - button "חפש" [ref=e78] [cursor=pointer]:
+        - img [ref=e80]
+        - generic [ref=e83]: חפש
+    - table [ref=e85]:
+      - rowgroup [ref=e86]:
+        - row "מק\"ט יצרן תיאור כמות סכום תאריך הזמנה סטטוס EMF BOM קבצים פעולות" [ref=e87]:
+          - columnheader "מק\"ט" [ref=e88]
+          - columnheader "יצרן" [ref=e89]
+          - columnheader "תיאור" [ref=e90]
+          - columnheader "כמות" [ref=e91]
+          - columnheader "סכום" [ref=e92]
+          - columnheader "תאריך הזמנה" [ref=e93]
+          - columnheader "סטטוס" [ref=e94]
+          - columnheader "EMF" [ref=e95]
+          - columnheader "BOM" [ref=e96]
+          - columnheader "קבצים" [ref=e97]
+          - columnheader "פעולות" [ref=e98]
+      - rowgroup [ref=e99]:
+        - row "אין הזמנות להצגה" [ref=e100]:
+          - cell "אין הזמנות להצגה" [ref=e101]
+    - generic [ref=e103]:
+      - generic [ref=e104]: 📊 מציג 1-0 מתוך 0 פריטים
+      - generic [ref=e105]:
+        - generic [ref=e106]: "הצג:"
+        - combobox [ref=e107] [cursor=pointer]:
+          - option "25"
+          - option "50"
+          - option "75"
+          - option "100"
+          - option "הכל" [selected]
+```

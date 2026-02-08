@@ -21,6 +21,13 @@ export const createLogService = (apiClient) => {
         page_size: params.limit || params.page_size || 50
       };
       if (apiParams.limit) delete apiParams.limit;
+
+      // Clean default empty strings from filters (fixes 422 on action="")
+      Object.keys(apiParams).forEach(key => {
+        if (apiParams[key] === '' || apiParams[key] === null || apiParams[key] === undefined) {
+          delete apiParams[key];
+        }
+      });
       
       const response = await apiClient.get(API_ENDPOINTS.LOGS, { params: apiParams });
       
@@ -32,9 +39,7 @@ export const createLogService = (apiClient) => {
             ...log,
             _id: log.id,
             user: log.actor,
-            item_identifier: log.resource_id || (log.target_resource === 'item' ? log.details : ''), 
-            // If resource_id is ObjectId, maybe show details or something else? 
-            // For now mapping resource_id is safest as it's the ID.
+            item_identifier: log.target_resource_name || log.resource_id || (log.target_resource === 'item' ? log.details : ''), 
           }))
         };
       }
@@ -56,15 +61,9 @@ export const createLogService = (apiClient) => {
      * @returns {Promise} Created log ID
      */
     createLog: async (logData) => {
-      // Map legacy fields to Audit API schema
-      const auditData = {
-        ...logData,
-        actor: logData.user, // Map user -> actor
-        actor_role: 'unknown', // Default role if not provided
-        // Remove mapped fields if needed, or keep them (Backend ignores extras usually)
-      };
-      
-      const response = await apiClient.post(API_ENDPOINTS.LOGS, auditData);
+      // The backend endpoint will override actor and actor_role from the current user's JWT
+      // So we just pass the data as-is
+      const response = await apiClient.post(API_ENDPOINTS.LOGS, logData);
       return response.data;
     }
   };

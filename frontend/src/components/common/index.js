@@ -11,5 +11,7 @@ export { default as FloatingToolbar } from './FloatingToolbar/FloatingToolbar';
 export { default as SelectionIndicator } from './SelectionIndicator/SelectionIndicator';
 export { default as ScrollableTableLayout } from './ScrollableTableLayout/ScrollableTableLayout';
 export { default as Select } from './Select/Select';
+export { default as NavigationWarningModal } from './NavigationWarningModal/NavigationWarningModal';
 // Duplicate line removed
+
 

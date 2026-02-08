@@ -60,28 +60,54 @@ const ItemTable = ({
     onCreateUndoLog: async (type, details) => {
       // Get current user from auth context
       const username = user?.username || 'unknown';
+      const userRole = user?.role || 'unknown';
       
-      if (type === 'edit') {
-        await logService.createLog({
-          action: 'undo',
-          user: username,
-          details: `ביטול עריכה: ${details.field} מ-"${details.from}" ל-"${details.to}"`,
-          changes: {
-            [details.field]: {
-              old: details.from,
-              new: details.to
+      console.log('🔄 Creating undo log:', { type, details, username, userRole });
+      
+      try {
+        if (type === 'edit') {
+          // Find the item to get catalog number
+          const item = items.find(i => i._id === details.itemId);
+          const catalogNumber = item?.catalog_number || 'לא ידוע';
+          
+          await logService.createLog({
+            action: 'undo',
+            actor: username,
+            actor_role: userRole,
+            target_resource: 'item',
+            resource_id: catalogNumber,
+            target_resource_name: catalogNumber,
+            details: `ביטול עריכה: ${details.field} מ-"${details.from}" ל-"${details.to}"`,
+            changes: {
+              [details.field]: {
+                old: details.from,
+                new: details.to
+              }
             }
-          }
-        });
-      } else if (type === 'delete') {
-        await logService.createLog({
-          action: 'undo',
-          user: username,
-          details: details.isBulk 
-            ? `ביטול מחיקה של ${details.count} פריטים`
-            : `ביטול מחיקת פריט`,
-          count: details.count
-        });
+          });
+          console.log('✅ Undo log created successfully for edit');
+        } else if (type === 'delete') {
+          // Get catalog numbers from deleted items
+          const catalogNumbers = details.deletedItems
+            ?.map(item => item.catalog_number)
+            .filter(Boolean)
+            .join(', ') || 'לא ידוע';
+          
+          await logService.createLog({
+            action: 'undo',
+            actor: username,
+            actor_role: userRole,
+            target_resource: 'item',
+            resource_id: catalogNumbers,
+            target_resource_name: catalogNumbers,
+            details: details.isBulk 
+              ? `ביטול מחיקה של ${details.count} פריטים: ${catalogNumbers}`
+              : `ביטול מחיקת פריט: ${catalogNumbers}`
+          });
+          console.log('✅ Undo log created successfully for delete');
+        }
+      } catch (error) {
+        console.error('❌ Failed to create undo log:', error);
       }
     }
   });
@@ -370,7 +396,7 @@ const ItemTable = ({
             <tr className="new-item-row">
               <td className="new-item-actions-cell th-frozen">
                 <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                  <button onClick={onSaveNew} className="action-btn-mini save" title="שמור (Enter)">
+                  <button onClick={onSaveNew} className="action-btn-mini save" title="שמור (Enter)" data-testid="save-new-item-button">
                     <FiSave size={16} />
                   </button>
                   <button onClick={onCancelNew} className="action-btn-mini cancel" title="בטל (Esc)">
@@ -388,6 +414,7 @@ const ItemTable = ({
                     onChange={(e) => onNewRowChange(col.key, e.target.value)}
                     onKeyDown={handleNewRowKeyDown}
                     autoFocus={col.key === 'catalog_number'}
+                    data-testid={`new-item-${col.key}`}
                   />
                 </td>
               ))}
@@ -400,6 +427,7 @@ const ItemTable = ({
                     value={newRowData[col.key] || ''}
                     onChange={(e) => onNewRowChange(col.key, e.target.value)}
                     onKeyDown={handleNewRowKeyDown}
+                    data-testid={`new-item-${col.key}`}
                   />
                 </td>
               ))}

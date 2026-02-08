@@ -1,0 +1,35 @@
+.navigation-warning-modal {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.navigation-warning-modal__icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.navigation-warning-modal__message {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.navigation-warning-modal__submessage {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.navigation-warning-modal__footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.navigation-warning-modal__footer button {
+  min-width: 120px;
+}

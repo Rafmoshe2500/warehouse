@@ -33,6 +33,7 @@ const ContextMenu = ({
                     onClose();
                 }}
                 disabled={selectedCellsCount === 0}
+                data-testid="context-menu-copy"
             >
                 <FiCopy size={14} />
                 העתק תאים ({selectedCellsCount})
@@ -44,6 +45,7 @@ const ContextMenu = ({
                     onClose();
                 }}
                 disabled={selectedItemsCount === 0}
+                data-testid="context-menu-edit"
             >
                 <FiEdit size={14} />
                 עריכה ({selectedItemsCount})
@@ -55,6 +57,7 @@ const ContextMenu = ({
                     onClose();
                 }}
                 disabled={selectedItemsCount === 0}
+                data-testid="context-menu-delete"
             >
                 <FiTrash2 size={14} />
                 מחיקה ({selectedItemsCount})

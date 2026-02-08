@@ -9,6 +9,7 @@ const Button = ({
   disabled = false,
   type = 'button',
   className = '',
+  ...props
 }) => {
   return (
     <button
@@ -16,6 +17,7 @@ const Button = ({
       className={`button button--${variant} ${className}`}
       onClick={onClick}
       disabled={disabled}
+      {...props}
     >
       {icon && <span className="button__icon">{icon}</span>}
       <span className="button__text">{children}</span>

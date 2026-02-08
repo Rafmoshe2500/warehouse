@@ -1,0 +1,777 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e7]
+        - generic [ref=e9]:
+          - heading "890Warehouse" [level=1] [ref=e10]
+          - text: Next-Gen Warehouse Management
+      - generic [ref=e11]:
+        - button "עבור למצב בהיר" [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+        - generic [ref=e19]:
+          - img [ref=e21]
+          - generic [ref=e24]: admin
+        - button "יציאה" [ref=e25] [cursor=pointer]:
+          - img [ref=e27]
+          - generic [ref=e30]: יציאה
+  - navigation [ref=e31]:
+    - generic [ref=e32]:
+      - link "דשבורד" [ref=e33] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e34]
+        - generic [ref=e37]: דשבורד
+      - link "מלאי" [ref=e38] [cursor=pointer]:
+        - /url: /inventory
+        - img [ref=e39]
+        - generic [ref=e43]: מלאי
+      - link "ניהול רכש" [ref=e44] [cursor=pointer]:
+        - /url: /procurement
+        - img [ref=e45]
+        - generic [ref=e49]: ניהול רכש
+      - link "ניהול מערכת" [ref=e50] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e51]
+        - generic [ref=e56]: ניהול מערכת
+  - generic [ref=e57]:
+    - generic [ref=e58]:
+      - button "מלאי נוכחי" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+        - text: מלאי נוכחי
+      - button "מלאי ישן" [ref=e64] [cursor=pointer]:
+        - img [ref=e65]
+        - text: מלאי ישן
+      - button "תנועות" [ref=e68] [cursor=pointer]:
+        - img [ref=e69]
+        - text: תנועות
+    - generic [ref=e72]:
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - button "יבוא אקסל" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]:
+              - img [ref=e77]
+              - text: יבוא אקסל
+          - button "העלאת שריונים" [ref=e80] [cursor=pointer]:
+            - generic [ref=e81]:
+              - img [ref=e82]
+              - text: העלאת שריונים
+          - button "ייצוא" [ref=e85] [cursor=pointer]:
+            - generic [ref=e86]:
+              - img [ref=e87]
+              - text: ייצוא
+          - button "הצג פילטר" [ref=e90] [cursor=pointer]:
+            - generic [ref=e91]:
+              - img [ref=e92]
+              - text: הצג פילטר
+          - button "הוסף פריט" [ref=e94] [cursor=pointer]:
+            - generic [ref=e95]:
+              - img [ref=e96]
+              - text: הוסף פריט
+          - button "עריכה" [disabled] [ref=e97]:
+            - generic [ref=e98]:
+              - img [ref=e99]
+              - text: עריכה
+          - button "מחק" [disabled] [ref=e101]:
+            - generic [ref=e102]:
+              - img [ref=e103]
+              - text: מחק
+        - textbox "חיפוש חופשי..." [ref=e108]
+      - generic [ref=e110]:
+        - table [ref=e113]:
+          - rowgroup [ref=e114]:
+            - row "מק\"ט סריאלי תיאור יצרן מיקום מלאי אחריות שריון עבור אתר יעד יעוד הערות" [ref=e115]:
+              - columnheader [ref=e116]:
+                - checkbox [ref=e117]
+              - columnheader "מק\"ט" [ref=e118] [cursor=pointer]:
+                - generic [ref=e119]: מק"ט
+              - columnheader "סריאלי" [ref=e120] [cursor=pointer]:
+                - generic [ref=e121]: סריאלי
+              - columnheader "תיאור" [ref=e122] [cursor=pointer]:
+                - generic [ref=e123]: תיאור
+              - columnheader "יצרן" [ref=e124] [cursor=pointer]:
+                - generic [ref=e125]: יצרן
+              - columnheader "מיקום" [ref=e126] [cursor=pointer]:
+                - generic [ref=e127]: מיקום
+              - columnheader "מלאי" [ref=e128] [cursor=pointer]:
+                - generic [ref=e129]: מלאי
+              - columnheader "אחריות" [ref=e130] [cursor=pointer]:
+                - generic [ref=e131]: אחריות
+              - columnheader "שריון עבור" [ref=e132] [cursor=pointer]:
+                - generic [ref=e133]: שריון עבור
+              - columnheader "אתר יעד" [ref=e134] [cursor=pointer]:
+                - generic [ref=e135]: אתר יעד
+              - columnheader "יעוד" [ref=e136] [cursor=pointer]:
+                - generic [ref=e137]: יעוד
+              - columnheader "הערות" [ref=e138] [cursor=pointer]:
+                - generic [ref=e139]: הערות
+          - rowgroup [ref=e140]:
+            - row "TEST-UNDO-1770585296748 - תיאור מקורי - - - - - - - -" [ref=e141]:
+              - cell [ref=e142]:
+                - checkbox [ref=e143]
+              - cell "TEST-UNDO-1770585296748" [ref=e144]:
+                - generic "לחץ פעמיים להעתקה" [ref=e145]: TEST-UNDO-1770585296748
+              - cell "-" [ref=e146]:
+                - generic "לחץ פעמיים להעתקה" [ref=e147]: "-"
+              - cell "תיאור מקורי" [ref=e148]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e149] [cursor=pointer]: תיאור מקורי
+              - cell "-" [ref=e150]:
+                - generic "לחץ פעמיים להעתקה" [ref=e151]: "-"
+              - cell "-" [ref=e152]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e153] [cursor=pointer]: "-"
+              - cell "-" [ref=e154]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e155] [cursor=pointer]: "-"
+              - cell "-" [ref=e156]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e157] [cursor=pointer]: "-"
+              - cell "-" [ref=e158]:
+                - generic "לחץ פעמיים להעתקה" [ref=e159]: "-"
+              - cell "-" [ref=e160]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e161] [cursor=pointer]: "-"
+              - cell "-" [ref=e162]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e163] [cursor=pointer]: "-"
+              - cell "-" [ref=e164]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e165] [cursor=pointer]: "-"
+            - row "TEST-ADD-1770585274400 - פריט חדש לבדיקה יצרן בדיקה מחסן בדיקה 10 - - - - -" [ref=e166]:
+              - cell [ref=e167]:
+                - checkbox [ref=e168]
+              - cell "TEST-ADD-1770585274400" [ref=e169]:
+                - generic "לחץ פעמיים להעתקה" [ref=e170]: TEST-ADD-1770585274400
+              - cell "-" [ref=e171]:
+                - generic "לחץ פעמיים להעתקה" [ref=e172]: "-"
+              - cell "פריט חדש לבדיקה" [ref=e173]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e174] [cursor=pointer]: פריט חדש לבדיקה
+              - cell "יצרן בדיקה" [ref=e175]:
+                - generic "לחץ פעמיים להעתקה" [ref=e176]: יצרן בדיקה
+              - cell "מחסן בדיקה" [ref=e177]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e178] [cursor=pointer]: מחסן בדיקה
+              - cell "10" [ref=e179]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e180] [cursor=pointer]: "10"
+              - cell "-" [ref=e181]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e182] [cursor=pointer]: "-"
+              - cell "-" [ref=e183]:
+                - generic "לחץ פעמיים להעתקה" [ref=e184]: "-"
+              - cell "-" [ref=e185]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e186] [cursor=pointer]: "-"
+              - cell "-" [ref=e187]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e188] [cursor=pointer]: "-"
+              - cell "-" [ref=e189]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e190] [cursor=pointer]: "-"
+            - row "TEST-UNDO-1770584691215 - תיאור מקורי - - - - - - - -" [ref=e191]:
+              - cell [ref=e192]:
+                - checkbox [ref=e193]
+              - cell "TEST-UNDO-1770584691215" [ref=e194]:
+                - generic "לחץ פעמיים להעתקה" [ref=e195]: TEST-UNDO-1770584691215
+              - cell "-" [ref=e196]:
+                - generic "לחץ פעמיים להעתקה" [ref=e197]: "-"
+              - cell "תיאור מקורי" [ref=e198]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e199] [cursor=pointer]: תיאור מקורי
+              - cell "-" [ref=e200]:
+                - generic "לחץ פעמיים להעתקה" [ref=e201]: "-"
+              - cell "-" [ref=e202]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e203] [cursor=pointer]: "-"
+              - cell "-" [ref=e204]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e205] [cursor=pointer]: "-"
+              - cell "-" [ref=e206]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e207] [cursor=pointer]: "-"
+              - cell "-" [ref=e208]:
+                - generic "לחץ פעמיים להעתקה" [ref=e209]: "-"
+              - cell "-" [ref=e210]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e211] [cursor=pointer]: "-"
+              - cell "-" [ref=e212]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e213] [cursor=pointer]: "-"
+              - cell "-" [ref=e214]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e215] [cursor=pointer]: "-"
+            - row "TEST-ADD-1770584672355 - פריט חדש לבדיקה יצרן בדיקה מחסן בדיקה 10 - - - - -" [ref=e216]:
+              - cell [ref=e217]:
+                - checkbox [ref=e218]
+              - cell "TEST-ADD-1770584672355" [ref=e219]:
+                - generic "לחץ פעמיים להעתקה" [ref=e220]: TEST-ADD-1770584672355
+              - cell "-" [ref=e221]:
+                - generic "לחץ פעמיים להעתקה" [ref=e222]: "-"
+              - cell "פריט חדש לבדיקה" [ref=e223]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e224] [cursor=pointer]: פריט חדש לבדיקה
+              - cell "יצרן בדיקה" [ref=e225]:
+                - generic "לחץ פעמיים להעתקה" [ref=e226]: יצרן בדיקה
+              - cell "מחסן בדיקה" [ref=e227]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e228] [cursor=pointer]: מחסן בדיקה
+              - cell "10" [ref=e229]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e230] [cursor=pointer]: "10"
+              - cell "-" [ref=e231]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e232] [cursor=pointer]: "-"
+              - cell "-" [ref=e233]:
+                - generic "לחץ פעמיים להעתקה" [ref=e234]: "-"
+              - cell "-" [ref=e235]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e236] [cursor=pointer]: "-"
+              - cell "-" [ref=e237]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e238] [cursor=pointer]: "-"
+              - cell "-" [ref=e239]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e240] [cursor=pointer]: "-"
+            - row "TEST-EDIT-1770584668583 - תיאור מקורי - - - - - - - -" [ref=e241]:
+              - cell [ref=e242]:
+                - checkbox [ref=e243]
+              - cell "TEST-EDIT-1770584668583" [ref=e244]:
+                - generic "לחץ פעמיים להעתקה" [ref=e245]: TEST-EDIT-1770584668583
+              - cell "-" [ref=e246]:
+                - generic "לחץ פעמיים להעתקה" [ref=e247]: "-"
+              - cell "תיאור מקורי" [ref=e248]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e249] [cursor=pointer]: תיאור מקורי
+              - cell "-" [ref=e250]:
+                - generic "לחץ פעמיים להעתקה" [ref=e251]: "-"
+              - cell "-" [ref=e252]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e253] [cursor=pointer]: "-"
+              - cell "-" [ref=e254]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e255] [cursor=pointer]: "-"
+              - cell "-" [ref=e256]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e257] [cursor=pointer]: "-"
+              - cell "-" [ref=e258]:
+                - generic "לחץ פעמיים להעתקה" [ref=e259]: "-"
+              - cell "-" [ref=e260]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e261] [cursor=pointer]: "-"
+              - cell "-" [ref=e262]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e263] [cursor=pointer]: "-"
+              - cell "-" [ref=e264]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e265] [cursor=pointer]: "-"
+            - 'row "ADP-DP-HDMI-012 - מתאם DisplayPort ל-HDMI Belkin מחסן C - מדף 2 30 - שריון: החלפת ציוד | כמות: 25 - החלפה להזמין עוד" [ref=e266]':
+              - cell [ref=e267]:
+                - checkbox [ref=e268]
+              - cell "ADP-DP-HDMI-012" [ref=e269]:
+                - generic "לחץ פעמיים להעתקה" [ref=e270]: ADP-DP-HDMI-012
+              - cell "-" [ref=e271]:
+                - generic "לחץ פעמיים להעתקה" [ref=e272]: "-"
+              - cell "מתאם DisplayPort ל-HDMI" [ref=e273]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e274] [cursor=pointer]: מתאם DisplayPort ל-HDMI
+              - cell "Belkin" [ref=e275]:
+                - generic "לחץ פעמיים להעתקה" [ref=e276]: Belkin
+              - cell "מחסן C - מדף 2" [ref=e277]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e278] [cursor=pointer]: מחסן C - מדף 2
+              - cell "30" [ref=e279]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e280] [cursor=pointer]: "30"
+              - cell "-" [ref=e281]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e282] [cursor=pointer]: "-"
+              - 'cell "שריון: החלפת ציוד | כמות: 25" [ref=e283]':
+                - generic "לחץ פעמיים להעתקה" [ref=e284]:
+                  - generic [ref=e286]: "שריון: החלפת ציוד | כמות: 25"
+              - cell "-" [ref=e287]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e288] [cursor=pointer]: "-"
+              - cell "החלפה" [ref=e289]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e290] [cursor=pointer]: החלפה
+              - cell "להזמין עוד" [ref=e291]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e292] [cursor=pointer]: להזמין עוד
+            - 'row "SSD-1T-008 SN2025008 כונן SSD 1TB WD מחסן C - מדף 5 1 2026-08-30 שריון: פרויקט ענן | כמות: 50 מחסן ראשי מלאי חירום לגריטה" [ref=e293]':
+              - cell [ref=e294]:
+                - checkbox [ref=e295]
+              - cell "SSD-1T-008" [ref=e296]:
+                - generic "לחץ פעמיים להעתקה" [ref=e297]: SSD-1T-008
+              - cell "SN2025008" [ref=e298]:
+                - generic "לחץ פעמיים להעתקה" [ref=e299]: SN2025008
+              - cell "כונן SSD 1TB" [ref=e300]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e301] [cursor=pointer]: כונן SSD 1TB
+              - cell "WD" [ref=e302]:
+                - generic "לחץ פעמיים להעתקה" [ref=e303]: WD
+              - cell "מחסן C - מדף 5" [ref=e304]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e305] [cursor=pointer]: מחסן C - מדף 5
+              - cell "1" [ref=e306]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e307] [cursor=pointer]: "1"
+              - cell "2026-08-30" [ref=e308]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e309] [cursor=pointer]: 2026-08-30
+              - 'cell "שריון: פרויקט ענן | כמות: 50" [ref=e310]':
+                - generic "לחץ פעמיים להעתקה" [ref=e311]:
+                  - generic [ref=e313]: "שריון: פרויקט ענן | כמות: 50"
+              - cell "מחסן ראשי" [ref=e314]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e315] [cursor=pointer]: מחסן ראשי
+              - cell "מלאי חירום" [ref=e316]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e317] [cursor=pointer]: מלאי חירום
+              - cell "לגריטה" [ref=e318]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e319] [cursor=pointer]: לגריטה
+            - 'row "SPK-20-028 SN2025028 רמקולים למחשב Creative מחסן C - מדף 5 11 2028-07-23 שריון: החלפת ציוד | כמות: 39 מחסן ראשי עובדים חדשים לגריטה" [ref=e320]':
+              - cell [ref=e321]:
+                - checkbox [ref=e322]
+              - cell "SPK-20-028" [ref=e323]:
+                - generic "לחץ פעמיים להעתקה" [ref=e324]: SPK-20-028
+              - cell "SN2025028" [ref=e325]:
+                - generic "לחץ פעמיים להעתקה" [ref=e326]: SN2025028
+              - cell "רמקולים למחשב" [ref=e327]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e328] [cursor=pointer]: רמקולים למחשב
+              - cell "Creative" [ref=e329]:
+                - generic "לחץ פעמיים להעתקה" [ref=e330]: Creative
+              - cell "מחסן C - מדף 5" [ref=e331]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e332] [cursor=pointer]: מחסן C - מדף 5
+              - cell "11" [ref=e333]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e334] [cursor=pointer]: "11"
+              - cell "2028-07-23" [ref=e335]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e336] [cursor=pointer]: 2028-07-23
+              - 'cell "שריון: החלפת ציוד | כמות: 39" [ref=e337]':
+                - generic "לחץ פעמיים להעתקה" [ref=e338]:
+                  - generic [ref=e340]: "שריון: החלפת ציוד | כמות: 39"
+              - cell "מחסן ראשי" [ref=e341]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e342] [cursor=pointer]: מחסן ראשי
+              - cell "עובדים חדשים" [ref=e343]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e344] [cursor=pointer]: עובדים חדשים
+              - cell "לגריטה" [ref=e345]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e346] [cursor=pointer]: לגריטה
+            - 'row "CBL-CAT6-3M-027 - כבל רשת CAT6 3 מטר Generic מחסן B - מדף 4 11 - שריון: שדרוג תשתיות | כמות: 14 מחסן ראשי גיבוי לגריטה" [ref=e347]':
+              - cell [ref=e348]:
+                - checkbox [ref=e349]
+              - cell "CBL-CAT6-3M-027" [ref=e350]:
+                - generic "לחץ פעמיים להעתקה" [ref=e351]: CBL-CAT6-3M-027
+              - cell "-" [ref=e352]:
+                - generic "לחץ פעמיים להעתקה" [ref=e353]: "-"
+              - cell "כבל רשת CAT6 3 מטר" [ref=e354]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e355] [cursor=pointer]: כבל רשת CAT6 3 מטר
+              - cell "Generic" [ref=e356]:
+                - generic "לחץ פעמיים להעתקה" [ref=e357]: Generic
+              - cell "מחסן B - מדף 4" [ref=e358]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e359] [cursor=pointer]: מחסן B - מדף 4
+              - cell "11" [ref=e360]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e361] [cursor=pointer]: "11"
+              - cell "-" [ref=e362]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e363] [cursor=pointer]: "-"
+              - 'cell "שריון: שדרוג תשתיות | כמות: 14" [ref=e364]':
+                - generic "לחץ פעמיים להעתקה" [ref=e365]:
+                  - generic [ref=e367]: "שריון: שדרוג תשתיות | כמות: 14"
+              - cell "מחסן ראשי" [ref=e368]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e369] [cursor=pointer]: מחסן ראשי
+              - cell "גיבוי" [ref=e370]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e371] [cursor=pointer]: גיבוי
+              - cell "לגריטה" [ref=e372]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e373] [cursor=pointer]: לגריטה
+            - 'row "MB-B550-024 SN2025024 לוח אם B550 Asus ארון תקשורת קומה 2 34 2027-01-31 שריון: מעבר משרדים | כמות: 50 - התקנות להזמין עוד" [ref=e374]':
+              - cell [ref=e375]:
+                - checkbox [ref=e376]
+              - cell "MB-B550-024" [ref=e377]:
+                - generic "לחץ פעמיים להעתקה" [ref=e378]: MB-B550-024
+              - cell "SN2025024" [ref=e379]:
+                - generic "לחץ פעמיים להעתקה" [ref=e380]: SN2025024
+              - cell "לוח אם B550" [ref=e381]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e382] [cursor=pointer]: לוח אם B550
+              - cell "Asus" [ref=e383]:
+                - generic "לחץ פעמיים להעתקה" [ref=e384]: Asus
+              - cell "ארון תקשורת קומה 2" [ref=e385]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e386] [cursor=pointer]: ארון תקשורת קומה 2
+              - cell "34" [ref=e387]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e388] [cursor=pointer]: "34"
+              - cell "2027-01-31" [ref=e389]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e390] [cursor=pointer]: 2027-01-31
+              - 'cell "שריון: מעבר משרדים | כמות: 50" [ref=e391]':
+                - generic "לחץ פעמיים להעתקה" [ref=e392]:
+                  - generic [ref=e394]: "שריון: מעבר משרדים | כמות: 50"
+              - cell "-" [ref=e395]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e396] [cursor=pointer]: "-"
+              - cell "התקנות" [ref=e397]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e398] [cursor=pointer]: התקנות
+              - cell "להזמין עוד" [ref=e399]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e400] [cursor=pointer]: להזמין עוד
+            - 'row "HDST-USB-020 SN2025020 אוזניות עם מיקרופון Jabra מחסן B - מדף 3 10 2026-09-26 שריון: מעבר משרדים | כמות: 25 שריון: פרויקט ענן | כמות: 9 - פרויקט ענן -" [ref=e401]':
+              - cell [ref=e402]:
+                - checkbox [ref=e403]
+              - cell "HDST-USB-020" [ref=e404]:
+                - generic "לחץ פעמיים להעתקה" [ref=e405]: HDST-USB-020
+              - cell "SN2025020" [ref=e406]:
+                - generic "לחץ פעמיים להעתקה" [ref=e407]: SN2025020
+              - cell "אוזניות עם מיקרופון" [ref=e408]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e409] [cursor=pointer]: אוזניות עם מיקרופון
+              - cell "Jabra" [ref=e410]:
+                - generic "לחץ פעמיים להעתקה" [ref=e411]: Jabra
+              - cell "מחסן B - מדף 3" [ref=e412]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e413] [cursor=pointer]: מחסן B - מדף 3
+              - cell "10" [ref=e414]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e415] [cursor=pointer]: "10"
+              - cell "2026-09-26" [ref=e416]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e417] [cursor=pointer]: 2026-09-26
+              - 'cell "שריון: מעבר משרדים | כמות: 25 שריון: פרויקט ענן | כמות: 9" [ref=e418]':
+                - generic "לחץ פעמיים להעתקה" [ref=e419]:
+                  - generic [ref=e420]:
+                    - generic [ref=e421]: "שריון: מעבר משרדים | כמות: 25"
+                    - generic [ref=e422]: "שריון: פרויקט ענן | כמות: 9"
+              - cell "-" [ref=e423]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e424] [cursor=pointer]: "-"
+              - cell "פרויקט ענן" [ref=e425]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e426] [cursor=pointer]: פרויקט ענן
+              - cell "-" [ref=e427]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e428] [cursor=pointer]: "-"
+            - 'row "PWR-USBC-021 SN2025021 מטען למחשב נייד USB-C Dell חדר שרתים 38 2029-05-07 שריון: פרויקט ענן | כמות: 14 - גיבוי שמור לפרויקט" [ref=e429]':
+              - cell [ref=e430]:
+                - checkbox [ref=e431]
+              - cell "PWR-USBC-021" [ref=e432]:
+                - generic "לחץ פעמיים להעתקה" [ref=e433]: PWR-USBC-021
+              - cell "SN2025021" [ref=e434]:
+                - generic "לחץ פעמיים להעתקה" [ref=e435]: SN2025021
+              - cell "מטען למחשב נייד USB-C" [ref=e436]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e437] [cursor=pointer]: מטען למחשב נייד USB-C
+              - cell "Dell" [ref=e438]:
+                - generic "לחץ פעמיים להעתקה" [ref=e439]: Dell
+              - cell "חדר שרתים" [ref=e440]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e441] [cursor=pointer]: חדר שרתים
+              - cell "38" [ref=e442]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e443] [cursor=pointer]: "38"
+              - cell "2029-05-07" [ref=e444]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e445] [cursor=pointer]: 2029-05-07
+              - 'cell "שריון: פרויקט ענן | כמות: 14" [ref=e446]':
+                - generic "לחץ פעמיים להעתקה" [ref=e447]:
+                  - generic [ref=e449]: "שריון: פרויקט ענן | כמות: 14"
+              - cell "-" [ref=e450]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e451] [cursor=pointer]: "-"
+              - cell "גיבוי" [ref=e452]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e453] [cursor=pointer]: גיבוי
+              - cell "שמור לפרויקט" [ref=e454]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e455] [cursor=pointer]: שמור לפרויקט
+            - 'row "MON-24-023 SN2025023 מסך 24 אינץ'' Samsung מחסן A - מדף 4 9 2028-06-02 שריון: שדרוג תשתיות | כמות: 38 - פרויקט ענן -" [ref=e456]':
+              - cell [ref=e457]:
+                - checkbox [ref=e458]
+              - cell "MON-24-023" [ref=e459]:
+                - generic "לחץ פעמיים להעתקה" [ref=e460]: MON-24-023
+              - cell "SN2025023" [ref=e461]:
+                - generic "לחץ פעמיים להעתקה" [ref=e462]: SN2025023
+              - cell "מסך 24 אינץ'" [ref=e463]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e464] [cursor=pointer]: מסך 24 אינץ'
+              - cell "Samsung" [ref=e465]:
+                - generic "לחץ פעמיים להעתקה" [ref=e466]: Samsung
+              - cell "מחסן A - מדף 4" [ref=e467]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e468] [cursor=pointer]: מחסן A - מדף 4
+              - cell "9" [ref=e469]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e470] [cursor=pointer]: "9"
+              - cell "2028-06-02" [ref=e471]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e472] [cursor=pointer]: 2028-06-02
+              - 'cell "שריון: שדרוג תשתיות | כמות: 38" [ref=e473]':
+                - generic "לחץ פעמיים להעתקה" [ref=e474]:
+                  - generic [ref=e476]: "שריון: שדרוג תשתיות | כמות: 38"
+              - cell "-" [ref=e477]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e478] [cursor=pointer]: "-"
+              - cell "פרויקט ענן" [ref=e479]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e480] [cursor=pointer]: פרויקט ענן
+              - cell "-" [ref=e481]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e482] [cursor=pointer]: "-"
+            - 'row "RAM-LT-16-013 SN2025013 זיכרון נייד 16GB Kingston חדר שרתים 12 2026-04-24 שריון: פרויקט ענן | כמות: 49 שריון: החלפת ציוד | כמות: 26 - עובדים חדשים תקין" [ref=e483]':
+              - cell [ref=e484]:
+                - checkbox [ref=e485]
+              - cell "RAM-LT-16-013" [ref=e486]:
+                - generic "לחץ פעמיים להעתקה" [ref=e487]: RAM-LT-16-013
+              - cell "SN2025013" [ref=e488]:
+                - generic "לחץ פעמיים להעתקה" [ref=e489]: SN2025013
+              - cell "זיכרון נייד 16GB" [ref=e490]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e491] [cursor=pointer]: זיכרון נייד 16GB
+              - cell "Kingston" [ref=e492]:
+                - generic "לחץ פעמיים להעתקה" [ref=e493]: Kingston
+              - cell "חדר שרתים" [ref=e494]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e495] [cursor=pointer]: חדר שרתים
+              - cell "12" [ref=e496]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e497] [cursor=pointer]: "12"
+              - cell "2026-04-24" [ref=e498]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e499] [cursor=pointer]: 2026-04-24
+              - 'cell "שריון: פרויקט ענן | כמות: 49 שריון: החלפת ציוד | כמות: 26" [ref=e500]':
+                - generic "לחץ פעמיים להעתקה" [ref=e501]:
+                  - generic [ref=e502]:
+                    - generic [ref=e503]: "שריון: פרויקט ענן | כמות: 49"
+                    - generic [ref=e504]: "שריון: החלפת ציוד | כמות: 26"
+              - cell "-" [ref=e505]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e506] [cursor=pointer]: "-"
+              - cell "עובדים חדשים" [ref=e507]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e508] [cursor=pointer]: עובדים חדשים
+              - cell "תקין" [ref=e509]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e510] [cursor=pointer]: תקין
+            - 'row "PSU-650-019 SN2025019 ספק כוח 650W Corsair מחסן A - מדף 1 21 2026-07-18 שריון: פרויקט ענן | כמות: 50 - פרויקט ענן שמור לפרויקט" [ref=e511]':
+              - cell [ref=e512]:
+                - checkbox [ref=e513]
+              - cell "PSU-650-019" [ref=e514]:
+                - generic "לחץ פעמיים להעתקה" [ref=e515]: PSU-650-019
+              - cell "SN2025019" [ref=e516]:
+                - generic "לחץ פעמיים להעתקה" [ref=e517]: SN2025019
+              - cell "ספק כוח 650W" [ref=e518]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e519] [cursor=pointer]: ספק כוח 650W
+              - cell "Corsair" [ref=e520]:
+                - generic "לחץ פעמיים להעתקה" [ref=e521]: Corsair
+              - cell "מחסן A - מדף 1" [ref=e522]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e523] [cursor=pointer]: מחסן A - מדף 1
+              - cell "21" [ref=e524]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e525] [cursor=pointer]: "21"
+              - cell "2026-07-18" [ref=e526]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e527] [cursor=pointer]: 2026-07-18
+              - 'cell "שריון: פרויקט ענן | כמות: 50" [ref=e528]':
+                - generic "לחץ פעמיים להעתקה" [ref=e529]:
+                  - generic [ref=e531]: "שריון: פרויקט ענן | כמות: 50"
+              - cell "-" [ref=e532]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e533] [cursor=pointer]: "-"
+              - cell "פרויקט ענן" [ref=e534]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e535] [cursor=pointer]: פרויקט ענן
+              - cell "שמור לפרויקט" [ref=e536]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e537] [cursor=pointer]: שמור לפרויקט
+            - 'row "RAM-DT-32-006 SN2025006 זיכרון נייח 32GB Corsair מחסן A - מדף 2 4 2026-06-06 שריון: פרויקט ענן | כמות: 27 שריון: שדרוג תשתיות | כמות: 81 - התקנות חסר במלאי" [ref=e538]':
+              - cell [ref=e539]:
+                - checkbox [ref=e540]
+              - cell "RAM-DT-32-006" [ref=e541]:
+                - generic "לחץ פעמיים להעתקה" [ref=e542]: RAM-DT-32-006
+              - cell "SN2025006" [ref=e543]:
+                - generic "לחץ פעמיים להעתקה" [ref=e544]: SN2025006
+              - cell "זיכרון נייח 32GB" [ref=e545]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e546] [cursor=pointer]: זיכרון נייח 32GB
+              - cell "Corsair" [ref=e547]:
+                - generic "לחץ פעמיים להעתקה" [ref=e548]: Corsair
+              - cell "מחסן A - מדף 2" [ref=e549]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e550] [cursor=pointer]: מחסן A - מדף 2
+              - cell "4" [ref=e551]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e552] [cursor=pointer]: "4"
+              - cell "2026-06-06" [ref=e553]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e554] [cursor=pointer]: 2026-06-06
+              - 'cell "שריון: פרויקט ענן | כמות: 27 שריון: שדרוג תשתיות | כמות: 81" [ref=e555]':
+                - generic "לחץ פעמיים להעתקה" [ref=e556]:
+                  - generic [ref=e557]:
+                    - generic [ref=e558]: "שריון: פרויקט ענן | כמות: 27"
+                    - generic [ref=e559]: "שריון: שדרוג תשתיות | כמות: 81"
+              - cell "-" [ref=e560]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e561] [cursor=pointer]: "-"
+              - cell "התקנות" [ref=e562]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e563] [cursor=pointer]: התקנות
+              - cell "חסר במלאי" [ref=e564]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e565] [cursor=pointer]: חסר במלאי
+            - row "DOCK-USBC-026 SN2025026 תחנת עגינה USB-C Lenovo מחסן C - מדף 3 17 2029-11-27 - - תשתיות -" [ref=e566]:
+              - cell [ref=e567]:
+                - checkbox [ref=e568]
+              - cell "DOCK-USBC-026" [ref=e569]:
+                - generic "לחץ פעמיים להעתקה" [ref=e570]: DOCK-USBC-026
+              - cell "SN2025026" [ref=e571]:
+                - generic "לחץ פעמיים להעתקה" [ref=e572]: SN2025026
+              - cell "תחנת עגינה USB-C" [ref=e573]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e574] [cursor=pointer]: תחנת עגינה USB-C
+              - cell "Lenovo" [ref=e575]:
+                - generic "לחץ פעמיים להעתקה" [ref=e576]: Lenovo
+              - cell "מחסן C - מדף 3" [ref=e577]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e578] [cursor=pointer]: מחסן C - מדף 3
+              - cell "17" [ref=e579]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e580] [cursor=pointer]: "17"
+              - cell "2029-11-27" [ref=e581]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e582] [cursor=pointer]: 2029-11-27
+              - cell "-" [ref=e583]:
+                - generic "לחץ פעמיים להעתקה" [ref=e584]: "-"
+              - cell "-" [ref=e585]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e586] [cursor=pointer]: "-"
+              - cell "תשתיות" [ref=e587]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e588] [cursor=pointer]: תשתיות
+              - cell "-" [ref=e589]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e590] [cursor=pointer]: "-"
+            - row "SSD-512-025 SN2025025 כונן SSD 512GB Samsung מחסן B - מדף 3 36 2027-04-12 - - גיבוי תקין" [ref=e591]:
+              - cell [ref=e592]:
+                - checkbox [ref=e593]
+              - cell "SSD-512-025" [ref=e594]:
+                - generic "לחץ פעמיים להעתקה" [ref=e595]: SSD-512-025
+              - cell "SN2025025" [ref=e596]:
+                - generic "לחץ פעמיים להעתקה" [ref=e597]: SN2025025
+              - cell "כונן SSD 512GB" [ref=e598]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e599] [cursor=pointer]: כונן SSD 512GB
+              - cell "Samsung" [ref=e600]:
+                - generic "לחץ פעמיים להעתקה" [ref=e601]: Samsung
+              - cell "מחסן B - מדף 3" [ref=e602]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e603] [cursor=pointer]: מחסן B - מדף 3
+              - cell "36" [ref=e604]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e605] [cursor=pointer]: "36"
+              - cell "2027-04-12" [ref=e606]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e607] [cursor=pointer]: 2027-04-12
+              - cell "-" [ref=e608]:
+                - generic "לחץ פעמיים להעתקה" [ref=e609]: "-"
+              - cell "-" [ref=e610]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e611] [cursor=pointer]: "-"
+              - cell "גיבוי" [ref=e612]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e613] [cursor=pointer]: גיבוי
+              - cell "תקין" [ref=e614]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e615] [cursor=pointer]: תקין
+            - row "MB-B550-022 SN2025022 לוח אם B550 Asus ארון תקשורת קומה 2 34 2026-10-06 - - התקנות נבדק" [ref=e616]:
+              - cell [ref=e617]:
+                - checkbox [ref=e618]
+              - cell "MB-B550-022" [ref=e619]:
+                - generic "לחץ פעמיים להעתקה" [ref=e620]: MB-B550-022
+              - cell "SN2025022" [ref=e621]:
+                - generic "לחץ פעמיים להעתקה" [ref=e622]: SN2025022
+              - cell "לוח אם B550" [ref=e623]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e624] [cursor=pointer]: לוח אם B550
+              - cell "Asus" [ref=e625]:
+                - generic "לחץ פעמיים להעתקה" [ref=e626]: Asus
+              - cell "ארון תקשורת קומה 2" [ref=e627]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e628] [cursor=pointer]: ארון תקשורת קומה 2
+              - cell "34" [ref=e629]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e630] [cursor=pointer]: "34"
+              - cell "2026-10-06" [ref=e631]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e632] [cursor=pointer]: 2026-10-06
+              - cell "-" [ref=e633]:
+                - generic "לחץ פעמיים להעתקה" [ref=e634]: "-"
+              - cell "-" [ref=e635]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e636] [cursor=pointer]: "-"
+              - cell "התקנות" [ref=e637]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e638] [cursor=pointer]: התקנות
+              - cell "נבדק" [ref=e639]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e640] [cursor=pointer]: נבדק
+            - row "PSU-650-018 SN2025018 ספק כוח 650W Corsair מחסן B - מדף 2 24 2026-12-26 - - גיבוי להזמין עוד" [ref=e641]:
+              - cell [ref=e642]:
+                - checkbox [ref=e643]
+              - cell "PSU-650-018" [ref=e644]:
+                - generic "לחץ פעמיים להעתקה" [ref=e645]: PSU-650-018
+              - cell "SN2025018" [ref=e646]:
+                - generic "לחץ פעמיים להעתקה" [ref=e647]: SN2025018
+              - cell "ספק כוח 650W" [ref=e648]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e649] [cursor=pointer]: ספק כוח 650W
+              - cell "Corsair" [ref=e650]:
+                - generic "לחץ פעמיים להעתקה" [ref=e651]: Corsair
+              - cell "מחסן B - מדף 2" [ref=e652]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e653] [cursor=pointer]: מחסן B - מדף 2
+              - cell "24" [ref=e654]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e655] [cursor=pointer]: "24"
+              - cell "2026-12-26" [ref=e656]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e657] [cursor=pointer]: 2026-12-26
+              - cell "-" [ref=e658]:
+                - generic "לחץ פעמיים להעתקה" [ref=e659]: "-"
+              - cell "-" [ref=e660]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e661] [cursor=pointer]: "-"
+              - cell "גיבוי" [ref=e662]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e663] [cursor=pointer]: גיבוי
+              - cell "להזמין עוד" [ref=e664]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e665] [cursor=pointer]: להזמין עוד
+            - row "RAM-DT-32-011 SN2025011 זיכרון נייח 32GB Corsair מחסן A - מדף 2 37 2025-04-23 - - תשתיות AAA" [ref=e666]:
+              - cell [ref=e667]:
+                - checkbox [ref=e668]
+              - cell "RAM-DT-32-011" [ref=e669]:
+                - generic "לחץ פעמיים להעתקה" [ref=e670]: RAM-DT-32-011
+              - cell "SN2025011" [ref=e671]:
+                - generic "לחץ פעמיים להעתקה" [ref=e672]: SN2025011
+              - cell "זיכרון נייח 32GB" [ref=e673]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e674] [cursor=pointer]: זיכרון נייח 32GB
+              - cell "Corsair" [ref=e675]:
+                - generic "לחץ פעמיים להעתקה" [ref=e676]: Corsair
+              - cell "מחסן A - מדף 2" [ref=e677]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e678] [cursor=pointer]: מחסן A - מדף 2
+              - cell "37" [ref=e679]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e680] [cursor=pointer]: "37"
+              - cell "2025-04-23" [ref=e681]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e682] [cursor=pointer]: 2025-04-23
+              - cell "-" [ref=e683]:
+                - generic "לחץ פעמיים להעתקה" [ref=e684]: "-"
+              - cell "-" [ref=e685]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e686] [cursor=pointer]: "-"
+              - cell "תשתיות" [ref=e687]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e688] [cursor=pointer]: תשתיות
+              - cell "AAA" [ref=e689]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e690] [cursor=pointer]: AAA
+            - row "LT-DELL-014 SN2025014 מחשב נייד Latitude Dell מחסן C - מדף 3 41 2027-08-10 - - החלפה AAA" [ref=e691]:
+              - cell [ref=e692]:
+                - checkbox [ref=e693]
+              - cell "LT-DELL-014" [ref=e694]:
+                - generic "לחץ פעמיים להעתקה" [ref=e695]: LT-DELL-014
+              - cell "SN2025014" [ref=e696]:
+                - generic "לחץ פעמיים להעתקה" [ref=e697]: SN2025014
+              - cell "מחשב נייד Latitude" [ref=e698]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e699] [cursor=pointer]: מחשב נייד Latitude
+              - cell "Dell" [ref=e700]:
+                - generic "לחץ פעמיים להעתקה" [ref=e701]: Dell
+              - cell "מחסן C - מדף 3" [ref=e702]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e703] [cursor=pointer]: מחסן C - מדף 3
+              - cell "41" [ref=e704]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e705] [cursor=pointer]: "41"
+              - cell "2027-08-10" [ref=e706]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e707] [cursor=pointer]: 2027-08-10
+              - cell "-" [ref=e708]:
+                - generic "לחץ פעמיים להעתקה" [ref=e709]: "-"
+              - cell "-" [ref=e710]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e711] [cursor=pointer]: "-"
+              - cell "החלפה" [ref=e712]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e713] [cursor=pointer]: החלפה
+              - cell "AAA" [ref=e714]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e715] [cursor=pointer]: AAA
+            - row "DOCK-USBC-010 SN2025010 תחנת עגינה USB-C Lenovo מחסן A - מדף 5 50 2027-04-10 - - עובדים חדשים AAA" [ref=e716]:
+              - cell [ref=e717]:
+                - checkbox [ref=e718]
+              - cell "DOCK-USBC-010" [ref=e719]:
+                - generic "לחץ פעמיים להעתקה" [ref=e720]: DOCK-USBC-010
+              - cell "SN2025010" [ref=e721]:
+                - generic "לחץ פעמיים להעתקה" [ref=e722]: SN2025010
+              - cell "תחנת עגינה USB-C" [ref=e723]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e724] [cursor=pointer]: תחנת עגינה USB-C
+              - cell "Lenovo" [ref=e725]:
+                - generic "לחץ פעמיים להעתקה" [ref=e726]: Lenovo
+              - cell "מחסן A - מדף 5" [ref=e727]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e728] [cursor=pointer]: מחסן A - מדף 5
+              - cell "50" [ref=e729]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e730] [cursor=pointer]: "50"
+              - cell "2027-04-10" [ref=e731]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e732] [cursor=pointer]: 2027-04-10
+              - cell "-" [ref=e733]:
+                - generic "לחץ פעמיים להעתקה" [ref=e734]: "-"
+              - cell "-" [ref=e735]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e736] [cursor=pointer]: "-"
+              - cell "עובדים חדשים" [ref=e737]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e738] [cursor=pointer]: עובדים חדשים
+              - cell "AAA" [ref=e739]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e740] [cursor=pointer]: AAA
+            - row "GPU-3060-016 SN2025016 כרטיס מסך RTX 3060 Gigabyte מחסן B - מדף 2 21 2026-10-17 - - מלאי חירום AAA" [ref=e741]:
+              - cell [ref=e742]:
+                - checkbox [ref=e743]
+              - cell "GPU-3060-016" [ref=e744]:
+                - generic "לחץ פעמיים להעתקה" [ref=e745]: GPU-3060-016
+              - cell "SN2025016" [ref=e746]:
+                - generic "לחץ פעמיים להעתקה" [ref=e747]: SN2025016
+              - cell "כרטיס מסך RTX 3060" [ref=e748]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e749] [cursor=pointer]: כרטיס מסך RTX 3060
+              - cell "Gigabyte" [ref=e750]:
+                - generic "לחץ פעמיים להעתקה" [ref=e751]: Gigabyte
+              - cell "מחסן B - מדף 2" [ref=e752]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e753] [cursor=pointer]: מחסן B - מדף 2
+              - cell "21" [ref=e754]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e755] [cursor=pointer]: "21"
+              - cell "2026-10-17" [ref=e756]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e757] [cursor=pointer]: 2026-10-17
+              - cell "-" [ref=e758]:
+                - generic "לחץ פעמיים להעתקה" [ref=e759]: "-"
+              - cell "-" [ref=e760]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e761] [cursor=pointer]: "-"
+              - cell "מלאי חירום" [ref=e762]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e763] [cursor=pointer]: מלאי חירום
+              - cell "AAA" [ref=e764]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e765] [cursor=pointer]: AAA
+            - row "GPU-3060-017 SN2025017 כרטיס מסך RTX 3060 Gigabyte מחסן B - מדף 4 41 2026-10-18 - - תשתיות AAA" [ref=e766]:
+              - cell [ref=e767]:
+                - checkbox [ref=e768]
+              - cell "GPU-3060-017" [ref=e769]:
+                - generic "לחץ פעמיים להעתקה" [ref=e770]: GPU-3060-017
+              - cell "SN2025017" [ref=e771]:
+                - generic "לחץ פעמיים להעתקה" [ref=e772]: SN2025017
+              - cell "כרטיס מסך RTX 3060" [ref=e773]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e774] [cursor=pointer]: כרטיס מסך RTX 3060
+              - cell "Gigabyte" [ref=e775]:
+                - generic "לחץ פעמיים להעתקה" [ref=e776]: Gigabyte
+              - cell "מחסן B - מדף 4" [ref=e777]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e778] [cursor=pointer]: מחסן B - מדף 4
+              - cell "41" [ref=e779]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e780] [cursor=pointer]: "41"
+              - cell "2026-10-18" [ref=e781]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e782] [cursor=pointer]: 2026-10-18
+              - cell "-" [ref=e783]:
+                - generic "לחץ פעמיים להעתקה" [ref=e784]: "-"
+              - cell "-" [ref=e785]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e786] [cursor=pointer]: "-"
+              - cell "תשתיות" [ref=e787]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e788] [cursor=pointer]: תשתיות
+              - cell "AAA" [ref=e789]:
+                - generic "לחץ פעמיים לעריכה, Ctrl+Click לסימון" [ref=e790] [cursor=pointer]: AAA
+        - generic [ref=e792]:
+          - generic [ref=e793]:
+            - generic [ref=e794]: 📊 מציג 1-25 מתוך 42 פריטים
+            - generic [ref=e795]:
+              - generic [ref=e796]: "הצג:"
+              - combobox [ref=e797] [cursor=pointer]:
+                - option "25" [selected]
+                - option "50"
+                - option "75"
+                - option "100"
+                - option "הכל"
+          - generic [ref=e798]:
+            - button "עמוד ראשון" [disabled] [ref=e799]:
+              - img [ref=e800]
+            - button "הקודם" [disabled] [ref=e803]:
+              - img [ref=e804]
+            - generic [ref=e806]:
+              - generic [ref=e807]: "1"
+              - generic [ref=e808]: /
+              - generic [ref=e809]: "2"
+            - button "הבא" [ref=e810] [cursor=pointer]:
+              - img [ref=e811]
+            - button "עמוד אחרון" [ref=e813] [cursor=pointer]:
+              - img [ref=e814]
+```

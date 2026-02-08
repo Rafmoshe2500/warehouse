@@ -23,7 +23,7 @@ const InventoryHeader = ({
       <div className="action-buttons">
         {canEdit && (
           <>
-            <Button variant="secondary" onClick={onUploadClick} disabled={uploadingExcel} className="btn-icon">
+            <Button variant="secondary" onClick={onUploadClick} disabled={uploadingExcel} className="btn-icon" data-testid="import-button">
               <FiUpload /> {uploadingExcel ? 'טוען...' : 'יבוא אקסל'}
             </Button>
 
@@ -33,7 +33,7 @@ const InventoryHeader = ({
           </>
         )}
 
-        <Button variant="secondary" onClick={onExportClick} className="btn-icon">
+        <Button variant="secondary" onClick={onExportClick} className="btn-icon" data-testid="export-button">
           <FiDownload /> ייצוא
         </Button>
 
@@ -48,7 +48,7 @@ const InventoryHeader = ({
 
         {canEdit && (
           <>
-            <Button onClick={onAddClick} className="btn-icon">
+            <Button onClick={onAddClick} className="btn-icon" data-testid="add-item-button">
               <FiPlus /> הוסף פריט
             </Button>
             <Button 
@@ -57,6 +57,7 @@ const InventoryHeader = ({
               disabled={selectedItems.length === 0}
               className="btn-icon"
               title={selectedItems.length === 0 ? "סמן פריטים לעריכה" : "ערוך פריטים מסומנים"}
+              data-testid="bulk-edit-button"
             >
               <FiEdit2 /> עריכה {selectedItems.length > 0 && `(${selectedItems.length})`}
             </Button>
@@ -67,6 +68,7 @@ const InventoryHeader = ({
               disabled={selectedItems.length === 0}
               className="btn-icon"
               title={selectedItems.length === 0 ? "סמן פריטים למחיקה" : "מחק פריטים מסומנים"}
+              data-testid="delete-button"
             >
               <FiTrash2 /> מחק {selectedItems.length > 0 && `(${selectedItems.length})`}
             </Button>

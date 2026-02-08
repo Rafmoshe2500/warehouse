@@ -120,21 +120,25 @@ class AuditRepository:
                 search_or.extend([
                     {f"{w}.actor": search_regex},
                     {f"{w}.target_user": search_regex},
-                    {f"{w}.target_resource": search_regex},
+                    {f"{w}.target_resource_name": search_regex},
                     {f"{w}.resource_id": search_regex},
                     {f"{w}.reason": search_regex},
                     {f"{w}.details": search_regex},
-                    {f"{w}.changes.name": search_regex},
-                    {f"{w}.changes.catalog_number": search_regex}
                 ])
             
+            # If there's already an $or in query, we need to wrap everything in $and
             if "$or" in query:
-                # Merge or use $and? 
-                # This logic is getting complex. 
-                # Simplification: If explicit target_resource is set (99% cases), we only query 1 wrapper.
-                pass
-            
-            query.setdefault("$or", []).extend(search_or)
+                existing_or = query.pop("$or")
+                query = {
+                    "$and": [
+                        {"$or": existing_or},
+                        {"$or": search_or},
+                        query  # Add other conditions
+                    ]
+                }
+            else:
+                query["$or"] = search_or
+
 
 
         # If we have multiple OR conditions, we might need $and: [{$or: ...}, {$or: ...}]

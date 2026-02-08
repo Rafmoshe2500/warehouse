@@ -82,6 +82,7 @@ const LoginPage = () => {
         <button
           className="login-selection__option login-selection__option--local"
           onClick={() => setAuthMode('local')}
+          data-testid="local-login-button"
         >
           <div className="login-selection__option-icon">
             <FiUsers size={32} />
@@ -96,6 +97,7 @@ const LoginPage = () => {
         <button
           className="login-selection__option login-selection__option--domain"
           onClick={handleDomainLogin}
+          data-testid="domain-login-button"
         >
           <div className="login-selection__option-icon">
             <FiServer size={32} />

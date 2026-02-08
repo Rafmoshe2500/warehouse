@@ -1,0 +1,125 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e7]
+        - generic [ref=e9]:
+          - heading "890Warehouse" [level=1] [ref=e10]
+          - text: Next-Gen Warehouse Management
+      - generic [ref=e11]:
+        - button "עבור למצב בהיר" [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+        - generic [ref=e19]:
+          - img [ref=e21]
+          - generic [ref=e24]: admin
+        - button "יציאה" [ref=e25] [cursor=pointer]:
+          - img [ref=e27]
+          - generic [ref=e30]: יציאה
+  - navigation [ref=e31]:
+    - generic [ref=e32]:
+      - link "דשבורד" [ref=e33] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e34]
+        - generic [ref=e37]: דשבורד
+      - link "מלאי" [ref=e38] [cursor=pointer]:
+        - /url: /inventory
+        - img [ref=e39]
+        - generic [ref=e43]: מלאי
+      - link "ניהול רכש" [ref=e44] [cursor=pointer]:
+        - /url: /procurement
+        - img [ref=e45]
+        - generic [ref=e49]: ניהול רכש
+      - link "ניהול מערכת" [ref=e50] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e51]
+        - generic [ref=e56]: ניהול מערכת
+  - generic [ref=e57]:
+    - generic [ref=e58]:
+      - button "מלאי נוכחי" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+        - text: מלאי נוכחי
+      - button "מלאי ישן" [ref=e64] [cursor=pointer]:
+        - img [ref=e65]
+        - text: מלאי ישן
+      - button "תנועות" [ref=e68] [cursor=pointer]:
+        - img [ref=e69]
+        - text: תנועות
+    - generic [ref=e72]:
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - button "יבוא אקסל" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]:
+              - img [ref=e77]
+              - text: יבוא אקסל
+          - button "העלאת שריונים" [ref=e80] [cursor=pointer]:
+            - generic [ref=e81]:
+              - img [ref=e82]
+              - text: העלאת שריונים
+          - button "ייצוא" [ref=e85] [cursor=pointer]:
+            - generic [ref=e86]:
+              - img [ref=e87]
+              - text: ייצוא
+          - button "הצג פילטר" [ref=e90] [cursor=pointer]:
+            - generic [ref=e91]:
+              - img [ref=e92]
+              - text: הצג פילטר
+          - button "הוסף פריט" [ref=e94] [cursor=pointer]:
+            - generic [ref=e95]:
+              - img [ref=e96]
+              - text: הוסף פריט
+          - button "עריכה" [disabled] [ref=e97]:
+            - generic [ref=e98]:
+              - img [ref=e99]
+              - text: עריכה
+          - button "מחק" [disabled] [ref=e101]:
+            - generic [ref=e102]:
+              - img [ref=e103]
+              - text: מחק
+        - textbox "חיפוש חופשי..." [ref=e108]: שינוי זמני
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - table [ref=e113]:
+            - rowgroup [ref=e114]:
+              - row "מק\"ט סריאלי תיאור יצרן מיקום מלאי אחריות שריון עבור אתר יעד יעוד הערות" [ref=e115]:
+                - columnheader [ref=e116]:
+                  - checkbox [ref=e117]
+                - columnheader "מק\"ט" [ref=e118] [cursor=pointer]:
+                  - generic [ref=e119]: מק"ט
+                - columnheader "סריאלי" [ref=e120] [cursor=pointer]:
+                  - generic [ref=e121]: סריאלי
+                - columnheader "תיאור" [ref=e122] [cursor=pointer]:
+                  - generic [ref=e123]: תיאור
+                - columnheader "יצרן" [ref=e124] [cursor=pointer]:
+                  - generic [ref=e125]: יצרן
+                - columnheader "מיקום" [ref=e126] [cursor=pointer]:
+                  - generic [ref=e127]: מיקום
+                - columnheader "מלאי" [ref=e128] [cursor=pointer]:
+                  - generic [ref=e129]: מלאי
+                - columnheader "אחריות" [ref=e130] [cursor=pointer]:
+                  - generic [ref=e131]: אחריות
+                - columnheader "שריון עבור" [ref=e132] [cursor=pointer]:
+                  - generic [ref=e133]: שריון עבור
+                - columnheader "אתר יעד" [ref=e134] [cursor=pointer]:
+                  - generic [ref=e135]: אתר יעד
+                - columnheader "יעוד" [ref=e136] [cursor=pointer]:
+                  - generic [ref=e137]: יעוד
+                - columnheader "הערות" [ref=e138] [cursor=pointer]:
+                  - generic [ref=e139]: הערות
+            - rowgroup [ref=e140]:
+              - row "לא נמצאו פריטים תואמים" [ref=e141]:
+                - cell "לא נמצאו פריטים תואמים" [ref=e142]
+          - paragraph [ref=e144]: לא נמצאו פריטים
+        - generic [ref=e147]:
+          - generic [ref=e148]: 📊 מציג 1-0 מתוך 0 פריטים
+          - generic [ref=e149]:
+            - generic [ref=e150]: "הצג:"
+            - combobox [ref=e151] [cursor=pointer]:
+              - option "25"
+              - option "50"
+              - option "75"
+              - option "100"
+              - option "הכל" [selected]
+```

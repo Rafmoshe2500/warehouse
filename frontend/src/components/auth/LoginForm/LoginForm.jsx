@@ -36,6 +36,7 @@ const LoginForm = ({ onSubmit, loading, error }) => {
               className="login-form__input"
               required
               disabled={loading}
+              data-testid="username-input"
             />
           </div>
         </div>
@@ -52,6 +53,7 @@ const LoginForm = ({ onSubmit, loading, error }) => {
               className="login-form__input"
               required
               disabled={loading}
+              data-testid="password-input"
             />
           </div>
         </div>
@@ -64,6 +66,7 @@ const LoginForm = ({ onSubmit, loading, error }) => {
         loading={loading}
         disabled={loading || !username || !password}
         className="login-form__submit"
+        data-testid="login-submit-button"
       >
         התחבר
       </Button>

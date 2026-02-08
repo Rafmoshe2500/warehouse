@@ -61,7 +61,7 @@ async def startup_db_client():
     try:
         # Connect to MongoDB
         await MongoDB.connect()
-        
+
         # Initialize first admin from env vars
         from app.db.init_admin import init_admin
         await init_admin()

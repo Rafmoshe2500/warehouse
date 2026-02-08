@@ -26,6 +26,7 @@ export const useAnalytics = () => {
                 return data;
             },
             staleTime: 1000 * 60 * 5,
+            placeholderData: (previousData) => previousData, // Keep old data while fetching
         });
     };
 

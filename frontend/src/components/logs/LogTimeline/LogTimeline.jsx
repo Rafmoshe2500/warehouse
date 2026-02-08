@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiUpload, FiRotateCcw } from 'react-icons/fi';
-import { ACTION_LABELS, FIELD_LABELS } from '../../../utils/constants';
+import { ACTION_LABELS, FIELD_LABELS, ROLE_LABELS } from '../../../utils/constants';
 import { formatDateTime } from '../../../utils/formatters';
 import './LogTimeline.css';
 
@@ -14,66 +14,41 @@ const roleBadgeStyle = {
     border: '1px solid rgba(0,0,0,0.1)'
 };
 
+
+const ACTION_CONFIG = {
+  create: { icon: FiPlus, className: 'log-item--success' },
+  update: { icon: FiEdit2, className: 'log-item--info' },
+  delete: { icon: FiTrash2, className: 'log-item--danger' },
+  import: { icon: FiUpload, className: 'log-item--success' },
+  undo: { icon: FiRotateCcw, className: 'log-item--undo' },
+  bulk_update: { icon: FiEdit2, className: 'log-item--info' },
+  bulk_delete: { icon: FiTrash2, className: 'log-item--danger' },
+  password_change: { icon: FiEdit2, className: 'log-item--info' },
+  role_change: { icon: FiEdit2, className: 'log-item--info' },
+  group_create: { icon: FiPlus, className: 'log-item--success' },
+  group_update: { icon: FiEdit2, className: 'log-item--info' },
+  group_delete: { icon: FiTrash2, className: 'log-item--danger' },
+  file_upload: { icon: FiPlus, className: 'log-item--success' },
+  file_delete: { icon: FiTrash2, className: 'log-item--danger' },
+  delete_all: { icon: FiTrash2, className: 'log-item--danger' },
+};
+
+const getActionConfig = (action) => {
+  // Normalize action (remove prefixes like item_, user_, procurement_)
+  const normalizedAction = action.replace(/^(item_|user_|procurement_)/, '');
+  return ACTION_CONFIG[normalizedAction] || { icon: FiEdit2, className: '' };
+};
+
+const getActionIcon = (action) => {
+  const IconComponent = getActionConfig(action).icon;
+  return <IconComponent size={16} />;
+};
+
+const getActionClass = (action) => {
+  return getActionConfig(action).className;
+};
+
 const LogTimeline = ({ logs }) => {
-  const getActionIcon = (action) => {
-    // Normalize action (remove prefixes like item_, user_, procurement_)
-    const normalizedAction = action.replace(/^(item_|user_|procurement_)/, '');
-
-    switch (normalizedAction) {
-      case 'create':
-      case 'group_create':
-      case 'file_upload':
-        return <FiPlus size={16} />;
-      case 'update':
-      case 'bulk_update':
-      case 'password_change':
-      case 'role_change':
-      case 'group_update':
-        return <FiEdit2 size={16} />;
-      case 'delete':
-      case 'bulk_delete':
-      case 'delete_all':
-      case 'file_delete':
-      case 'group_delete':
-        return <FiTrash2 size={16} />;
-      case 'import':
-        return <FiUpload size={16} />;
-      case 'undo':
-        return <FiRotateCcw size={16} />;
-      default:
-        return <FiEdit2 size={16} />;
-    }
-  };
-
-  const getActionClass = (action) => {
-    // Normalize action
-    const normalizedAction = action.replace(/^(item_|user_|procurement_)/, '');
-
-    switch (normalizedAction) {
-      case 'create':
-      case 'import':
-      case 'file_upload':
-      case 'group_create':
-        return 'log-item--success';
-      case 'update':
-      case 'bulk_update':
-      case 'password_change':
-      case 'role_change':
-      case 'group_update':
-        return 'log-item--info';
-      case 'delete':
-      case 'bulk_delete':
-      case 'delete_all':
-      case 'file_delete':
-      case 'group_delete':
-        return 'log-item--danger';
-      case 'undo':
-        return 'log-item--undo';
-      default:
-        return '';
-    }
-  };
-
   return (
     <div className="log-timeline">
       {logs.map((log) => (
@@ -90,7 +65,6 @@ const LogTimeline = ({ logs }) => {
             {log.target_user && (
               <div className="log-item__detail">
                 <strong>משתמש:</strong> {log.target_user}
-                {log.target_role && <span className="role-badge-mini">{log.target_role}</span>}
               </div>
             )}
 
@@ -125,8 +99,7 @@ const LogTimeline = ({ logs }) => {
                   // Translation helper for values
                   const translateValue = (field, value) => {
                     if (field === 'role') {
-                      const roles = { 'admin': 'מנהל', 'user': 'משתמש', 'superadmin': 'סופר-אדמין' };
-                      return roles[value] || value;
+                      return ROLE_LABELS[value] || value;
                     }
                     if (field === 'is_active') {
                       return value ? 'כן' : 'לא';
