@@ -36,10 +36,6 @@ class ProcurementService:
         self.s3_service = S3Service()
         self.audit_service = AuditService()
     
-    def can_edit_procurement(self, user_role: str) -> bool:
-        """Check if user can edit procurement (admin or superadmin)"""
-        return user_role in [UserRole.ADMIN, UserRole.SUPERADMIN]
-    
     async def create_order(
         self,
         order_data: ProcurementOrderCreate,
@@ -114,12 +110,9 @@ class ProcurementService:
         self,
         order_id: str,
         update_data: ProcurementOrderUpdate,
-        user_role: str,
         username: str = "unknown"
     ) -> dict:
         """Update procurement order"""
-        if not self.can_edit_procurement(user_role):
-            raise HTTPException(status_code=403, detail="אין לך הרשאה לערוך הזמנות")
         
         # Get existing order
         existing_order = await self.get_order_by_id(order_id)
@@ -173,7 +166,7 @@ class ProcurementService:
                 await self.audit_service.log_user_action(
                     action=AuditAction.PROCUREMENT_UPDATE,
                     actor=username,
-                    actor_role=user_role,
+                    actor_role="unknown",  # user_role removed from input
                     target_resource="procurement_order",
                     resource_id=order_id,
                     changes=changes
@@ -183,10 +176,8 @@ class ProcurementService:
         
         return updated_order
     
-    async def delete_order(self, order_id: str, user_role: str, username: str = "unknown") -> bool:
+    async def delete_order(self, order_id: str, username: str = "unknown") -> bool:
         """Delete procurement order and all associated files"""
-        if not self.can_edit_procurement(user_role):
-            raise HTTPException(status_code=403, detail="אין לך הרשאה למחוק הזמנות")
         
         # Get order to delete files
         order = await self.get_order_by_id(order_id)
@@ -208,7 +199,7 @@ class ProcurementService:
             await self.audit_service.log_user_action(
                 action=AuditAction.PROCUREMENT_DELETE,
                 actor=username,
-                actor_role=user_role,
+                actor_role="unknown",  # user_role removed from input
                 target_resource="procurement_order",
                 resource_id=order_id,
                 reason="Deleted by user"
@@ -222,12 +213,9 @@ class ProcurementService:
         self,
         order_id: str,
         file: UploadFile,
-        uploaded_by: str,
-        user_role: str
+        uploaded_by: str
     ) -> dict:
         """Upload file to procurement order"""
-        if not self.can_edit_procurement(user_role):
-            raise HTTPException(status_code=403, detail="אין לך הרשאה להעלות קבצים")
         
         # Validate order exists
         await self.get_order_by_id(order_id)
@@ -245,12 +233,9 @@ class ProcurementService:
                 detail=f"גודל הקובץ חורג מהמקסימום המותר ({MAX_FILE_SIZE / 1024 / 1024}MB)"
             )
         
-        # Reset file pointer for upload
-        await file.seek(0)
-        
         # Upload to S3 or local storage
         upload_result = await self.s3_service.upload_file(
-            file_content=file.file,
+            file_content=file_content,
             filename=file.filename,
             content_type=file.content_type or 'application/octet-stream'
         )
@@ -282,7 +267,7 @@ class ProcurementService:
             await self.audit_service.log_user_action(
                 action=AuditAction.PROCUREMENT_FILE_UPLOAD,
                 actor=uploaded_by,
-                actor_role=user_role,
+                actor_role="unknown",  # user_role removed from input
                 target_resource="procurement_order",
                 resource_id=order_id,
                 changes={"filename": file.filename}
@@ -314,10 +299,8 @@ class ProcurementService:
         
         return file_content, file_metadata["filename"], file_metadata["file_type"]
     
-    async def delete_file(self, order_id: str, file_id: str, user_role: str, username: str = "unknown") -> bool:
+    async def delete_file(self, order_id: str, file_id: str, username: str = "unknown") -> bool:
         """Delete file from procurement order"""
-        if not self.can_edit_procurement(user_role):
-            raise HTTPException(status_code=403, detail="אין לך הרשאה למחוק קבצים")
         
         # Get file metadata
         file_metadata = await self.repository.get_file_metadata(order_id, file_id)
@@ -340,7 +323,7 @@ class ProcurementService:
             await self.audit_service.log_user_action(
                 action=AuditAction.PROCUREMENT_FILE_DELETE,
                 actor=username,
-                actor_role=user_role,
+                actor_role="unknown",  # user_role removed from input
                 target_resource="procurement_order",
                 resource_id=order_id,
                 changes={"filename": file_metadata["filename"]}

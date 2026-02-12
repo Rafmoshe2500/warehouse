@@ -37,7 +37,40 @@ export const useItems = (queryParams = null) => {
   const updateItemMutation = useMutation({
     mutationFn: ({ itemId, field, value, isUndo }) => 
       itemService.updateItem(itemId, field, value, isUndo),
-    onSuccess: () => invalidateItems(),
+    // Optimistic Update
+    onMutate: async ({ itemId, field, value }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: QUERY_KEYS.items.all });
+
+      // Snapshot the previous value
+      const previousItems = queryClient.getQueriesData({ queryKey: QUERY_KEYS.items.all });
+
+      // Optimistically update to the new value
+      queryClient.setQueriesData({ queryKey: QUERY_KEYS.items.all }, (old) => {
+        if (!old || !old.items) return old;
+        return {
+          ...old,
+          items: old.items.map((item) => 
+            item._id === itemId ? { ...item, [field]: value } : item
+          ),
+        };
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousItems };
+    },
+    // If the mutation fails, use the context returned from onMutate to roll back
+    onError: (err, newTodo, context) => {
+      if (context?.previousItems) {
+        context.previousItems.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      invalidateItems();
+    },
   });
 
   const bulkUpdateMutation = useMutation({

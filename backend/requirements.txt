@@ -10,6 +10,9 @@ openpyxl
 httpx
 pytest
 pytest-asyncio
+slowapi
+bcrypt
+python-jose[cryptography]
 
 # Code Quality
 mypy

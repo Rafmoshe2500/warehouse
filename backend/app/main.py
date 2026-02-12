@@ -22,6 +22,14 @@ app = FastAPI(
     version="2.0.0"
 )
 
+# Rate Limiting
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from app.core.limiter import limiter
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,

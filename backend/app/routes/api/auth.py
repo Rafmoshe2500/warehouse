@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Response, Depends
+from fastapi import APIRouter, Response, Depends, Request
+from app.core.limiter import limiter
 
 from app.schemas.auth import LoginRequest, Token, DomainLoginRequest
 from app.schemas.user import PasswordChange
@@ -15,7 +16,9 @@ def get_user_service():
 
 
 @router.post("/login", response_model=Token)
+@limiter.limit("5/minute")
 async def login(
+    request: Request,
     login_data: LoginRequest,
     response: Response,
     auth_service: AuthService = Depends(get_auth_service)
@@ -25,7 +28,9 @@ async def login(
 
 
 @router.post("/domain-login", response_model=Token)
+@limiter.limit("5/minute")
 async def domain_login(
+    request: Request,
     login_data: DomainLoginRequest,
     response: Response,
     auth_service: AuthService = Depends(get_auth_service)

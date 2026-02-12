@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowRight, FiSearch } from 'react-icons/fi';
+import { ACTION_LABELS } from '../../utils/constants';
 import { useToast } from '../../hooks/useToast';
 import { usePagination } from '../../hooks/usePagination';
 import auditService from '../../api/services/auditService';
@@ -61,17 +62,21 @@ const AuditLogs = ({ isEmbedded = false }) => {
     fetchLogs();
   };
 
-  const ACTION_OPTIONS = [
-    { value: 'user_create', label: 'יצירה' },
-    { value: 'user_update', label: 'עדכון' },
-    { value: 'user_delete', label: 'מחיקה' },
-    { value: 'user_login', label: 'התחברות' },
-    { value: 'user_login', label: 'התחברות' },
-    { value: 'password_change', label: 'שינוי סיסמה' },
-    { value: 'group_create', label: 'יצירת קבוצה' },
-    { value: 'group_update', label: 'עדכון קבוצה' },
-    { value: 'group_delete', label: 'מחיקת קבוצה' }
+  const ACTION_KEYS = [
+    'user_create',
+    'user_update',
+    'user_delete',
+    'user_login',
+    'password_change',
+    'group_create',
+    'group_update',
+    'group_delete'
   ];
+
+  const ACTION_OPTIONS = ACTION_KEYS.map(key => ({
+    value: key,
+    label: ACTION_LABELS[key] || key
+  }));
 
   const totalPages = Math.ceil(totalLogs / itemsPerPage);
 

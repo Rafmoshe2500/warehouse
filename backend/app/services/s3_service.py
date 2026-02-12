@@ -46,74 +46,56 @@ class S3Service:
     
     async def upload_file(
         self,
-        file_content: BinaryIO,
+        file_content: bytes,
         filename: str,
         content_type: str
     ) -> dict:
         """
         Upload file to S3 or local storage
-        
-        Returns:
-            dict with 's3_key' or 'local_path' and 'file_id'
         """
         file_id = str(uuid.uuid4())
         safe_filename = self._sanitize_filename(filename)
         
+        # 1. Try S3 if enabled
         if self.use_s3:
-            return await self._upload_to_s3(file_content, file_id, safe_filename, content_type)
-        else:
-            return await self._upload_to_local(file_content, file_id, safe_filename)
-    
-    async def _upload_to_s3(
-        self,
-        file_content: BinaryIO,
-        file_id: str,
-        filename: str,
-        content_type: str
-    ) -> dict:
-        """Upload file to S3"""
+            try:
+                s3_key = f"procurement/{file_id}/{safe_filename}"
+                self.s3_client.put_object(
+                    Bucket=self.bucket_name,
+                    Key=s3_key,
+                    Body=file_content,
+                    ContentType=content_type
+                )
+                logger.info(f"Uploaded file to S3: {s3_key}")
+                return {
+                    "file_id": file_id,
+                    "s3_key": s3_key,
+                    "local_path": None
+                }
+            except Exception as e:
+                logger.error(f"S3 upload failed: {e}")
+                raise ValueError(f"S3 upload failed: {str(e)}")
+        
+        # 2. Local Storage (Only if S3 is NOT enabled)
         try:
-            s3_key = f"procurement/{file_id}/{filename}"
+            file_dir = self.local_storage_path / file_id
+            file_dir.mkdir(parents=True, exist_ok=True)
+            target_path = file_dir / safe_filename
             
-            self.s3_client.upload_fileobj(
-                file_content,
-                self.bucket_name,
-                s3_key,
-                ExtraArgs={'ContentType': content_type}
-            )
-            
-            logger.info(f"Uploaded file to S3: {s3_key}")
+            with open(target_path, "wb") as f:
+                f.write(file_content)
+                
+            logger.info(f"Saved file to local storage: {target_path}")
             return {
                 "file_id": file_id,
-                "s3_key": s3_key,
-                "local_path": None
+                "s3_key": None,
+                "local_path": str(target_path)
             }
         except Exception as e:
-            logger.error(f"S3 upload failed: {e}")
-            # Fallback to local storage
-            return await self._upload_to_local(file_content, file_id, filename)
-    
-    async def _upload_to_local(
-        self,
-        file_content: BinaryIO,
-        file_id: str,
-        filename: str
-    ) -> dict:
-        """Upload file to local storage"""
-        file_dir = self.local_storage_path / file_id
-        file_dir.mkdir(parents=True, exist_ok=True)
-        
-        file_path = file_dir / filename
-        
-        with open(file_path, 'wb') as f:
-            f.write(file_content.read())
-        
-        logger.info(f"Uploaded file to local storage: {file_path}")
-        return {
-            "file_id": file_id,
-            "s3_key": None,
-            "local_path": str(file_path)
-        }
+            logger.error(f"Local storage upload failed: {e}")
+            raise ValueError(f"Failed to save file: {e}")
+
+
     
     async def download_file(self, s3_key: Optional[str] = None, local_path: Optional[str] = None) -> Optional[bytes]:
         """Download file from S3 or local storage"""

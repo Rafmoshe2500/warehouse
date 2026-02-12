@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FiPackage, FiUsers, FiPieChart, FiShoppingCart } from 'react-icons/fi';
+import { FiPackage, FiSettings, FiShoppingCart, FiPieChart, FiUsers } from 'react-icons/fi';
 import { useAuth } from '../../../context/AuthContext';
+import { PermissionGate } from '../../common';
 import './Navigation.css';
 
 const Navigation = () => {
@@ -20,7 +21,7 @@ const Navigation = () => {
           <span>דשבורד</span>
         </NavLink>
 
-        {(hasPermission('inventory:ro') || hasPermission('inventory:rw')) && (
+        <PermissionGate permission="inventory:ro">
           <NavLink
             to="/inventory"
             className={({ isActive }) =>
@@ -30,9 +31,9 @@ const Navigation = () => {
             <FiPackage size={20} />
             <span>מלאי</span>
           </NavLink>
-        )}
+        </PermissionGate>
 
-        {(hasPermission('procurement:ro') || hasPermission('procurement:rw')) && (
+        <PermissionGate permission="procurement:ro">
           <NavLink
             to="/procurement"
             className={({ isActive }) =>
@@ -42,9 +43,9 @@ const Navigation = () => {
             <FiShoppingCart size={20} />
             <span>ניהול רכש</span>
           </NavLink>
-        )}
+        </PermissionGate>
 
-
+        {/* Admin Link - handled by internal logic of PermissionGate or just keep simple check if complex */}
         {isAdmin && (
           <NavLink
             to="/admin"

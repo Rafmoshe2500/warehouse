@@ -3,6 +3,7 @@ export { default as Input } from './Input/Input';
 export { default as Modal } from './Modal/Modal';
 export { default as Spinner } from './Spinner/Spinner';
 export { default as Toast } from './Toast/Toast';
+export { default as PermissionGate } from './PermissionGate';
 export { default as ToastContainer } from './Toast/ToastContainer';
 export { default as Pagination } from './Pagination/Pagination';
 export { default as TableCell } from './TableCell/TableCell';

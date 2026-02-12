@@ -42,7 +42,6 @@ const ItemSearchChart = () => {
                         value={catalogNumber}
                         onChange={(e) => setCatalogNumber(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleItemSearch()}
-                        icon={FiSearch}
                         style={{ fontSize: '0.875rem' }}
                     />
                 </div>
@@ -60,7 +59,7 @@ const ItemSearchChart = () => {
                 </Button>
             </div>
 
-            <div style={{ flex: 1, minHeight: 0 }}>
+            <div style={{ flex: 1, minHeight: 0, width: '100%' }}>
                 {itemLoading ? (
                     <div className="loading-state"><Spinner size="medium" /></div>
                 ) : itemStats ? (

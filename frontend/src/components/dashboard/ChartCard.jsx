@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './ChartCard.css';
 
-const ChartCard = React.memo(({ title, icon: Icon, children, className, headerContent }) => {
+const ChartCard = React.memo(({ title, icon: Icon, children, className = '', headerContent }) => {
     return (
         <div className={`chart-card ${className}`}>
             <div className="chart-header">
@@ -25,10 +25,6 @@ ChartCard.propTypes = {
     children: PropTypes.node.isRequired,
     className: PropTypes.string,
     headerContent: PropTypes.node
-};
-
-ChartCard.defaultProps = {
-    className: ''
 };
 
 ChartCard.displayName = 'ChartCard';

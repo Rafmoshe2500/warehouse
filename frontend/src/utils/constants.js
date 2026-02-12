@@ -17,6 +17,17 @@ export const FIELD_LABELS = {
   role: 'תפקיד',
   is_active: 'פעיל',
   username: 'שם משתמש',
+  email: 'אימייל',
+  last_login: 'כניסה אחרונה',
+  groups: 'קבוצות',
+  is_superuser: 'סופר-אדמין',
+  permissions: 'הרשאות',
+  phone_number: 'טלפון',
+  department: 'מחלקה',
+  updated_at: 'תאריך עדכון',
+  created_at: 'תאריך יצירה',
+  modified_count: 'כמות שורות שהושפעו',
+  target_site: 'אתר יעד',
 };
 
 export const PROCUREMENT_STATUS_OPTIONS = [
@@ -45,6 +56,18 @@ export const ACTION_LABELS = {
   item_import: 'יבוא אקסל',
   undo: 'ביטול פעולה',
   redo: 'שחזור פעולה',
+};
+
+export const ADMIN_ACTION_LABELS = {
+  user_create: 'יצירת משתמש',
+  user_update: 'עדכון משתמש',
+  user_delete: 'מחיקת משתמש',
+  user_login: 'התחברות',
+  password_change: 'שינוי סיסמה',
+  group_create: 'יצירת קבוצה',
+  group_update: 'עדכון קבוצה',
+  group_delete: 'מחיקת קבוצה',
+  access_control_update: 'עדכון הרשאות',
 };
 
 export const EDITABLE_FIELDS = [

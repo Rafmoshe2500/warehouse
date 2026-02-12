@@ -7,6 +7,7 @@ const Button = ({
   variant = 'primary',
   icon,
   disabled = false,
+  loading = false,
   type = 'button',
   className = '',
   ...props
@@ -14,13 +15,19 @@ const Button = ({
   return (
     <button
       type={type}
-      className={`button button--${variant} ${className}`}
+      className={`button button--${variant} ${className} ${loading ? 'button--loading' : ''}`}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       {...props}
     >
-      {icon && <span className="button__icon">{icon}</span>}
-      <span className="button__text">{children}</span>
+      {loading ? (
+        <span className="button__loading-text">טוען...</span>
+      ) : (
+        <>
+          {icon && <span className="button__icon">{icon}</span>}
+          <span className="button__text">{children}</span>
+        </>
+      )}
     </button>
   );
 };

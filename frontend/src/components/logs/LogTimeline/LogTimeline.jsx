@@ -51,8 +51,8 @@ const getActionClass = (action) => {
 const LogTimeline = ({ logs }) => {
   return (
     <div className="log-timeline">
-      {logs.map((log) => (
-        <div key={log._id} className={`log-item ${getActionClass(log.action)}`}>
+      {logs.map((log, index) => (
+        <div key={`${log._id || 'log'}-${index}`} className={`log-item ${getActionClass(log.action)}`}>
           <div className="log-item__icon">{getActionIcon(log.action)}</div>
           
           <div className="log-item__content">
@@ -75,7 +75,8 @@ const LogTimeline = ({ logs }) => {
               </div>
             )}
 
-            {log.details && (
+            {/* Generic details - hide if we have specific changes to avoid duplication */}
+            {log.details && (!log.changes || Object.keys(log.changes).length === 0) && (
               <div className="log-item__detail">{log.details}</div>
             )}
 
@@ -98,11 +99,16 @@ const LogTimeline = ({ logs }) => {
 
                   // Translation helper for values
                   const translateValue = (field, value) => {
+                    if (value === undefined || value === null) return value;
+                    
                     if (field === 'role') {
                       return ROLE_LABELS[value] || value;
                     }
                     if (field === 'is_active') {
                       return value ? 'כן' : 'לא';
+                    }
+                    if (['created_at', 'updated_at', 'last_login', 'warranty_expiry'].includes(field)) {
+                        return formatDateTime(value);
                     }
                     return value;
                   };

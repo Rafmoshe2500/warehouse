@@ -4,12 +4,14 @@ import { useAuth } from '../../context/AuthContext';
 import { FiUsers, FiServer, FiArrowRight } from 'react-icons/fi';
 import LoginForm from '../../components/auth/LoginForm/LoginForm';
 import authService from '../../api/services/authService';
+import { useToast } from '../../hooks/useToast';
+import ToastContainer from '../../components/common/Toast/ToastContainer';
 import './LoginPage.css';
 
 const LoginPage = () => {
   const [authMode, setAuthMode] = useState(null); // null = selection, 'local' = local form, 'domain' = domain
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { toasts, removeToast, error: toastError } = useToast();
   const { login, isAuthenticated, isAdmin, hasPermission } = useAuth();
   const navigate = useNavigate();
 
@@ -30,13 +32,12 @@ const LoginPage = () => {
 
   const handleLogin = async (username, password) => {
     setLoading(true);
-    setError('');
 
     try {
       await login({ username, password }); 
       // Navigation will be handled by the useEffect below
     } catch (err) {
-      setError(err.response?.data?.detail || 'שגיאה בהתחברות');
+      toastError(err.response?.data?.detail || 'שגיאה בהתחברות');
       setLoading(false);
     }
   };
@@ -58,13 +59,12 @@ const LoginPage = () => {
         window.location.search = `?hashToken=${hashToken}`;
     } catch (error) {
        console.error("Domain login failed:", error);
-       setError('התחברות דומיין נכשלה');
+       toastError('התחברות דומיין נכשלה');
     }
   };
 
   const handleBack = () => {
     setAuthMode(null);
-    setError('');
   };
 
   // Auth Selection Screen
@@ -110,7 +110,7 @@ const LoginPage = () => {
         </button>
       </div>
 
-      {error && <div className="login-selection__error">{error}</div>}
+      {/* {error && <div className="login-selection__error">{error}</div>} - Replaced by Toast */}
     </div>
   );
 
@@ -121,12 +121,13 @@ const LoginPage = () => {
         <FiArrowRight />
         <span>חזרה</span>
       </button>
-      <LoginForm onSubmit={handleLogin} loading={loading} error={error} />
+      <LoginForm onSubmit={handleLogin} loading={loading} />
     </div>
   );
 
   return (
     <div className="login-page">
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
       <div className="login-page__container">
         {authMode === null && renderAuthSelection()}
         {authMode === 'local' && renderLocalLogin()}

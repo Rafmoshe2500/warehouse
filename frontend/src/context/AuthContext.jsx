@@ -16,9 +16,20 @@ export const AuthProvider = ({ children }) => {
   const isSuperAdmin = user?.role === 'superadmin';
 
   const hasPermission = useCallback((permission) => {
-    if (isSuperAdmin) return true;
-    return user?.permissions?.includes(permission) || false;
-  }, [user?.permissions, isSuperAdmin]);
+    // 1. SuperAdmin / Admin has full access
+    if (isSuperAdmin || isAdmin) return true;
+    
+    // 2. Exact match
+    if (user?.permissions?.includes(permission)) return true;
+
+    // 3. Hierarchy check: 'inventory:rw' implies 'inventory:ro'
+    if (permission.endsWith(':ro')) {
+      const rwPermission = permission.replace(':ro', ':rw');
+      if (user?.permissions?.includes(rwPermission)) return true;
+    }
+
+    return false;
+  }, [user?.permissions, isSuperAdmin, isAdmin]);
 
   // Memoize only the stable values, not the mutation functions
   const value = useMemo(() => ({

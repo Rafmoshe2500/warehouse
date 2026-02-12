@@ -65,11 +65,6 @@ async def create_order(
 ):
     """Create new procurement order (admin+ only)"""
     username = current_user.get("username") or current_user.get("sub")
-    role = current_user.get("role", "user")
-    
-    if not procurement_service.can_edit_procurement(role):
-        from fastapi import HTTPException
-        raise HTTPException(status_code=403, detail="אין לך הרשאה ליצור הזמנות")
     
     return await procurement_service.create_order(
         order_data=order_data,
@@ -96,12 +91,10 @@ async def update_order(
 ):
     """Update procurement order (admin+ only)"""
     username = current_user.get("username") or current_user.get("sub")
-    role = current_user.get("role", "user")
     
     return await procurement_service.update_order(
         order_id=order_id,
         update_data=update_data,
-        user_role=role,
         username=username
     )
 
@@ -114,9 +107,8 @@ async def delete_order(
 ):
     """Delete procurement order (admin+ only)"""
     username = current_user.get("username") or current_user.get("sub")
-    role = current_user.get("role", "user")
     
-    await procurement_service.delete_order(order_id=order_id, user_role=role, username=username)
+    await procurement_service.delete_order(order_id=order_id, username=username)
     return {"message": "ההזמנה נמחקה בהצלחה"}
 
 
@@ -129,13 +121,11 @@ async def upload_file(
 ):
     """Upload file to procurement order (admin+ only)"""
     username = current_user.get("username") or current_user.get("sub")
-    role = current_user.get("role", "user")
     
     return await procurement_service.upload_file(
         order_id=order_id,
         file=file,
-        uploaded_by=username,
-        user_role=role
+        uploaded_by=username
     )
 
 
@@ -175,7 +165,6 @@ async def delete_file(
     await procurement_service.delete_file(
         order_id=order_id,
         file_id=file_id,
-        user_role=role,
         username=username
     )
     

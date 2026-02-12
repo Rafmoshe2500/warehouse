@@ -3,7 +3,7 @@ import { FiUser, FiLock } from 'react-icons/fi';
 import Button from '../../common/Button/Button';
 import './LoginForm.css';
 
-const LoginForm = ({ onSubmit, loading, error }) => {
+const LoginForm = ({ onSubmit, loading }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -20,8 +20,6 @@ const LoginForm = ({ onSubmit, loading, error }) => {
         <h1>מערכת ניהול מלאי</h1>
         <p>התחבר כדי להמשיך</p>
       </div>
-
-      {error && <div className="login-form__error">{error}</div>}
 
       <div className="login-form__fields">
         <div className="login-form__field">

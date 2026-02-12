@@ -229,7 +229,7 @@ class AnalyticsService:
         וסוכם לפי אתר יעד.
         """
         pipeline = [
-            {"$match": {"target_site": {"$exists": True, "$ne": ""}}},
+            {"$match": {"target_site": {"$exists": True, "$ne": None, "$nin": ["", None]}}},
             {"$group": {"_id": "$target_site", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]
@@ -247,7 +247,7 @@ class AnalyticsService:
         התפלגות לפי יצרן - לוקח את מה שאחרי | בשם היצרן
         """
         pipeline = [
-            {"$match": {"manufacturer": {"$exists": True, "$ne": ""}}},
+            {"$match": {"manufacturer": {"$exists": True, "$ne": None, "$nin": ["", None]}}},
             {"$group": {"_id": "$manufacturer", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}},
             {"$limit": 15}  # Top 15 manufacturers
@@ -258,8 +258,10 @@ class AnalyticsService:
         
         async for doc in cursor:
             manufacturer_name = doc["_id"]
-            if "|" in manufacturer_name:
-                manufacturer_name = manufacturer_name.split("|")[1].strip()
+            if manufacturer_name and "|" in manufacturer_name:
+                parts = manufacturer_name.split("|")
+                if len(parts) > 1:
+                    manufacturer_name = parts[1].strip()
             results.append({"name": manufacturer_name, "value": doc["count"]})
         
         return results
@@ -269,7 +271,7 @@ class AnalyticsService:
         התפלגות לפי מיקום
         """
         pipeline = [
-            {"$match": {"location": {"$exists": True, "$ne": ""}}},
+            {"$match": {"location": {"$exists": True, "$ne": None, "$nin": ["", None]}}},
             {"$group": {"_id": "$location", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]

@@ -98,5 +98,7 @@ def require_permission(permission: str):
 
 def verify_delete_password(password: str) -> bool:
     """אימות סיסמת מחיקה"""
+    if not settings.DELETE_PASSWORD:
+        return False
     return password == settings.DELETE_PASSWORD
 

@@ -1,29 +1,12 @@
-# Build Stage
-FROM node:18-alpine as build
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-# Allow passing VITE_ variables at build time
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
-RUN npm run build
-
-# Production Stage
+# Production Stage ONLY
+# Note: You MUST run 'npm run build' locally before building this image
 FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-# Copy custom nginx config if we had one, but default is often okay for SPA if configured for fallback
-# But for now assume default nginx. 
-# We might need a simple nginx.conf for SPA routing (try_files $uri /index.html)
-RUN echo 'server { \
-    listen 80; \
-    location / { \
-    root /usr/share/nginx/html; \
-    index index.html index.htm; \
-    try_files $uri $uri/ /index.html; \
-    } \
-    }' > /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+# Copy local dist folder to container
+COPY ./dist /usr/share/nginx/html
+
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]

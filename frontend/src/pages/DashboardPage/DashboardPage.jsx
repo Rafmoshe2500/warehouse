@@ -57,13 +57,13 @@ const DashboardPage = () => {
             {/* First Row - Project Distribution & Target Sites */}
             <div className="charts-grid">
                 <ChartCard title="התפלגות לפי פרויקט">
-                    <div style={{ height: 450 }}>
+                    <div style={{ height: 450, width: '100%' }}>
                         <ProjectDistributionChart data={stats?.projects} />
                     </div>
                 </ChartCard>
 
                 <ChartCard title="התפלגות לפי אתר יעד">
-                    <div style={{ height: 450 }}>
+                    <div style={{ height: 450, width: '100%' }}>
                         <TargetSiteChart data={stats?.target_sites} />
                     </div>
                 </ChartCard>
@@ -72,13 +72,13 @@ const DashboardPage = () => {
             {/* Second Row - Item Search & Activity Stats */}
             <div className="charts-grid second-row">
                 <ChartCard title='חיפוש התפלגות לפי מק"ט'>
-                    <div style={{ height: 380 }}>
+                    <div style={{ height: 380, width: '100%' }}>
                         <ItemSearchChart />
                     </div>
                 </ChartCard>
 
                 <ChartCard title="פעילות אחרונה">
-                    <div style={{ height: 380 }}>
+                    <div style={{ height: 380, width: '100%' }}>
                         <ActivityStatsCard />
                     </div>
                 </ChartCard>
@@ -87,13 +87,13 @@ const DashboardPage = () => {
             {/* Third Row - Manufacturers & Locations */}
             <div className="charts-grid third-row">
                 <ChartCard title="התפלגות לפי יצרן" icon={FiPackage}>
-                    <div style={{ height: 400 }}>
+                    <div style={{ height: 400, width: '100%' }}>
                         <ManufacturerChart data={stats?.manufacturers} />
                     </div>
                 </ChartCard>
 
                 <ChartCard title="התפלגות לפי מיקום" icon={FiMapPin}>
-                    <div style={{ height: 400 }}>
+                    <div style={{ height: 400, width: '100%' }}>
                         <LocationChart data={stats?.locations} />
                     </div>
                 </ChartCard>

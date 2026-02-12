@@ -438,17 +438,23 @@ class UserService:
         if count > 0:
             # Check if admin exists and update to superadmin if needed
             admin_user = await collection.find_one({"username": username})
-            if admin_user and admin_user.get("role") != UserRole.SUPERADMIN.value:
-                await collection.update_one(
-                    {"username": username},
-                    {"$set": {
-                        "role": UserRole.SUPERADMIN.value,
-                        "created_by": "system",
-                        "updated_at": datetime.utcnow()
-                    }}
-                )
-                logger.info(f"✅ Updated '{username}' to SuperAdmin role")
-                return True
+            if admin_user:
+                # Security: Never auto-promote AD users to SuperAdmin via this script
+                if admin_user.get("user_type") == "ad":
+                    logger.warning(f"⚠️ User '{username}' exists as AD user. Skipping auto-promotion to SuperAdmin.")
+                    return False
+
+                if admin_user.get("role") != UserRole.SUPERADMIN.value:
+                    await collection.update_one(
+                        {"username": username},
+                        {"$set": {
+                            "role": UserRole.SUPERADMIN.value,
+                            "created_by": "system",
+                            "updated_at": datetime.utcnow()
+                        }}
+                    )
+                    logger.info(f"✅ Updated '{username}' to SuperAdmin role")
+                    return True
             return False
         
         user_doc = {
