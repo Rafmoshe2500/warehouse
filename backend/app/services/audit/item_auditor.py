@@ -15,12 +15,21 @@ class ItemAuditor:
         return user.get("role", "user")
 
     def _get_resource_name(self, item: Dict[str, Any]) -> str:
-        sku = item.get("catalog_number", "No SKU")
+        sku = item.get("catalog_number")
         serial = item.get("serial")
-        desc = item.get("description", "No Desc")
+        desc = item.get("description")
+        
+        parts = []
+        if sku:
+            parts.append(sku)
         if serial:
-             return f"{sku} (S/N: {serial}) - {desc}"
-        return f"{sku} - {desc}"
+            parts.append(f"(S/N: {serial})")
+        
+        main_id = " ".join(parts)
+        
+        if main_id and desc:
+            return f"{main_id} - {desc}"
+        return main_id or desc or "פריט ללא מזהה"
 
     async def log_creation(self, user: Dict[str, Any], item: Dict[str, Any]):
         """Logs the creation of a new item."""
