@@ -5,7 +5,7 @@
     border-radius: 12px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     width: 175px;
-    overflow: hidden;
+    /* overflow: hidden;  <-- REMOVED: This was clipping the submenu! */
     animation: slideIn 0.2s ease-out;
 }
 
@@ -61,10 +61,100 @@
     padding-right: 1.5rem;
 }
 
-
-
 .context-menu__item:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
+}
+
+/* Submenu container */
+.context-menu__submenu-container {
+    position: relative;
+    width: 100%;
+}
+
+.context-menu__submenu-trigger {
+    justify-content: space-between;
+}
+
+.context-menu__submenu-trigger::after {
+    content: '◀'; /* Left arrow for RTL */
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+/* Submenu list */
+.context-menu__submenu {
+    position: absolute;
+    top: 0;
+    right: 100%; /* Opens to the left */
+    margin-right: 8px;
+    background: rgba(17, 24, 39, 0.98);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    width: 200px;
+    padding: 4px;
+    display: none;
+    flex-direction: column;
+    z-index: 1001;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* 
+   Hover Bridge on the CONTAINER 
+   Extends to the left (where submenu is) to catch the mouse
+*/
+.context-menu__submenu-container::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    bottom: -10px;
+    right: 100%; /* Start at left edge of container */
+    width: 20px; /* Cover the 8px gap + buffer */
+    background: transparent;
+    /* background: rgba(255,0,0,0.2); */ /* Debug */
+    z-index: 1000;
+}
+
+/* Ensure container has height/width to catch hover */
+.context-menu__submenu-container {
+    position: relative;
+    width: 100%;
+    display: block; /* Ensure it takes space */
+}
+
+/* Show submenu on hover of the container */
+.context-menu__submenu-container:hover .context-menu__submenu {
+    display: flex;
+    animation: slideIn 0.2s ease-out;
+}
+
+/* Scrollbar for submenu */
+.context-menu__submenu::-webkit-scrollbar {
+    width: 6px;
+}
+.context-menu__submenu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.submenu-item {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    color: #e0e7ff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    text-align: right;
+direction: rtl;
+}
+
+.submenu-item:hover {
+    background: rgba(79, 70, 229, 0.2);
+    color: white;
 }

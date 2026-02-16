@@ -28,6 +28,7 @@ export const FIELD_LABELS = {
   created_at: 'תאריך יצירה',
   modified_count: 'כמות שורות שהושפעו',
   target_site: 'אתר יעד',
+  collection_name: 'שם האוסף',
 };
 
 export const PROCUREMENT_STATUS_OPTIONS = [
@@ -56,6 +57,8 @@ export const ACTION_LABELS = {
   item_import: 'יבוא אקסל',
   undo: 'ביטול פעולה',
   redo: 'שחזור פעולה',
+  collection_item_add: 'שיוך לאוסף',
+  collection_item_remove: 'הסרה מאוסף',
 };
 
 export const ADMIN_ACTION_LABELS = {

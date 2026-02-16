@@ -66,6 +66,12 @@
   --log-icon-danger-color: #f87171;
   --log-user-bg: rgba(79, 70, 229, 0.2);
   --log-user-color: #a5b4fc;
+  
+  /* Button Variables (Dark Mode) */
+  --btn-primary-bg: #3b82f6;
+  --btn-primary-fg: #ffffff;
+  --btn-primary-hover-bg: #2563eb;
+  --btn-primary-hover-fg: #ffffff;
   --log-detail-color: #9ca3af;
   --log-detail-strong-color: #d1d5db;
   --log-change-bg: rgba(79, 70, 229, 0.1);
@@ -91,7 +97,7 @@
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
   /* Layout */
-  --page-max-width: 1400px;
+  --page-max-width: 95%;
 }
 
 /* === Light Mode Overrides === */
@@ -161,6 +167,12 @@
   --log-icon-danger-color: #dc2626;
   --log-user-bg: rgba(59, 130, 246, 0.15);
   --log-user-color: #2563eb;
+
+  /* Button Variables (Light Mode) */
+  --btn-primary-bg: #e0f2fe; /* Light Blue BG */
+  --btn-primary-fg: #0284c7; /* Dark Blue Text/Icon */
+  --btn-primary-hover-bg: #bae6fd;
+  --btn-primary-hover-fg: #0369a1;
   --log-detail-color: #64748b;
   --log-detail-strong-color: #334155;
   --log-change-bg: rgba(59, 130, 246, 0.1);
@@ -168,6 +180,152 @@
   --log-old-value-color: #dc2626;
   --log-new-value-color: #16a34a;
 }
+
+/* === Wood Theme Overrides === */
+[data-variant="wood"] {
+    /* Wood Dark Mode (Default for Wood) */
+    --bg-primary: #2c1810; /* Dark Wood */
+    --bg-secondary: #3e2723; /* Medium Wood */
+    --bg-tertiary: #5d4037; /* Light Wood */
+    
+    --text-primary: #efebe9;
+    --text-secondary: #d7ccc8;
+    --text-muted: #a1887f;
+
+    --accent-primary: #8d6e63; /* Wood Accent */
+    --accent-secondary: #a1887f;
+    --accent-success: #558b2f;
+    --accent-warning: #f9a825;
+    --accent-danger: #c62828;
+
+    --border-color: #5d4037;
+    --border-subtle: #4e342e;
+    
+    --header-bg: rgba(44, 24, 16, 0.9);
+    --input-bg: rgba(62, 39, 35, 0.8);
+    --input-border: rgba(141, 110, 99, 0.5);
+    
+    --btn-primary-bg: #8d6e63;
+    --btn-primary-fg: #ffffff;
+    --btn-primary-hover-bg: #795548;
+}
+
+[data-variant="wood"][data-theme="light"] {
+    /* Wood Light Mode */
+    --bg-primary: #efebe9; /* Very Light Wood */
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #d7ccc8; 
+
+    --text-primary: #3e2723;
+    --text-secondary: #5d4037;
+    
+    --border-color: #d7ccc8;
+    
+    --header-bg: rgba(239, 235, 233, 0.9);
+    --input-bg: rgba(255, 255, 255, 0.8);
+    --input-border: rgba(161, 136, 127, 0.5);
+
+    --btn-primary-bg: #8d6e63;
+    --btn-primary-fg: #ffffff;
+    --btn-primary-hover-bg: #a1887f;
+}
+
+/* === Space Theme Overrides === */
+/* === Space Theme Overrides === */
+[data-variant="space"] {
+    /* Space Dark Mode (Black/White/Red) */
+    --bg-primary: #000000; /* Pure Black */
+    --bg-secondary: #0a0a0a; /* Almost Black */
+    --bg-tertiary: #171717; /* Dark Grey */
+    
+    --text-primary: #ffffff;
+    --text-secondary: #e5e5e5;
+    
+    --accent-primary: #ef4444; /* Red 500 */
+    --accent-secondary: #b91c1c; /* Red 700 */
+    
+    --border-color: #333333;
+    
+    --header-bg: rgba(0, 0, 0, 0.9);
+    --input-bg: rgba(23, 23, 23, 0.8);
+    --input-border: rgba(239, 68, 68, 0.5); /* Red border */
+    --input-focus-glow: rgba(239, 68, 68, 0.4);
+
+    --btn-primary-bg: #ef4444;
+    --btn-primary-fg: #ffffff;
+    --btn-primary-hover-bg: #dc2626;
+}
+
+[data-variant="space"][data-theme="light"] {
+    /* Space Light Mode (High Contrast White/Black/Red) */
+    --bg-primary: #ffffff; 
+    --bg-secondary: #f5f5f5;
+    --bg-tertiary: #e5e5e5;
+    
+    --text-primary: #000000;
+    --text-secondary: #171717;
+    
+    --accent-primary: #ef4444; /* Red */
+    --border-color: #d4d4d4;
+    
+    --header-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: #ffffff;
+    --input-border: #000000;
+    
+    --btn-primary-bg: #000000;
+    --btn-primary-fg: #ffffff;
+    --btn-primary-hover-bg: #333333;
+}
+
+/* === Classic Theme Overrides === */
+/* === Classic Theme Overrides === */
+[data-variant="classic"] {
+    /* Classic Dark Mode (Enterprise Dark) */
+    --bg-primary: #18191a; /* Facebook/Enterprise Dark */
+    --bg-secondary: #242526; 
+    --bg-tertiary: #3a3b3c; 
+
+    --text-primary: #e4e6eb;
+    --text-secondary: #b0b3b8;
+
+    --accent-primary: #1877f2; /* Classic Blue */
+    --accent-secondary: #216fdb;
+    --accent-success: #28a745; /* Standard Success Green */
+    
+    --border-color: #3e4042;
+
+    --header-bg: #242526; /* Solid header, not transparent */
+    --input-bg: #3a3b3c;
+    --input-border: #3e4042;
+
+    --btn-primary-bg: #1877f2;
+    --btn-primary-fg: #ffffff;
+    --btn-primary-hover-bg: #166fe5;
+}
+
+[data-variant="classic"][data-theme="light"] {
+    /* Classic Light Mode (Windows/Office/Excel Style) */
+    --bg-primary: #f0f2f5; /* Light Grey Background */
+    --bg-secondary: #ffffff; /* White Cards */
+    --bg-tertiary: #e4e6eb;
+
+    --text-primary: #050505;
+    --text-secondary: #65676b;
+
+    --accent-primary: #1877f2; /* Standard Link Blue */
+    --accent-success: #1d6f42; /* Excel Green */
+    
+    --border-color: #ced0d4;
+
+    --header-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #ccc; /* Classic Grey Border */
+
+    --btn-primary-bg: #1877f2;
+    --btn-primary-fg: #ffffff;
+    --btn-primary-hover-bg: #166fe5;
+}
+
 
 * {
   margin: 0;
@@ -254,4 +412,155 @@ h6 {
 /* Light mode adjustments */
 [data-theme="light"] .tab-btn:hover {
   background: rgba(59, 130, 246, 0.08);
+}
+
+/* === Global Checkbox Styling === */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  vertical-align: middle;
+  margin: 0;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+input[type="checkbox"]:disabled {
+  background-color: var(--bg-tertiary); /* Adjusted for disabled state */
+  border-color: var(--border-subtle);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* === Global Input Styling === */
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="image"]),
+select,
+textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  direction: rtl;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  backdrop-filter: blur(10px);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 1; /* Firefox fix */
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: var(--input-bg-focus);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow), 0 0 20px var(--input-focus-glow);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: var(--input-bg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+  border-color: var(--border-subtle);
+}
+
+/* Error state class that can be applied to any input */
+.input-error,
+input.error,
+select.error,
+textarea.error {
+  border-color: var(--accent-danger);
+}
+
+.input-error:focus,
+input.error:focus,
+select.error:focus,
+textarea.error:focus {
+  box-shadow: 0 0 0 3px var(--input-error-shadow), 0 0 20px var(--input-error-glow);
+  border-color: var(--accent-danger);
+}
+
+/* Select specific styling */
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: var(--select-arrow);
+  background-repeat: no-repeat;
+  background-position: left 1rem center;
+  padding-left: 2.5rem; /* Ensure text doesn't overlap arrow */
+}
+
+select:focus {
+  background-image: var(--select-arrow-focus);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* === Global Label Styling === */
+.input-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  direction: rtl;
+  text-align: right;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: block; /* Ensure it behaves like a block */
+  margin-bottom: 0.25rem; /* Default spacing */
+}
+
+/* === Global Checkbox Label Styling === */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  user-select: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.checkbox-label:hover {
+  color: var(--accent-primary);
 }

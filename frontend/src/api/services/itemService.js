@@ -149,6 +149,14 @@ export const createItemService = (apiClient) => {
         params: { days, page, limit }
       });
       return response.data;
+    },
+
+    /**
+     * Get associated collections for an item
+     */
+    getItemCollections: async (itemId) => {
+      const response = await apiClient.get(`${API_ENDPOINTS.ITEMS}/${itemId}/collections`);
+      return response.data;
     }
   };
 };

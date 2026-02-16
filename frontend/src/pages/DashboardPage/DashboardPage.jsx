@@ -1,7 +1,17 @@
 import React from 'react';
-import { FiBox, FiPackage, FiHash, FiMapPin } from 'react-icons/fi';
+import { 
+    FiBox, 
+    FiPackage, 
+    FiHash, 
+    FiMapPin, 
+    FiCalendar,
+    FiTrendingUp,
+    FiActivity,
+    FiSearch
+} from 'react-icons/fi';
 import Spinner from '../../components/common/Spinner/Spinner';
 import { useAnalytics } from '../../hooks/useAnalytics';
+import { useAuth } from '../../context/AuthContext'; // Corrected import path
 
 // Dashboard Components
 import StatCard from '../../components/dashboard/StatCard';
@@ -18,86 +28,145 @@ import './DashboardPage.css';
 const DashboardPage = () => {
     const { useDashboardStats } = useAnalytics();
     const { data: stats, isLoading: loading, error } = useDashboardStats();
+    const { user } = useAuth(); // Get current user
 
-    if (loading) return <div className="loading-container"><Spinner size="large" text="טוען נתונים..." /></div>;
-    if (error) return <div className="loading-container" style={{color: 'red'}}>שגיאה בטעינת הנתונים</div>;
+    if (loading) return (
+        <div className="dashboard-loading">
+            <Spinner size="large" />
+            <p>מכין את הדאשבורד שלך...</p>
+        </div>
+    );
+    
+    if (error) return (
+        <div className="dashboard-error">
+            <div className="error-content">
+                <h3>שגיאה בטעינת הנתונים</h3>
+                <p>נסה לרענן את העמוד או לפנות לתמיכה</p>
+                <button onClick={() => window.location.reload()} className="retry-btn">נסה שוב</button>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="dashboard-page">
-            
-            {/* Stat Cards */}
-            <div className="stats-grid">
-                <StatCard 
-                    icon={FiBox}
-                    title='סה"כ פריטים'
-                    value={stats?.total_items || 0}
-                    color="blue"
-                />
-                <StatCard 
-                    icon={FiPackage}
-                    title="שריונים פעילים"
-                    value={stats?.active_allocations || 0}
-                    color="green"
-                />
-                <StatCard 
-                    icon={FiHash}
-                    title="כמות ציוד סריאלי"
-                    value={stats?.serial_equipment || 0}
-                    color="purple"
-                />
-                <StatCard 
-                    icon={FiBox}
-                    title="כמות ציוד נלווה"
-                    value={stats?.non_serial_equipment || 0}
-                    color="amber"
-                />
-            </div>
-
-
-            {/* First Row - Project Distribution & Target Sites */}
-            <div className="charts-grid">
-                <ChartCard title="התפלגות לפי פרויקט">
-                    <div style={{ height: 450, width: '100%' }}>
-                        <ProjectDistributionChart data={stats?.projects} />
+        <div className="dashboard-wrapper" dir="rtl">
+            <main className="dashboard-container">
+                
+                {/* Stats Row - Highlighted */}
+                <div className="dashboard-section-title">
+                    <FiActivity /> מדדים מרכזיים
+                </div>
+                
+                <div className="bento-grid-stats">
+                    <div className="stat-tile blue">
+                        <div className="stat-icon-bg"><FiBox /></div>
+                        <div className="stat-content">
+                            <h3>סה"כ פריטים</h3>
+                            <div className="stat-number">{stats?.total_items?.toLocaleString() || 0}</div>
+                        </div>
+                        <div className="stat-trend positive">
+                            <FiTrendingUp /> במלאי
+                        </div>
                     </div>
-                </ChartCard>
 
-                <ChartCard title="התפלגות לפי אתר יעד">
-                    <div style={{ height: 450, width: '100%' }}>
-                        <TargetSiteChart data={stats?.target_sites} />
+                    <div className="stat-tile green">
+                        <div className="stat-icon-bg"><FiPackage /></div>
+                        <div className="stat-content">
+                            <h3>שריונים פעילים</h3>
+                            <div className="stat-number">{stats?.active_allocations?.toLocaleString() || 0}</div>
+                        </div>
+                        <div className="stat-trend neutral">
+                            פעילים כרגע
+                        </div>
                     </div>
-                </ChartCard>
-            </div>
 
-            {/* Second Row - Item Search & Activity Stats */}
-            <div className="charts-grid second-row">
-                <ChartCard title='חיפוש התפלגות לפי מק"ט'>
-                    <div style={{ height: 380, width: '100%' }}>
-                        <ItemSearchChart />
+                    <div className="stat-tile purple">
+                        <div className="stat-icon-bg"><FiHash /></div>
+                        <div className="stat-content">
+                            <h3>ציוד סריאלי</h3>
+                            <div className="stat-number">{stats?.serial_equipment?.toLocaleString() || 0}</div>
+                        </div>
+                        <div className="stat-trend">
+                            מעקב פרטני
+                        </div>
                     </div>
-                </ChartCard>
 
-                <ChartCard title="פעילות אחרונה">
-                    <div style={{ height: 380, width: '100%' }}>
-                        <ActivityStatsCard />
+                    <div className="stat-tile amber">
+                        <div className="stat-icon-bg"><FiBox /></div>
+                        <div className="stat-content">
+                            <h3>ציוד נלווה</h3>
+                            <div className="stat-number">{stats?.non_serial_equipment?.toLocaleString() || 0}</div>
+                        </div>
+                        <div className="stat-trend">
+                            ניהול כמותי
+                        </div>
                     </div>
-                </ChartCard>
-            </div>
+                </div>
 
-            {/* Third Row - Manufacturers & Locations */}
-            <div className="charts-grid third-row">
-                <ChartCard title="התפלגות לפי יצרן" icon={FiPackage}>
-                    <div style={{ height: 400, width: '100%' }}>
-                        <ManufacturerChart data={stats?.manufacturers} />
+                {/* Main Content Grid */}
+                <div className="bento-grid-main">
+                    
+                    {/* Locations - Tall Item (Right) */}
+                    <div className="bento-card activity-card">
+                        <div className="card-header">
+                            <h3>מיקומים במחסן</h3>
+                        </div>
+                        <div className="card-body">
+                            <LocationChart data={stats?.locations} />
+                        </div>
                     </div>
-                </ChartCard>
 
-                <ChartCard title="התפלגות לפי מיקום" icon={FiMapPin}>
-                    <div style={{ height: 400, width: '100%' }}>
-                        <LocationChart data={stats?.locations} />
+                    {/* Item Search - 1 Column (Middle) */}
+                    <div className="bento-card col-span-1">
+                        <div className="card-header">
+                            <h3><FiSearch /> חיפוש וניתוח לפי מק"ט</h3>
+                        </div>
+                        <div className="card-body">
+                            <ItemSearchChart />
+                        </div>
                     </div>
-                </ChartCard>
-            </div>
+
+                    {/* Project Distribution - 2 Columns (Left) */}
+                    <div className="bento-card"> 
+                        <div className="card-header">
+                            <h3>פילוג לפי פרויקט</h3>
+                        </div>
+                        <div className="card-body">
+                            <ProjectDistributionChart data={stats?.projects} />
+                        </div>
+                    </div>
+
+                    {/* Target Sites - 3 Columns (Bottom Left - Next to Locations) */}
+                    <div className="bento-card chart-card-lg">
+                        <div className="card-header">
+                            <h3>פילוג לפי אתר יעד</h3>
+                        </div>
+                        <div className="card-body">
+                            <TargetSiteChart data={stats?.target_sites} />
+                        </div>
+                    </div>
+
+                    {/* Activity Feed - 25% Width */}
+                    <div className="bento-card col-span-1">
+                        <div className="card-header">
+                            <h3><FiActivity /> פעילות אחרונה</h3>
+                        </div>
+                        <div className="card-body scrollable">
+                            <ActivityStatsCard />
+                        </div>
+                    </div>
+
+                    {/* Manufacturers - 75% Width */}
+                    <div className="bento-card col-span-3">
+                        <div className="card-header">
+                            <h3>יצרנים מובילים</h3>
+                        </div>
+                        <div className="card-body">
+                            <ManufacturerChart data={stats?.manufacturers} />
+                        </div>
+                    </div>
+
+                </div>
+            </main>
         </div>
     );
 };

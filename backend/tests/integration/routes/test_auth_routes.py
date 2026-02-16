@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from app.core.password import hash_password
 from app.core.constants import UserRole
 
@@ -56,8 +56,8 @@ class TestAuthRoutes:
             "password_hash": hash_password("old_api_pass"),
             "role": UserRole.ADMIN,
             "is_active": True,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
             "user_type": "local"
         })
         

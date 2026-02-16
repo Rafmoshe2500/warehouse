@@ -26,9 +26,9 @@ const Select = ({
   return (
     <div className="select-wrapper">
       {label && (
-        <label className="select-label">
+        <label className="input-label">
           {label}
-          {required && <span className="select-required">*</span>}
+          {required && <span className="input-required">*</span>}
         </label>
       )}
       <div className="select-container">

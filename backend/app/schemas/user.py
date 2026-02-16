@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 from typing import Optional
 from datetime import datetime
 from enum import Enum
@@ -14,11 +14,12 @@ class UserCreate(BaseModel):
     role: UserRole = UserRole.USER
     permissions: Optional[list[str]] = []
     
-    @validator('password')
-    def validate_password(cls, v, values):
-        if values.get('user_type') == UserType.LOCAL and not v:
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v: Optional[str], info: ValidationInfo) -> Optional[str]:
+        if info.data.get('user_type') == UserType.LOCAL and not v:
             raise ValueError('Password is required for local users')
-        if values.get('user_type') == UserType.ACTIVE_DIRECTORY and v:
+        if info.data.get('user_type') == UserType.ACTIVE_DIRECTORY and v:
             raise ValueError('Password should not be provided for AD users')
         return v
 
@@ -43,8 +44,7 @@ class UserResponse(BaseModel):
     created_by: Optional[str] = None  # Username of creator
     last_login: Optional[datetime] = None  # Last login timestamp
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PasswordChange(BaseModel):

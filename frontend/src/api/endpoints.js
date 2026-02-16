@@ -45,4 +45,11 @@ export const API_ENDPOINTS = {
   PROCUREMENT_ORDER_BY_ID: (id) => `/procurement/orders/${id}`,
   PROCUREMENT_FILES: (orderId) => `/procurement/orders/${orderId}/files`,
   PROCUREMENT_FILE_BY_ID: (orderId, fileId) => `/procurement/orders/${orderId}/files/${fileId}`,
+
+  // Collections
+  COLLECTIONS: '/collections',
+  COLLECTION_BY_ID: (id) => `/collections/${id}`,
+  COLLECTION_ITEMS: (id) => `/collections/${id}/items`,
+  COLLECTION_ITEM_BY_ID: (collectionId, itemId) => `/collections/${collectionId}/items/${itemId}`,
+  COLLECTION_PERMISSIONS: (id) => `/collections/${id}/permissions`,
 };

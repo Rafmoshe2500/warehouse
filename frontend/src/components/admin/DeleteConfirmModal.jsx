@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from '../common/Modal/Modal';
 import Button from '../common/Button/Button';
+import Input from '../common/Input/Input';
 import { FiAlertTriangle } from 'react-icons/fi';
 import './DeleteConfirmModal.css';
 
@@ -66,19 +67,19 @@ const DeleteConfirmModal = ({
 
                 {/* שדה סיבת מחיקה */}
                 <div className="delete-confirm-modal__form">
-                    <label className="delete-confirm-modal__label">סיבת מחיקה</label>
-                    <textarea
-                        className="delete-confirm-modal__textarea"
+                    <Input
+                        label="סיבת מחיקה"
                         value={reason}
                         onChange={(e) => {
                             setReason(e.target.value);
                             setError('');
                         }}
                         placeholder="למשל: חשבון לא בשימוש, טעות ביצירה..."
+                        multiline
                         rows={3}
                         autoFocus
+                        error={error}
                     />
-                    {error && <div className="delete-confirm-modal__error">{error}</div>}
                     <div className="delete-confirm-modal__hint">
                         💡 הסיבה תישמר ביומן הפעולות
                     </div>

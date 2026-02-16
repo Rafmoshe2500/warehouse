@@ -14,6 +14,14 @@ const groupService = {
     },
 
     /**
+     * Search groups (public)
+     */
+    searchGroups: async (term) => {
+        const response = await apiClient.get(`/users/groups/search?q=${term}`);
+        return response.data;
+    },
+
+    /**
      * Create new group
      */
     createGroup: async (groupData) => {

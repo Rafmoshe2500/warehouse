@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Dict, Any, List
 from bson import ObjectId
 
@@ -16,8 +16,8 @@ class ProcurementRepository:
         order_doc = {
             **order_data,
             "files": [],
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
         }
         
         result = await self.collection.insert_one(order_doc)
@@ -46,9 +46,7 @@ class ProcurementRepository:
             filter_query["status"] = {"$in": status_in}
         elif status_ne:
             filter_query["status"] = {"$ne": status_ne}
-            
-        print(f"DEBUG REPO: filter_query={filter_query}, status_in={status_in}, status_ne={status_ne}")
-        
+                    
         # Get total count
         total = await self.collection.count_documents(filter_query)
         
@@ -69,7 +67,7 @@ class ProcurementRepository:
     async def update_order(self, order_id: str, update_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Update procurement order"""
         try:
-            update_data["updated_at"] = datetime.utcnow()
+            update_data["updated_at"] = datetime.now(timezone.utc)
             
             result = await self.collection.find_one_and_update(
                 {"_id": ObjectId(order_id)},
@@ -96,7 +94,7 @@ class ProcurementRepository:
                 {"_id": ObjectId(order_id)},
                 {
                     "$push": {"files": file_metadata},
-                    "$set": {"updated_at": datetime.utcnow()}
+                    "$set": {"updated_at": datetime.now(timezone.utc)}
                 },
                 return_document=True
             )
@@ -112,7 +110,7 @@ class ProcurementRepository:
                 {"_id": ObjectId(order_id)},
                 {
                     "$pull": {"files": {"file_id": file_id}},
-                    "$set": {"updated_at": datetime.utcnow()}
+                    "$set": {"updated_at": datetime.now(timezone.utc)}
                 },
                 return_document=True
             )

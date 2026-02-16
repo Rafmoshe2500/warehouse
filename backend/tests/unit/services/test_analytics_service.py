@@ -3,7 +3,7 @@ Tests for AnalyticsService.
 Tests dashboard statistics calculation.
 """
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock
 
 from app.services.analytics_service import AnalyticsService
@@ -66,7 +66,7 @@ class TestAnalyticsService:
     @pytest.mark.asyncio
     async def test_get_activity_stats(self, analytics_service, test_audit_collection):
         """Test activity stats from audit logs."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         # Seed audit logs - MUST BE WRAPPED
         await test_audit_collection.insert_many([
             {"item_action": {"action": "item_create", "timestamp": now}},

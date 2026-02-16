@@ -30,15 +30,17 @@
 }
 
 /* Primary */
+/* Primary */
 .button--primary {
-  background: var(--accent-primary);
-  color: var(--text-primary);
-  border: 2px solid var(--accent-primary);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  border: 2px solid var(--btn-primary-bg);
 }
 
 .button--primary:hover:not(:disabled) {
-  background: transparent;
-  color: var(--accent-primary);
+  background: var(--btn-primary-hover-bg);
+  color: var(--btn-primary-hover-fg);
+  border-color: var(--btn-primary-hover-bg);
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
@@ -100,6 +102,39 @@
 
 .button--danger:active:not(:disabled) {
   transform: translateY(0);
+}
+
+/* Ghost */
+.button--ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid transparent;
+}
+
+.button--ghost:hover:not(:disabled) {
+    background: rgba(148, 163, 184, 0.1);
+    color: var(--text-primary);
+}
+
+.button--ghost:active:not(:disabled) {
+    background: rgba(148, 163, 184, 0.2);
+}
+
+/* Outline */
+.button--outline {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.button--outline:hover:not(:disabled) {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.button--outline:active:not(:disabled) {
+    background: rgba(59, 130, 246, 0.1);
 }
 
 /* Icon Only Variant - Added for Refactoring */

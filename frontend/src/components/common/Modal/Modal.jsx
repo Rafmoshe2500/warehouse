@@ -10,6 +10,7 @@ const Modal = ({
   footer,
   size = 'medium',
   closeOnOverlay = true,
+  className = '', // Allow custom class overrides
 }) => {
   useEffect(() => {
     if (isOpen) {
@@ -44,7 +45,7 @@ const Modal = ({
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
-      <div className={`modal modal--${size}`}>
+      <div className={`modal modal--${size} ${className}`} onClick={e => e.stopPropagation()}>
         <div className="modal__header">
           <h2 className="modal__title">{title}</h2>
           <button className="modal__close" onClick={onClose}>

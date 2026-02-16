@@ -1,12 +1,12 @@
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pandas as pd
 from fastapi import UploadFile
 import io
 
 from app.db.repositories.items import ItemsRepository
-from app.services.audit_service import AuditService
+from app.services.audit.item_auditor import ItemAuditor
 from app.schemas.audit import AuditAction
 from app.core.exceptions import ExcelFileException
 from app.core.excel_parser import ExcelParser
@@ -14,9 +14,9 @@ from app.schemas.item import ItemFilter
 
 
 class ExcelService:
-    def __init__(self, items_repo: ItemsRepository, audit_service: AuditService):
+    def __init__(self, items_repo: ItemsRepository, item_auditor: ItemAuditor):
         self.items_repo = items_repo
-        self.audit_service = audit_service
+        self.item_auditor = item_auditor
 
     async def import_excel(self, file: UploadFile, user: str):
         """
@@ -48,6 +48,9 @@ class ExcelService:
             'catalog_number', 'description', 'manufacturer',
             'location', 'current_stock', 'warranty_expiry'
         ]
+        
+        # Mock user dict for auditor
+        user_dict = {"username": user, "role": "unknown"}
 
         for index, record in enumerate(records, start=1):
             try:
@@ -65,41 +68,31 @@ class ExcelService:
 
                             # בונים את המידע לעדכון (רק השדות המותרים)
                             update_data = {k: self.normalize_value(record[k]) for k in serial_update_fields if k in record}
-                            update_data['updated_at'] = datetime.utcnow()
+                            update_data['updated_at'] = datetime.now(timezone.utc)
 
                             await self.items_repo.update(str(existing_item["_id"]), update_data)
                             updated_count += 1
 
-                            await self.audit_service.log_user_action(
-                                action=AuditAction.ITEM_UPDATE,
-                                actor=user,
-                                actor_role="unknown", # Assuming user ID passed
-                                target_resource="item",
-                                resource_id=str(existing_item["_id"]),
-                                target_resource_name=record.get('catalog_number') or record.get('description') or "Unknown Item",
+                            await self.item_auditor.log_update(
+                                user=user_dict,
+                                item=existing_item,
                                 changes=changes,
                                 details="עדכון מאקסל (ללא הערות/יעוד)"
                             )
                         else:
                             # הכל זהה -> רק מעדכנים זמן עדכון (למניעת סטטוס stale)
-                            await self.items_repo.update(str(existing_item["_id"]), {"updated_at": datetime.utcnow()})
+                            await self.items_repo.update(str(existing_item["_id"]), {"updated_at": datetime.now(timezone.utc)})
                             skipped_count += 1
                     else:
                         # יש סריאלי אבל הוא לא קיים במערכת -> יוצרים חדש
-                        record["created_at"] = datetime.utcnow()
-                        record["updated_at"] = datetime.utcnow()
+                        record["created_at"] = datetime.now(timezone.utc)
+                        record["updated_at"] = datetime.now(timezone.utc)
                         created_item = await self.items_repo.create(record)
                         added_count += 1
 
-                        await self.audit_service.log_user_action(
-                            action=AuditAction.ITEM_CREATE,
-                            actor=user,
-                            actor_role="unknown",
-                            target_resource="item",
-                            resource_id=str(created_item["_id"]),
-                            target_resource_name=record.get('catalog_number') or record.get('description') or "Unknown Item",
-                            changes=record,
-                            details="נוסף מאקסל (לפי סריאלי)"
+                        await self.item_auditor.log_creation(
+                            user=user_dict,
+                            item=created_item
                         )
 
                 # --- תרחיש 2: אין סריאלי ---
@@ -123,40 +116,30 @@ class ExcelService:
                         if new_stock != old_stock:
                             update_data = {
                                 'current_stock': new_stock,
-                                'updated_at': datetime.utcnow()
+                                'updated_at': datetime.now(timezone.utc)
                             }
                             await self.items_repo.update(str(existing_item["_id"]), update_data)
                             updated_count += 1
 
-                            await self.audit_service.log_user_action(
-                                action=AuditAction.ITEM_UPDATE,
-                                actor=user,
-                                actor_role="unknown",
-                                target_resource="item",
-                                resource_id=str(existing_item["_id"]),
-                                target_resource_name=existing_item.get('catalog_number') or "Unknown Item",
+                            await self.item_auditor.log_update(
+                                user=user_dict,
+                                item=existing_item,
                                 changes={'current_stock': {'old': old_stock, 'new': new_stock}},
                                 details=f"עדכון כמות במיקום {location}"
                             )
                         else:
-                            await self.items_repo.update(str(existing_item["_id"]), {"updated_at": datetime.utcnow()})
+                            await self.items_repo.update(str(existing_item["_id"]), {"updated_at": datetime.now(timezone.utc)})
                             skipped_count += 1
                     else:
                         # מיקום שונה או מק"ט לא קיים -> יוצרים חדש
-                        record["created_at"] = datetime.utcnow()
-                        record["updated_at"] = datetime.utcnow()
+                        record["created_at"] = datetime.now(timezone.utc)
+                        record["updated_at"] = datetime.now(timezone.utc)
                         created_item = await self.items_repo.create(record)
                         added_count += 1
 
-                        await self.audit_service.log_user_action(
-                            action=AuditAction.ITEM_CREATE,
-                            actor=user,
-                            actor_role="unknown",
-                            target_resource="item",
-                            resource_id=str(created_item["_id"]),
-                            target_resource_name=record.get('catalog_number') or "Unknown Item",
-                            changes=record,
-                            details=f"נוסף מאקסל (מק\"ט במיקום {location})"
+                        await self.item_auditor.log_creation(
+                            user=user_dict,
+                            item=created_item
                         )
 
             except Exception as e:
@@ -165,15 +148,11 @@ class ExcelService:
 
         # לוג סיכום
         if added_count > 0 or updated_count > 0:
-            await self.audit_service.log_user_action(
-                action=AuditAction.ITEM_IMPORT,
-                actor=user,
-                actor_role="unknown",
-                target_resource="item",
-                resource_id="BULK_IMPORT",
-                target_resource_name="Excel Import Summary",
-                details=f"יבוא מאקסל: {added_count} נוספו, {updated_count} עודכנו",
-                changes={"total_rows": len(records), "added": added_count, "updated": updated_count}
+            await self.item_auditor.log_import_summary(
+                user=user,
+                added=added_count,
+                updated=updated_count,
+                total=len(records)
             )
 
         return {
@@ -272,6 +251,7 @@ class ExcelService:
                 grouped_data[key][proj] = qty
 
         updated_count = 0
+        user_dict = {"username": user, "role": "unknown"}
         
         for (cat, loc), projects in grouped_data.items():
             lines = []
@@ -288,14 +268,11 @@ class ExcelService:
                 updated_count += modified_count
                 
                 # Log the action (generic log for the group)
-                await self.audit_service.log_user_action(
-                    action=AuditAction.ITEM_UPDATE,
-                    actor=user,
-                    actor_role="unknown",
-                    target_resource="item",
-                    resource_id=cat,
-                    details=f"עדכון הקצאות (קבוצתי) במיקום {loc}: {reserved_value_str.replace(chr(10), ', ')}",
-                    changes={"reserved_stock": reserved_value_str, "modified_count": modified_count}
+                await self.item_auditor.log_update(
+                    user=user_dict,
+                    item={"_id": cat, "catalog_number": cat}, # Dummy item for ID
+                    changes={"reserved_stock": reserved_value_str, "modified_count": modified_count},
+                    details=f"עדכון הקצאות (קבוצתי) במיקום {loc}: {reserved_value_str.replace(chr(10), ', ')}"
                 )
 
         return {

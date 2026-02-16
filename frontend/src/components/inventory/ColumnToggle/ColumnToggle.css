@@ -1,0 +1,81 @@
+.column-toggle-container {
+  position: relative;
+}
+
+.column-toggle-menu {
+  position: absolute;
+  top: 100%;
+  left: 0; /* Align left for RTL context might need adjustment depending on parent */
+  margin-top: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 200px;
+  z-index: 100;
+  overflow: hidden;
+  direction: rtl; /* Ensure Hebrew text aligns right */
+}
+
+.column-toggle-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  background: var(--bg-tertiary);
+}
+
+.column-toggle-list {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.column-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  user-select: none;
+}
+
+.column-toggle-item:hover {
+  background: var(--bg-primary);
+}
+
+.column-toggle-item.active {
+  color: var(--accent-primary);
+}
+
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.column-toggle-item.active .checkbox-custom {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.column-toggle-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.column-toggle-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.column-toggle-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}

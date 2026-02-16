@@ -2,6 +2,7 @@ import React from 'react';
 import ItemForm from '../ItemForm/ItemForm';
 import DeleteConfirmation from '../DeleteConfirmation/DeleteConfirmation';
 import BulkEditModal from '../BulkEditModal/BulkEditModal';
+import AssociatedCollectionsModal from '../AssociatedCollectionsModal/AssociatedCollectionsModal';
 import Modal from '../../common/Modal/Modal';
 import './InventoryModals.css';
 
@@ -31,6 +32,11 @@ const InventoryModals = ({
   onCloseExport,
   exportProgress,
   onExecuteExport,
+
+  // Associated Collections Modal
+  showCollectionsModal,
+  onCloseCollectionsModal,
+  collectionsModalItem,
 }) => {
   return (
     <>
@@ -93,6 +99,15 @@ const InventoryModals = ({
             </button>
           </div>
         </Modal>
+      )}
+
+      {/* Associated Collections Modal */}
+      {showCollectionsModal && (
+        <AssociatedCollectionsModal
+          isOpen={showCollectionsModal}
+          onClose={onCloseCollectionsModal}
+          item={collectionsModalItem}
+        />
       )}
     </>
   );

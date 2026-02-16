@@ -33,7 +33,7 @@ const AdminPanel = () => {
   if (loading) {
     return (
       <div className="admin-panel-loading">
-        <Spinner size="large" text="טוען..." />
+        <Spinner size="large" />
       </div>
     );
   }

@@ -1,5 +1,5 @@
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
 from fastapi import HTTPException
 import logging
@@ -8,18 +8,17 @@ from app.db.mongodb import MongoDB
 from app.core.password import hash_password, verify_password
 from app.core.constants import UserRole, Permission
 from app.schemas.user import UserCreate, UserUpdate
-from app.schemas.audit import AuditAction
+from app.services.audit.user_auditor import UserAuditor
+from app.db.repositories.user_repository import UserRepository
 from app.core.exceptions import NotFoundException, BadRequestException
 
 logger = logging.getLogger(__name__)
 
 
 class UserService:
-    def __init__(self):
-        self.collection_name = "users"
-    
-    def _get_collection(self):
-        return MongoDB.get_permissions_collection(self.collection_name)
+    def __init__(self, auditor: UserAuditor, repo: UserRepository):
+        self.auditor = auditor
+        self.repo = repo
     
     def can_manage_user(
         self,
@@ -56,38 +55,26 @@ class UserService:
     
     async def get_users(self) -> List[dict]:
         """Get all users"""
-        collection = self._get_collection()
-        users = []
-        async for user in collection.find():
-            user["id"] = str(user.pop("_id"))
-            user.pop("password_hash", None)
-            users.append(user)
+        users = await self.repo.list_users()
         return {"users": users, "total": len(users)}
     
     async def get_user_by_id(self, user_id: str) -> dict:
         """Get user by ID"""
-        collection = self._get_collection()
-        user = await collection.find_one({"_id": ObjectId(user_id)})
+        user = await self.repo.get_by_id(user_id)
         if not user:
             raise NotFoundException("משתמש לא נמצא")
-        user["id"] = str(user.pop("_id"))
         user.pop("password_hash", None)
         return user
     
     async def get_user_by_username(self, username: str) -> Optional[dict]:
         """Get user by username (includes password_hash for auth)"""
-        collection = self._get_collection()
-        user = await collection.find_one({"username": username})
-        if user:
-            user["id"] = str(user.pop("_id"))
-        return user
+        return await self.repo.get_by_username(username)
     
     async def create_user(
         self,
         user_data: UserCreate,
         created_by: str,
         creator_role: str,
-        audit_service=None,
         ip_address: Optional[str] = None,
         user_agent: Optional[str] = None
     ) -> dict:
@@ -108,7 +95,6 @@ class UserService:
         Raises:
             HTTPException: If permission denied or validation fails
         """
-        collection = self._get_collection()
         
         # Permission check: Only SuperAdmin can create Admins
         if user_data.role == UserRole.ADMIN and creator_role != UserRole.SUPERADMIN.value:
@@ -118,7 +104,7 @@ class UserService:
             )
         
         # Check if username exists
-        existing = await collection.find_one({"username": user_data.username})
+        existing = await self.repo.get_by_username(user_data.username)
         if existing:
             raise BadRequestException("שם משתמש כבר קיים")
         
@@ -129,8 +115,8 @@ class UserService:
             "permissions": user_data.permissions or [],
             "is_active": True,
             "created_by": created_by,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
             "last_login": None
         }
         
@@ -138,29 +124,24 @@ class UserService:
         if user_data.user_type == "local" and user_data.password:
             user_doc["password_hash"] = hash_password(user_data.password)
         
-        result = await collection.insert_one(user_doc)
-        user_doc["id"] = str(result.inserted_id)
-        user_doc.pop("_id", None)
-        user_doc.pop("password_hash", None)
+        created_user = await self.repo.create(user_doc)
+        created_user.pop("password_hash", None)
         
         # Audit log
-        if audit_service:
-            try:
-                await audit_service.log_user_action(
-                    action=AuditAction.USER_CREATE,
-                    actor=created_by,
-                    actor_role=creator_role,
-                    target_user=user_data.username,
-                    target_role=user_data.role.value,
-                    target_resource="user",
-                    ip_address=ip_address,
-                    user_agent=user_agent
-                )
-            except Exception as e:
-                logger.error(f"Failed to create audit log: {e}")
+        try:
+            await self.auditor.log_create_user(
+                actor=created_by,
+                actor_role=creator_role,
+                target_user=user_data.username,
+                target_role=user_data.role.value,
+                ip_address=ip_address,
+                user_agent=user_agent
+            )
+        except Exception as e:
+            logger.error(f"Failed to create audit log: {e}")
         
         logger.info(f"User created: {user_data.username} by {created_by}")
-        return user_doc
+        return created_user
     
     async def update_user(
         self,
@@ -168,7 +149,6 @@ class UserService:
         update_data: UserUpdate,
         updated_by: str,
         updater_role: str,
-        audit_service=None,
         ip_address: Optional[str] = None,
         user_agent: Optional[str] = None
     ) -> dict:
@@ -190,10 +170,8 @@ class UserService:
         Raises:
             HTTPException: If permission denied
         """
-        collection = self._get_collection()
-        
         # Check user exists
-        existing = await collection.find_one({"_id": ObjectId(user_id)})
+        existing = await self.repo.get_by_id(user_id)
         if not existing:
             raise NotFoundException("משתמש לא נמצא")
         
@@ -223,15 +201,12 @@ class UserService:
         
         # Track changes for audit
         changes = {}
-        update_dict = {"updated_at": datetime.utcnow()}
+        update_dict = {"updated_at": datetime.now(timezone.utc)}
         
         if update_data.username is not None:
             # Check if new username is taken
-            username_exists = await collection.find_one({
-                "username": update_data.username,
-                "_id": {"$ne": ObjectId(user_id)}
-            })
-            if username_exists:
+            username_exists = await self.repo.get_by_username(update_data.username)
+            if username_exists and username_exists["id"] != user_id:
                 raise BadRequestException("שם משתמש כבר קיים")
             changes["username"] = {
                 "old": target_username,
@@ -266,24 +241,16 @@ class UserService:
             }
             update_dict["is_active"] = update_data.is_active
         
-        await collection.update_one(
-            {"_id": ObjectId(user_id)},
-            {"$set": update_dict}
-        )
+        await self.repo.update(user_id, update_dict)
         
         # Audit log
-        if audit_service and changes:
+        if changes:
             try:
-                await audit_service.log_user_action(
-                    action=AuditAction.USER_UPDATE,
+                await self.auditor.log_update_user(
                     actor=updated_by,
                     actor_role=updater_role,
                     target_user=target_username,
-                    target_role=target_role,
-                    target_resource="user",
-                    changes=changes,
-                    ip_address=ip_address,
-                    user_agent=user_agent
+                    changes=changes
                 )
             except Exception as e:
                 logger.error(f"Failed to create audit log: {e}")
@@ -296,7 +263,6 @@ class UserService:
         reason: str,
         deleted_by: str,
         deleter_role: str,
-        audit_service=None,
         ip_address: Optional[str] = None,
         user_agent: Optional[str] = None
     ) -> dict:
@@ -318,9 +284,7 @@ class UserService:
         Raises:
             HTTPException: If permission denied
         """
-        collection = self._get_collection()
-        
-        existing = await collection.find_one({"_id": ObjectId(user_id)})
+        existing = await self.repo.get_by_id(user_id)
         if not existing:
             raise NotFoundException("משתמש לא נמצא")
         
@@ -343,28 +307,21 @@ class UserService:
         
         # Don't allow deleting the last admin
         if target_role == UserRole.ADMIN.value:
-            admin_count = await collection.count_documents({"role": UserRole.ADMIN.value})
+            admin_count = await self.repo.count({"role": UserRole.ADMIN.value})
             if admin_count <= 1:
                 raise BadRequestException("לא ניתן למחוק את האדמין האחרון")
         
-        await collection.delete_one({"_id": ObjectId(user_id)})
+        await self.repo.delete(user_id)
         
         # Audit log
-        if audit_service:
-            try:
-                await audit_service.log_user_action(
-                    action=AuditAction.USER_DELETE,
-                    actor=deleted_by,
-                    actor_role=deleter_role,
-                    target_user=target_username,
-                    target_role=target_role,
-                    target_resource="user",
-                    reason=reason,
-                    ip_address=ip_address,
-                    user_agent=user_agent
-                )
-            except Exception as e:
-                logger.error(f"Failed to create audit log: {e}")
+        try:
+            await self.auditor.log_delete_user(
+                actor=deleted_by,
+                actor_role=deleter_role,
+                target_user=target_username
+            )
+        except Exception as e:
+            logger.error(f"Failed to create audit log: {e}")
         
         logger.info(f"User deleted: {target_username} by {deleted_by}")
         return {"message": "משתמש נמחק בהצלחה", "reason": reason}
@@ -374,114 +331,51 @@ class UserService:
         user_id: str,
         current_password: str,
         new_password: str,
-        audit_service=None,
         ip_address: Optional[str] = None
     ) -> dict:
         """Change user's own password"""
-        collection = self._get_collection()
-        
-        user = await collection.find_one({"_id": ObjectId(user_id)})
+        user = await self.repo.get_by_id(user_id)
         if not user:
             raise NotFoundException("משתמש לא נמצא")
         
         if not verify_password(current_password, user["password_hash"]):
             raise BadRequestException("סיסמה נוכחית שגויה")
         
-        await collection.update_one(
-            {"_id": ObjectId(user_id)},
-            {"$set": {
+        await self.repo.update(
+            user_id,
+            {
                 "password_hash": hash_password(new_password),
-                "updated_at": datetime.utcnow()
-            }}
+                "updated_at": datetime.now(timezone.utc)
+            }
         )
         
         # Audit log
-        if audit_service:
-            try:
-                await audit_service.log_user_action(
-                    action=AuditAction.PASSWORD_CHANGE,
-                    actor=user.get("username"),
-                    actor_role=user.get("role"),
-                    target_user=user.get("username"),
-                    target_role=user.get("role"),
-                    target_resource="user",
-                    ip_address=ip_address
-                )
-            except Exception as e:
-                logger.error(f"Failed to create audit log: {e}")
+        try:
+            await self.auditor.log_password_change(
+                actor=user.get("username"),
+                actor_role=user.get("role"),
+                target_user=user.get("username")
+            )
+        except Exception as e:
+            logger.error(f"Failed to create audit log: {e}")
         
         return {"message": "סיסמה עודכנה בהצלחה"}
     
     async def update_last_login(self, username: str) -> None:
         """Update user's last login timestamp"""
-        collection = self._get_collection()
-        await collection.update_one(
-            {"username": username},
-            {"$set": {"last_login": datetime.utcnow()}}
+        await self.repo.update_by_username(
+            username,
+            {"last_login": datetime.now(timezone.utc)}
         )
     
-    async def create_initial_admin(self, username: str, password: str) -> bool:
-        """
-        Create initial SuperAdmin from env vars if no users exist.
-        
-        Args:
-            username: SuperAdmin username (should be 'admin')
-            password: SuperAdmin password
-            
-        Returns:
-            True if created, False if users already exist
-        """
-        collection = self._get_collection()
-        
-        # Check if any users exist
-        count = await collection.count_documents({})
-        if count > 0:
-            # Check if admin exists and update to superadmin if needed
-            admin_user = await collection.find_one({"username": username})
-            if admin_user:
-                # Security: Never auto-promote AD users to SuperAdmin via this script
-                if admin_user.get("user_type") == "ad":
-                    logger.warning(f"⚠️ User '{username}' exists as AD user. Skipping auto-promotion to SuperAdmin.")
-                    return False
-
-                if admin_user.get("role") != UserRole.SUPERADMIN.value:
-                    await collection.update_one(
-                        {"username": username},
-                        {"$set": {
-                            "role": UserRole.SUPERADMIN.value,
-                            "created_by": "system",
-                            "updated_at": datetime.utcnow()
-                        }}
-                    )
-                    logger.info(f"✅ Updated '{username}' to SuperAdmin role")
-                    return True
-            return False
-        
-        user_doc = {
-            "username": username,
-            "password_hash": hash_password(password),
-            "role": UserRole.SUPERADMIN.value,
-            "permissions": [Permission.ADMIN.value, Permission.INVENTORY_RW.value, Permission.PROCUREMENT_RW.value],
-            "is_active": True,
-            "created_by": "system",
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
-            "last_login": None
-        }
-        
-        await collection.insert_one(user_doc)
-        logger.info(f"✅ Initial SuperAdmin user '{username}' created")
-        return True
     
     async def get_user_stats(self) -> dict:
         """Get user statistics for admin dashboard"""
-        collection = self._get_collection()
-        
-        total_users = await collection.count_documents({})
-        active_users = await collection.count_documents({"is_active": True})
-        superadmins = await collection.count_documents({"role": UserRole.SUPERADMIN.value})
-        admins = await collection.count_documents({"role": UserRole.ADMIN.value})
-        regular_users = await collection.count_documents({"role": UserRole.USER.value})
+        total_users = await self.repo.count()
+        active_users = await self.repo.count({"is_active": True})
+        superadmins = await self.repo.count({"role": UserRole.SUPERADMIN.value})
+        admins = await self.repo.count({"role": UserRole.ADMIN.value})
+        regular_users = await self.repo.count({"role": UserRole.USER.value})
         
         return {
             "total_users": total_users,
@@ -496,8 +390,7 @@ class UserService:
         self,
         username: str,
         permissions: list[str],
-        role: str = "user",
-        audit_service=None
+        role: str = "user"
     ) -> dict:
         """
         Create AD user without password (auto-created during domain login).
@@ -506,43 +399,45 @@ class UserService:
             username: AD username
             permissions: Aggregated permissions from AD groups
             role: User role (default: user)
-            audit_service: Optional audit service for logging
             
         Returns:
             Created user data
         """
-        collection = self._get_collection()
-        
         user_doc = {
             "username": username,
             "user_type": "ad",
             "role": role,
             "permissions": permissions,
             "is_active": True,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
             "created_by": "system_ad_auto",
-            "last_login": datetime.utcnow()  # Set to now since they just logged in
+            "last_login": datetime.now(timezone.utc)
         }
         
-        result = await collection.insert_one(user_doc)
-        user_doc["id"] = str(result.inserted_id)
-        user_doc.pop("_id", None)
+        created_user = await self.repo.create(user_doc)
         
         # Audit log
-        if audit_service:
-            try:
-                await audit_service.log_user_action(
-                    action=AuditAction.USER_CREATE,
-                    actor="system_ad",
-                    actor_role="system",
-                    target_user=username,
-                    target_role=role,
-                    target_resource="user",
-                    details=f"Auto-created from AD login"
-                )
-            except Exception as e:
-                logger.error(f"Failed to create audit log: {e}")
+        try:
+            await self.auditor.log_ad_user_creation(
+                username=username,
+                role=role
+            )
+        except Exception as e:
+            logger.error(f"Failed to create audit log: {e}")
         
         logger.info(f"AD user auto-created: {username}")
-        return user_doc
+        return created_user
+
+    async def search_users(self, query: str, limit: int = 10) -> List[dict]:
+        """
+        Search users by username or email.
+        
+        Args:
+            query: Search term
+            limit: Max results
+            
+        Returns:
+            List of matching users (safe fields only)
+        """
+        return await self.repo.search(query, limit)

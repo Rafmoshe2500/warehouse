@@ -5,14 +5,10 @@ from app.schemas.auth import LoginRequest, Token, DomainLoginRequest
 from app.schemas.user import PasswordChange
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
-from app.dependencies import get_auth_service
+from app.dependencies import get_auth_service, get_user_service
 from app.core.security import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
-
-
-def get_user_service():
-    return UserService()
 
 
 @router.post("/login", response_model=Token)
@@ -24,7 +20,7 @@ async def login(
     auth_service: AuthService = Depends(get_auth_service)
 ):
     """התחברות למערכת"""
-    return await auth_service.login(login_data, response)
+    return await auth_service.login(login_data, response, request)
 
 
 @router.post("/domain-login", response_model=Token)
@@ -36,17 +32,18 @@ async def domain_login(
     auth_service: AuthService = Depends(get_auth_service)
 ):
     """התחברות באמצעות דומיין (ADFS)"""
-    return await auth_service.domain_login(login_data, response)
+    return await auth_service.domain_login(login_data, response, request)
 
 
 @router.post("/logout")
 async def logout(
+    request: Request,
     response: Response,
     current_user: dict = Depends(get_current_user),
     auth_service: AuthService = Depends(get_auth_service)
 ):
     """התנתקות מהמערכת"""
-    return await auth_service.logout(response)
+    return await auth_service.logout(response, current_user, request)
 
 
 @router.get("/me")

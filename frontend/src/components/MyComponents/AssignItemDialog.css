@@ -1,0 +1,143 @@
+/* AssignItemDialog.css */
+
+/* Override standard Modal body padding for this specific dialog */
+.assign-item-modal .modal__body {
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important; /* Let internal table handle scroll */
+}
+
+/* Main content wrapper */
+.assign-dialog-content {
+    display: flex;
+    flex-direction: column;
+    height: 80vh; /* Fixed height relative to viewport */
+    min-height: 500px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Toolbar styling */
+.assign-dialog-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+    z-index: 50; /* Ensure above table content */
+    position: relative;
+    justify-content: space-between; /* Spread items */
+}
+
+.assign-dialog-actions-left {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    order: 1; /* Move to visual left in LTR, but we are RTL so verify */
+    /* Since direction is RTL:
+       justify-content: space-between puts first item on Right, last on Left.
+       The order in JSX is: LeftActions, Search, Info.
+       We want Buttons on Left (End), Search/Info on Right (Start).
+    */
+    margin-right: auto; /* Push to the left in RTL */
+}
+
+.assign-dialog-search {
+    flex: 1;
+    max-width: 300px;
+    margin-right: 1rem;
+}
+
+.assign-dialog-selection-info {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    background: rgba(59, 130, 246, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+/* Table Wrapper - Critical for table-only scroll */
+.assign-dialog-table-wrapper {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    background-color: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+    z-index: 0;
+}
+
+/* Ensure ItemTable fits perfectly without extra frame */
+.assign-dialog-table-wrapper .item-table-container {
+    flex: 1;
+    height: 100%;
+    border: none !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    overflow: auto; /* Scroll happens here */
+}
+
+/* Sticky header adjustments for inside modal */
+.assign-dialog-table-wrapper .item-table-container thead {
+    background: var(--bg-secondary);
+    position: sticky;
+    top: 0;
+    z-index: 40; /* Lower than toolbar (50) but higher than body */
+}
+
+.assign-dialog-table-wrapper .item-table-container th {
+    top: 0 !important; 
+    z-index: 40 !important;
+}
+
+/* Footer styling */
+.assign-dialog-footer {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: center; /* Centered pagination */
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    flex-shrink: 0;
+    z-index: 50;
+}
+
+/* Empty state */
+.table-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    padding: 2rem;
+}
+
+/* Custom scrollbar */
+.assign-dialog-table-wrapper .item-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.assign-dialog-table-wrapper .item-table-container::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+}
+
+.assign-dialog-table-wrapper .item-table-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.assign-dialog-table-wrapper .item-table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+.assign-dialog-table-wrapper .item-table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}

@@ -1,15 +1,20 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useItems } from '../../hooks/useItems';
 import { useToast } from '../../hooks/useToast';
 import { usePagination } from '../../hooks/usePagination';
-import { useExcelManager } from '../../hooks/useExcelManager';
 import { useInventoryModals } from '../../hooks/useInventoryModals';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useInlineAddItem } from '../../hooks/useInlineAddItem';
 import { useAuth } from '../../context/AuthContext';
 import excelService from '../../api/services/excelService';
+
+// New Hooks
+import { useInventorySelection } from '../../hooks/useInventorySelection';
+import { useInventoryExcel } from '../../hooks/useInventoryExcel';
+import { useAddToCollection } from '../../hooks/useAddToCollection';
+import useColumnVisibility from '../../hooks/useColumnVisibility'; 
 
 // Components
 import InventoryHeader from '../../components/inventory/InventoryHeader/InventoryHeader';
@@ -17,6 +22,7 @@ import InventoryContent from '../../components/inventory/InventoryContent/Invent
 import InventoryModals from '../../components/inventory/InventoryModals/InventoryModals';
 import ExcelManager from '../../components/inventory/ExcelManager/ExcelManager';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
+import { TABLE_COLUMNS } from '../../constants/tableConfig';
 
 import './InventoryPage.css';
 
@@ -30,7 +36,6 @@ const InventoryPage = ({ isEmbedded = false }) => {
   
   // 2. Pagination & UI State
   const { currentPage, itemsPerPage, goToPage, setItemsPerPage } = usePagination(1, 25);
-  const [selectedItems, setSelectedItems] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({});
   const [sortConfig, setSortConfig] = useState({ key: 'updated_at', direction: 'desc' });
@@ -42,7 +47,6 @@ const InventoryPage = ({ isEmbedded = false }) => {
 
   // 3. Derived State
   const debouncedFilters = useDebounce(filters, 500);
-  const { uploadingExcel, setUploadingExcel, showExportModal, fileInputRef, handleUploadClick } = useExcelManager();
 
   // 4. Query Params Construction
   const queryParams = {
@@ -60,11 +64,43 @@ const InventoryPage = ({ isEmbedded = false }) => {
     createItem, updateItem, bulkUpdate, deleteItem, bulkDelete, restoreItems,
     loadItems // Mapped to refetch
   } = useItems(queryParams);
-  
-  // 6. Inline Add Logic
+
+  // 6. Custom Hooks Integration
+  const {
+      selectedItems,
+      setSelectedItems,
+      handleSelectItem,
+      handleSelectAll,
+      clearSelection
+  } = useInventorySelection(items);
+
+  const {
+      visibleColumns,
+      toggleColumn
+  } = useColumnVisibility('inventory_columns', TABLE_COLUMNS);
+
+  const {
+      uploadingExcel,
+      importType,
+      setImportType,
+      handleImportExcel
+  } = useInventoryExcel(loadItems, addToast);
+
+  const {
+      userCollections,
+      collectionsModalItem,
+      openCollectionsModal,
+      closeCollectionsModal,
+      handleAddToCollection
+  } = useAddToCollection(canEdit, addToast);
+
+  // File Input Ref for Excel (Local to page as it connects UI to hook)
+  const fileInputRef = useRef(null);
+  const handleUploadClick = () => fileInputRef.current?.click();
+
+  // 7. Inline Add Logic
   const handleAddItemSuccess = async () => {
       addToast('פריט נוצר בהצלחה', 'success');
-      // React Query auto-invalidates, but valid to reset page
       goToPage(1);
   };
 
@@ -78,18 +114,7 @@ const InventoryPage = ({ isEmbedded = false }) => {
     handleAddItemError
   );
   
-  // Destructure inline add - kept separate to match existing pattern if needed, or structured here
-  const { 
-    isAdding, 
-    newRowData, 
-    startAdd: handleStartAdd, 
-    cancelAdd: handleCancelNew, 
-    handleNewRowChange, 
-    saveNewItem: handleSaveNewItem 
-  } = inlineAdd;
-
-
-  // ============ EXISTING HANDLERS ============
+  // ============ HANDLERS ============
 
   const handleSaveItemModal = async (data) => {
     try {
@@ -113,7 +138,7 @@ const InventoryPage = ({ isEmbedded = false }) => {
         // Get all items that will be deleted
         deletedItemsData = items.filter(i => selectedItems.includes(i._id));
         await bulkDelete(selectedItems, reason);
-        setSelectedItems([]);
+        clearSelection();
       } else {
         const item = items.find(i => i._id === modals.deletingItemName);
         if (item) {
@@ -147,7 +172,7 @@ const InventoryPage = ({ isEmbedded = false }) => {
       await bulkUpdate(selectedItems, updates);
       
       addToast('עדכון מרובה בוצע בהצלחה', 'success');
-      setSelectedItems([]);
+      clearSelection();
       modals.closeBulkEdit();
     } catch (err) {
       console.error(err);
@@ -155,23 +180,10 @@ const InventoryPage = ({ isEmbedded = false }) => {
     }
   };
 
-  const handleSelectItem = (id) => {
-    setSelectedItems(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
-  };
-
-  const handleSelectAll = () => {
-    setSelectedItems(
-      selectedItems.length === items.length ? [] : items.map(i => i._id)
-    );
-  };
-
   const handleEditCell = async (itemId, field, value, isUndo = false) => {
     try {
       await updateItem(itemId, field, value, isUndo);
       addToast('הפריט עודכן בהצלחה', 'success');
-      // No manual reload needed
     } catch (err) {
       addToast('שגיאה בעדכון הפריט', 'error');
     }
@@ -195,9 +207,7 @@ const InventoryPage = ({ isEmbedded = false }) => {
     if (currentPage !== 1) goToPage(1);
   };
 
-  // Import State
-  const [importType, setImportType] = useState('standard'); // 'standard' | 'project'
-
+  // Import Handlers
   const handleProjectImportClick = () => {
     setImportType('project');
     handleUploadClick();
@@ -207,44 +217,12 @@ const InventoryPage = ({ isEmbedded = false }) => {
     setImportType('standard');
     handleUploadClick();
   };
-
-  const handleImportExcel = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingExcel(true);
-    try {
-      let result;
-      if (importType === 'project') {
-        result = await excelService.importProjectExcel(file);
-        addToast(result.message, 'success');
-      } else {
-        result = await excelService.importExcel(file);
-        
-        // Build message
-        let message = `יבוא הושלם! נוצרו: ${result.added}, עודכנו: ${result.updated}`;
-        if (result.skipped > 0) message += `, דולגו: ${result.skipped}`;
-        
-        // If there are errors, show warning with combined message
-        if (result.errors && result.errors.length > 0) {
-          message += `. שימו לב: היו שגיאות ב-${result.errors.length} שורות`;
-          addToast(message, 'warning');
-        } else {
-          // No errors - show success
-          addToast(message, 'success');
-        }
-      }
-
-      // Invalidate queries instead of manual reload
-      await loadItems(); // loadItems is now refetch
-      goToPage(1);
-    } catch (err) {
-      addToast(err.response?.data?.detail || 'שגיאה ביבוא מאקסל', 'error');
-    } finally {
-      setUploadingExcel(false);
-      e.target.value = '';
-      setImportType('standard'); // Reset to default
-    }
+  
+  // Wrapper for hook's import to accept event
+  const onFileChange = (e) => {
+      const file = e.target.files[0];
+      handleImportExcel(file);
+      e.target.value = ''; // Reset input
   };
 
   const handleExportRequest = () => {
@@ -273,6 +251,16 @@ const InventoryPage = ({ isEmbedded = false }) => {
     }
   };
 
+  // Wrapper for Add to Collection to refresh items after (if count needs updating)
+  const onAddToCollectionSuccess = () => {
+     loadItems(); 
+     clearSelection();
+  };
+  
+  const onAddToCollectionClick = (collection) => {
+      handleAddToCollection(collection, selectedItems, onAddToCollectionSuccess);
+  };
+
   return (
     <div className={isEmbedded ? "inventory-page-embedded" : "inventory-page"}>
       <InventoryHeader
@@ -285,17 +273,27 @@ const InventoryPage = ({ isEmbedded = false }) => {
         onFilterToggle={handleFilterToggle}
         onUploadClick={handleStandardImportClick}
         onExportClick={handleExportRequest}
-        onAddClick={handleStartAdd}
+        onAddClick={inlineAdd.startAdd}
         onBulkEdit={handleBulkEditClick}
         onBulkDelete={() => modals.openDeleteConfirm(null, '', true)}
+
         onImportProjectsClick={handleProjectImportClick}
+        
+        // Column Toggle Props
+        allColumns={TABLE_COLUMNS}
+        visibleColumns={Object.keys(visibleColumns).filter(k => visibleColumns[k])} // Convert object to keys array for Header if it expects array? 
+        // Wait, Header expects "visibleColumns" as array of keys? 
+        // useColumnVisibility returns object { key: true/false }.
+        // Previous State was array of strings.
+        // I need to check InventoryHeader.
+        onColumnToggle={toggleColumn}
       />
       
       <InventoryContent
         canEdit={canEdit}
         isEmbedded={isEmbedded}
-        queryParams={queryParams} // New prop
-        // data prop removed
+        queryParams={queryParams}
+        visibleColumns={Object.keys(visibleColumns).filter(k => visibleColumns[k])} // Pass array
         selection={{
           selectedItems,
           setSelectedItems,
@@ -318,6 +316,9 @@ const InventoryPage = ({ isEmbedded = false }) => {
 
         onShowToast={addToast}
         onRestoreItems={restoreItems}
+        onShowCollections={openCollectionsModal} 
+        userCollections={userCollections}
+        onAddToCollection={onAddToCollectionClick}
       />
 
 
@@ -343,13 +344,18 @@ const InventoryPage = ({ isEmbedded = false }) => {
         showExportModal={modals.showExportModal}
         onCloseExport={modals.closeExport}
         onExecuteExport={handleExecuteExport}
+        
+        // Associated Collections Modal
+        showCollectionsModal={!!collectionsModalItem}
+        onCloseCollectionsModal={closeCollectionsModal}
+        collectionsModalItem={collectionsModalItem}
       />
 
       <ExcelManager
         fileInputRef={fileInputRef}
         showExportModal={modals.showExportModal}
         onCloseExport={modals.closeExport}
-        onUploadChange={handleImportExcel}
+        onUploadChange={onFileChange}
         onExecuteExport={handleExecuteExport}
         totalItems={totalItems}
         currentPageItems={items.length}

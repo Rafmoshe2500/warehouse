@@ -38,6 +38,16 @@ async def get_stale_items(
     return await item_service.get_stale_items(days=days, page=page, limit=limit)
 
 
+@router.get("/{item_id}/collections")
+async def get_item_collections(
+        item_id: str,
+        current_user: dict = Depends(inventory_ro),
+        item_service: ItemService = Depends(get_item_service)
+):
+    """קבלת רשימת האוספים המשוייכים לפריט"""
+    return await item_service.get_item_collections(item_id)
+
+
 @router.post("")
 async def create_item(
         item: ItemCreate,
@@ -74,7 +84,6 @@ async def bulk_update_items(
         item_service: ItemService = Depends(get_item_service)
 ):
     """עדכון מרובה"""
-    print(f"DEBUG: Route POST /items/bulk-update called with: {update}")
     return await item_service.bulk_update_items(update, current_user)
 
 

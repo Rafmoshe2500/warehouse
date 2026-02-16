@@ -9,7 +9,7 @@ import asyncio
 import pytest
 import pytest_asyncio
 from typing import AsyncGenerator, Generator
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, AsyncMock
 
 # Add app to path
@@ -21,6 +21,13 @@ from fastapi.testclient import TestClient
 
 from app.config import settings
 from app.db.mongodb import MongoDB
+from unittest.mock import MagicMock
+
+# Patch MongoDB to avoid RuntimeError during app import (due to global service instantiation)
+if MongoDB.db is None:
+    MongoDB.db = MagicMock()
+    MongoDB.client = MagicMock()
+
 from app.main import app
 from app.core.constants import UserRole, Permission
 
@@ -49,6 +56,7 @@ async def mongo_client() -> AsyncGenerator[AsyncIOMotorClient, None]:
         maxPoolSize=10,
         minPoolSize=1,
         serverSelectionTimeoutMS=5000,
+        tz_aware=True,
     )
     # Test connection
     await client.admin.command('ping')
@@ -282,8 +290,8 @@ def sample_item_data() -> dict:
         "purpose": "Testing",
         "target_site": "Lab",
         "notes": "Test notes",
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
     }
 
 
@@ -295,15 +303,15 @@ def sample_procurement_data() -> dict:
         "manufacturer": "Test Vendor",
         "description": "Test Procurement Item",
         "quantity": 5,
-        "order_date": datetime.utcnow(),
+        "order_date": datetime.now(timezone.utc),
         "amount": 1000.00,
         "status": "waiting_emf",
         "received_emf": False,
         "received_bom": False,
         "created_by": "test_user",
         "files": [],
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
     }
 
 
@@ -316,8 +324,8 @@ def sample_user_data() -> dict:
         "password_hash": hash_password("testpassword123"),
         "role": UserRole.USER,
         "is_active": True,
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
     }
 
 
@@ -331,5 +339,5 @@ def sample_audit_data() -> dict:
         "target_resource": "item",
         "resource_id": "item_123",
         "details": "Created test item",
-        "timestamp": datetime.utcnow()
+        "timestamp": datetime.now(timezone.utc)
     }

@@ -38,9 +38,7 @@ const Input = ({
   const { required: isRequired } = finalValidation;
 
   const inputClass = [
-    'input',
-    inputError && 'input--error',
-    isDisabled && 'input--disabled',
+    inputError && 'input-error',
     className,
   ]
     .filter(Boolean)

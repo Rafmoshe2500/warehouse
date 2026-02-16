@@ -31,15 +31,15 @@ class TestAdminRoutes:
         """PUT /api/admin/users/{id} - Update user."""
         # Create user
         from bson import ObjectId
-        from datetime import datetime
+        from datetime import datetime, timezone
         u_id = ObjectId()
         await test_users_collection.insert_one({
             "_id": u_id,
             "username": "to_update",
             "role": "user",
             "is_active": True,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
             "user_type": "local"
         })
         
@@ -51,14 +51,15 @@ class TestAdminRoutes:
         """DELETE /api/admin/users/{id} - Delete user."""
         from bson import ObjectId
         from datetime import datetime
+        from datetime import timezone
         u_id = ObjectId()
         await test_users_collection.insert_one({
             "_id": u_id,
             "username": "to_delete",
             "role": "user",
             "is_active": True,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
             "user_type": "local"
         })
         
@@ -67,8 +68,8 @@ class TestAdminRoutes:
             "username": "other_admin",
             "role": "admin",
             "is_active": True,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
             "user_type": "local"
         })
         

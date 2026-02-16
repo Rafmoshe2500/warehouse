@@ -10,7 +10,8 @@ const ProcurementTable = ({
   onDelete, 
   onManageFiles, 
   onHistory,
-  canEdit = false
+  canEdit = false,
+  isAdmin = false
 }) => {
 
   return (
@@ -74,20 +75,26 @@ const ProcurementTable = ({
                       title="היסטוריה"
                       icon={<FiClock size={16} />}
                     />
-                    <Button 
-                      variant="icon"
-                      onClick={() => onEdit(order)}
-                      title="ערוך"
-                      icon={<FiEdit2 size={16} />}
-                      style={{ color: '#3b82f6' }}
-                    />
-                    <Button 
-                      variant="icon"
-                      onClick={() => onDelete(order)}
-                      title="מחק"
-                      icon={<FiTrash2 size={16} />}
-                      style={{ color: '#ef4444' }}
-                    />
+                    
+                    {/* Allow Edit/Delete only if Admin OR (Not Finished) */}
+                    {(isAdmin || order.status !== 'received') && (
+                        <>
+                            <Button 
+                            variant="icon"
+                            onClick={() => onEdit(order)}
+                            title="ערוך"
+                            icon={<FiEdit2 size={16} />}
+                            className="edit-btn"
+                            />
+                            <Button 
+                            variant="icon"
+                            onClick={() => onDelete(order)}
+                            title="מחק"
+                            icon={<FiTrash2 size={16} />}
+                            className="delete-btn"
+                            />
+                        </>
+                    )}
                   </td>
                 )}
               </tr>

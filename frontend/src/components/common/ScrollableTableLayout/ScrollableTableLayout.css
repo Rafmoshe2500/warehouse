@@ -77,11 +77,22 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
+[data-theme="light"] .scrollable-table-layout__header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--bg-tertiary);
+  z-index: -1;
+}
+
 [data-theme="light"] .scrollable-table-layout__content::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
 
 [data-theme="light"] .scrollable-table-layout__content::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #4f46e5, rgba(79, 70, 229, 0.7));
-  border-color: #f1f5f9;
+  background: linear-gradient(180deg, var(--accent-primary), rgba(79, 70, 229, 0.7));
+  border-color: var(--bg-tertiary);
 }

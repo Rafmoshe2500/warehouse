@@ -4,7 +4,7 @@ Tests CRUD operations, search, filtering, and bulk operations.
 """
 import pytest
 import pytest_asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from bson import ObjectId
 
 from app.db.repositories.items import ItemsRepository
@@ -149,8 +149,8 @@ class TestItemsRepository:
         for i in range(5):
             data = sample_item_data.copy()
             data["catalog_number"] = f"CAT-{i:03d}"
-            data["created_at"] = datetime.utcnow()
-            data["updated_at"] = datetime.utcnow()
+            data["created_at"] = datetime.now(timezone.utc)
+            data["updated_at"] = datetime.now(timezone.utc)
             await repo.create(data)
         
         filter_params = ItemFilter(page=1, limit=3)
@@ -168,8 +168,8 @@ class TestItemsRepository:
         for cat in ["ALPHA-001", "BETA-002", "ALPHA-003"]:
             data = sample_item_data.copy()
             data["catalog_number"] = cat
-            data["created_at"] = datetime.utcnow()
-            data["updated_at"] = datetime.utcnow()
+            data["created_at"] = datetime.now(timezone.utc)
+            data["updated_at"] = datetime.now(timezone.utc)
             await repo.create(data)
         
         filter_params = ItemFilter(catalog_number="ALPHA", page=1, limit=10)
@@ -186,8 +186,8 @@ class TestItemsRepository:
         for cat in ["C-001", "A-001", "B-001"]:
             data = sample_item_data.copy()
             data["catalog_number"] = cat
-            data["created_at"] = datetime.utcnow()
-            data["updated_at"] = datetime.utcnow()
+            data["created_at"] = datetime.now(timezone.utc)
+            data["updated_at"] = datetime.now(timezone.utc)
             await repo.create(data)
         
         filter_params = ItemFilter(sort_by="catalog_number", sort_order="asc", page=1, limit=10)
@@ -221,8 +221,8 @@ class TestItemsRepository:
         for i in range(3):
             data = sample_item_data.copy()
             data["catalog_number"] = f"BULK-{i}"
-            data["created_at"] = datetime.utcnow()
-            data["updated_at"] = datetime.utcnow()
+            data["created_at"] = datetime.now(timezone.utc)
+            data["updated_at"] = datetime.now(timezone.utc)
             created = await repo.create(data)
             item_ids.append(created["_id"])
         
@@ -266,8 +266,8 @@ class TestItemsRepository:
         for i in range(3):
             data = sample_item_data.copy()
             data["catalog_number"] = f"DEL-{i}"
-            data["created_at"] = datetime.utcnow()
-            data["updated_at"] = datetime.utcnow()
+            data["created_at"] = datetime.now(timezone.utc)
+            data["updated_at"] = datetime.now(timezone.utc)
             created = await repo.create(data)
             item_ids.append(created["_id"])
         
@@ -291,15 +291,15 @@ class TestItemsRepository:
         # Create old item (60 days ago)
         old_data = sample_item_data.copy()
         old_data["catalog_number"] = "OLD-001"
-        old_data["updated_at"] = datetime.utcnow() - timedelta(days=60)
-        old_data["created_at"] = datetime.utcnow() - timedelta(days=60)
+        old_data["updated_at"] = datetime.now(timezone.utc) - timedelta(days=60)
+        old_data["created_at"] = datetime.now(timezone.utc) - timedelta(days=60)
         await repo.create(old_data)
         
         # Create recent item
         new_data = sample_item_data.copy()
         new_data["catalog_number"] = "NEW-001"
-        new_data["updated_at"] = datetime.utcnow()
-        new_data["created_at"] = datetime.utcnow()
+        new_data["updated_at"] = datetime.now(timezone.utc)
+        new_data["created_at"] = datetime.now(timezone.utc)
         await repo.create(new_data)
         
         items, total = await repo.get_stale_items(days=30)

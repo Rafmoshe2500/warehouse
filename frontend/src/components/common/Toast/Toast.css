@@ -85,7 +85,7 @@
 }
 
 .toast--success::before {
-  background: linear-gradient(90deg, #22c55e, #16a34a);
+  background: linear-gradient(90deg, var(--accent-success), var(--accent-success));
 }
 
 .toast--success .toast__icon {
@@ -98,7 +98,7 @@
 }
 
 .toast--error::before {
-  background: linear-gradient(90deg, #ef4444, #dc2626);
+  background: linear-gradient(90deg, var(--accent-danger), var(--accent-danger));
 }
 
 .toast--error .toast__icon {
@@ -111,7 +111,7 @@
 }
 
 .toast--info::before {
-  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-primary));
 }
 
 .toast--info .toast__icon {
@@ -124,7 +124,7 @@
 }
 
 .toast--warning::before {
-  background: linear-gradient(90deg, #f59e0b, #d97706);
+  background: linear-gradient(90deg, var(--accent-warning), var(--accent-warning));
 }
 
 .toast--warning .toast__icon {

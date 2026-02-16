@@ -1,8 +1,8 @@
-from typing import List
-from datetime import datetime
-from bson import ObjectId
+from typing import List, Optional
+from datetime import datetime, timezone
 
-from app.db.mongodb import MongoDB
+from app.db.repositories.group_repository import GroupRepository
+from app.services.audit.group_auditor import GroupAuditor
 from app.schemas.group import GroupCreate, GroupUpdate
 from app.core.exceptions import NotFoundException, BadRequestException
 
@@ -10,50 +10,37 @@ from app.core.exceptions import NotFoundException, BadRequestException
 class GroupService:
     """Service for managing groups - groups have no password and are always 'user' role"""
     
-    def __init__(self):
-        self.collection_name = "groups"
-    
-    def _get_collection(self):
-        return MongoDB.get_permissions_collection(self.collection_name)
+    def __init__(self, repo: GroupRepository, auditor: GroupAuditor):
+        self.repo = repo
+        self.auditor = auditor
     
     async def get_groups(self) -> dict:
         """Get all groups"""
-        collection = self._get_collection()
-        groups = []
-        async for group in collection.find():
-            group["id"] = str(group.pop("_id"))
-            groups.append(group)
+        groups = await self.repo.list_groups()
         return {"groups": groups, "total": len(groups)}
     
     async def get_group_by_id(self, group_id: str) -> dict:
         """Get group by ID"""
-        collection = self._get_collection()
-        group = await collection.find_one({"_id": ObjectId(group_id)})
+        group = await self.repo.get_by_id(group_id)
         if not group:
             raise NotFoundException("קבוצה לא נמצאה")
-        group["id"] = str(group.pop("_id"))
         return group
     
-    async def get_group_by_name(self, name: str) -> dict:
+    async def get_group_by_name(self, name: str) -> Optional[dict]:
         """Get group by name"""
-        collection = self._get_collection()
-        group = await collection.find_one({"name": name})
-        if group:
-            group["id"] = str(group.pop("_id"))
-        return group
+        return await self.repo.get_by_name(name)
     
     async def create_group(
         self, 
         group_data: GroupCreate, 
         created_by: str, 
         creator_role: str,
-        audit_service=None
+        # audit_service is removed in flavor of self.auditor
     ) -> dict:
         """Create new group"""
-        collection = self._get_collection()
         
         # Check if group name exists
-        existing = await collection.find_one({"name": group_data.name})
+        existing = await self.repo.get_by_name(group_data.name)
         if existing:
             raise BadRequestException("שם קבוצה כבר קיים")
         
@@ -62,54 +49,48 @@ class GroupService:
             "role": group_data.role,
             "permissions": group_data.permissions or [],
             "is_active": True,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
         }
         
-        result = await collection.insert_one(group_doc)
-        group_doc["id"] = str(result.inserted_id)
-        group_doc.pop("_id", None)
-
-        if audit_service:
-            from app.schemas.audit import AuditAction
-            await audit_service.log_user_action(
-                action=AuditAction.GROUP_CREATE,
+        created_group = await self.repo.create(group_doc)
+        
+        # Audit log
+        try:
+            await self.auditor.log_create_group(
                 actor=created_by,
                 actor_role=creator_role,
-                target_resource="group",
-                resource_id=group_doc["id"],
-                details=f"נוצרה קבוצה: {group_data.name}",
-                changes=group_data.dict()
+                group_id=created_group["id"],
+                group_name=created_group["name"],
+                changes=group_data.model_dump()
             )
+        except Exception as e:
+            # We don't want to fail request if audit logging fails
+            # But in production we should log this error
+            pass
 
-        return group_doc
+        return created_group
     
     async def update_group(
         self, 
         group_id: str, 
         update_data: GroupUpdate,
         updated_by: str,
-        updater_role: str,
-        audit_service=None
+        updater_role: str
     ) -> dict:
         """Update group"""
-        collection = self._get_collection()
-        
         # Check group exists
-        existing = await collection.find_one({"_id": ObjectId(group_id)})
+        existing = await self.repo.get_by_id(group_id)
         if not existing:
             raise NotFoundException("קבוצה לא נמצאה")
         
-        update_dict = {"updated_at": datetime.utcnow()}
+        update_dict = {"updated_at": datetime.now(timezone.utc)}
         changes = {}
 
         if update_data.name is not None:
             # Check if new name is taken
-            name_exists = await collection.find_one({
-                "name": update_data.name,
-                "_id": {"$ne": ObjectId(group_id)}
-            })
-            if name_exists:
+            name_exists = await self.repo.get_by_name(update_data.name)
+            if name_exists and name_exists["id"] != group_id:
                 raise BadRequestException("שם קבוצה כבר קיים")
             update_dict["name"] = update_data.name
             changes["name"] = {"old": existing.get("name"), "new": update_data.name}
@@ -126,22 +107,20 @@ class GroupService:
             update_dict["is_active"] = update_data.is_active
             changes["is_active"] = {"old": existing.get("is_active"), "new": update_data.is_active}
         
-        await collection.update_one(
-            {"_id": ObjectId(group_id)},
-            {"$set": update_dict}
-        )
+        await self.repo.update(group_id, update_dict)
 
-        if audit_service and changes:
-            from app.schemas.audit import AuditAction
-            await audit_service.log_user_action(
-                action=AuditAction.GROUP_UPDATE,
-                actor=updated_by,
-                actor_role=updater_role,
-                target_resource="group",
-                resource_id=group_id,
-                details=f"עודכנה קבוצה: {existing.get('name')}",
-                changes=changes
-            )
+        # Audit log
+        if changes:
+            try:
+                await self.auditor.log_update_group(
+                    actor=updated_by,
+                    actor_role=updater_role,
+                    group_id=group_id,
+                    group_name=existing.get("name"),  # Use old name in log details? Or new? details uses name.
+                    changes=changes
+                )
+            except Exception:
+                pass
         
         return await self.get_group_by_id(group_id)
     
@@ -150,28 +129,28 @@ class GroupService:
         group_id: str, 
         reason: str,
         deleted_by: str,
-        deleter_role: str,
-        audit_service=None
+        deleter_role: str
     ) -> dict:
         """Delete group"""
-        collection = self._get_collection()
-        
-        existing = await collection.find_one({"_id": ObjectId(group_id)})
+        existing = await self.repo.get_by_id(group_id)
         if not existing:
             raise NotFoundException("קבוצה לא נמצאה")
         
-        await collection.delete_one({"_id": ObjectId(group_id)})
+        await self.repo.delete(group_id)
 
-        if audit_service:
-            from app.schemas.audit import AuditAction
-            await audit_service.log_user_action(
-                action=AuditAction.GROUP_DELETE,
+        try:
+            await self.auditor.log_delete_group(
                 actor=deleted_by,
                 actor_role=deleter_role,
-                target_resource="group",
-                resource_id=group_id,
-                details=f"נמחקה קבוצה: {existing.get('name')}",
+                group_id=group_id,
+                group_name=existing.get("name"),
                 reason=reason
             )
+        except Exception:
+            pass
 
         return {"message": "קבוצה נמחקה בהצלחה", "reason": reason}
+
+    async def search_groups(self, query: str, limit: int = 10) -> List[dict]:
+        """Search groups by name for permission assignment"""
+        return await self.repo.search(query, limit)

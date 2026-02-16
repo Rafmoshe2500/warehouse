@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 from datetime import datetime
 
@@ -18,6 +18,8 @@ class GroupUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
+
+
 class GroupResponse(BaseModel):
     """Schema for group response"""
     id: str
@@ -28,8 +30,7 @@ class GroupResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class GroupsListResponse(BaseModel):

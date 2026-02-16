@@ -8,6 +8,9 @@ import { useToast } from '../../hooks/useToast';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
 import './LoginPage.css';
 
+import Header from '../../components/layout/Header/Header';
+// import ThemeSelector from '../../components/layout/ThemeSelector/ThemeSelector'; // Removed as it is now in Header
+
 const LoginPage = () => {
   const [authMode, setAuthMode] = useState(null); // null = selection, 'local' = local form, 'domain' = domain
   const [loading, setLoading] = useState(false);
@@ -127,6 +130,7 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
+      <Header isLogin={true} />
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       <div className="login-page__container">
         {authMode === null && renderAuthSelection()}

@@ -6,6 +6,7 @@ from typing import Optional, List
 from app.core.security import get_current_user, require_permission
 from app.core.constants import Permission
 from app.services.procurement_service import ProcurementService
+from app.dependencies import get_procurement_service
 from app.schemas.procurement import (
     ProcurementOrderCreate,
     ProcurementOrderUpdate,
@@ -21,11 +22,6 @@ procurement_ro = require_permission(Permission.PROCUREMENT_RO)
 procurement_rw = require_permission(Permission.PROCUREMENT_RW)
 
 
-def get_procurement_service() -> ProcurementService:
-    """Dependency to get procurement service"""
-    return ProcurementService()
-
-
 @router.get("/orders", response_model=ProcurementOrdersListResponse)
 async def get_orders(
     page: int = Query(1, ge=1),
@@ -38,7 +34,6 @@ async def get_orders(
     current_user: dict = Depends(procurement_ro),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
-    print(f"DEBUG ROUTE: status_in={status_in}, status_ne={status_ne}")
     """Get all procurement orders (all authenticated users)"""
     orders, total = await procurement_service.get_orders(
         page=page,
@@ -89,7 +84,6 @@ async def update_order(
     current_user: dict = Depends(procurement_rw),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
-    """Update procurement order (admin+ only)"""
     username = current_user.get("username") or current_user.get("sub")
     
     return await procurement_service.update_order(

@@ -4,7 +4,7 @@ Tests order CRUD operations, file management, and filtering.
 """
 import pytest
 import pytest_asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
 
 from app.db.repositories.procurement_repository import ProcurementRepository
@@ -264,7 +264,7 @@ class TestProcurementRepository:
             "file_type": "application/pdf",
             "file_size": 1024,
             "uploaded_by": "test_user",
-            "uploaded_at": datetime.utcnow()
+            "uploaded_at": datetime.now(timezone.utc)
         }
         
         result = await repo.add_file_to_order(order_id, file_metadata)
@@ -290,7 +290,7 @@ class TestProcurementRepository:
                 "file_type": "application/pdf",
                 "file_size": 1024,
                 "uploaded_by": "test_user",
-                "uploaded_at": datetime.utcnow()
+                "uploaded_at": datetime.now(timezone.utc)
             }
             await repo.add_file_to_order(order_id, file_metadata)
         
@@ -313,7 +313,7 @@ class TestProcurementRepository:
             "file_type": "application/pdf",
             "file_size": 1024,
             "uploaded_by": "test_user",
-            "uploaded_at": datetime.utcnow()
+            "uploaded_at": datetime.now(timezone.utc)
         }
         await repo.add_file_to_order(order_id, file_metadata)
         
@@ -338,7 +338,7 @@ class TestProcurementRepository:
             "file_type": "application/pdf",
             "file_size": 2048,
             "uploaded_by": "test_user",
-            "uploaded_at": datetime.utcnow()
+            "uploaded_at": datetime.now(timezone.utc)
         }
         await repo.add_file_to_order(order_id, file_metadata)
         

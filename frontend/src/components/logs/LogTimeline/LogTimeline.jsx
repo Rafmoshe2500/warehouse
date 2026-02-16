@@ -31,6 +31,8 @@ const ACTION_CONFIG = {
   file_upload: { icon: FiPlus, className: 'log-item--success' },
   file_delete: { icon: FiTrash2, className: 'log-item--danger' },
   delete_all: { icon: FiTrash2, className: 'log-item--danger' },
+  collection_item_add: { icon: FiPlus, className: 'log-item--success' },
+  collection_item_remove: { icon: FiTrash2, className: 'log-item--danger' },
 };
 
 const getActionConfig = (action) => {

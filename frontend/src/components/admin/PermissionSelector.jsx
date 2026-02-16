@@ -14,15 +14,15 @@ const PermissionSelector = ({ selectedPermissions = [], onChange }) => {
         {
             title: 'מלאי',
             permissions: [
-                { id: 'inventory:ro', label: 'צפייה בלבד' },
-                { id: 'inventory:rw', label: 'מלאה (צפייה + עריכה)' }
+                { id: 'inventory:ro', label: 'קריאה' },
+                { id: 'inventory:rw', label: 'קריאה/כתיבה' }
             ]
         },
         {
             title: 'רכש',
             permissions: [
-                { id: 'procurement:ro', label: 'צפייה בלבד' },
-                { id: 'procurement:rw', label: 'מלאה (צפייה + עריכה)' }
+                { id: 'procurement:ro', label: 'קריאה' },
+                { id: 'procurement:rw', label: 'קריאה/כתיבה' }
             ]
         },
         {

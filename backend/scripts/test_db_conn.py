@@ -1,8 +1,10 @@
 
 import asyncio
+import pytest
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.config import settings
 
+@pytest.mark.asyncio
 async def test_conn():
     print(f"Connecting to {settings.MONGODB_URL}")
     client = AsyncIOMotorClient(settings.MONGODB_URL, serverSelectionTimeoutMS=2000)

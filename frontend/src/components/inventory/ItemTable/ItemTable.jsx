@@ -12,6 +12,7 @@ import logService from '../../../api/services/logService';
 import { useAuth } from '../../../context/AuthContext';
 
 import { TableCell, ContextMenu, FloatingToolbar, SelectionIndicator } from '../../common';
+import ItemTableRow from './ItemTableRow';
 
 import './ItemTable.css';
 
@@ -22,6 +23,7 @@ const ItemTable = ({
   sorting = {},
   filtering = {},
   editing = {},
+  visibleColumns = [], 
   onBulkEdit,
   onBulkDelete,
   isAdding,
@@ -30,7 +32,10 @@ const ItemTable = ({
   onSaveNew,
   onCancelNew,
   onShowToast,
-  onRestoreItems
+  onRestoreItems,
+  onShowCollections, 
+  userCollections,
+  onAddToCollection
 }) => {
   const { selectedItems = [], setSelectedItems, onSelectItem, onSelectAll } = selection;
   const { sortConfig, onSort } = sorting;
@@ -39,7 +44,13 @@ const ItemTable = ({
 
   const [lastSelectedId, setLastSelectedId] = useState(null);
   const tableContainerRef = useRef(null);
-  const columns = TABLE_COLUMNS;
+  
+  // Filter columns based on visibility
+  const columns = useMemo(() => {
+    if (!visibleColumns || visibleColumns.length === 0) return TABLE_COLUMNS;
+    return TABLE_COLUMNS.filter(col => visibleColumns.includes(col.key));
+  }, [visibleColumns]);
+
   const { user } = useAuth();
 
   // Undo/Redo hook
@@ -61,9 +72,7 @@ const ItemTable = ({
       // Get current user from auth context
       const username = user?.username || 'unknown';
       const userRole = user?.role || 'unknown';
-      
-      console.log('🔄 Creating undo log:', { type, details, username, userRole });
-      
+            
       try {
         if (type === 'edit') {
           // Find the item to get catalog number
@@ -85,7 +94,6 @@ const ItemTable = ({
               }
             }
           });
-          console.log('✅ Undo log created successfully for edit');
         } else if (type === 'delete') {
           // Get catalog numbers from deleted items
           const catalogNumbers = details.deletedItems
@@ -104,7 +112,6 @@ const ItemTable = ({
               ? `ביטול מחיקה של ${details.count} פריטים: ${catalogNumbers}`
               : `ביטול מחיקת פריט: ${catalogNumbers}`
           });
-          console.log('✅ Undo log created successfully for delete');
         }
       } catch (error) {
         console.error('❌ Failed to create undo log:', error);
@@ -146,8 +153,6 @@ const ItemTable = ({
   const handleUndo = useCallback(async () => {
     if (canUndo) {
       await undo();
-      // The type of undo (edit/delete) isn't returned by undo(), but we can infer or use a generic message
-      // Or we could check history length change, but keeps it simple for now.
       if (onShowToast) onShowToast('פעולה בוטלה', 'info');
     }
   }, [canUndo, undo, onShowToast]);
@@ -196,11 +201,12 @@ const ItemTable = ({
 
   // Double-click handler for cells
   const handleCellDoubleClick = async (item, field, value) => {
-    if (!canEdit) return; // Prevent editing for RO users
-
-    if (IMMUTABLE_FIELDS.includes(field)) {
+    // Allow copying for immutable fields OR if user is Read-Only
+    if (IMMUTABLE_FIELDS.includes(field) || !canEdit) {
       try {
         const textToCopy = formatCellValue(value);
+        if (!textToCopy) return; // Don't copy empty values
+        
         await navigator.clipboard.writeText(textToCopy);
         if (onShowToast) {
           onShowToast(`הועתק ללוח: ${textToCopy}`, 'success');
@@ -210,11 +216,13 @@ const ItemTable = ({
       }
       return;
     }
+
+    // Only allow editing if user has permission and field is mutable
     startEdit(item._id, field, value);
   };
 
   // Row click handler
-  const handleRowClick = (item, e) => {
+  const handleRowClick = useCallback((item, e) => {
     if (isAdding) return;
     if (e.target.tagName === 'INPUT' && e.target.type !== 'checkbox') return;
     if (e.target.closest('.item-table__edit-container')) return;
@@ -232,6 +240,7 @@ const ItemTable = ({
       setLastSelectedId(id);
     } else if (e.shiftKey) {
       e.preventDefault();
+      // Need access to current items which is in closure... OK
       if (lastSelectedId && items.find(i => i._id === lastSelectedId) && setSelectedItems) {
         const currentIndex = items.findIndex(i => i._id === id);
         const lastIndex = items.findIndex(i => i._id === lastSelectedId);
@@ -254,7 +263,7 @@ const ItemTable = ({
         setLastSelectedId(id);
       }
     }
-  };
+  }, [items, isAdding, selectedItems, lastSelectedId, setSelectedItems, onSelectItem]);
 
   // Sort handler
   const handleSort = (key) => {
@@ -283,9 +292,27 @@ const ItemTable = ({
   };
 
   // Render cell helper
-  const renderCell = (item, col) => {
+  const renderCell = useCallback((item, col) => {
     const field = col.key;
     const value = item[field];
+
+    if (field === 'associated_collections_count') {
+      if (value > 0) {
+        return (
+          <button
+            className="link-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onShowCollections) onShowCollections(item);
+            }}
+          >
+            {value}
+          </button>
+        );
+      } else {
+        return <span>0</span>;
+      }
+    }
 
     return (
       <TableCell
@@ -306,10 +333,15 @@ const ItemTable = ({
         onMouseEnter={handleCellMouseEnter}
       />
     );
-  };
+  }, [isEditing, editValue, focusedCell, selectedCells, updateEditValue, saveEdit, cancelEdit, handleCellDoubleClick, setFocusedCell, handleCellMouseDown, handleCellMouseEnter, onShowCollections]);
 
   const frozenColumns = useMemo(() => columns.filter(col => col.frozen), [columns]);
   const scrollableColumns = useMemo(() => columns.filter(col => !col.frozen), [columns]);
+
+  const handleSelectItem = useCallback((id) => {
+      onSelectItem(id);
+      setLastSelectedId(id);
+  }, [onSelectItem]);
 
   return (
     <div
@@ -442,33 +474,16 @@ const ItemTable = ({
             </tr>
           ) : (
             items.map((item) => (
-              <tr
+              <ItemTableRow
                 key={item._id}
-                className={selectedItems.includes(item._id) ? 'row-selected' : ''}
-                onClick={(e) => handleRowClick(item, e)}
-              >
-                <td className="th-frozen">
-                  <input
-                    type="checkbox"
-                    checked={selectedItems.includes(item._id)}
-                    onChange={() => {
-                      onSelectItem(item._id);
-                      setLastSelectedId(item._id);
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </td>
-                {frozenColumns.map((col) => (
-                  <td key={col.key} className={`col-${col.key} th-frozen`}>
-                    {renderCell(item, col)}
-                  </td>
-                ))}
-                {scrollableColumns.map((col) => (
-                  <td key={col.key} className={`col-${col.key}`}>
-                    {renderCell(item, col)}
-                  </td>
-                ))}
-              </tr>
+                item={item}
+                isSelected={selectedItems.includes(item._id)}
+                onSelect={handleSelectItem}
+                onRowClick={handleRowClick}
+                frozenColumns={frozenColumns}
+                scrollableColumns={scrollableColumns}
+                renderCell={renderCell}
+              />
             ))
           )}
         </tbody>
@@ -492,10 +507,12 @@ const ItemTable = ({
         position={contextMenu}
         selectedItemsCount={selectedItems.length}
         selectedCellsCount={selectedCells.length}
-        onEdit={canEdit ? onBulkEdit : null}
-        onDelete={canEdit ? onBulkDelete : null}
-        onCopy={copySelectedCells}
+        onEdit={onBulkEdit}
         onClose={closeContextMenu}
+        onCopy={copySelectedCells}
+        onDelete={onBulkDelete}
+        onAddToCollection={onAddToCollection}
+        userCollections={userCollections}
       />
     </div>
   );

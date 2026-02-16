@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Select } from '../common';
+import { Button, Input } from '../common';
 import PermissionSelector from './PermissionSelector';
 import './GroupForm.css';
 
@@ -54,17 +54,16 @@ const GroupForm = ({ group, onSubmit, onCancel }) => {
     };
 
     return (
-        <div className="group-form-overlay">
-            <div className="group-form">
+        <div className="group-form-overlay" onClick={onCancel}>
+            <div className="group-form" onClick={e => e.stopPropagation()}>
                 <h2>{group ? 'עריכת קבוצה' : 'הוספת קבוצה חדשה'}</h2>
 
                 {error && <div className="group-form__error">{error}</div>}
 
                 <form onSubmit={handleSubmit}>
-                    <div className="group-form__field">
+                    <div className="form-grid">
                         <Input
                             label="שם קבוצה"
-                            id="name"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
@@ -72,33 +71,35 @@ const GroupForm = ({ group, onSubmit, onCancel }) => {
                             minLength={2}
                             placeholder="הכנס שם קבוצה"
                         />
+                        
+                        <div className="full-width">
+                            <PermissionSelector
+                                selectedPermissions={formData.permissions}
+                                onChange={(newPermissions) => setFormData({ ...formData, permissions: newPermissions })}
+                            />
+                        </div>
+
+                        {group && (
+                            <div className="form-checkboxes">
+                                <label className="checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        name="is_active"
+                                        checked={formData.is_active}
+                                        onChange={handleChange}
+                                    />
+                                    קבוצה פעילה
+                                </label>
+                            </div>
+                        )}
                     </div>
 
-                    {group && (
-                        <div className="group-form__field group-form__field--checkbox">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    name="is_active"
-                                    checked={formData.is_active}
-                                    onChange={handleChange}
-                                />
-                                קבוצה פעילה
-                            </label>
-                        </div>
-                    )}
-
-                    <PermissionSelector
-                        selectedPermissions={formData.permissions}
-                        onChange={(newPermissions) => setFormData({ ...formData, permissions: newPermissions })}
-                    />
-
                     <div className="group-form__actions">
+                        <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
+                            ביטול
+                        </Button>
                         <Button type="submit" variant="primary" disabled={loading}>
                             {loading ? 'שומר...' : group ? 'עדכון' : 'הוספה'}
-                        </Button>
-                        <Button type="button" variant="secondary" onClick={onCancel}>
-                            ביטול
                         </Button>
                     </div>
                 </form>

@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '../common';
+import { Button, Input, Select } from '../common';
 import PermissionSelector from './PermissionSelector';
 import './UserForm.css';
+
+const USER_TYPE_OPTIONS = [
+    { value: 'local', label: 'משתמש מקומי' },
+    { value: 'ad', label: 'Active Directory' }
+];
 
 const UserForm = ({ user, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
-        user_type: 'local',
+        user_type: 'ad',
         role: 'user',
         permissions: [],
         is_active: true,
@@ -33,6 +38,16 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
         setFormData({
             ...formData,
             [name]: type === 'checkbox' ? checked : value,
+        });
+    };
+
+    const handleSelectChange = (e) => {
+        const { value } = e.target;
+        // Specifically for Select component which passes event-like object but target might be different or standard event
+        // The standard select change handler in React gives event with target.name and target.value
+        setFormData({
+            ...formData,
+            user_type: value,
         });
     };
 
@@ -63,18 +78,16 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
     };
 
     return (
-        <div className="user-form-overlay">
-            <div className="user-form">
+        <div className="user-form-overlay" onClick={onCancel}>
+            <div className="user-form" onClick={e => e.stopPropagation()}>
                 <h2>{user ? 'עריכת משתמש' : 'הוספת משתמש חדש'}</h2>
 
                 {error && <div className="user-form__error">{error}</div>}
 
                 <form onSubmit={handleSubmit}>
-                    <div className="user-form__field">
-                        <label htmlFor="username">שם משתמש</label>
-                        <input
-                            type="text"
-                            id="username"
+                    <div className="form-grid">
+                        <Input
+                            label="שם משתמש"
                             name="username"
                             value={formData.username}
                             onChange={handleChange}
@@ -82,65 +95,61 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
                             minLength={3}
                             placeholder="הכנס שם משתמש"
                         />
-                    </div>
 
-                    <div className="user-form__field">
-                        <label htmlFor="user_type">סוג משתמש</label>
-                        <select
-                            id="user_type"
+                        <Select
+                            label="סוג משתמש"
                             name="user_type"
                             value={formData.user_type}
                             onChange={handleChange}
+                            options={USER_TYPE_OPTIONS}
                             disabled={!!user}
-                        >
-                            <option value="local">משתמש מקומי</option>
-                            <option value="ad">Active Directory</option>
-                        </select>
-                    </div>
+                        />
 
-                    {formData.user_type === 'local' && (
-                        <div className="user-form__field">
-                            <label htmlFor="password">
-                                סיסמה {user && '(השאר ריק לשמירת הסיסמה הנוכחית)'}
-                            </label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required={!user && formData.user_type === 'local'}
-                                minLength={4}
-                                placeholder={user ? '••••••••' : 'הכנס סיסמה'}
+                        {formData.user_type === 'local' && (
+                            <div className="full-width">
+                                <Input
+                                    label={`סיסמה ${user ? '(השאר ריק לשמירת הקיים)' : ''}`}
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required={!user && formData.user_type === 'local'}
+                                    minLength={4}
+                                    placeholder={user ? '••••••••' : 'הכנס סיסמה'}
+                                />
+                            </div>
+                        )}
+
+                        <div className="full-width">
+                            <PermissionSelector
+                                selectedPermissions={formData.permissions}
+                                onChange={(newPermissions) => setFormData({ ...formData, permissions: newPermissions })}
                             />
                         </div>
-                    )}
 
-                    <PermissionSelector
-                        selectedPermissions={formData.permissions}
-                        onChange={(newPermissions) => setFormData({ ...formData, permissions: newPermissions })}
-                    />
+                        {user && (
+                            <div className="form-checkboxes">
+                                <label className="checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        name="is_active"
+                                        checked={formData.is_active}
+                                        onChange={handleChange}
+                                    />
+                                    משתמש פעיל
+                                </label>
+                            </div>
+                        )}
+                    </div>
 
-                    {user && (
-                        <div className="user-form__field user-form__field--checkbox">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    name="is_active"
-                                    checked={formData.is_active}
-                                    onChange={handleChange}
-                                />
-                                משתמש פעיל
-                            </label>
-                        </div>
-                    )}
+                    <div className="form-divider"></div>
 
                     <div className="user-form__actions">
+                        <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
+                            ביטול
+                        </Button>
                         <Button type="submit" variant="primary" disabled={loading}>
                             {loading ? 'שומר...' : user ? 'עדכון' : 'הוספה'}
-                        </Button>
-                        <Button type="button" variant="secondary" onClick={onCancel}>
-                            ביטול
                         </Button>
                     </div>
                 </form>

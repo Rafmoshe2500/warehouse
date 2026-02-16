@@ -1,6 +1,8 @@
 import React from 'react';
 import { FiPlus, FiUpload, FiDownload, FiEdit2, FiTrash2, FiFilter } from 'react-icons/fi';
 import Button from '../../common/Button/Button';
+import Spinner from '../../common/Spinner/Spinner';
+import ColumnToggle from '../ColumnToggle/ColumnToggle';
 import './InventoryHeader.css';
 
 const InventoryHeader = ({
@@ -16,7 +18,11 @@ const InventoryHeader = ({
   onAddClick,
   onBulkEdit,
   onBulkDelete,
-  onImportProjectsClick
+  onImportProjectsClick,
+  // Column Toggle Props
+  allColumns,
+  visibleColumns,
+  onColumnToggle
 }) => {
   return (
     <div className="inventory-header">
@@ -24,11 +30,11 @@ const InventoryHeader = ({
         {canEdit && (
           <>
             <Button variant="secondary" onClick={onUploadClick} disabled={uploadingExcel} className="btn-icon" data-testid="import-button">
-              <FiUpload /> {uploadingExcel ? 'טוען...' : 'יבוא אקסל'}
+              <FiUpload /> {uploadingExcel ? <Spinner inline size="small" /> : 'יבוא מלאי'}
             </Button>
 
             <Button variant="secondary" onClick={onImportProjectsClick} disabled={uploadingExcel} className="btn-icon">
-              <FiUpload /> העלאת שריונים
+              <FiUpload /> יבוא שריונים
             </Button>
           </>
         )}
@@ -40,16 +46,24 @@ const InventoryHeader = ({
         <Button
           variant={showFilters ? 'primary' : 'secondary'}
           onClick={onFilterToggle}
-          title={showFilters ? "הסתר פילטרים" : "הצג פילטרים"}
+          title={showFilters ? "הסתרה" : "פילטרים"}
           className="btn-icon"
         >
-          <FiFilter /> {showFilters ? 'הסתר פילטר' : 'הצג פילטר'}
+          <FiFilter /> {showFilters ? 'הסתרה' : 'פילטרים'}
         </Button>
+
+        {allColumns && (
+          <ColumnToggle
+            allColumns={allColumns}
+            visibleColumns={visibleColumns}
+            onToggle={onColumnToggle}
+          />
+        )}
 
         {canEdit && (
           <>
             <Button onClick={onAddClick} className="btn-icon" data-testid="add-item-button">
-              <FiPlus /> הוסף פריט
+              <FiPlus /> הוסף
             </Button>
             <Button 
               variant="secondary" 

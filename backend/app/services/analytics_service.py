@@ -77,27 +77,19 @@ class AnalyticsService:
         """
         מחזיר כמות פעולות (יצירה, עדכון, מחיקה) בטווח הימים האחרונים
         """
-        start_date = datetime.utcnow() - timedelta(days=days)
-        repo = self.audit_service.repository.collection
-        
-        # Helper to build OR query for all wrappers
-        def build_action_query(actions):
-            wrappers = ["user_action", "item_action", "procurement_action", "general_action"]
-            conditions = []
-            for w in wrappers:
-                conditions.append({
-                    f"{w}.timestamp": {"$gte": start_date},
-                    f"{w}.action": {"$in": actions}
-                })
-            return {"$or": conditions}
-
-        created_query = build_action_query(["item_create", "procurement_create", "user_create"])
-        updated_query = build_action_query(["item_update", "item_bulk_update", "procurement_update", "user_update", "password_change", "role_change"])
-        deleted_query = build_action_query(["item_delete", "item_bulk_delete", "procurement_delete", "user_delete"])
-        
-        created = await repo.count_documents(created_query)
-        updated = await repo.count_documents(updated_query)
-        deleted = await repo.count_documents(deleted_query)
+        created = await self.audit_service.get_action_count(
+            ["item_create", "procurement_create", "user_create", "group_create"], 
+            days
+        )
+        updated = await self.audit_service.get_action_count(
+            ["item_update", "item_bulk_update", "procurement_update", "user_update", 
+             "password_change", "role_change", "group_update"], 
+            days
+        )
+        deleted = await self.audit_service.get_action_count(
+            ["item_delete", "item_bulk_delete", "procurement_delete", "user_delete", "group_delete"], 
+            days
+        )
         
         return {
             "created": created,

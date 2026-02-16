@@ -32,7 +32,7 @@ class TestExcelService:
                 "manufacturer": "M1",
                 "location": "L1",
                 "current_stock": "5",
-                "updated_at": datetime.utcnow()
+                "updated_at": datetime.now(timezone.utc)
             },
             {
                 "catalog_number": "E2",
@@ -40,7 +40,7 @@ class TestExcelService:
                 "manufacturer": "M2",
                 "location": "L2",
                 "current_stock": "10",
-                "updated_at": datetime.utcnow()
+                "updated_at": datetime.now(timezone.utc)
             }
         ])
         
@@ -66,4 +66,4 @@ class TestExcelService:
         assert excel_service.normalize_value(123) == "123"
         assert excel_service.normalize_value("nan") == ""
 
-from datetime import datetime
+from datetime import datetime, timezone

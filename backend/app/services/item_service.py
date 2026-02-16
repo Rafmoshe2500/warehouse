@@ -1,8 +1,8 @@
 from typing import Optional, List, Dict, Any, TYPE_CHECKING
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.db.repositories.items import ItemsRepository
-from app.services.audit_service import AuditService
+from app.services.audit.item_auditor import ItemAuditor
 from app.schemas.audit import AuditAction
 from app.schemas.item import ItemCreate, ItemUpdate, BulkUpdate
 
@@ -10,10 +10,13 @@ if TYPE_CHECKING:
     from app.schemas.item import ItemFilter
 
 
+from app.db.repositories.collection_repository import CollectionRepository
+
 class ItemService:
-    def __init__(self, items_repo: ItemsRepository, audit_service: AuditService):
+    def __init__(self, items_repo: ItemsRepository, item_auditor: ItemAuditor, collection_repo: Optional[CollectionRepository] = None):
         self.items_repo = items_repo
-        self.audit_service = audit_service
+        self.item_auditor = item_auditor
+        self.collection_repo = collection_repo
 
     async def get_items(
             self,
@@ -34,6 +37,29 @@ class ItemService:
             "pages": pages
         }
 
+    async def get_item_collections(self, item_id: str) -> List[Dict[str, Any]]:
+        """Get all collections an item belongs to with details"""
+        if not self.collection_repo:
+            return []
+            
+        # Get collection_items for this item
+        item_assignments = await self.collection_repo.get_item_collections(item_id)
+        
+        results = []
+        for assignment in item_assignments:
+            collection_id = assignment.get("collection_id")
+            if collection_id:
+                collection = await self.collection_repo.get_collection(collection_id)
+                if collection:
+                    results.append({
+                        "collection_id": str(collection.get("id")),
+                        "collection_name": collection.get("name"),
+                        "owner_id": collection.get("owner_id"),
+                        # potentially fetch owner username if needed, but ID might suffice for now
+                        # or we can rely on frontend resolving user IDs if they are cached
+                    })
+        return results
+
     async def get_stale_items(self, days: int = 30, page: int = 1, limit: int = 30):
         items, total = await self.items_repo.get_stale_items(days, page, limit)
         pages = (total + limit - 1) // limit
@@ -46,9 +72,9 @@ class ItemService:
         }
 
     async def create_item(self, item_data: ItemCreate, user: Dict[str, Any], undo_log_id: Optional[str] = None, is_undo: bool = False):
-        item_dict = item_data.dict(by_alias=False)
-        item_dict["created_at"] = datetime.utcnow()
-        item_dict["updated_at"] = datetime.utcnow()
+        item_dict = item_data.model_dump(by_alias=False)
+        item_dict["created_at"] = datetime.now(timezone.utc)
+        item_dict["updated_at"] = datetime.now(timezone.utc)
         
         self._sync_reserved_stock(item_dict)
 
@@ -56,7 +82,7 @@ class ItemService:
 
         # Skip logging if this is an undo operation (log created separately)
         if not is_undo:
-            await self._log_creation(user, created_item)
+            await self.item_auditor.log_creation(user, created_item)
         return created_item
 
     async def update_item_field(self, item_id: str, update: ItemUpdate, user: Dict[str, Any], undo_log_id: Optional[str] = None, is_undo: bool = False):
@@ -65,7 +91,7 @@ class ItemService:
 
         update_data = {
             update.field: update.value,
-            "updated_at": datetime.utcnow()
+            "updated_at": datetime.now(timezone.utc)
         }
         
         # If updating project_allocations, sync reserved_stock string
@@ -77,14 +103,14 @@ class ItemService:
         # Skip logging if this is an undo operation (log created separately)
         if not is_undo:
             changes = {update.field: {"old": old_value, "new": update.value}}
-            await self._log_update(user, updated_item, f"עדכון שדה '{update.field}'", changes)
+            await self.item_auditor.log_update(user, updated_item, changes, f"עדכון שדה '{update.field}'")
         
         return updated_item
 
     async def bulk_update_items(self, update: BulkUpdate, user: Dict[str, Any]):
         # Build update dictionary dynamically from all non-None fields in BulkUpdate
         # excluding 'ids' and 'field'/'value' legacy fields if they are not used
-        update_data = update.dict(exclude={"ids", "field", "value"}, exclude_unset=True)
+        update_data = update.model_dump(exclude={"ids", "field", "value"}, exclude_unset=True)
         
         changes_description = []
         for key, val in update_data.items():
@@ -107,15 +133,7 @@ class ItemService:
         )
 
         for item in items_before:
-            # Construct changes dict for logging
-            changes_log = {}
-            for key, new_val in update_data.items():
-                if key == "updated_at": continue
-                old_val = item.get(key, "")
-                changes_log[key] = {"old": old_val, "new": new_val}
-
-            details = f"עדכון מרובה - {', '.join(changes_description)}"
-            await self._log_update(user, item, details, changes_log)
+            await self.item_auditor.log_bulk_update_item(user, item, update_data, changes_description)
 
         return {
             "message": f"עודכנו {modified_count} פריטים",
@@ -126,7 +144,7 @@ class ItemService:
         item = await self.items_repo.get_by_id_or_raise(item_id)
         await self.items_repo.delete(item_id)
 
-        await self._log_deletion(user, item, f"סיבת מחיקה: {reason}")
+        await self.item_auditor.log_deletion(user, item, reason)
             
         return {"message": "פריט נמחק בהצלחה"}
 
@@ -134,7 +152,7 @@ class ItemService:
         items_before, deleted_count = await self.items_repo.bulk_delete_by_ids(item_ids)
 
         for item in items_before:
-            await self._log_deletion(user, item, f"מחיקה מרובה - סיבה: {reason}")
+            await self.item_auditor.log_bulk_delete_item(user, item, reason)
             
         return {
             "message": f"נמחקו {deleted_count} פריטים",
@@ -145,15 +163,7 @@ class ItemService:
         deleted_count = await self.items_repo.delete_many({})
 
         # Log via audit service (using BULK_DELETE as approximation for DELETE_ALL)
-        await self.audit_service.log_user_action(
-            action=AuditAction.ITEM_BULK_DELETE,
-            actor=self._get_username(user),
-            actor_role=self._get_role(user),
-            target_resource="item",
-            resource_id="ALL",
-            details=f"מחיקת כל מסד הנתונים - סיבה: {reason}",
-            changes={"deleted_count": deleted_count}
-        )
+        await self.item_auditor.log_delete_all(user, deleted_count, reason)
         return {
             "message": f"כל מסד הנתונים נמחק! נמחקו {deleted_count} פריטים",
             "deleted_count": deleted_count
@@ -192,50 +202,4 @@ class ItemService:
             else:
                  # Format: "ProjectA: 5, ProjectB: 3"
                  data["reserved_stock"] = ", ".join([f"{k}: {v}" for k, v in allocations.items()])
-    
-    def _get_username(self, user: Dict[str, Any]) -> str:
-        return user.get("username", user.get("sub", "unknown"))
 
-    def _get_role(self, user: Dict[str, Any]) -> str:
-        return user.get("role", "user")
-
-    # --- Private Logging Helpers ---
-
-    async def _log_creation(self, user: Dict[str, Any], item: dict):
-        resource_name = item.get("catalog_number") or item.get("description") or "Unknown Item"
-        await self.audit_service.log_user_action(
-            action=AuditAction.ITEM_CREATE,
-            actor=self._get_username(user),
-            actor_role=self._get_role(user),
-            target_resource="item",
-            resource_id=str(item.get("_id")),
-            target_resource_name=resource_name,
-            changes={"name": item.get("name"), "description": item.get("description")},
-            details="נוסף פריט חדש למלאי"
-        )
-
-    async def _log_update(self, user: Dict[str, Any], item: dict, details: str, changes: Dict):
-        resource_name = item.get("catalog_number") or item.get("description") or "Unknown Item"
-        await self.audit_service.log_user_action(
-            action=AuditAction.ITEM_UPDATE,
-            actor=self._get_username(user),
-            actor_role=self._get_role(user),
-            target_resource="item",
-            resource_id=str(item.get("_id")),
-            target_resource_name=resource_name,
-            changes=changes,
-            details=details
-        )
-
-    async def _log_deletion(self, user: Dict[str, Any], item: dict, details: str):
-        resource_name = item.get("catalog_number") or item.get("description") or "Unknown Item"
-        await self.audit_service.log_user_action(
-            action=AuditAction.ITEM_DELETE,
-            actor=self._get_username(user),
-            actor_role=self._get_role(user),
-            target_resource="item",
-            resource_id=str(item.get("_id")),
-            target_resource_name=resource_name,
-            changes={"name": item.get("name"), "description": item.get("description")},
-            details=details
-        )

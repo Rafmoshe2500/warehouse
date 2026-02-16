@@ -1,10 +1,11 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     # MongoDB
     MONGODB_URL: str
     DB_NAME: str = "warehouse"
+    ENVIRONMENT: str = "production"
 
     # Security
     SECRET_KEY: str
@@ -30,9 +31,12 @@ class Settings(BaseSettings):
     S3_ACCESS_KEY: str = ""
     S3_SECRET_KEY: str = ""
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # ADFS Settings
+    ADFS_LOGIN_URL: str = "https://adfs.example.com/adfs/oauth2/token"
+    ADFS_TOKEN_INFO_URL: str = "https://adfs.example.com/adfs/oauth2/tokeninfo"
+    ADFS_VALIDATE_URL: str = "https://adfs.example.com/adfs/validate"
+
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 
 
 settings = Settings()

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 from fastapi import HTTPException, UploadFile
 import uuid
@@ -7,8 +7,7 @@ import logging
 from app.core.constants import UserRole
 from app.db.repositories.procurement_repository import ProcurementRepository
 from app.services.s3_service import S3Service
-from app.services.audit_service import AuditService
-from app.schemas.audit import AuditAction
+from app.services.audit.procurement_auditor import ProcurementAuditor
 from app.schemas.procurement import (
     ProcurementOrderCreate,
     ProcurementOrderUpdate,
@@ -31,10 +30,10 @@ MAX_FILE_SIZE = 10 * 1024 * 1024
 class ProcurementService:
     """Service for procurement business logic"""
     
-    def __init__(self):
-        self.repository = ProcurementRepository()
-        self.s3_service = S3Service()
-        self.audit_service = AuditService()
+    def __init__(self, repository: ProcurementRepository, s3_service: S3Service, auditor: ProcurementAuditor):
+        self.repository = repository
+        self.s3_service = s3_service
+        self.auditor = auditor
     
     async def create_order(
         self,
@@ -66,13 +65,10 @@ class ProcurementService:
         
         # Audit Log
         try:
-            await self.audit_service.log_user_action(
-                action=AuditAction.PROCUREMENT_CREATE,
-                actor=created_by,
-                actor_role=UserRole.ADMIN,  # Assuming admin created it
-                target_resource="procurement_order",
-                resource_id=created_order["id"],
-                changes=order_dict
+            await self.auditor.log_create_order(
+                username=created_by,
+                order_id=str(created_order["id"]),
+                order_data=order_dict
             )
         except Exception as e:
             logger.error(f"Failed to log audit for create order: {e}")
@@ -163,12 +159,9 @@ class ProcurementService:
         # Audit Log
         if changes:
             try:
-                await self.audit_service.log_user_action(
-                    action=AuditAction.PROCUREMENT_UPDATE,
-                    actor=username,
-                    actor_role="unknown",  # user_role removed from input
-                    target_resource="procurement_order",
-                    resource_id=order_id,
+                await self.auditor.log_update_order(
+                    username=username,
+                    order_id=order_id,
                     changes=changes
                 )
             except Exception as e:
@@ -196,13 +189,9 @@ class ProcurementService:
         
         # Audit Log
         try:
-            await self.audit_service.log_user_action(
-                action=AuditAction.PROCUREMENT_DELETE,
-                actor=username,
-                actor_role="unknown",  # user_role removed from input
-                target_resource="procurement_order",
-                resource_id=order_id,
-                reason="Deleted by user"
+            await self.auditor.log_delete_order(
+                username=username,
+                order_id=order_id
             )
         except Exception as e:
             logger.error(f"Failed to log audit for delete order: {e}")
@@ -249,7 +238,7 @@ class ProcurementService:
             "s3_key": upload_result.get("s3_key"),
             "local_path": upload_result.get("local_path"),
             "uploaded_by": uploaded_by,
-            "uploaded_at": datetime.utcnow()
+            "uploaded_at": datetime.now(timezone.utc)
         }
         
         # Add to order
@@ -264,13 +253,10 @@ class ProcurementService:
         
         # Audit Log
         try:
-            await self.audit_service.log_user_action(
-                action=AuditAction.PROCUREMENT_FILE_UPLOAD,
-                actor=uploaded_by,
-                actor_role="unknown",  # user_role removed from input
-                target_resource="procurement_order",
-                resource_id=order_id,
-                changes={"filename": file.filename}
+            await self.auditor.log_upload_file(
+                username=uploaded_by,
+                order_id=order_id,
+                filename=file.filename
             )
         except Exception as e:
             logger.error(f"Failed to log audit for file upload: {e}")
@@ -320,13 +306,10 @@ class ProcurementService:
         
         # Audit Log
         try:
-            await self.audit_service.log_user_action(
-                action=AuditAction.PROCUREMENT_FILE_DELETE,
-                actor=username,
-                actor_role="unknown",  # user_role removed from input
-                target_resource="procurement_order",
-                resource_id=order_id,
-                changes={"filename": file_metadata["filename"]}
+            await self.auditor.log_delete_file(
+                username=username,
+                order_id=order_id,
+                filename=file_metadata["filename"]
             )
         except Exception as e:
             logger.error(f"Failed to log audit for file delete: {e}")

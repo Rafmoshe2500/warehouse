@@ -27,6 +27,7 @@ export { createItemService, default as itemService } from './itemService';
 export { createExcelService, default as excelService } from './excelService';
 export { createLogService, default as logService } from './logService';
 export { createAuthService, default as authService } from './authService';
+export { createCollectionsService, default as collectionsService } from './collectionsService';
 
 // Utility Services
 export { 
@@ -59,7 +60,9 @@ export const createServices = (apiClient, options = {}) => {
     itemService: require('./itemService').createItemService(apiClient),
     excelService: require('./excelService').createExcelService(apiClient),
     logService: require('./logService').createLogService(apiClient),
+    logService: require('./logService').createLogService(apiClient),
     authService: require('./authService').createAuthService(apiClient),
+    collectionsService: require('./collectionsService').createCollectionsService(apiClient),
 
     // Utility Services
     errorService: require('./errorService').createErrorService(errorServiceOptions),

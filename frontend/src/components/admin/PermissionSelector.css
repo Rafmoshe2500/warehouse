@@ -25,16 +25,16 @@
 }
 
 .permission-group:hover {
-    border-color: var(--primary-color);
+    border-color: var(--accent-primary);
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .permission-group__header {
-    background: rgba(var(--primary-rgb), 0.05);
+    background: color-mix(in srgb, var(--accent-primary), transparent 95%);
     padding: 0.6rem 0.8rem;
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--primary-color);
+    color: var(--accent-primary);
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -57,17 +57,18 @@
 }
 
 .permission-option:hover {
-    background: rgba(var(--primary-rgb), 0.05);
+    background: color-mix(in srgb, var(--accent-primary), transparent 95%);
 }
 
 .permission-option.active {
-    background: rgba(var(--primary-rgb), 0.1);
+    background: color-mix(in srgb, var(--accent-primary), transparent 90%);
 }
 
 .permission-option input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--primary-color);
+    /* Use global checkbox styles, remove specific sizing that conflicts */
+    /* width: 1.1rem; inherited from index.css */
+    /* height: 1.1rem; inherited from index.css */
+    accent-color: var(--accent-primary); /* Fallback */
     cursor: pointer;
 }
 

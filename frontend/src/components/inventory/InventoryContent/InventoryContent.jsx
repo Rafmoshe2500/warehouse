@@ -23,7 +23,12 @@ const InventoryContent = ({
   onShowToast,
   onRestoreItems,
   // Prop for embedded mode
-  isEmbedded = false
+  // Prop for embedded mode
+  isEmbedded = false,
+  visibleColumns, // New prop
+  onShowCollections, // New prop
+  userCollections,
+  onAddToCollection
 }) => {
   // Fetch data directly using the hook and passed params
   const { items = [], totalItems = 0, loading = false, error = null } = useItems(queryParams);
@@ -79,8 +84,7 @@ const InventoryContent = ({
           editing={{ onEdit }}
           onBulkEdit={onBulkEdit}
           onBulkDelete={onBulkDelete}
-
-          /* העברה לטבלה */
+          visibleColumns={visibleColumns} // Pass to ItemTable
           isAdding={isAdding}
           newRowData={newRowData}
           onNewRowChange={onNewRowChange}
@@ -88,6 +92,9 @@ const InventoryContent = ({
           onCancelNew={onCancelNew}
           onShowToast={onShowToast}
           onRestoreItems={onRestoreItems}
+          onShowCollections={onShowCollections}
+          userCollections={userCollections}
+          onAddToCollection={onAddToCollection}
         />
 
         {totalItems === 0 && !loading && !isAdding && (

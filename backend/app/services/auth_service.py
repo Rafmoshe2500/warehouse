@@ -1,5 +1,6 @@
 from datetime import timedelta
 from fastapi import Response, Request
+import logging
 
 from app.config import settings
 from app.core.security import create_access_token
@@ -9,14 +10,24 @@ from app.schemas.auth import LoginRequest, DomainLoginRequest
 from app.services.group_service import GroupService
 from app.services.user_service import UserService
 from app.services.adfs_service import ADFSService
+from app.services.audit.auth_auditor import AuthAuditor
+
+logger = logging.getLogger(__name__)
 
 class AuthService:
-    def __init__(self):
-        self.user_service = UserService()
-        self.group_service = GroupService()
-        self.adfs_service = ADFSService()
+    def __init__(
+        self,
+        user_service: UserService,
+        group_service: GroupService,
+        adfs_service: ADFSService,
+        auth_auditor: AuthAuditor
+    ):
+        self.user_service = user_service
+        self.group_service = group_service
+        self.adfs_service = adfs_service
+        self.auth_auditor = auth_auditor
 
-    async def login(self, login_data: LoginRequest, response: Response):
+    async def login(self, login_data: LoginRequest, response: Response, request: Request):
         """התחברות למערכת"""
         # Get user from MongoDB
         user = await self.user_service.get_user_by_username(login_data.username)
@@ -51,6 +62,19 @@ class AuthService:
             samesite="lax",
             secure=False  # ב-HTTPS בפרודקשן להפוך ל-True
         )
+
+        # Audit Log
+        if self.auth_auditor:
+            try:
+                await self.auth_auditor.log_login(
+                    username=user.get("username"),
+                    user_id=str(user.get("id", "")),
+                    role=user.get("role"),
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent")
+                )
+            except Exception as e:
+                logger.error(f"Failed to log login: {e}")
 
         return {"access_token": access_token, "token_type": "bearer"}
 
@@ -144,6 +168,18 @@ class AuthService:
             secure=False
         )
 
+        # Audit Log
+        if self.auth_auditor:
+            try:
+                await self.auth_auditor.log_domain_login(
+                    username=username,
+                    role=role,
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent")
+                )
+            except Exception as e:
+                logger.error(f"Failed to log domain login: {e}")
+
         return {"access_token": access_token, "token_type": "bearer"}
 
     async def _get_user_groups_from_adfs_stub(self, username: str) -> list[str]:
@@ -151,11 +187,23 @@ class AuthService:
         פונקציית עזר מדמה קבלת קבוצות.
         כרגע מחזיר רשימה פיקטיבית לבדיקה.
         """
-        print(f"Fetching groups for user: {username}")
         return ["Users", "Admins", "WarehouseTeam"]
 
-    async def logout(self, response: Response):
+    async def logout(self, response: Response, user: dict, request: Request):
         """התנתקות"""
         response.delete_cookie(key="access_token")
+        
+        # Audit Log
+        if self.auth_auditor and user:
+            try:
+                await self.auth_auditor.log_logout(
+                    username=user.get("username", "unknown"),
+                    role=user.get("role", "unknown"),
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent")
+                )
+            except Exception as e:
+                logger.error(f"Failed to log logout: {e}")
+                
         return {"message": "התנתקת בהצלחה"}
 

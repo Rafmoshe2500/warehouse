@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FiPackage, FiSettings, FiShoppingCart, FiPieChart, FiUsers } from 'react-icons/fi';
+import { FiPackage, FiSettings, FiShoppingCart, FiPieChart, FiUsers, FiLayers, FiHelpCircle } from 'react-icons/fi';
 import { useAuth } from '../../../context/AuthContext';
 import { PermissionGate } from '../../common';
 import './Navigation.css';
@@ -33,6 +33,16 @@ const Navigation = () => {
           </NavLink>
         </PermissionGate>
 
+        <NavLink
+          to="/my-components"
+          className={({ isActive }) =>
+            `navigation__link ${isActive ? 'navigation__link--active' : ''}`
+          }
+        >
+          <FiLayers size={20} />
+          <span>המלאי שלי</span>
+        </NavLink>
+
         <PermissionGate permission="procurement:ro">
           <NavLink
             to="/procurement"
@@ -57,6 +67,16 @@ const Navigation = () => {
             <span>ניהול מערכת</span>
           </NavLink>
         )}
+
+        <NavLink
+          to="/guide"
+          className={({ isActive }) =>
+            `navigation__link ${isActive ? 'navigation__link--active' : ''}`
+          }
+        >
+          <FiHelpCircle size={20} />
+          <span>מדריך</span>
+        </NavLink>
       </div>
     </nav>
   );

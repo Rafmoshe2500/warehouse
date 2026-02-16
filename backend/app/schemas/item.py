@@ -41,8 +41,7 @@ class ItemInDB(ItemBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 class ItemResponse(ItemBase):
     created_at: datetime

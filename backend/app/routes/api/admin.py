@@ -3,7 +3,6 @@ from typing import List
 
 from app.schemas.user import UserCreate, UserUpdate, UserResponse, UsersListResponse, DeleteRequest
 from app.services.user_service import UserService
-from app.services.audit_service import AuditService
 from app.core.security import get_current_user, require_admin
 
 # All routes in this router require admin permissions
@@ -14,12 +13,8 @@ router = APIRouter(
 )
 
 
-def get_user_service():
-    return UserService()
 
-
-def get_audit_service():
-    return AuditService()
+from app.dependencies import get_user_service
 
 
 @router.get("/users", response_model=UsersListResponse)
@@ -36,8 +31,7 @@ async def create_user(
     user_data: UserCreate,
     request: Request,
     current_user: dict = Depends(require_admin),
-    user_service: UserService = Depends(get_user_service),
-    audit_service: AuditService = Depends(get_audit_service)
+    user_service: UserService = Depends(get_user_service)
 ):
     """Create new user (admin only)"""
     # Fallback: use 'sub' if 'username' not in token (for old tokens)
@@ -48,7 +42,6 @@ async def create_user(
         user_data=user_data,
         created_by=username,
         creator_role=role,
-        audit_service=audit_service,
         ip_address=request.client.host if request.client else None,
         user_agent=request.headers.get("user-agent")
     )
@@ -70,8 +63,7 @@ async def update_user(
     update_data: UserUpdate,
     request: Request,
     current_user: dict = Depends(require_admin),
-    user_service: UserService = Depends(get_user_service),
-    audit_service: AuditService = Depends(get_audit_service)
+    user_service: UserService = Depends(get_user_service)
 ):
     """Update user (admin only)"""
     # Fallback: use 'sub' if 'username' not in token (for old tokens)
@@ -83,7 +75,6 @@ async def update_user(
         update_data=update_data,
         updated_by=username,
         updater_role=role,
-        audit_service=audit_service,
         ip_address=request.client.host if request.client else None,
         user_agent=request.headers.get("user-agent")
     )
@@ -95,8 +86,7 @@ async def delete_user(
     delete_data: DeleteRequest,
     request: Request,
     current_user: dict = Depends(require_admin),
-    user_service: UserService = Depends(get_user_service),
-    audit_service: AuditService = Depends(get_audit_service)
+    user_service: UserService = Depends(get_user_service)
 ):
     """Delete user (admin only)"""
     # Fallback: use 'sub' if 'username' not in token (for old tokens)
@@ -108,7 +98,6 @@ async def delete_user(
         reason=delete_data.reason,
         deleted_by=username,
         deleter_role=role,
-        audit_service=audit_service,
         ip_address=request.client.host if request.client else None,
         user_agent=request.headers.get("user-agent")
     )

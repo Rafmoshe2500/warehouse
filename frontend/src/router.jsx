@@ -18,6 +18,14 @@ const UserManagement = lazy(() => import('./pages/AdminPanel/UserManagement')); 
 const AuditLogs = lazy(() => import('./pages/AdminPanel/AuditLogs'));
 const ProcurementPage = lazy(() => import('./pages/ProcurementPage/ProcurementPage'));
 
+// My Components
+const MyComponentsDashboard = lazy(() => import('./pages/MyComponents/MyComponentsDashboard'));
+
+const CollectionDetails = lazy(() => import('./pages/MyComponents/CollectionDetails'));
+
+// User Guide
+const UserGuidePage = lazy(() => import('./pages/UserGuidePage/UserGuidePage'));
+
 // Loading fallback component
 const PageLoader = () => (
   <div style={{ 
@@ -33,81 +41,81 @@ const PageLoader = () => (
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) {
-    return <Spinner size="large" text="טוען..." />;
-  }
+    if (loading) {
+      return <Spinner size="large" text="טוען..." />;
+    }
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
-};
+    return isAuthenticated ? children : <Navigate to="/login" />;
+  };
 
-PrivateRoute.propTypes = {
-  children: PropTypes.node.isRequired
-};
+  PrivateRoute.propTypes = {
+    children: PropTypes.node.isRequired
+  };
 
-const AdminRoute = ({ children }) => {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const AdminRoute = ({ children }) => {
+    const { isAuthenticated, isAdmin, loading } = useAuth();
 
-  if (loading) {
-    return <Spinner size="large" text="טוען..." />;
-  }
+    if (loading) {
+      return <Spinner size="large" />;
+    }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+    if (!isAuthenticated) {
+      return <Navigate to="/login" />;
+    }
 
-  if (!isAdmin) {
-    return <Navigate to="/dashboard" />;
-  }
+    if (!isAdmin) {
+      return <Navigate to="/dashboard" />;
+    }
 
-  return children;
-};
+    return children;
+  };
 
-AdminRoute.propTypes = {
-  children: PropTypes.node.isRequired
-};
+  AdminRoute.propTypes = {
+    children: PropTypes.node.isRequired
+  };
 
-const PermissionRoute = ({ children, permission }) => {
-  const { isAuthenticated, hasPermission, loading } = useAuth();
+  const PermissionRoute = ({ children, permission }) => {
+    const { isAuthenticated, hasPermission, loading } = useAuth();
 
-  if (loading) {
-    return <Spinner size="large" text="טוען..." />;
-  }
+    if (loading) {
+      return <Spinner size="large" />;
+    }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+    if (!isAuthenticated) {
+      return <Navigate to="/login" />;
+    }
 
-  // Check for exact permission
-  let allowed = hasPermission(permission);
+    // Check for exact permission
+    let allowed = hasPermission(permission);
 
-  // If not found, and we are asking for read-only access, check if we have read-write access
-  if (!allowed && permission.endsWith(':ro')) {
-      const rwPermission = permission.replace(':ro', ':rw');
-      allowed = hasPermission(rwPermission);
-  }
+    // If not found, and we are asking for read-only access, check if we have read-write access
+    if (!allowed && permission.endsWith(':ro')) {
+        const rwPermission = permission.replace(':ro', ':rw');
+        allowed = hasPermission(rwPermission);
+    }
 
-  if (!allowed) {
-    return <Navigate to="/dashboard" />;
-  }
+    if (!allowed) {
+      return <Navigate to="/dashboard" />;
+    }
 
-  return children;
-};
+    return children;
+  };
 
-PermissionRoute.propTypes = {
-  children: PropTypes.node.isRequired,
-  permission: PropTypes.string.isRequired
-};
+  PermissionRoute.propTypes = {
+    children: PropTypes.node.isRequired,
+    permission: PropTypes.string.isRequired
+  };
 
-const AppRouter = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const AppRouter = () => {
+    const { isAuthenticated, loading } = useAuth();
 
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Spinner size="large" text="טוען..." />
-      </div>
-    );
-  }
+    if (loading) {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+          <Spinner size="large" text="טוען..." />
+        </div>
+      );
+    }
 
   return (
     <BrowserRouter>
@@ -167,6 +175,30 @@ const AppRouter = () => {
               <PermissionRoute permission="procurement:ro">
                 <ProcurementPage />
               </PermissionRoute>
+            }
+          />
+          <Route
+            path="/my-components"
+            element={
+              <PrivateRoute>
+                <MyComponentsDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/my-components/:id"
+            element={
+              <PrivateRoute>
+                <CollectionDetails />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide"
+            element={
+              <PrivateRoute>
+                <UserGuidePage />
+              </PrivateRoute>
             }
           />
           <Route path="/" element={<Navigate to="/dashboard" />} />

@@ -1,0 +1,231 @@
+/* CustomFieldsEditor.css */
+.custom-fields-editor {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+.fields-header {
+    margin-bottom: var(--spacing-lg);
+}
+
+.fields-header h3 {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.fields-header p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.custom-fields-content {
+    display: flex;
+    gap: var(--spacing-xl);
+    align-items: stretch;
+    height: auto;
+    max-height: 200px; /* Consistent with PermissionsManager */
+}
+
+.add-field-form {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 100px 100px auto;
+    gap: var(--spacing-md);
+    margin-bottom: 0;
+    padding-bottom: var(--spacing-lg);
+    border-bottom: none; /* Removed border as it's now side-by-side */
+    align-items: start;
+    align-content: start; /* Align content to top */
+}
+
+.field-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Checkbox Styling */
+.field-form-group.checkbox-group {
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-top: 1.5rem; /* Align with input fields visually */
+}
+
+.field-form-group.checkbox-group label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.field-form-group.checkbox-group input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-secondary);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.field-form-group.checkbox-group input[type="checkbox"]:checked {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+.field-form-group.checkbox-group input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: bold;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.field-form-group.checkbox-group input[type="checkbox"]:hover {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+/* Key Display Styling */
+.field-form-group.key-display {
+    justify-content: flex-start;
+}
+
+.field-form-group.key-display label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.field-form-group.key-display .text-sm {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    padding: 0.6rem 0.75rem; /* Match input padding */
+    border-radius: var(--radius-md);
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    height: 42px; /* Match standard input height */
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fields-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    height: auto;
+    max-height: 100%;
+    overflow-y: auto;
+    padding-right: var(--spacing-xs);
+    min-height: 0;
+}
+
+/* Scrollbar for fields list UI matching permissions list */
+.fields-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.fields-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.fields-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.field-item {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 100px 100px auto;
+    gap: var(--spacing-md);
+    align-items: center;
+    padding: var(--spacing-md);
+    background-color: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+}
+
+.field-item-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.field-item-key {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.field-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--accent-primary);
+    text-align: center;
+}
+
+.field-required-check {
+    display: flex;
+    justify-content: center;
+    color: var(--accent-success);
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .custom-fields-content {
+        flex-direction: column;
+        height: auto;
+        max-height: none;
+    }
+
+    .add-field-form {
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .fields-list {
+        width: 100%;
+        max-height: 400px;
+        height: auto;
+    }
+    
+    .field-item {
+        grid-template-columns: 1fr 1fr 50px auto auto;
+        font-size: 0.85rem;
+    }
+}
+@media (max-width: 600px) {
+    .add-field-form {
+        grid-template-columns: 1fr;
+    }
+    .field-item {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xs);
+    }
+    .field-item header {
+        display: none;
+    }
+}

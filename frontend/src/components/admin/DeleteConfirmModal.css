@@ -65,42 +65,6 @@
     gap: 0.75rem;
 }
 
-.delete-confirm-modal__label {
-    font-weight: 500;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-}
-
-.delete-confirm-modal__textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: inherit;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    resize: vertical;
-    min-height: 80px;
-    box-sizing: border-box;
-}
-
-.delete-confirm-modal__textarea:focus {
-    outline: none;
-    border-color: var(--accent-danger);
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-}
-
-.delete-confirm-modal__textarea::placeholder {
-    color: var(--text-muted);
-}
-
-.delete-confirm-modal__error {
-    color: var(--accent-danger);
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
 /* רמז */
 .delete-confirm-modal__hint {
     text-align: center;

@@ -4,7 +4,7 @@ Tests audit log creation, filtering, and user activity.
 """
 import pytest
 import pytest_asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from bson import ObjectId
 
 from app.db.repositories.audit_repository import AuditRepository
@@ -184,7 +184,7 @@ class TestAuditRepository:
         repo = AuditRepository()
         repo.collection = test_audit_collection
         
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         
         # Create logs with different timestamps
         # Insert directly to control timestamp, must be wrapped!

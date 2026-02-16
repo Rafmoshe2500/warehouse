@@ -46,7 +46,8 @@
 }
 
 .days-input {
-    width: 70px;
+    width: 60px;
+    max-width: 70px;
     padding: 0.5rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);

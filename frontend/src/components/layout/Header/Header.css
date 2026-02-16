@@ -1,12 +1,13 @@
 .header {
+  position: relative;
+  top: 0;
+  z-index: 1000; /* Higher than Navigation and content */
   background: var(--header-bg, rgba(10, 14, 39, 0.8));
   /* שימוש במשתנה */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-color);
   /* שימוש במשתנה */
-  top: 0;
-  z-index: 100;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -42,7 +43,7 @@
 .header__logo-icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -69,7 +70,7 @@
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: 2px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -78,7 +79,7 @@
 
 .header__logo-subtitle {
   font-size: 0.7rem;
-  color: #6366f1;
+  color: var(--accent-primary);
   font-weight: 500;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -88,6 +89,25 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.header__theme-container {
+    position: relative;
+}
+
+.header__theme-dropdown {
+    position: absolute;
+    top: 120%;
+    left: 0;
+    transform: none;
+    z-index: 1000;
+    width: max-content;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Theme Button Styles */
@@ -105,7 +125,8 @@
   transition: all 0.2s;
 }
 
-.header__theme-btn:hover {
+.header__theme-btn:hover,
+.header__theme-btn.active {
   background: var(--bg-tertiary);
   color: var(--accent-warning);
   /* צהוב/כתום ב-Hover שמתאים לשמש/ירח */
@@ -132,7 +153,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,11 +169,11 @@
 
 .header__logout-btn {
   border-color: rgba(79, 70, 229, 0.5) !important;
-  color: #818cf8 !important;
+  color: var(--accent-primary) !important;
 }
 
 .header__logout-btn:hover {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
   color: white !important;
   border-color: transparent !important;
 }

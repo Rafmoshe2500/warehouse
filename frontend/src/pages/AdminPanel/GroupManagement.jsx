@@ -25,9 +25,11 @@ const GroupManagement = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Initial load error handling
-    if (loadError) {
-        toastError('שגיאה בטעינת קבוצות');
-    }
+    React.useEffect(() => {
+        if (loadError) {
+            toastError('שגיאה בטעינת קבוצות');
+        }
+    }, [loadError, toastError]);
 
     const handleCreate = () => {
         setSelectedGroup(null);

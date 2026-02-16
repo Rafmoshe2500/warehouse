@@ -1,0 +1,48 @@
+.associated-collections-content {
+  min-height: 200px;
+}
+
+.collections-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.collections-table th,
+.collections-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: right;
+  color: var(--text-primary);
+}
+
+.collections-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
+}
+
+.collections-table tr:last-child td {
+  border-bottom: none;
+}
+
+.collections-table tr:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.ltr-text {
+  direction: ltr;
+  text-align: left;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 2rem;
+}
+
+.error-message {
+  color: var(--accent-danger);
+  text-align: center;
+  padding: 1rem;
+}

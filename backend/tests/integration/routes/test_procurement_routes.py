@@ -2,7 +2,7 @@
 Integration tests for Procurement API routes.
 """
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 
 @pytest.mark.asyncio
 class TestProcurementRoutes:
@@ -15,7 +15,7 @@ class TestProcurementRoutes:
             "manufacturer": "Vendor API",
             "description": "API Test",
             "quantity": 5,
-            "order_date": datetime.utcnow().isoformat(),
+            "order_date": datetime.now(timezone.utc).isoformat(),
             "amount": 100.50
         }
         
@@ -43,7 +43,7 @@ class TestProcurementRoutes:
             "manufacturer": "V",
             "description": "D",
             "quantity": 1,
-            "order_date": datetime.utcnow().isoformat(),
+            "order_date": datetime.now(timezone.utc).isoformat(),
             "amount": 10.0
         }
         created = await async_client.post("/api/procurement/orders", json=order_data)
@@ -63,7 +63,7 @@ class TestProcurementRoutes:
             "manufacturer": "V",
             "description": "D",
             "quantity": 1,
-            "order_date": datetime.utcnow().isoformat(),
+            "order_date": datetime.now(timezone.utc).isoformat(),
             "amount": 10.0
         }
         created = await async_client.post("/api/procurement/orders", json=order_data)

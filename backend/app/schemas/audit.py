@@ -1,7 +1,7 @@
 """
 Audit log schemas for tracking user management operations.
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -14,6 +14,7 @@ class AuditAction(str, Enum):
     USER_UPDATE = "user_update"
     USER_DELETE = "user_delete"
     USER_LOGIN = "user_login"
+    USER_DOMAIN_LOGIN = "user_domain_login"
     USER_LOGOUT = "user_logout"
     PASSWORD_CHANGE = "password_change"
     ROLE_CHANGE = "role_change"
@@ -37,6 +38,14 @@ class AuditAction(str, Enum):
     ITEM_BULK_UPDATE = "item_bulk_update"
     ITEM_BULK_DELETE = "item_bulk_delete"
     ITEM_IMPORT = "item_import"
+    
+    # Collections
+    COLLECTION_CREATE = "collection_create"
+    COLLECTION_UPDATE = "collection_update"
+    COLLECTION_DELETE = "collection_delete"
+    COLLECTION_ITEM_ADD = "collection_item_add"
+    COLLECTION_ITEM_REMOVE = "collection_item_remove"
+    
     UNDO = "undo"
 
 
@@ -62,6 +71,8 @@ class AuditLogCreate(BaseModel):
     user_agent: Optional[str] = None  # Client user agent
 
 
+
+
 class AuditLogResponse(BaseModel):
     """Schema for audit log response."""
     id: str
@@ -80,8 +91,7 @@ class AuditLogResponse(BaseModel):
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AuditLogsListResponse(BaseModel):

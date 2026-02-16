@@ -12,7 +12,9 @@ const ContextMenu = ({
     onEdit,
     onDelete,
     onCopy,
-    onClose
+    onClose,
+    onAddToCollection,
+    userCollections
 }) => {
     if (!position) return null;
 
@@ -62,6 +64,43 @@ const ContextMenu = ({
                 <FiTrash2 size={14} />
                 מחיקה ({selectedItemsCount})
             </button>
+            
+            {/* Custom Submenus */}
+            {onAddToCollection && (
+                 <div className="context-menu__submenu-container">
+                    <button
+                        className="context-menu__item context-menu__submenu-trigger"
+                        disabled={selectedItemsCount === 0}
+                    >
+                         <span style={{display:'flex', alignItems:'center', gap: '8px'}}>
+                            <FiCopy size={14} /> {/* Icon reuse or new one */}
+                            שייך למלאי שלי
+                         </span>
+                    </button>
+                    <div className="context-menu__submenu">
+                        {userCollections && userCollections.length > 0 ? (
+                            userCollections.map(col => (
+                                <div 
+                                    key={col.id} 
+                                    className="submenu-item"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (onAddToCollection) onAddToCollection(col);
+                                        onClose();
+                                    }}
+                                >
+                                    {col.name}
+                                </div>
+                            ))
+                        ) : (
+                             <div className="submenu-item" style={{cursor: 'default', opacity: 0.7}}>
+                                אין אוספים זמינים
+                            </div>
+                        )}
+                    </div>
+                 </div>
+            )}
+
         </div>
     );
 };

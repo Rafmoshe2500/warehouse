@@ -1,0 +1,293 @@
+/* PermissionsManager.css */
+.permissions-manager {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.permissions-header {
+    margin-bottom: var(--spacing-lg);
+}
+
+.permissions-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.permissions-header p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.permissions-content {
+    display: flex;
+    gap: var(--spacing-xl);
+    align-items: stretch;
+    height: auto;
+    max-height: 200px; /* Reduced for compactness, shows approx 2-3 items */
+}
+
+/* Add Permission Form */
+.add-permission-form {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: var(--spacing-md);
+    margin-bottom: 0;
+    padding: var(--spacing-lg);
+    background-color: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    align-items: flex-end;
+}
+
+.permission-type-toggle {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: var(--spacing-xl); /* Increased gap */
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-xs) 0;
+}
+
+.permission-type-toggle label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Space between radio and text */
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.permission-type-toggle label:hover {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-subtle);
+}
+
+.permission-type-toggle input[type="radio"] {
+    accent-color: var(--accent-primary);
+    width: 1.1em;
+    height: 1.1em;
+    margin: 0;
+    cursor: pointer;
+}
+
+.permission-type-toggle span {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.user-search-container {
+    position: relative;
+}
+
+.role-select-container {
+    min-width: 150px;
+}
+
+/* Search Results Dropdown */
+.search-results-dropdown {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    max-height: 250px;
+    overflow-y: auto;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-result-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.search-result-item .font-medium {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.125rem;
+}
+
+.search-result-item .text-xs {
+    font-size: 0.75rem;
+}
+
+.search-result-item .text-gray-500 {
+    color: var(--text-secondary);
+}
+
+/* Loading state for search */
+.search-loading {
+    padding: 0.75rem 1rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* Permissions List */
+.permissions-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    height: auto;
+    max-height: 100%; /* Respect container max-height */
+    overflow-y: auto;
+    padding-right: var(--spacing-xs);
+    /* Ensure content doesn't force container growth beyond max-height in some flex contexts */
+    min-height: 0; 
+}
+
+/* Scrollbar for permissions list */
+.permissions-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.permissions-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.permissions-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.permission-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm); /* Reduced padding */
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+}
+
+.permission-item:hover {
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.permission-user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.permission-avatar {
+    width: 2rem; /* Reduced size */
+    height: 2rem; /* Reduced size */
+    border-radius: 50%;
+    background-color: var(--accent-secondary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.permission-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.permission-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+.permission-role {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.permission-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.delete-permission-btn {
+    color: var(--color-danger) !important;
+    transition: all 0.2s ease;
+}
+
+.delete-permission-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    color: #dc2626 !important;
+}
+
+/* Scrollbar styling for dropdown */
+.search-results-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.search-results-dropdown::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+}
+
+.search-results-dropdown::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.search-results-dropdown::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .permissions-content {
+        flex-direction: column;
+        height: auto;
+        max-height: none; /* Remove limit on mobile */
+    }
+    
+    .permissions-list {
+        width: 100%;
+        max-height: 300px; /* Limit height on mobile */
+        height: auto;
+    }
+
+    .add-permission-form {
+        width: 100%;
+        grid-template-columns: 1fr;
+    }
+    
+    .role-select-container {
+        min-width: auto;
+    }
+}
+

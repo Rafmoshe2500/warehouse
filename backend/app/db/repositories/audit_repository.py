@@ -2,7 +2,7 @@
 Repository for audit log operations.
 """
 from typing import List, Optional, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
 
 from app.db.mongodb import MongoDB
@@ -19,7 +19,7 @@ class AuditRepository:
         """Create a new audit log entry with nested schema."""
         # Optimize storage by excluding None values
         log_dict = audit_data.model_dump(exclude_none=True)
-        log_dict["timestamp"] = datetime.utcnow()
+        log_dict["timestamp"] = datetime.now(timezone.utc)
         
         # Determine the root key based on target_resource
         target = log_dict.get("target_resource")
@@ -226,3 +226,18 @@ class AuditRepository:
                 flat_logs.append(data)
         
         return flat_logs, total
+
+    async def count_actions(self, actions: List[str], start_date: datetime) -> int:
+        """Count specific actions since start_date."""
+        wrappers = ["user_action", "item_action", "procurement_action", "general_action"]
+        
+        conditions = []
+        for w in wrappers:
+            conditions.append({
+                "$and": [
+                    {f"{w}.action": {"$in": actions}},
+                    {f"{w}.timestamp": {"$gte": start_date}}
+                ]
+            })
+            
+        return await self.collection.count_documents({"$or": conditions})

@@ -254,6 +254,7 @@ const ProcurementPage = () => {
           <ProcurementTable
             orders={orders}
             canEdit={canEdit}
+            isAdmin={isAdmin || isSuperAdmin}
             onEdit={openEditModal}
             onDelete={openDeleteModal}
             onManageFiles={openFilesModal}

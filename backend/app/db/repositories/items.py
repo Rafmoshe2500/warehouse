@@ -1,5 +1,5 @@
 from typing import Optional, List, Dict, Any, TYPE_CHECKING
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from bson import ObjectId
 
 if TYPE_CHECKING:
@@ -8,9 +8,14 @@ if TYPE_CHECKING:
 
 from app.db.repositories.base import BaseRepository
 from app.core.exceptions import ItemNotFoundException
+from app.db.mongodb import MongoDB
 
 
 class ItemsRepository(BaseRepository):
+
+    def __init__(self, collection):
+        super().__init__(collection)
+        self.collection_items = MongoDB.get_collection("collection_items")
 
     def _serialize_item(self, item: Dict[str, Any]) -> Dict[str, Any]:
         if item and "_id" in item:
@@ -71,8 +76,24 @@ class ItemsRepository(BaseRepository):
         cursor = cursor.skip((filter_params.page - 1) * filter_params.limit).limit(filter_params.limit)
         items = await cursor.to_list(length=filter_params.limit)
 
-        for item in items:
-            item["_id"] = str(item["_id"])
+        # Enrich with associated collections count
+        item_ids = [str(item["_id"]) for item in items]
+        if item_ids:
+            # Aggregate counts from collection_items
+            pipeline = [
+                {"$match": {"item_id": {"$in": item_ids}}},
+                {"$group": {"_id": "$item_id", "count": {"$sum": 1}}}
+            ]
+            counts_cursor = self.collection_items.aggregate(pipeline)
+            counts = {doc["_id"]: doc["count"] async for doc in counts_cursor}
+            
+            for item in items:
+                item["_id"] = str(item["_id"])
+                item["associated_collections_count"] = counts.get(item["_id"], 0)
+        else:
+             for item in items:
+                item["_id"] = str(item["_id"])
+                item["associated_collections_count"] = 0
 
         return items, total
 
@@ -103,7 +124,7 @@ class ItemsRepository(BaseRepository):
         object_ids = [self._validate_object_id(item_id) for item_id in item_ids]
         items_before = await self.get_many_by_ids(item_ids)
 
-        update_data["updated_at"] = datetime.utcnow()
+        update_data["updated_at"] = datetime.now(timezone.utc)
         
         result = await self.collection.update_many(
             {"_id": {"$in": object_ids}},
@@ -134,7 +155,7 @@ class ItemsRepository(BaseRepository):
             limit: int = 30
     ) -> tuple[List[Dict[str, Any]], int]:
         """מציאת פריטים שלא עודכנו במשך יותר מ-X ימים"""
-        cutoff_date = datetime.utcnow() - timedelta(days=days)
+        cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
         
         query = {"updated_at": {"$lt": cutoff_date}}
         
@@ -162,7 +183,7 @@ class ItemsRepository(BaseRepository):
                 "$set": {
                     "project_allocations": project_allocations,
                     "reserved_stock": reserved_stock,
-                    "updated_at": datetime.utcnow()
+                    "updated_at": datetime.now(timezone.utc)
                 }
             }
         )

@@ -4,6 +4,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 import logging
 import time
+from contextlib import asynccontextmanager
 
 from app.config import settings
 from app.db.mongodb import MongoDB
@@ -16,19 +17,53 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-app = FastAPI(
-    title="מערכת ניהול מלאי",
-    description="מערכת מתקדמת לניהול מלאי מחסן עם אפשרויות חיפוש, עריכה ויבוא מאקסל",
-    version="2.0.0"
-)
-
 # Rate Limiting
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from app.core.limiter import limiter
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifecycle manager for the application."""
+    try:
+        # Startup
+        await MongoDB.connect()
+        # Admin initialization removed based on user request
+        
+        # Create Indexes
+        await MongoDB.create_indexes()
+        
+        collection = MongoDB.get_collection("inventory")
+        count = await collection.count_documents({})
+        logger.info(f"✅ MongoDB connected successfully. Total items: {count}")
+        
+        yield
+        
+    except Exception as e:
+        logger.error(f"❌ Startup error: {e}")
+        raise
+    finally:
+        # Shutdown
+        await MongoDB.disconnect()
+
+app = FastAPI(
+    title="מערכת ניהול מלאי",
+    description="מערכת מתקדמת לניהול מלאי מחסן עם אפשרויות חיפוש, עריכה ויבוא מאקסל",
+    version="2.0.0",
+    lifespan=lifespan
+)
+
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Global Exception Handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error", "message": str(exc)}
+    )
 
 # CORS Middleware
 app.add_middleware(
@@ -60,35 +95,6 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     logger.debug(f"{request.method} {request.url.path} - {process_time:.3f}s")
     return response
-
-
-# Startup Event
-@app.on_event("startup")
-async def startup_db_client():
-    """Initialize database connection."""
-    try:
-        # Connect to MongoDB
-        await MongoDB.connect()
-
-        # Initialize first admin from env vars
-        from app.db.init_admin import init_admin
-        await init_admin()
-        
-        # Verify MongoDB connection
-        collection = MongoDB.get_collection("inventory")
-        count = await collection.count_documents({})
-        logger.info(f"✅ MongoDB connected successfully. Total items: {count}")
-        
-    except Exception as e:
-        logger.error(f"❌ Startup error: {e}")
-        raise
-
-
-# Shutdown Event
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    """Close database connection."""
-    await MongoDB.disconnect()
 
 
 # Include API routes

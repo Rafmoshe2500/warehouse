@@ -50,16 +50,16 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #ccc;
+  background: var(--text-muted);
 }
 
 .status-dot.green {
-  background: #10b981;
+  background: var(--accent-success);
   box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
 }
 
 .status-dot.red {
-  background: #ef4444;
+  background: var(--accent-danger);
 }
 
 .files-btn {
@@ -104,8 +104,16 @@
   background: rgba(59, 130, 246, 0.1);
 }
 
+.edit-btn {
+  color: var(--accent-primary);
+}
+
 .delete-btn:hover {
   background: rgba(239, 68, 68, 0.1);
+}
+
+.delete-btn {
+  color: var(--accent-danger);
 }
 
 .history-btn:hover {
@@ -129,31 +137,31 @@
 
 .status-waiting_emf, .status-waiting_bom {
     background: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
+    color: var(--accent-warning);
 }
 
 .status-ordered {
     background: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
+    color: var(--accent-primary);
 }
 
 .status-received {
     background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
+    color: var(--accent-success);
 }
 
 [data-theme='dark'] .status-waiting_emf, 
 [data-theme='dark'] .status-waiting_bom {
     background: rgba(245, 158, 11, 0.25);
-    color: #fbbf24;
+    color: var(--accent-warning);
 }
 
 [data-theme='dark'] .status-ordered {
     background: rgba(59, 130, 246, 0.25);
-    color: #60a5fa;
+    color: var(--accent-primary);
 }
 
 [data-theme='dark'] .status-received {
     background: rgba(16, 185, 129, 0.25);
-    color: #34d399;
+    color: var(--accent-success);
 }

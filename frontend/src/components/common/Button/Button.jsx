@@ -1,4 +1,5 @@
 import React from 'react';
+import Spinner from '../Spinner/Spinner';
 import './Button.css';
 
 const Button = ({
@@ -8,20 +9,24 @@ const Button = ({
   icon,
   disabled = false,
   loading = false,
+  isLoading, // Filter out from spread props to avoid React warning
   type = 'button',
   className = '',
   ...props
 }) => {
+  // Support both prop names but prefer 'loading'
+  const isButtonLoading = loading || isLoading;
+
   return (
     <button
       type={type}
-      className={`button button--${variant} ${className} ${loading ? 'button--loading' : ''}`}
+      className={`button button--${variant} ${className} ${isButtonLoading ? 'button--loading' : ''}`}
       onClick={onClick}
-      disabled={disabled || loading}
+      disabled={disabled || isButtonLoading}
       {...props}
     >
-      {loading ? (
-        <span className="button__loading-text">טוען...</span>
+      {isButtonLoading ? (
+        <Spinner inline size="small" />
       ) : (
         <>
           {icon && <span className="button__icon">{icon}</span>}

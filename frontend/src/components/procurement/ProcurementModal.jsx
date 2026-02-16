@@ -160,21 +160,21 @@ const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdi
               <label className="checkbox-label">
                 <input
                   type="checkbox"
-                  checked={formData.received_emf}
-                  onChange={e => handleCheckboxChange('received_emf', e.target.checked)}
-                  disabled={formData.status === 'ordered' || formData.status === 'received'}
-                />
-                התקבל EMF
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
                   checked={formData.received_bom}
                   onChange={e => handleCheckboxChange('received_bom', e.target.checked)}
                   disabled={formData.status === 'ordered' || formData.status === 'received'}
                 />
                 התקבל BOM
+              </label>
+
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={formData.received_emf}
+                  onChange={e => handleCheckboxChange('received_emf', e.target.checked)}
+                  disabled={formData.status === 'ordered' || formData.status === 'received'}
+                />
+                התקבל EMF
               </label>
             </div>
           </div>

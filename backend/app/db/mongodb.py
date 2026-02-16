@@ -32,7 +32,8 @@ class MongoDB:
                 maxIdleTimeMS=45000,  # Close idle connections after 45s
                 serverSelectionTimeoutMS=5000,  # 5s timeout for server selection
                 retryWrites=True,  # Retry write operations on failure
-                retryReads=True    # Retry read operations on failure
+                retryReads=True,    # Retry read operations on failure
+                tz_aware=True       # Return timezone-aware datetimes
             )
             cls.db = cls.client[settings.DB_NAME]
             
@@ -113,4 +114,51 @@ class MongoDB:
         except Exception as e:
             logger.error(f"MongoDB health check failed: {e}")
             return False
+
+    @classmethod
+    async def create_indexes(cls) -> None:
+        """Create database indexes."""
+        if cls.db is None:
+             return
+             
+        try:
+            # Items indexes
+            items = cls.get_collection("items")
+            await items.create_index("catalog_number")  # Not unique based on user feedback
+            await items.create_index("serial", unique=True, sparse=True) # Unique but can be missing
+            await items.create_index([("updated_at", 1)])
+            
+            # Procurement indexes
+            procurement = cls.get_collection("procurement_orders")
+            await procurement.create_index("catalog_number")
+            await procurement.create_index([("updated_at", -1)])
+            await procurement.create_index("status")
+            
+            # Audit indexes
+            audit = cls.get_collection("warehouse-audit-logs")
+            await audit.create_index([("timestamp", -1)])
+            await audit.create_index("action")
+            await audit.create_index("actor")
+            await audit.create_index("target_resource")
+            
+            # User/Group indexes
+            users = cls.get_permissions_collection("users")
+            await users.create_index("username", unique=True)
+            await users.create_index("email", sparse=True)
+            
+            
+            groups = cls.get_permissions_collection("groups")
+            await groups.create_index("name", unique=True)
+
+            # Collection Items indexes
+            collection_items = cls.get_collection("collection_items")
+            await collection_items.create_index("collection_id")
+            await collection_items.create_index("item_id")
+            # Compound index for uniqueness if needed, but at least these for performance
+            await collection_items.create_index([("collection_id", 1), ("item_id", 1)], unique=True)
+            
+            logger.info("✅ Database indexes created/verified")
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to create indexes: {e}")
 

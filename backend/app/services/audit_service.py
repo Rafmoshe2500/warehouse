@@ -2,7 +2,7 @@
 Service for managing audit logs.
 """
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import logging
 
 from app.db.repositories.audit_repository import AuditRepository
@@ -133,3 +133,8 @@ class AuditService:
             page=page,
             page_size=page_size
         )
+
+    async def get_action_count(self, actions: List[str], days: int) -> int:
+        """Get count of specific actions in the last N days."""
+        start_date = datetime.now(timezone.utc) - timedelta(days=days)
+        return await self.repository.count_actions(actions, start_date)

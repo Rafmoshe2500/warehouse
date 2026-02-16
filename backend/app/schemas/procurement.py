@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from enum import Enum
 
 
@@ -55,6 +55,8 @@ class ProcurementOrderUpdate(BaseModel):
     received_bom: Optional[bool] = None
 
 
+
+
 class ProcurementOrderResponse(ProcurementOrderBase):
     """Schema for procurement order response"""
     id: str
@@ -63,8 +65,7 @@ class ProcurementOrderResponse(ProcurementOrderBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProcurementOrdersListResponse(BaseModel):

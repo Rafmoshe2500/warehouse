@@ -1,0 +1,44 @@
+
+.settings-container {
+    padding-bottom: 3rem;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.danger-zone {
+    border: 1px solid var(--accent-danger);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    background-color: rgba(239, 68, 68, 0.05); /* Very light red */
+    margin-top: 3rem;
+}
+
+[data-theme="dark"] .danger-zone {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.danger-zone-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--accent-danger);
+    margin-bottom: 1rem;
+}
+
+.danger-zone-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.danger-zone-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+[data-theme="light"] .danger-zone-description {
+    color: var(--text-secondary); /* Or a specific darker red if preferred */
+}

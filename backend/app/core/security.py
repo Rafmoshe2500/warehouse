@@ -1,10 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 
-from app.config import settings
 from app.config import settings
 from app.core.exceptions import UnauthorizedException, ForbiddenException
 from app.core.constants import UserRole, Permission
@@ -16,9 +15,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     """יצירת JWT token"""
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
@@ -48,6 +47,27 @@ async def get_current_user(
         raise UnauthorizedException("Not authenticated")
 
     return verify_token(token)
+
+
+async def get_current_user_groups(
+        current_user: dict = Depends(get_current_user)
+) -> list[str]:
+    """Get the groups the current user belongs to."""
+    groups = current_user.get("groups", [])
+    
+    # Mock for dev/test if empty AND in development environment
+    if not groups and settings.ENVIRONMENT == "development":
+        # Default mock groups for everyone
+        groups = ["All Users", "Domain Users"]
+        
+        # Add simpler mock logic based on role for testing
+        if current_user.get("role") in [UserRole.ADMIN, UserRole.SUPERADMIN]:
+            groups.extend(["Admins", "Management"])
+        
+        if current_user.get("username") == "user": # Specific mock for 'user'
+             groups.extend(["Designers"])
+             
+    return groups
 
 
 async def require_admin(
@@ -94,11 +114,3 @@ def require_permission(permission: str):
         return current_user
     
     return permission_dependency
-
-
-def verify_delete_password(password: str) -> bool:
-    """אימות סיסמת מחיקה"""
-    if not settings.DELETE_PASSWORD:
-        return False
-    return password == settings.DELETE_PASSWORD
-
