@@ -13,7 +13,8 @@ import {
   Pagination, 
   Button, 
   Input, 
-  Select 
+  Select,
+  SkeletonTable
 } from '../../components/common';
 import './AuditLogs.css';
 
@@ -151,9 +152,7 @@ const AuditLogs = ({ isEmbedded = false }) => {
         }
       >
         {loading ? (
-          <div className="audit-logs-loading">
-            <Spinner size="large" text="טוען יומן ביקורת..." />
-          </div>
+          <SkeletonTable rows={8} columns={5} />
         ) : (
           <div className="audit-timeline-wrapper">
              <LogTimeline logs={logs} />

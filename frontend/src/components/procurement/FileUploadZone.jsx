@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useToast } from '../../hooks/useToast';
-import Spinner from '../common/Spinner/Spinner';
+import UploadAnimation from '../common/UploadAnimation/UploadAnimation';
 import './FileUploadZone.css';
 
 const FileUploadZone = ({ onUpload, uploading, maxSize = 10 * 1024 * 1024 }) => {
@@ -55,8 +55,8 @@ const FileUploadZone = ({ onUpload, uploading, maxSize = 10 * 1024 * 1024 }) => 
 
   if (uploading) {
     return (
-      <div className="file-upload-zone uploading">
-        <Spinner size="medium" text="מעלה קובץ..." />
+      <div className="upload-animation-floating">
+        <UploadAnimation type="s3" status="uploading" />
       </div>
     );
   }

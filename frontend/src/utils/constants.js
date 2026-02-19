@@ -50,13 +50,38 @@ export const ACTION_TYPES = {
 };
 
 export const ACTION_LABELS = {
-  // Basic item operations for filter dropdown
+  // Inventory
   item_create: 'יצירה',
   item_delete: 'מחיקה',
   item_update: 'עדכון',
+  item_bulk_update: 'עדכון מרובה',
+  item_bulk_delete: 'מחיקה מרובה',
   item_import: 'יבוא אקסל',
   undo: 'ביטול פעולה',
   redo: 'שחזור פעולה',
+  // Users
+  user_create: 'יצירת משתמש',
+  user_update: 'עדכון משתמש',
+  user_delete: 'מחיקת משתמש',
+  user_login: 'התחברות',
+  user_domain_login: 'התחברות דומיין',
+  user_logout: 'התנתקות',
+  password_change: 'שינוי סיסמה',
+  role_change: 'שינוי תפקיד',
+  // Groups
+  group_create: 'יצירת קבוצה',
+  group_update: 'עדכון קבוצה',
+  group_delete: 'מחיקת קבוצה',
+  // Procurement
+  procurement_create: 'יצירת הזמנה',
+  procurement_update: 'עדכון הזמנה',
+  procurement_delete: 'מחיקת הזמנה',
+  procurement_file_upload: 'העלאת קובץ',
+  procurement_file_delete: 'מחיקת קובץ',
+  // Collections
+  collection_create: 'יצירת אוסף',
+  collection_update: 'עדכון אוסף',
+  collection_delete: 'מחיקת אוסף',
   collection_item_add: 'שיוך לאוסף',
   collection_item_remove: 'הסרה מאוסף',
 };

@@ -177,13 +177,6 @@
     color: var(--text-primary);
 }
 
-.actions-cell {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    justify-content: flex-start;
-}
-
 .action-btn {
     display: flex;
     align-items: center;

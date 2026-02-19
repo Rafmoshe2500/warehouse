@@ -21,7 +21,7 @@ export const ACTION_TYPES = {
  * @param {number} maxDeleteHistory - Maximum delete history size (default: 10)
  */
 export const useUndoRedo = (callbacks, maxEditHistory = 20, maxDeleteHistory = 10) => {
-    const { onEdit, onRestoreItems, onCreateUndoLog } = callbacks;
+    const { onEdit, onRestoreItems, onCreateUndoLog, onCreateRedoLog } = callbacks;
 
     const [editHistory, setEditHistory] = useState([]);
     const [editRedoStack, setEditRedoStack] = useState([]);
@@ -100,9 +100,25 @@ export const useUndoRedo = (callbacks, maxEditHistory = 20, maxDeleteHistory = 1
         setEditRedoStack(prev => prev.slice(0, -1));
         setEditHistory(prev => [...prev, lastUndo]);
 
-        await onEdit(lastUndo.itemId, lastUndo.field, lastUndo.newValue);
+        // Pass isUndo=true to prevent backend from writing a duplicate ITEM_UPDATE log
+        await onEdit(lastUndo.itemId, lastUndo.field, lastUndo.newValue, true);
+
+        // Create REDO log if callback provided
+        if (onCreateRedoLog) {
+            try {
+                await onCreateRedoLog('edit', {
+                    itemId: lastUndo.itemId,
+                    field: lastUndo.field,
+                    from: lastUndo.previousValue,
+                    to: lastUndo.newValue
+                });
+            } catch (err) {
+                console.error('Failed to create redo log:', err);
+            }
+        }
+
         return true;
-    }, [editRedoStack, onEdit]);
+    }, [editRedoStack, onEdit, onCreateRedoLog]);
 
     // Undo the last delete action (restore items)
     const undoDelete = useCallback(async () => {

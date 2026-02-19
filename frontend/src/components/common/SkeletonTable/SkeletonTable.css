@@ -1,0 +1,33 @@
+.skeleton-table {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.skeleton-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.skeleton-table thead th {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.skeleton-table tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+.skeleton-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.skeleton-table td {
+  padding: 1rem;
+}
+
+.skeleton-table .skeleton {
+  margin: 0.25rem 0;
+}

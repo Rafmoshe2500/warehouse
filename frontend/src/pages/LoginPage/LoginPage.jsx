@@ -3,33 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FiUsers, FiServer, FiArrowRight } from 'react-icons/fi';
 import LoginForm from '../../components/auth/LoginForm/LoginForm';
-import authService from '../../api/services/authService';
 import { useToast } from '../../hooks/useToast';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
 import './LoginPage.css';
 
 import Header from '../../components/layout/Header/Header';
-// import ThemeSelector from '../../components/layout/ThemeSelector/ThemeSelector'; // Removed as it is now in Header
+
 
 const LoginPage = () => {
-  const [authMode, setAuthMode] = useState(null); // null = selection, 'local' = local form, 'domain' = domain
+  const [authMode, setAuthMode] = useState(null);
   const [loading, setLoading] = useState(false);
   const { toasts, removeToast, error: toastError } = useToast();
   const { login, isAuthenticated, isAdmin, hasPermission } = useAuth();
   const navigate = useNavigate();
 
   const getRedirectPath = React.useCallback(() => {
-    // 1. Admins and Inventory Managers go to Dashboard
     if (isAdmin || hasPermission('inventory:ro') || hasPermission('inventory:rw')) {
-      return '/inventory'; // Also covers users with BOTH inventory and procurement
+      return '/inventory';
     }
     
-    // 2. Procurement ONLY users go to Procurement
     if (hasPermission('procurement:ro') || hasPermission('procurement:rw')) {
       return '/procurement';
     }
 
-    // 3. Fallback
     return '/dashboard';
   }, [isAdmin, hasPermission]);
 
@@ -38,7 +34,6 @@ const LoginPage = () => {
 
     try {
       await login({ username, password }); 
-      // Navigation will be handled by the useEffect below
     } catch (err) {
       toastError(err.response?.data?.detail || 'שגיאה בהתחברות');
       setLoading(false);
@@ -56,10 +51,10 @@ const LoginPage = () => {
     // בלוגיקה החדשה, התחברות לדומיין מבוצעת על ידי הפניה לשרת (או ל-ADFS).
     // אם זו הדמיה ללא שרת אמיתי, הקוד הבא מדמה את התהליך:
     try {
-        const hashToken = "simulation_token_123"; 
+        const hashedToken = "simulation_token_123"; 
         // בחיים האמיתיים: window.location.href = 'YOUR_ADFS_URL';
         // בהדמיה: מרעננים את הדף עם הטוקן כאילו חזרנו מה-ADFS
-        window.location.search = `?hashToken=${hashToken}`;
+        window.location.search = `?hashedToken=${hashedToken}`;
     } catch (error) {
        console.error("Domain login failed:", error);
        toastError('התחברות דומיין נכשלה');

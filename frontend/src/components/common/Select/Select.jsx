@@ -25,37 +25,39 @@ const Select = ({
 
   return (
     <div className="select-wrapper">
-      {label && (
-        <label className="input-label">
-          {label}
-          {required && <span className="input-required">*</span>}
-        </label>
-      )}
-      <div className="select-container">
-        <select
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-          className={selectClass}
-          {...props}
-        >
-          {placeholder && (
-            <option value="" disabled>
-              {placeholder}
-            </option>
-          )}
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <div className="select-arrow">
+      <fieldset className={`select-fieldset ${error ? 'select--error' : ''}`}>
+        {label && (
+          <legend className="select-legend">
+            {label}
+            {required && <span className="input-required">*</span>}
+          </legend>
+        )}
+        <div className="select-container">
+          <select
+            value={value}
+            onChange={onChange}
+            disabled={disabled}
+            className={selectClass}
+            {...props}
+          >
+            {placeholder && (
+              <option value="" disabled>
+                {placeholder}
+              </option>
+            )}
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <div className="select-arrow">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
+              <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
+          </div>
         </div>
-      </div>
+      </fieldset>
       {error && <span className="select-error-message">{error}</span>}
     </div>
   );

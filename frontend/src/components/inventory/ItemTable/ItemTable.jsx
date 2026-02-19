@@ -116,6 +116,35 @@ const ItemTable = ({
       } catch (error) {
         console.error('❌ Failed to create undo log:', error);
       }
+    },
+    onCreateRedoLog: async (type, details) => {
+      const username = user?.username || 'unknown';
+      const userRole = user?.role || 'unknown';
+
+      try {
+        if (type === 'edit') {
+          const item = items.find(i => i._id === details.itemId);
+          const catalogNumber = item?.catalog_number || 'לא ידוע';
+
+          await logService.createLog({
+            action: 'redo',
+            actor: username,
+            actor_role: userRole,
+            target_resource: 'item',
+            resource_id: catalogNumber,
+            target_resource_name: catalogNumber,
+            details: `שחזור עריכה: ${details.field} מ-"${details.from}" ל-"${details.to}"`,
+            changes: {
+              [details.field]: {
+                old: details.from,
+                new: details.to
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error('❌ Failed to create redo log:', error);
+      }
     }
   });
 

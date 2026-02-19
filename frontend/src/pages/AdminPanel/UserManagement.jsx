@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowRight, FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
-import { Button } from '../../components/common';
+import { Button, SkeletonTable } from '../../components/common';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
-import { useUsers } from '../../hooks/useUsers'; // Import hook
-import Spinner from '../../components/common/Spinner/Spinner';
+import { useUsers } from '../../hooks/useUsers';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
 import UserForm from '../../components/admin/UserForm';
 import './UserManagement.css';
@@ -98,11 +97,7 @@ const UserManagement = ({ isEmbedded = false }) => {
   };
 
   if (loading) {
-    return (
-      <div className="user-management-loading">
-        <Spinner size="large" text="טוען משתמשים..." />
-      </div>
-    );
+    return <SkeletonTable rows={8} columns={6} />;
   }
 
   return (

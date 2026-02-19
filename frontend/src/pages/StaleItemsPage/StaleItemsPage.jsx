@@ -5,7 +5,7 @@ import { useToast } from '../../hooks/useToast';
 
 import ItemTable from '../../components/inventory/ItemTable/ItemTable';
 import { usePagination } from '../../hooks/usePagination';
-import { ScrollableTableLayout, Pagination } from '../../components/common';
+import { ScrollableTableLayout, Pagination, SkeletonTable } from '../../components/common';
 import './StaleItemsPage.css';
 
 const StaleItemsPage = ({ isEmbedded = false }) => {
@@ -90,16 +90,20 @@ const StaleItemsPage = ({ isEmbedded = false }) => {
                     />
                 }
             >
-                <ItemTable 
-                    items={items}
-                    editing={{ onEdit: handleEditCell }}
-                    selection={{
-                        selectedItems,
-                        setSelectedItems,
-                        onSelectItem: handleSelectItem,
-                        onSelectAll: handleSelectAll
-                    }}
-                />
+                {loading && !items.length ? (
+                    <SkeletonTable rows={8} columns={7} />
+                ) : (
+                    <ItemTable 
+                        items={items}
+                        editing={{ onEdit: handleEditCell }}
+                        selection={{
+                            selectedItems,
+                            setSelectedItems,
+                            onSelectItem: handleSelectItem,
+                            onSelectAll: handleSelectAll
+                        }}
+                    />
+                )}
             </ScrollableTableLayout>
         </div>
     );

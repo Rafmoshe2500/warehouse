@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FiPackage, FiSettings, FiShoppingCart, FiPieChart, FiUsers, FiLayers, FiHelpCircle } from 'react-icons/fi';
+import { FiPackage, FiShoppingCart, FiPieChart, FiUsers, FiHelpCircle } from 'react-icons/fi';
+import { FaBoxOpen } from 'react-icons/fa';
 import { useAuth } from '../../../context/AuthContext';
 import { PermissionGate } from '../../common';
 import './Navigation.css';
@@ -39,7 +40,7 @@ const Navigation = () => {
             `navigation__link ${isActive ? 'navigation__link--active' : ''}`
           }
         >
-          <FiLayers size={20} />
+          <FaBoxOpen size={20} />
           <span>המלאי שלי</span>
         </NavLink>
 

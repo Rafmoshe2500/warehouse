@@ -43,39 +43,6 @@
   margin-bottom: 1.5rem;
 }
 
-.login-form__field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.login-form__label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  direction: rtl;
-  text-align: right;
-}
-
-.login-form__input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.login-form__icon {
-  position: absolute;
-  right: 0.75rem;
-  color: var(--text-secondary);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.login-form__input {
-  width: 100%;
-  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-}
-
 .login-form__submit {
   width: 100%;
 }

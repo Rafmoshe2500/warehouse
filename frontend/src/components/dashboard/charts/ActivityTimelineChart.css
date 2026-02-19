@@ -1,0 +1,105 @@
+.activity-timeline-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-timeline-controls {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  max-width: 500px;
+}
+
+.activity-timeline-controls > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-timeline-chart {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+/* Search Input Styling */
+.activity-timeline-search {
+  font-size: 0.875rem;
+}
+
+.activity-timeline-button {
+  min-width: 70px;
+  height: 38px;
+  font-size: 0.875rem;
+}
+
+.activity-timeline-button--search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Chart Tooltip */
+.timeline-tooltip {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.timeline-tooltip-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.timeline-tooltip-row:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-tooltip-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.timeline-tooltip-value {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .activity-timeline-controls {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .activity-timeline-controls > div {
+    flex: 1;
+  }
+
+  .activity-timeline-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .activity-timeline-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .activity-timeline-search {
+    font-size: 0.8125rem;
+  }
+
+  .activity-timeline-button {
+    min-width: auto;
+    height: 36px;
+    font-size: 0.8125rem;
+  }
+}

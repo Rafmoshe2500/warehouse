@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FiUser, FiLock } from 'react-icons/fi';
 import Button from '../../common/Button/Button';
+import Input from '../../common/Input/Input';
 import './LoginForm.css';
 
 const LoginForm = ({ onSubmit, loading }) => {
@@ -22,39 +23,29 @@ const LoginForm = ({ onSubmit, loading }) => {
       </div>
 
       <div className="login-form__fields">
-        <div className="login-form__field">
-          <label className="login-form__label">שם משתמש</label>
-          <div className="login-form__input-wrapper">
-            <FiUser className="login-form__icon" />
-            <input
-              type="text"
-              placeholder="הזן שם משתמש"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="login-form__input"
-              required
-              disabled={loading}
-              data-testid="username-input"
-            />
-          </div>
-        </div>
+        <Input
+          label="שם משתמש"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="הזן שם משתמש"
+          type="text"
+          icon={<FiUser />}
+          required
+          disabled={loading}
+          data-testid="username-input"
+        />
 
-        <div className="login-form__field">
-          <label className="login-form__label">סיסמה</label>
-          <div className="login-form__input-wrapper">
-            <FiLock className="login-form__icon" />
-            <input
-              type="password"
-              placeholder="הזן סיסמה"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="login-form__input"
-              required
-              disabled={loading}
-              data-testid="password-input"
-            />
-          </div>
-        </div>
+        <Input
+          label="סיסמה"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="הזן סיסמה"
+          type="password"
+          icon={<FiLock />}
+          required
+          disabled={loading}
+          data-testid="password-input"
+        />
       </div>
 
       <Button

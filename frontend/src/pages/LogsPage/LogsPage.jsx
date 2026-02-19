@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useLogs } from '../../hooks/useLogs';
 import { usePagination } from '../../hooks/usePagination';
 import { LogTimeline, LogFilters } from '../../components/logs';
-import { Spinner, ScrollableTableLayout, Pagination } from '../../components/common';
+import { Spinner, ScrollableTableLayout, Pagination, SkeletonTable } from '../../components/common';
 import './LogsPage.css';
 
 const LogsPage = ({ isEmbedded = false }) => {
@@ -49,9 +49,7 @@ const LogsPage = ({ isEmbedded = false }) => {
         }
       >
         {loading ? (
-          <div className="logs-page__loading">
-            <Spinner size="large" text="טוען לוגים..." />
-          </div>
+          <SkeletonTable rows={8} columns={7} />
         ) : error ? (
           <div className="logs-page__error">שגיאה: {error}</div>
         ) : (

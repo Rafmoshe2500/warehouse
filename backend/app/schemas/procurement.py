@@ -24,14 +24,20 @@ class ProcurementFileMetadata(BaseModel):
     uploaded_at: datetime
 
 
-class ProcurementOrderBase(BaseModel):
-    """Base procurement order schema"""
+class BOMItem(BaseModel):
+    """BOM item within procurement order"""
+    item_id: int = Field(..., description="פריט ID")
     catalog_number: str = Field(..., min_length=1, description="מק\"ט")
     manufacturer: str = Field(..., min_length=1, description="יצרן")
-    description: str = Field(..., description="תיאור")
+    description: str = Field(default="", description="תיאור")
     quantity: int = Field(..., gt=0, description="כמות")
+
+
+class ProcurementOrderBase(BaseModel):
+    """Base procurement order schema"""
     order_date: datetime = Field(..., description="תאריך הזמנה")
-    amount: float = Field(..., ge=0, description="סכום")
+    bom_items: List[BOMItem] = Field(..., min_length=1, description="פריטי BOM")
+    total_amount: float = Field(..., ge=0, description="סכום כולל")
     status: ProcurementStatus = Field(default=ProcurementStatus.WAITING_FOR_EMF, description="סטטוס הזמנה")
     received_emf: bool = Field(default=False, description="התקבל EMF")
     received_bom: bool = Field(default=False, description="התקבל BOM")
@@ -44,12 +50,9 @@ class ProcurementOrderCreate(ProcurementOrderBase):
 
 class ProcurementOrderUpdate(BaseModel):
     """Schema for updating procurement order"""
-    catalog_number: Optional[str] = None
-    manufacturer: Optional[str] = None
-    description: Optional[str] = None
-    quantity: Optional[int] = Field(None, gt=0)
     order_date: Optional[datetime] = None
-    amount: Optional[float] = Field(None, ge=0)
+    bom_items: Optional[List[BOMItem]] = None
+    total_amount: Optional[float] = Field(None, ge=0)
     status: Optional[ProcurementStatus] = None
     received_emf: Optional[bool] = None
     received_bom: Optional[bool] = None

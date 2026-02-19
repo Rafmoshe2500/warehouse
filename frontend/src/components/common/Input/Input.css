@@ -1,14 +1,84 @@
 .input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
   width: 100%;
 }
 
-/* 
-  .input styles are now handled globally in index.css 
-  targeting input, select, textarea elements directly.
-*/
+.input-fieldset {
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 0;
+  margin: 0;
+  background: var(--input-bg);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.input-legend {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-right: 0.75rem;
+  padding: 0 0.5rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.input-fieldset:focus-within {
+  border-color: var(--accent-primary);
+  background: var(--input-bg-focus);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow), 0 0 20px var(--input-focus-glow);
+}
+
+.input-fieldset.input-error {
+  border-color: var(--accent-danger);
+}
+
+.input-fieldset.input-error:focus-within {
+  box-shadow: 0 0 0 3px var(--input-error-shadow), 0 0 20px var(--input-error-glow);
+}
+
+/* Override global styles for inputs inside fieldset */
+.input-inner {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  padding-right: 0.75rem;
+  padding-left: 0;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.input-has-icon input,
+.input-has-icon textarea {
+  padding-right: 0 !important;
+}
+
+.input-fieldset input,
+.input-fieldset textarea {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  padding: 0.75rem 1rem !important;
+  outline: none !important;
+  color: var(--text-primary) !important;
+  flex: 1;
+  min-width: 0;
+}
+
+.input-required {
+  color: var(--accent-danger);
+  margin-right: 2px;
+}
 
 .input-error-message {
   font-size: 0.75rem;
@@ -16,4 +86,5 @@
   direction: rtl;
   text-align: right;
   font-weight: 500;
+  margin-top: 2px;
 }

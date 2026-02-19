@@ -10,6 +10,7 @@ import excelService from '../api/services/excelService';
 export const useInventoryExcel = (loadItems, addToast) => {
     const [uploadingExcel, setUploadingExcel] = useState(false);
     const [importType, setImportType] = useState('standard'); // 'standard' | 'project'
+    const uploadStartTimeRef = useRef(null);
     
     // Using existing hook logic inside this custom hook or just plain state
     // Ideally this replaces useExcelManager if it was too specific or simple
@@ -18,6 +19,8 @@ export const useInventoryExcel = (loadItems, addToast) => {
         if (!file) return;
 
         setUploadingExcel(true);
+        uploadStartTimeRef.current = Date.now();
+        
         try {
             let result;
             if (importType === 'project') {
@@ -41,6 +44,14 @@ export const useInventoryExcel = (loadItems, addToast) => {
             }
 
             if (loadItems) await loadItems();
+            
+            // Ensure minimum animation display time (1500ms)
+            const elapsedTime = Date.now() - uploadStartTimeRef.current;
+            const remainingTime = Math.max(0, 1500 - elapsedTime);
+            
+            if (remainingTime > 0) {
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+            }
         } catch (err) {
             addToast(err.response?.data?.detail || 'שגיאה ביבוא מאקסל', 'error');
         } finally {

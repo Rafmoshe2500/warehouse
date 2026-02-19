@@ -130,7 +130,8 @@ class MongoDB:
             
             # Procurement indexes
             procurement = cls.get_collection("procurement_orders")
-            await procurement.create_index("catalog_number")
+            await procurement.create_index("bom_items.catalog_number")
+            await procurement.create_index("bom_items.manufacturer")
             await procurement.create_index([("updated_at", -1)])
             await procurement.create_index("status")
             

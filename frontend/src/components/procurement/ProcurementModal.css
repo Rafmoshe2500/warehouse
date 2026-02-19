@@ -5,53 +5,91 @@
   border: 1px solid var(--border-color);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  padding: 1.5rem; /* Reduced from 2rem */
+  padding: 1.25rem;
   color: var(--text-primary);
-  /* Added from UserForm */
   animation: slideIn 0.3s ease-out;
-  /* Scan removed max-height and overflow-y to prevent scrollbar */
-}
-
-/* Added Overlay Animation */
-.modal-overlay {
-  animation: fadeIn 0.2s ease-out;
-  /* Ensure backdrop filter matches UserForm if supported */
-  backdrop-filter: blur(4px); 
 }
 
 .procurement-modal h2 {
   color: var(--text-primary);
-  margin-bottom: 1.5rem; /* Reduced from 2rem */
+  margin-bottom: 1.25rem;
   text-align: center;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem; /* Reduced from 1.5rem */
+  gap: 0.75rem;
 }
 
 /* Wrapper div for full width grid item */
-.full-width {
+.full-width,
+.form-row {
   grid-column: 1 / -1;
 }
 
-.form-checkboxes {
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-checkboxes-inline {
   grid-column: 1 / -1;
   display: flex;
   gap: 2rem;
+  align-items: flex-start;
+  padding-top: 0.5rem;
+}
+
+.form-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--border-color);
   margin-top: 0.5rem;
-  padding-top: 0;
-  border-top: none;
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 1.5rem; /* Reduced from 2rem */
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.modal-actions-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 1.25rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border-color);
+}
+
+.status-info-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status-info-inline .status-info-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.status-badge-inline {
+  font-weight: 500;
+  color: var(--text-primary);
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 @keyframes fadeIn {
@@ -69,4 +107,240 @@
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+  
+  .bom-item-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* BOM Items Styling */
+.bom-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--accent-primary);
+}
+
+.bom-tabs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+/* BOM Tabs */
+.bom-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  align-items: flex-start;
+}
+
+.bom-tab-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.bom-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.8rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.85rem;
+  flex: 0 0 auto;
+}
+
+.bom-tab:hover {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.bom-tab.active {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+}
+
+.bom-tab.valid.active {
+  background: #10b981;
+  border-color: #10b981;
+}
+
+.bom-tab.invalid {
+  opacity: 0.7;
+}
+
+.bom-tab-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.bom-tab.active .bom-tab-number {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.bom-tab-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 55px;
+  font-size: 0.8rem;
+}
+
+.bom-tab-delete {
+  position: absolute;
+  left: 0.3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--accent-danger);
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  z-index: 10;
+}
+
+.bom-tab-delete:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.bom-tab.active .bom-tab-delete {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.bom-tab.active .bom-tab-delete:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* BOM Item Content */
+.bom-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bom-item-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.full-width-input {
+  grid-column: 1 / -1;
+}
+
+/* BOM Controls Row - Checkboxes on left, Add button on right */
+.bom-controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.bom-controls-left {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.add-bom-item-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 2px dashed var(--accent-primary);
+  color: var(--accent-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.add-bom-item-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.05);
+  transform: translateY(-2px);
+}
+
+.add-bom-item-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--text-muted);
+  color: var(--text-muted);
+}
+
+/* Total Amount Section - REMOVED FRAME */
+/* No special styling needed - just a regular input */
+
+/* Checkboxes */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-primary);
+}
+
+.checkbox-label input[type="checkbox"]:hover {
+  opacity: 0.8;
 }

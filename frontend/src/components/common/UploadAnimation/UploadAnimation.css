@@ -1,0 +1,395 @@
+/* ===== FLOATING CLOUD ANIMATION (S3 Upload) ===== */
+
+.upload-animation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px 20px;
+}
+
+/* Floating Cloud Wrapper */
+.floating-cloud-wrapper {
+  position: relative;
+  width: 200px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cloud-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cloud-icon {
+  width: 120px;
+  height: 80px;
+  animation: floatingCloud 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(66, 165, 245, 0.3));
+}
+
+@keyframes floatingCloud {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Cloud Glow Effect */
+.cloud-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 100px;
+  background: radial-gradient(ellipse at center, rgba(66, 165, 245, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: glowPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+/* Floating Document */
+.floating-document {
+  position: absolute;
+  width: 60px;
+  height: 70px;
+  background: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.floating-document.uploading-motion {
+  animation: documentToCloud 2s ease-in-out infinite;
+}
+
+@keyframes documentToCloud {
+  0% {
+    /* Start from top, outside the view */
+    top: -100px;
+    left: 50%;
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+  }
+  40% {
+    /* Move towards center/cloud */
+    top: 30%;
+    opacity: 1;
+  }
+  70% {
+    /* Getting closer and shrinking */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0.8;
+  }
+  100% {
+    /* Enter the cloud, become very small */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+}
+
+.floating-document.success {
+  animation: documentSuccess 0.6s ease-out forwards;
+}
+
+@keyframes documentSuccess {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+  }
+}
+
+.floating-document svg {
+  width: 36px;
+  height: 36px;
+}
+
+/* Success Checkmark */
+.success-checkmark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  background: #4CAF50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: checkmarkPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-checkmark svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ===== SCAN LINES ANIMATION (Excel Upload) ===== */
+
+.scan-lines-wrapper {
+  position: relative;
+  width: 220px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.excel-sheet {
+  position: relative;
+  width: 180px;
+  height: 160px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+  border: 2px solid #E0E0E0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.sheet-header {
+  padding: 12px;
+  background: linear-gradient(90deg, #2196F3 0%, #1976D2 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.sheet-content {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sheet-row {
+  height: 12px;
+  background: linear-gradient(90deg, #BDBDBD 0%, #E0E0E0 100%);
+  border-radius: 4px;
+}
+
+/* Scan Line Animation */
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(76, 175, 80, 0.4) 25%,
+    rgba(76, 175, 80, 0.6) 50%,
+    rgba(76, 175, 80, 0.4) 75%,
+    transparent 100%
+  );
+  animation: scanningEffect 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scanningEffect {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.scan-line.complete {
+  animation: scanComplete 1.5s ease-out forwards;
+}
+
+@keyframes scanComplete {
+  0% {
+    left: 100%;
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Scan Progress */
+.scan-progress {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.scan-progress span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2196F3;
+}
+
+/* Scan Success Badge */
+.scan-success-badge {
+  position: absolute;
+  bottom: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: #4CAF50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: badgeAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+@keyframes badgeAppear {
+  0% {
+    transform: translateX(-50%) scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.scan-success-badge svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ===== UPLOAD INFO ===== */
+
+.upload-info {
+  text-align: center;
+  max-width: 100%;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  margin: 0;
+  word-break: break-all;
+  max-width: 300px;
+}
+
+.upload-status {
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+  margin: 8px 0 0 0;
+  animation: pulse-text 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ===== RTL SUPPORT ===== */
+
+[dir="rtl"] .scan-line {
+  left: 100%;
+  animation: scanningEffectRTL 2.5s ease-in-out infinite;
+}
+
+@keyframes scanningEffectRTL {
+  0% {
+    left: 100%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: -100%;
+    opacity: 0;
+  }
+}
+
+[dir="rtl"] .scan-line.complete {
+  animation: scanCompleteRTL 1.5s ease-out forwards;
+}
+
+@keyframes scanCompleteRTL {
+  0% {
+    left: -100%;
+    opacity: 1;
+  }
+  100% {
+    left: -100%;
+    opacity: 0;
+  }
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiPlus, FiSearch, FiClock, FiCheckCircle, FiX } from 'react-icons/fi';
-import { Button, Input, Pagination, Spinner, ToastContainer } from '../../components/common';
+import { Button, Input, Pagination, Spinner, ToastContainer, SkeletonTable } from '../../components/common';
 import ProcurementTable from '../../components/procurement/ProcurementTable';
 import ProcurementModal from '../../components/procurement/ProcurementModal';
 import ProcurementFilesModal from '../../components/procurement/ProcurementFilesModal';
@@ -155,21 +155,31 @@ const ProcurementPage = () => {
 
   const handleFileChange = async () => {
     try {
-      fetchOrders();
-      
-      const data = await procurementService.getOrders({
-         page,
-         page_size: pageSize,
-         catalog_number: filters.catalog_number 
-      });
+      // Refetch with current tab filters
+      const currentFilters = filters;
+      const queryParams = {
+        page,
+        page_size: pageSize,
+        ...currentFilters
+      };
+
+      // Add status filter based on active tab
+      if (activeTab === 'process') {
+        queryParams.status_ne = 'received';
+      } else {
+        queryParams.status_in = ['received'];
+      }
+
+      const data = await procurementService.getOrders(queryParams);
       setOrders(data.orders);
+      setTotal(data.total);
       
       const updatedOrder = data.orders.find(o => o.id === selectedOrderForFiles.id);
       if (updatedOrder) {
         setSelectedOrderForFiles(updatedOrder);
       }
     } catch (err) {
-      console.error(err);
+      error('שגיאה בעדכון הנתונים');
     }
   };
 
@@ -246,9 +256,7 @@ const ProcurementPage = () => {
       </div>
 
       {loading ? (
-        <div className="loading-container">
-          <Spinner size="large" />
-        </div>
+        <SkeletonTable rows={8} columns={7} />
       ) : (
         <>
           <ProcurementTable

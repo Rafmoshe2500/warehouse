@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiPlus, FiEdit2, FiTrash2, FiUpload, FiRotateCcw } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiUpload, FiRotateCcw, FiRotateCw } from 'react-icons/fi';
 import { ACTION_LABELS, FIELD_LABELS, ROLE_LABELS } from '../../../utils/constants';
 import { formatDateTime } from '../../../utils/formatters';
 import './LogTimeline.css';
@@ -21,6 +21,7 @@ const ACTION_CONFIG = {
   delete: { icon: FiTrash2, className: 'log-item--danger' },
   import: { icon: FiUpload, className: 'log-item--success' },
   undo: { icon: FiRotateCcw, className: 'log-item--undo' },
+  redo: { icon: FiRotateCw, className: 'log-item--redo' },
   bulk_update: { icon: FiEdit2, className: 'log-item--info' },
   bulk_delete: { icon: FiTrash2, className: 'log-item--danger' },
   password_change: { icon: FiEdit2, className: 'log-item--info' },

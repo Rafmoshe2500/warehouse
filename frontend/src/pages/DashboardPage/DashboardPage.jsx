@@ -28,7 +28,11 @@ import './DashboardPage.css';
 const DashboardPage = () => {
     const { useDashboardStats } = useAnalytics();
     const { data: stats, isLoading: loading, error } = useDashboardStats();
-    const { user } = useAuth(); // Get current user
+    const { user, hasPermission } = useAuth(); // Get current user
+    
+    // Check permissions
+    const hasInventoryAccess = hasPermission('inventory:ro') || hasPermission('inventory:rw');
+    const hasProcurementAccess = hasPermission('procurement:ro') || hasPermission('procurement:rw');
 
     if (loading) return (
         <div className="dashboard-loading">
@@ -57,111 +61,120 @@ const DashboardPage = () => {
                 </div>
                 
                 <div className="bento-grid-stats">
-                    <div className="stat-tile blue">
-                        <div className="stat-icon-bg"><FiBox /></div>
-                        <div className="stat-content">
-                            <h3>סה"כ פריטים</h3>
-                            <div className="stat-number">{stats?.total_items?.toLocaleString() || 0}</div>
-                        </div>
-                        <div className="stat-trend positive">
-                            <FiTrendingUp /> במלאי
-                        </div>
-                    </div>
+                    {hasInventoryAccess && (
+                        <>
+                            <div className="stat-tile blue">
+                                <div className="stat-icon-bg"><FiBox /></div>
+                                <div className="stat-content">
+                                    <h3>סה"כ פריטים</h3>
+                                    <div className="stat-number">{stats?.total_items?.toLocaleString() || 0}</div>
+                                </div>
+                                <div className="stat-trend positive">
+                                    <FiTrendingUp /> במלאי
+                                </div>
+                            </div>
 
-                    <div className="stat-tile green">
-                        <div className="stat-icon-bg"><FiPackage /></div>
-                        <div className="stat-content">
-                            <h3>שריונים פעילים</h3>
-                            <div className="stat-number">{stats?.active_allocations?.toLocaleString() || 0}</div>
-                        </div>
-                        <div className="stat-trend neutral">
-                            פעילים כרגע
-                        </div>
-                    </div>
+                            <div className="stat-tile green">
+                                <div className="stat-icon-bg"><FiPackage /></div>
+                                <div className="stat-content">
+                                    <h3>שריונים פעילים</h3>
+                                    <div className="stat-number">{stats?.active_allocations?.toLocaleString() || 0}</div>
+                                </div>
+                                <div className="stat-trend neutral">
+                                    פעילים כרגע
+                                </div>
+                            </div>
 
-                    <div className="stat-tile purple">
-                        <div className="stat-icon-bg"><FiHash /></div>
-                        <div className="stat-content">
-                            <h3>ציוד סריאלי</h3>
-                            <div className="stat-number">{stats?.serial_equipment?.toLocaleString() || 0}</div>
-                        </div>
-                        <div className="stat-trend">
-                            מעקב פרטני
-                        </div>
-                    </div>
+                            <div className="stat-tile purple">
+                                <div className="stat-icon-bg"><FiHash /></div>
+                                <div className="stat-content">
+                                    <h3>ציוד סריאלי</h3>
+                                    <div className="stat-number">{stats?.serial_equipment?.toLocaleString() || 0}</div>
+                                </div>
+                                <div className="stat-trend">
+                                    מעקב פרטני
+                                </div>
+                            </div>
 
-                    <div className="stat-tile amber">
-                        <div className="stat-icon-bg"><FiBox /></div>
-                        <div className="stat-content">
-                            <h3>ציוד נלווה</h3>
-                            <div className="stat-number">{stats?.non_serial_equipment?.toLocaleString() || 0}</div>
-                        </div>
-                        <div className="stat-trend">
-                            ניהול כמותי
-                        </div>
-                    </div>
+                            <div className="stat-tile amber">
+                                <div className="stat-icon-bg"><FiBox /></div>
+                                <div className="stat-content">
+                                    <h3>ציוד נלווה</h3>
+                                    <div className="stat-number">{stats?.non_serial_equipment?.toLocaleString() || 0}</div>
+                                </div>
+                                <div className="stat-trend">
+                                    ניהול כמותי
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Main Content Grid */}
                 <div className="bento-grid-main">
                     
-                    {/* Locations - Tall Item (Right) */}
-                    <div className="bento-card activity-card">
-                        <div className="card-header">
-                            <h3>מיקומים במחסן</h3>
-                        </div>
-                        <div className="card-body">
-                            <LocationChart data={stats?.locations} />
-                        </div>
-                    </div>
+                    {/* Inventory-Specific Charts */}
+                    {hasInventoryAccess && (
+                        <>
+                            {/* Locations - Tall Item (Right) */}
+                            <div className="bento-card activity-card">
+                                <div className="card-header">
+                                    <h3>מיקומים במחסן</h3>
+                                </div>
+                                <div className="card-body">
+                                    <LocationChart data={stats?.locations} />
+                                </div>
+                            </div>
 
-                    {/* Item Search - 1 Column (Middle) */}
-                    <div className="bento-card col-span-1">
-                        <div className="card-header">
-                            <h3><FiSearch /> חיפוש וניתוח לפי מק"ט</h3>
-                        </div>
-                        <div className="card-body">
-                            <ItemSearchChart />
-                        </div>
-                    </div>
+                            {/* Item Search - 1 Column (Middle) */}
+                            <div className="bento-card col-span-1">
+                                <div className="card-header">
+                                    <h3><FiSearch /> חיפוש וניתוח לפי מק"ט</h3>
+                                </div>
+                                <div className="card-body">
+                                    <ItemSearchChart />
+                                </div>
+                            </div>
 
-                    {/* Project Distribution - 2 Columns (Left) */}
-                    <div className="bento-card"> 
-                        <div className="card-header">
-                            <h3>פילוג לפי פרויקט</h3>
-                        </div>
-                        <div className="card-body">
-                            <ProjectDistributionChart data={stats?.projects} />
-                        </div>
-                    </div>
+                            {/* Project Distribution - 2 Columns (Left) */}
+                            <div className="bento-card"> 
+                                <div className="card-header">
+                                    <h3>פילוג לפי פרויקט</h3>
+                                </div>
+                                <div className="card-body">
+                                    <ProjectDistributionChart data={stats?.projects} />
+                                </div>
+                            </div>
 
-                    {/* Target Sites - 3 Columns (Bottom Left - Next to Locations) */}
-                    <div className="bento-card chart-card-lg">
-                        <div className="card-header">
-                            <h3>פילוג לפי אתר יעד</h3>
-                        </div>
-                        <div className="card-body">
-                            <TargetSiteChart data={stats?.target_sites} />
-                        </div>
-                    </div>
+                            {/* Target Sites - 3 Columns (Bottom Left - Next to Locations) */}
+                            <div className="bento-card chart-card-lg">
+                                <div className="card-header">
+                                    <h3>פילוג לפי אתר יעד</h3>
+                                </div>
+                                <div className="card-body">
+                                    <TargetSiteChart data={stats?.target_sites} />
+                                </div>
+                            </div>
 
-                    {/* Activity Feed - 25% Width */}
+                            {/* Manufacturers - 75% Width */}
+                            <div className="bento-card col-span-3">
+                                <div className="card-header">
+                                    <h3>יצרנים מובילים</h3>
+                                </div>
+                                <div className="card-body">
+                                    <ManufacturerChart data={stats?.manufacturers} />
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {/* Activity Feed - Always visible - 25% Width */}
                     <div className="bento-card col-span-1">
                         <div className="card-header">
                             <h3><FiActivity /> פעילות אחרונה</h3>
                         </div>
                         <div className="card-body scrollable">
                             <ActivityStatsCard />
-                        </div>
-                    </div>
-
-                    {/* Manufacturers - 75% Width */}
-                    <div className="bento-card col-span-3">
-                        <div className="card-header">
-                            <h3>יצרנים מובילים</h3>
-                        </div>
-                        <div className="card-body">
-                            <ManufacturerChart data={stats?.manufacturers} />
                         </div>
                     </div>
 

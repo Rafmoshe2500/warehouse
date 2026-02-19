@@ -71,6 +71,15 @@
   color: #f59e0b;
 }
 
+.log-item--redo {
+  border-right-color: #06b6d4;
+}
+
+.log-item--redo .log-item__icon {
+  background: rgba(6, 182, 212, 0.2);
+  color: #06b6d4;
+}
+
 .log-item__content {
   flex: 1;
   display: flex;

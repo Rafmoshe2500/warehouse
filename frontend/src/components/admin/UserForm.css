@@ -45,6 +45,13 @@
 
 .form-grid {
   display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+/* Row container for username and user type */
+.form-row {
+  display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 }

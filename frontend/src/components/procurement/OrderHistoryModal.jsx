@@ -19,7 +19,10 @@ const FIELD_LABELS = {
   'description': 'תיאור',
   'quantity': 'כמות',
   'amount': 'סכום',
+  'total_amount': 'מחיר',
   'order_date': 'תאריך הזמנה',
+  'created_at': 'תאריך יצירה',
+  'created_by': 'נוצר ע"י',
   'status': 'סטטוס',
   'received_emf': 'התקבל EMF',
   'received_bom': 'התקבל BOM',
@@ -59,6 +62,7 @@ const OrderHistoryModal = ({ isOpen, onClose, orderId, orderNumber }) => {
 
   const formatValue = (key, value) => {
     if (key === 'status') return STATUS_LABELS[value] || value;
+    if (key === 'created_at' || key === 'order_date') return new Date(value).toLocaleString('he-IL');
     if (typeof value === 'boolean') return value ? 'כן' : 'לא';
     return value;
   };
@@ -70,11 +74,29 @@ const OrderHistoryModal = ({ isOpen, onClose, orderId, orderNumber }) => {
       <div className="history-changes">
         {Object.entries(changes).map(([key, value]) => {
           // Skip internal fields
-          if (['updated_at', 'created_at'].includes(key)) return null;
+          if (['updated_at'].includes(key)) return null;
+
+          // Special handling for bom_items — show catalog numbers
+          if (key === 'bom_items') {
+            const items = Array.isArray(value) ? value : (value?.new ?? value?.old ?? []);
+            const catalogs = (Array.isArray(items) ? items : []).map(i => i.catalog_number).filter(Boolean);
+            if (catalogs.length === 0) return null;
+            return (
+              <div key={key} className="change-item">
+                <span className="change-field">מק"טים:</span>
+                <span className="change-new">{catalogs.join(', ')}</span>
+              </div>
+            );
+          }
+
+          // Skip complex nested objects/arrays (e.g. bom_items) — not renderable inline
+          if (Array.isArray(value) || (value !== null && typeof value === 'object' && !('old' in value) && !('new' in value))) return null;
           
           const label = FIELD_LABELS[key] || key;
           
           if (typeof value === 'object' && value !== null && 'old' in value && 'new' in value) {
+            // Skip if old/new are themselves objects/arrays
+            if (typeof value.old === 'object' || typeof value.new === 'object') return null;
             return (
               <div key={key} className="change-item">
                 <span className="change-field">{label}:</span>
@@ -94,7 +116,7 @@ const OrderHistoryModal = ({ isOpen, onClose, orderId, orderNumber }) => {
               );
            }
            
-           // For Create action, just show values
+           // For Create action, just show primitive values
            return (
             <div key={key} className="change-item">
                <span className="change-field">{label}:</span>

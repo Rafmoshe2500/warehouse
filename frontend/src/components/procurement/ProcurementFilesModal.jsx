@@ -13,9 +13,20 @@ const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit =
 
   const handleUpload = async (file) => {
     setUploading(true);
+    const uploadStartTime = Date.now();
+    
     try {
       await procurementService.uploadFile(order.id, file);
       success('הקובץ הועלה בהצלחה');
+      
+      // Ensure minimum animation display time (1500ms)
+      const elapsedTime = Date.now() - uploadStartTime;
+      const remainingTime = Math.max(0, 1500 - elapsedTime);
+      
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
+      
       onFileChange(); // Refresh order data
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה בהעלאת הקובץ');

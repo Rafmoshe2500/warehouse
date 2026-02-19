@@ -18,9 +18,13 @@
 
 .procurement-table th,
 .procurement-table td {
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   text-align: right;
   border-bottom: 1px solid var(--border-color);
+}
+
+.procurement-table tbody tr {
+  height: auto;
 }
 
 .procurement-table th {
@@ -36,6 +40,42 @@
 
 .procurement-table tr:hover {
   background: var(--hover-bg);
+}
+
+/* BOM Items List Styling */
+.bom-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 1.5rem;
+}
+
+.bom-item-row {
+  font-size: 0.9rem;
+  padding: 0.4rem 0;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.bom-item-row:not(:last-child) {
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bom-item-row:last-child {
+  padding-bottom: 0.4rem;
+}
+
+.amount-cell {
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.item-count {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
 }
 
 .desc-col {

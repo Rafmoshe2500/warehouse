@@ -2,7 +2,7 @@ import React from 'react';
 import { FaPlus, FaSearch, FaLayerGroup } from 'react-icons/fa';
 import CollectionCard from '../../components/MyComponents/CollectionCard';
 import CreateCollectionDialog from '../../components/MyComponents/CreateCollectionDialog';
-import { Button, Input, Spinner } from '../../components/common';
+import { Button, Input, Spinner, SkeletonCards } from '../../components/common';
 import { useMyComponents } from '../../hooks/useMyComponents';
 import './MyComponents.css';
 
@@ -21,8 +21,16 @@ const MyComponentsDashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="loading-state">
-        <Spinner size="lg" />
+      <div className="my-components-page" dir="rtl">
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">
+              <FaLayerGroup className="page-title-icon" />
+              המלאי שלי
+            </h1>
+          </div>
+        </div>
+        <SkeletonCards count={6} variant="collection" />
       </div>
     );
   }

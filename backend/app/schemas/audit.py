@@ -47,6 +47,7 @@ class AuditAction(str, Enum):
     COLLECTION_ITEM_REMOVE = "collection_item_remove"
     
     UNDO = "undo"
+    REDO = "redo"
 
 
 class AuditLogCreate(BaseModel):

@@ -37,10 +37,15 @@ class ProcurementRepository:
         """Get all procurement orders with pagination and filters"""
         # Build filter
         filter_query = {}
-        if catalog_number:
-            filter_query["catalog_number"] = {"$regex": catalog_number, "$options": "i"}
-        if manufacturer:
-            filter_query["manufacturer"] = {"$regex": manufacturer, "$options": "i"}
+        
+        # Search in bom_items array for catalog_number and manufacturer
+        if catalog_number or manufacturer:
+            bom_filter = {}
+            if catalog_number:
+                bom_filter["bom_items.catalog_number"] = {"$regex": catalog_number, "$options": "i"}
+            if manufacturer:
+                bom_filter["bom_items.manufacturer"] = {"$regex": manufacturer, "$options": "i"}
+            filter_query.update(bom_filter)
         
         if status_in:
             filter_query["status"] = {"$in": status_in}

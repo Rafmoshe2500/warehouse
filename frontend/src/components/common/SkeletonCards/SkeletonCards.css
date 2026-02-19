@@ -1,0 +1,50 @@
+.skeleton-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.skeleton-cards--collection {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.skeleton-card {
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  aspect-ratio: 1;
+}
+
+.skeleton-card--collection {
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: auto;
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.skeleton-card--collection .skeleton {
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.skeleton-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeleton-card-footer {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.skeleton-card-footer .skeleton {
+  flex: 1;
+}

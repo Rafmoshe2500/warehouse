@@ -1,66 +1,116 @@
 .select-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
   width: 100%;
 }
 
-/* Label styling uses global .input-label from index.css */
+.select-fieldset {
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 0;
+  margin: 0;
+  background: var(--input-bg);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.select-legend {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-right: 0.75rem;
+  padding: 0 0.5rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.select-fieldset:focus-within {
+  border-color: var(--accent-primary);
+  background: var(--input-bg-focus);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow), 0 0 20px var(--input-focus-glow);
+}
+
+.select-fieldset.select--error {
+  border-color: var(--accent-danger);
+}
+
+.select-fieldset.select--error:focus-within {
+  box-shadow: 0 0 0 3px var(--input-error-shadow), 0 0 20px var(--input-error-glow);
+}
 
 .select-container {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .select-input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   padding-left: 2.5rem; 
-  border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 6px;
-  font-size: 1rem;
-  background-color: var(--input-bg, #fff);
-  color: var(--text-primary, #111);
+  border: none !important;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  background: transparent !important;
+  color: var(--text-primary);
   transition: all 0.2s;
   appearance: none;
   cursor: pointer;
-  background-image: none; /* Remove duplicate arrow from global index.css */
+  outline: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
-/* RTL: Text is right aligned, Arrow should be on the left */
-.select-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--text-secondary, #6b7280);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    left: 1rem; 
+/* Styling options for better theme support */
+.select-input option {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0.5rem;
 }
 
+/* Ensure the native select has a background for the dropdown to inherit in some browsers */
 .select-input:focus {
-  outline: none;
-  border-color: var(--primary-color, #3b82f6);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: var(--bg-secondary) !important;
 }
 
-.select--error {
-  border-color: #ef4444;
+.select-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 1rem; 
+  transition: color 0.2s ease;
+}
+
+.select-fieldset:focus-within .select-arrow {
+  color: var(--accent-primary);
 }
 
 .select--disabled {
-  background-color: var(--bg-secondary, #f3f4f6);
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.5;
+}
+
+.select-fieldset:has(.select--disabled) {
+  background: var(--input-bg-disabled);
+  border-color: var(--border-subtle);
 }
 
 .select--placeholder {
-    color: var(--text-secondary, #9ca3af);
+  color: var(--text-muted);
 }
 
 .select-error-message {
-  font-size: 0.85rem;
-  color: #ef4444;
+  font-size: 0.75rem;
+  color: var(--accent-danger);
+  direction: rtl;
+  text-align: right;
+  font-weight: 500;
+  margin-top: 2px;
 }

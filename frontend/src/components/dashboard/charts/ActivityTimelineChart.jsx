@@ -3,9 +3,11 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { FiSearch } from 'react-icons/fi';
 import Input from '../../common/Input/Input';
 import Button from '../../common/Button/Button';
+import Spinner from '../../common/Spinner/Spinner';
 import { TimelineTooltip } from '../Tooltips';
+import './ActivityTimelineChart.css';
 
-const ActivityTimelineChart = ({ data, days, onDaysChange, onCatalogSearch }) => {
+const ActivityTimelineChart = ({ data, loading, days, onDaysChange, onCatalogSearch }) => {
     const [catalogNumber, setCatalogNumber] = useState('');
 
     const handleSearch = () => {
@@ -21,20 +23,22 @@ const ActivityTimelineChart = ({ data, days, onDaysChange, onCatalogSearch }) =>
         }
     };
 
+    if (loading) {
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <Spinner size="medium" />
+            </div>
+        );
+    }
+
     if (!data || data.length === 0) {
         return <div className="no-data">אין נתוני פעילות</div>;
     }
 
     return (
         <>
-            <div style={{ 
-                marginBottom: '1rem', 
-                display: 'flex', 
-                gap: '0.5rem', 
-                alignItems: 'flex-start',
-                maxWidth: '500px'
-            }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="activity-timeline-controls">
+                <div>
                     <Input
                         type="text"
                         placeholder='סנן לפי מק"ט (השאר ריק לכל הפעילות)'
@@ -42,18 +46,14 @@ const ActivityTimelineChart = ({ data, days, onDaysChange, onCatalogSearch }) =>
                         onChange={(e) => setCatalogNumber(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                         icon={FiSearch}
-                        style={{ fontSize: '0.875rem' }}
+                        className="activity-timeline-search"
                     />
                 </div>
                 <Button 
                     onClick={handleSearch} 
                     variant="primary"
                     icon={<FiSearch />}
-                    style={{ 
-                        minWidth: '70px',
-                        height: '38px',
-                        fontSize: '0.875rem'
-                    }}
+                    className="activity-timeline-button activity-timeline-button--search"
                 >
                     סנן
                 </Button>
@@ -61,11 +61,7 @@ const ActivityTimelineChart = ({ data, days, onDaysChange, onCatalogSearch }) =>
                     <Button 
                         onClick={handleClear} 
                         variant="secondary"
-                        style={{ 
-                            minWidth: '70px',
-                            height: '38px',
-                            fontSize: '0.875rem'
-                        }}
+                        className="activity-timeline-button"
                     >
                         נקה
                     </Button>

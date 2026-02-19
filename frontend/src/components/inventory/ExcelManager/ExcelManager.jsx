@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from '../../common/Modal/Modal';
 import Button from '../../common/Button/Button';
+import UploadAnimation from '../../common/UploadAnimation/UploadAnimation';
 import { FiFileText, FiLayers } from 'react-icons/fi';
 import './ExcelManager.css';
 
@@ -20,6 +21,14 @@ const ExcelManager = ({
   currentPageItems = 0,
   uploading = false,
 }) => {
+  if (uploading) {
+    return (
+      <div className="upload-animation-floating">
+        <UploadAnimation type="excel" status="scanning" />
+      </div>
+    );
+  }
+
   if (!fileInputRef) return null;
 
   return (

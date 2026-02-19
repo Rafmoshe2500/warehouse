@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer } from 'recharts';
 import { FiSearch } from 'react-icons/fi';
 import { CustomTooltip } from '../Tooltips';
+import './ManufacturerChart.css';
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6'];
 
@@ -21,35 +22,21 @@ const ManufacturerChart = ({ data }) => {
     }
 
     return (
-        <div style={{ height: '100%', minHeight: '300px', display: 'flex', flexDirection: 'column' }}>
-            <div className="chart-search-container" style={{ marginBottom: '1rem', padding: '0 0.5rem' }}>
-                <div className="search-input-wrapper" style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    background: 'rgba(255,255,255,0.05)', 
-                    borderRadius: '8px', 
-                    padding: '0.4rem 0.8rem',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                }}>
-                    <FiSearch style={{ color: 'var(--text-secondary)', marginLeft: '0.5rem' }} />
+        <div className="manufacturer-chart">
+            <div className="manufacturer-search-container">
+                <div className="manufacturer-search-input-wrapper">
+                    <FiSearch className="manufacturer-search-icon" />
                     <input 
                         type="text" 
+                        className="manufacturer-search-input"
                         placeholder="חפש יצרן..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ 
-                            background: 'transparent', 
-                            border: 'none', 
-                            color: 'var(--text-primary)', 
-                            width: '100%',
-                            outline: 'none',
-                            fontSize: '0.875rem'
-                        }}
                     />
                 </div>
             </div>
 
-            <div style={{ flex: 1, minHeight: 0 }}>
+            <div className="manufacturer-chart-container">
                 {filteredData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
@@ -76,7 +63,7 @@ const ManufacturerChart = ({ data }) => {
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="no-data" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.5 }}>
+                    <div className="manufacturer-no-results">
                         לא נמצאו יצרנים
                     </div>
                 )}

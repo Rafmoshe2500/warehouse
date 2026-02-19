@@ -1,6 +1,6 @@
 import React from 'react';
 import ItemTable from '../ItemTable/ItemTable';
-import { Pagination, ScrollableTableLayout } from '../../common';
+import { Pagination, ScrollableTableLayout, SkeletonTable } from '../../common';
 import Spinner from '../../common/Spinner/Spinner';
 import './InventoryContent.css';
 import { useItems } from '../../../hooks/useItems';
@@ -44,7 +44,7 @@ const InventoryContent = ({
   if (loading && !items.length) {
     return (
       <div className="inventory-content loading">
-        <Spinner message="טוען מלאי..." />
+        <SkeletonTable rows={8} columns={visibleColumns.length || 7} />
       </div>
     );
   }

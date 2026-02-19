@@ -6,6 +6,7 @@ const Input = ({
   value,
   onChange,
   placeholder,
+  icon,
   // Config grouped props
   config = {},
   state = {},
@@ -46,33 +47,38 @@ const Input = ({
 
   return (
     <div className="input-wrapper">
-      {label && (
-        <label className="input-label">
-          {label}
-          {isRequired && <span className="input-required">*</span>}
-        </label>
-      )}
-      {isMultiline ? (
-        <textarea
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          disabled={isDisabled}
-          className={inputClass}
-          rows={inputRows}
-          {...props}
-        />
-      ) : (
-        <input
-          type={inputType}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          disabled={isDisabled}
-          className={inputClass}
-          {...props}
-        />
-      )}
+      <fieldset className={`input-fieldset ${inputError ? 'input-error' : ''}`}>
+        {label && (
+          <legend className="input-legend">
+            {label}
+            {isRequired && <span className="input-required">*</span>}
+          </legend>
+        )}
+        <div className={`input-inner${icon ? ' input-has-icon' : ''}`}>
+          {icon && <span className="input-icon">{icon}</span>}
+          {isMultiline ? (
+            <textarea
+              value={value}
+              onChange={onChange}
+              placeholder={placeholder}
+              disabled={isDisabled}
+              className={inputClass}
+              rows={inputRows}
+              {...props}
+            />
+          ) : (
+            <input
+              type={inputType}
+              value={value}
+              onChange={onChange}
+              placeholder={placeholder}
+              disabled={isDisabled}
+              className={inputClass}
+              {...props}
+            />
+          )}
+        </div>
+      </fieldset>
       {inputError && <span className="input-error-message">{inputError}</span>}
     </div>
   );

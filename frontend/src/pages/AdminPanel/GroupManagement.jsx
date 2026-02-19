@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
-import { Button } from '../../components/common';
+import { Button, SkeletonTable } from '../../components/common';
 import { useToast } from '../../hooks/useToast';
+import ToastContainer from '../../components/common/Toast/ToastContainer';
 import Spinner from '../../components/common/Spinner/Spinner';
 import GroupForm from '../../components/admin/GroupForm';
-import { useGroups } from '../../hooks/useGroups'; // Import hook
-import './UserManagement.css'; 
+import { useGroups } from '../../hooks/useGroups';
+import './UserManagement.css';
 
 const GroupManagement = () => {
-    const { success, error: toastError } = useToast();
+    const { toasts, removeToast, success, error: toastError } = useToast();
     
     // Use React Query Hook
     const { 
@@ -71,10 +72,11 @@ const GroupManagement = () => {
         }
     };
 
-    if (loading) return <div className="user-management-loading"><Spinner size="large" /></div>;
+    if (loading) return <SkeletonTable rows={8} columns={5} />;
 
     return (
-        <div className="user-management"> {/* Reusing class for layout */}
+        <div className="user-management">
+            <ToastContainer toasts={toasts} removeToast={removeToast} />
             <div className="user-management-header">
                 <Button 
                     variant="primary" 

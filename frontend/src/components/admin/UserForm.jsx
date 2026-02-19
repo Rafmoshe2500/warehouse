@@ -86,47 +86,49 @@ const UserForm = ({ user, onSubmit, onCancel }) => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-grid">
-                        <Input
-                            label="שם משתמש"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            required={!user}
-                            minLength={3}
-                            placeholder="הכנס שם משתמש"
-                        />
+                        {/* Row 1: Username and User Type (same row) */}
+                        <div className="form-row">
+                            <Input
+                                label="שם משתמש"
+                                name="username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                required={!user}
+                                minLength={3}
+                                placeholder="הכנס שם משתמש"
+                            />
 
-                        <Select
-                            label="סוג משתמש"
-                            name="user_type"
-                            value={formData.user_type}
-                            onChange={handleChange}
-                            options={USER_TYPE_OPTIONS}
-                            disabled={!!user}
-                        />
-
-                        {formData.user_type === 'local' && (
-                            <div className="full-width">
-                                <Input
-                                    label={`סיסמה ${user ? '(השאר ריק לשמירת הקיים)' : ''}`}
-                                    type="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required={!user && formData.user_type === 'local'}
-                                    minLength={4}
-                                    placeholder={user ? '••••••••' : 'הכנס סיסמה'}
-                                />
-                            </div>
-                        )}
-
-                        <div className="full-width">
-                            <PermissionSelector
-                                selectedPermissions={formData.permissions}
-                                onChange={(newPermissions) => setFormData({ ...formData, permissions: newPermissions })}
+                            <Select
+                                label="סוג משתמש"
+                                name="user_type"
+                                value={formData.user_type}
+                                onChange={handleChange}
+                                options={USER_TYPE_OPTIONS}
+                                disabled={!!user}
                             />
                         </div>
 
+                        {/* Row 2: Password (full width, only for local users) */}
+                        {formData.user_type === 'local' && (
+                            <Input
+                                label={`סיסמה ${user ? '(השאר ריק לשמירת הקיים)' : ''}`}
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required={!user && formData.user_type === 'local'}
+                                minLength={4}
+                                placeholder={user ? '••••••••' : 'הכנס סיסמה'}
+                            />
+                        )}
+
+                        {/* Row 3: Permissions */}
+                        <PermissionSelector
+                            selectedPermissions={formData.permissions}
+                            onChange={(newPermissions) => setFormData({ ...formData, permissions: newPermissions })}
+                        />
+
+                        {/* Row 4: Active Status (only on edit) */}
                         {user && (
                             <div className="form-checkboxes">
                                 <label className="checkbox-label">

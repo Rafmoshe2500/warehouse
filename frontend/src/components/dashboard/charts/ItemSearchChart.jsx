@@ -4,6 +4,7 @@ import { FiSearch } from 'react-icons/fi';
 import Spinner from '../../common/Spinner/Spinner';
 import { CustomTooltip } from '../Tooltips';
 import { useAnalytics } from '../../../hooks/useAnalytics';
+import './ItemSearchChart.css';
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6'];
 
@@ -25,17 +26,9 @@ const ItemSearchChart = () => {
     };
 
     return (
-        <div style={{ height: '100%', minHeight: '300px', display: 'flex', flexDirection: 'column' }}>
-            {/* Search Input */}
-            <div className="chart-search-container" style={{ marginBottom: '1rem', padding: '0 0.5rem' }}>
-                <div className="search-input-wrapper" style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    background: 'rgba(255,255,255,0.05)', 
-                    borderRadius: '8px', 
-                    padding: '0.4rem 0.8rem',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                }}>
+        <div className="item-search-chart">
+            <div className="item-search-container">
+                <div className="item-search-input-wrapper">
                     <input 
                         type="text" 
                         placeholder="הזן מקט לחיפוש..." 
@@ -53,42 +46,27 @@ const ItemSearchChart = () => {
                     />
                     <button 
                         onClick={handleItemSearch}
-                        style={{
-                            background: 'var(--accent-primary)',
-                            border: 'none',
-                            borderRadius: '6px',
-                            color: 'white',
-                            padding: '0.4rem 0.8rem',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
+                        className="item-search-button"
                     >
                         <FiSearch />
                     </button>
                 </div>
             </div>
 
-            {/* Content Area */}
-            <div style={{ flex: 1, minHeight: 0, width: '100%', position: 'relative' }}>
+            <div className="item-search-content">
                 {itemLoading && (
-                    <div style={{ 
-                        position: 'absolute', inset: 0, 
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(0,0,0,0.2)', zIndex: 10, borderRadius: '12px'
-                    }}>
+                    <div className="item-search-loading">
                         <Spinner size="medium" />
                     </div>
                 )}
 
                 {!searchQuery ? (
-                    <div className="no-data" style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.6 }}>
-                        <FiSearch style={{ fontSize: '2rem', marginBottom: '0.5rem' }} />
-                        <p>חפש מק"ט כדי לראות פילוג</p>
+                    <div className="item-search-empty">
+                        <FiSearch className="item-search-empty-icon" />
+                        <p className="item-search-empty-text">חפש מק"ט כדי לראות פילוג</p>
                     </div>
                 ) : itemError ? (
-                    <div className="error-message" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444' }}>
+                    <div className="item-search-error">
                         שגיאה בטעינת נתונים
                     </div>
                 ) : itemStats && itemStats.length > 0 ? (
@@ -119,7 +97,7 @@ const ItemSearchChart = () => {
                         </PieChart>
                     </ResponsiveContainer>
                 ) : searchQuery && !itemLoading ? (
-                     <div className="no-data" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.6 }}>
+                     <div className="item-search-empty">
                         לא נמצאו נתונים למק"ט זה
                     </div>
                 ) : null}

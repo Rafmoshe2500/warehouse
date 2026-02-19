@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
 import { FiActivity } from 'react-icons/fi';
+import Spinner from '../../common/Spinner/Spinner';
 import { useAnalytics } from '../../../hooks/useAnalytics';
+import './ActivityStatsCard.css';
 
 const ActivityStatsCard = () => {
     const [activityDays, setActivityDays] = useState(7);
     const { useActivityStats } = useAnalytics();
-    const { data: activityStats } = useActivityStats(activityDays);
+    const { data: activityStats, isLoading } = useActivityStats(activityDays);
+
+    if (isLoading) {
+        return (
+            <div className="activity-card">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                    <Spinner size="medium" />
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="activity-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <div className="activity-header" style={{ marginBottom: '1rem' }}>
+        <div className="activity-card">
+            <div className="activity-header">
                 <select 
                     value={activityDays} 
                     onChange={(e) => setActivityDays(Number(e.target.value))}
@@ -22,7 +34,7 @@ const ActivityStatsCard = () => {
                 </select>
             </div>
             
-            <div className="activity-stats-display" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="activity-stats-display">
                 <div className="activity-item">
                     <div className="activity-icon green">
                         <FiActivity />
