@@ -7,19 +7,19 @@ export const useAuthQuery = () => {
     const queryClient = useQueryClient();
     
     // Extract token immediately (lazy init to run once)
-    const [hashToken] = useState(() => {
+    const [hashedToken] = useState(() => {
         const params = new URLSearchParams(window.location.search);
-        return params.get('hashToken');
+        return params.get('hashedToken');
     });
 
-    // 1. Domain Login Handshake (Runs automatically if hashToken exists)
+    // 1. Domain Login Handshake (Runs automatically if hashedToken exists)
     const domainLoginQuery = useQuery({
-        queryKey: ['auth', 'domain-handshake', hashToken],
+        queryKey: ['auth', 'domain-handshake', hashedToken],
         queryFn: async () => {
-            const response = await authService.domainLogin(hashToken);
+            const response = await authService.domainLogin(hashedToken);
             return response;
         },
-        enabled: !!hashToken, // Only run if token is in URL
+        enabled: !!hashedToken, // Only run if token is in URL
         retry: false,
         staleTime: Infinity, // Run once per token
         gcTime: 0, // Don't persist this special query
@@ -27,15 +27,15 @@ export const useAuthQuery = () => {
 
     // Effect to invalidate user query after successful handshake
     useEffect(() => {
-        if (domainLoginQuery.isSuccess && hashToken) {
+        if (domainLoginQuery.isSuccess && hashedToken) {
             // Invalidate user query to ensure we fetch the fresh user data from server
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.auth.user });
         }
-    }, [domainLoginQuery.isSuccess, hashToken, queryClient]);
+    }, [domainLoginQuery.isSuccess, hashedToken, queryClient]);
 
     // 2. User Data Query (The Main Auth State)
     // Dependencies: Wait for domain login if we have a token
-    const shouldFetchUser = !hashToken || (hashToken && domainLoginQuery.isSuccess) || (hashToken && domainLoginQuery.isError);
+    const shouldFetchUser = !hashedToken || (hashedToken && domainLoginQuery.isSuccess) || (hashedToken && domainLoginQuery.isError);
 
     const {
         data: user,
@@ -61,7 +61,7 @@ export const useAuthQuery = () => {
     });
 
     // Calculate aggregated loading state
-    const isLoading = (!!hashToken && domainLoginQuery.isLoading) || isUserLoading;
+    const isLoading = (!!hashedToken && domainLoginQuery.isLoading) || isUserLoading;
 
     // 3. Login Mutation (Manual)
     const loginMutation = useMutation({

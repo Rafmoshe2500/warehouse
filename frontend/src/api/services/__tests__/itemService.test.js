@@ -142,18 +142,6 @@ describe('itemService with Dependency Injection', () => {
     });
   });
 
-  describe('getStatistics', () => {
-    it('should fetch statistics', async () => {
-      const mockResponse = { data: { total: 100, active: 95 } };
-      mockApiClient.get.mockResolvedValue(mockResponse);
-
-      const result = await itemService.getStatistics();
-
-      expect(mockApiClient.get).toHaveBeenCalledWith('/items/statistics');
-      expect(result).toEqual(mockResponse.data);
-    });
-  });
-
   describe('DI Benefits', () => {
     it('should support multiple instances with different clients', () => {
       const mockClient1 = { get: jest.fn() };

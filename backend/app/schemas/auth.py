@@ -6,7 +6,7 @@ class LoginRequest(BaseModel):
     password: str
 
 class DomainLoginRequest(BaseModel):
-    username: str
+    hashed_token: str
 
 class Token(BaseModel):
     access_token: str

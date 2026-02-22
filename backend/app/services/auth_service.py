@@ -79,11 +79,9 @@ class AuthService:
         return {"access_token": access_token, "token_type": "bearer"}
 
     async def domain_login(self, login_data: DomainLoginRequest, response: Response, request: Request):
-        """התחברות דומיין (ADFS) - with existing user check"""
-        hashed_token = login_data.hashed_token
-        
+        """התחברות דומיין (ADFS) - with existing user check"""      
         # 1. Get token and user info from ADFS
-        token = await self.adfs_service.get_token_from_hashed_token(hashed_token, request)
+        token = await self.adfs_service.get_token_from_hashed_token(login_data.hashed_token, request)
         user_information = await self.adfs_service.get_user_information(token)
         
         if not user_information:

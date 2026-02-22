@@ -29,12 +29,9 @@ export const createItemService = (apiClient) => {
         }
       });
 
-      // Support for serial_number parameter
-      if (params.serial_number) {
+      // Support for serial_number as an alias for serial
+      if (params.serial_number && !params.serial) {
         queryParams.append('serial', params.serial_number);
-      }
-      if (params.serial) {
-        queryParams.append('serial', params.serial);
       }
 
       const response = await apiClient.get(`${API_ENDPOINTS.ITEMS}?${queryParams.toString()}`);
@@ -130,14 +127,6 @@ export const createItemService = (apiClient) => {
       const response = await apiClient.post(API_ENDPOINTS.DELETE_ALL, {
         reason
       });
-      return response.data;
-    },
-
-    /**
-     * Get statistics about items
-     */
-    getStatistics: async () => {
-      const response = await apiClient.get('/items/statistics');
       return response.data;
     },
 

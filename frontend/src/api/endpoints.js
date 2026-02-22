@@ -25,7 +25,6 @@ export const API_ENDPOINTS = {
   ANALYTICS: '/analytics/dashboard',
   ANALYTICS_ITEM: (catalogNumber) => `/analytics/item/${catalogNumber}`,
   ANALYTICS_ACTIVITY: '/analytics/activity',
-  ANALYTICS_TIMELINE: '/analytics/timeline',
 
   // Admin
   ADMIN_USERS: '/admin/users',
