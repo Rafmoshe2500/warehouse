@@ -119,10 +119,10 @@ const TableCell = ({
         <div
             className={cellClasses}
             onDoubleClick={() => onDoubleClick(item, field, value)}
-            onClick={() => onCellClick({ itemId: item._id, field })}
+            onClick={(e) => { if (!e.ctrlKey && !e.metaKey) onCellClick({ itemId: item._id, field }); }}
             onMouseDown={(e) => onMouseDown(e, item, field, value)}
             onMouseEnter={(e) => onMouseEnter(e, item, field, value)}
-            title={isImmutable ? 'לחץ פעמיים להעתקה' : 'לחץ פעמיים לעריכה, Ctrl+Click לסימון'}
+            title={isImmutable ? 'לחץ פעמיים להעתקה' : 'לחץ לסימון תא • גרור להרחבה • Ctrl+Click לסימון שורה'}
         >
             {renderValue()}
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState, useRef } from 'react';
+﻿import { useEffect, useCallback, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 /**
@@ -92,4 +92,3 @@ export const useNavigationBlocker = (shouldBlock) => {
   };
 };
 
-export default useNavigationBlocker;

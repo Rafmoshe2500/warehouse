@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button, Input, Pagination, Spinner } from '../common';
 import ItemTable from '../inventory/ItemTable/ItemTable';

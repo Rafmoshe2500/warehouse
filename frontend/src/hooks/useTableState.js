@@ -10,7 +10,7 @@ import { useState, useMemo } from 'react';
  * @param {Object} options.initialFilters - Initial filter values
  * @returns {Object} - State and handlers for table management
  */
-const useTableState = ({
+export const useTableState = ({
   initialPageSize = 10,
   initialSortConfig = { key: 'updated_at', direction: 'desc' },
   initialFilters = {}
@@ -143,4 +143,3 @@ const useTableState = ({
   };
 };
 
-export default useTableState;

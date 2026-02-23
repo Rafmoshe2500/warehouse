@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useItems } from '../../hooks/useItems';
@@ -14,7 +14,7 @@ import excelService from '../../api/services/excelService';
 import { useInventorySelection } from '../../hooks/useInventorySelection';
 import { useInventoryExcel } from '../../hooks/useInventoryExcel';
 import { useAddToCollection } from '../../hooks/useAddToCollection';
-import useColumnVisibility from '../../hooks/useColumnVisibility'; 
+import { useColumnVisibility } from '../../hooks/useColumnVisibility';
 
 // Components
 import InventoryHeader from '../../components/inventory/InventoryHeader/InventoryHeader';

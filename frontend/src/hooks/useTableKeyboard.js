@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+﻿import { useEffect, useCallback } from 'react';
 
 export const useTableKeyboard = ({
     editingCell,
@@ -189,4 +189,3 @@ export const useTableKeyboard = ({
     return { moveToCell, startEditingFocused };
 };
 
-export default useTableKeyboard;

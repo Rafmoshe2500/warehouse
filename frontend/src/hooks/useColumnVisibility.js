@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from 'react';
  * @param {Array} columns - Array of column objects with { key, label } structure
  * @returns {Object} - { visibleColumns, toggleColumn, showFilter, setShowFilter, filterRef }
  */
-const useColumnVisibility = (storageKey, columns) => {
+export const useColumnVisibility = (storageKey, columns) => {
   const [showFilter, setShowFilter] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState(() => {
     // Load from localStorage or default to all visible
@@ -74,4 +74,3 @@ const useColumnVisibility = (storageKey, columns) => {
   };
 };
 
-export default useColumnVisibility;

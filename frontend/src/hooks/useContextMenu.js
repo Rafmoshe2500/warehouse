@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+﻿import { useState, useCallback } from 'react';
 
 export const useContextMenu = () => {
     const [contextMenu, setContextMenu] = useState(null);
@@ -38,4 +38,3 @@ export const useContextMenu = () => {
     };
 };
 
-export default useContextMenu;

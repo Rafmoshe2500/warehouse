@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import analyticsService from '../api/services/analyticsService';
 import { QUERY_KEYS } from '../lib/queryKeys';
 

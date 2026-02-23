@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { FaPlus, FaSearch, FaLayerGroup } from 'react-icons/fa';
 import CollectionCard from '../../components/MyComponents/CollectionCard';
 import CreateCollectionDialog from '../../components/MyComponents/CreateCollectionDialog';

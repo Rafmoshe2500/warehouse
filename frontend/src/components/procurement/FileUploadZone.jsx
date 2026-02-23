@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { useToast } from '../../hooks/useToast';
 import UploadAnimation from '../common/UploadAnimation/UploadAnimation';
 import './FileUploadZone.css';

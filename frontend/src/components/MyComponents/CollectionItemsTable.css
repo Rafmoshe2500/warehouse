@@ -1,5 +1,5 @@
 .items-table-container {
-    width: 95%;
+    width: 100%;
     margin: 0 auto;
     overflow-x: auto;
     background-color: var(--bg-secondary);
@@ -20,9 +20,37 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-start; /* Groups items to the right in RTL */
-  gap: 0.5rem; /* Small gap as requested */
+  gap: 0.5rem;
   margin-bottom: 1rem;
   padding: 0 0.5rem;
+}
+
+/* Search input in toolbar */
+.collection-search-wrapper {
+  flex: 1;
+  max-width: 280px;
+}
+
+.collection-search-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.collection-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.collection-search-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
 /* Specific Input Height */
@@ -177,6 +205,14 @@
     color: var(--text-primary);
 }
 
+/* Actions cell – scoped to collection table only (horizontal layout) */
+.collection-items-table .actions-cell {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .action-btn {
     display: flex;
     align-items: center;
@@ -272,4 +308,34 @@
     .items-table {
         min-width: 500px;
     }
+}
+
+/* ── Row selection (Ctrl/Shift) ─────────────────────────────────────────── */
+.collection-items-table tbody tr.row-selected {
+    background-color: var(--accent-light, rgba(59, 130, 246, 0.1)) !important;
+    outline: 1px solid var(--accent-primary, #3b82f6);
+    outline-offset: -1px;
+}
+
+/* ── Cell selection (Excel-like copy) ───────────────────────────────────── */
+.collection-items-table td.cell-selected {
+    background-color: rgba(59, 130, 246, 0.15) !important;
+    outline: 2px solid var(--accent-primary, #3b82f6);
+    outline-offset: -2px;
+    cursor: copy;
+}
+
+/* ── Cell selection hint badge ───────────────────────────────────────────── */
+.cell-selection-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0 0.5rem;
+    height: 30px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
 }

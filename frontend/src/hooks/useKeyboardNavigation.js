@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+﻿import { useState, useCallback, useEffect, useRef } from 'react';
 
 /**
  * Hook for keyboard navigation in table cells
@@ -170,4 +170,3 @@ export const useKeyboardNavigation = ({
     };
 };
 
-export default useKeyboardNavigation;

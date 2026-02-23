@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { formatCellValue } from '../utils/formatters';
 
-export const useTableSelection = ({ onShowToast }) => {
+export const useTableSelection = ({ onShowToast, items = [], columns = [] }) => {
     const [selectedCells, setSelectedCells] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState(null);
@@ -10,49 +10,70 @@ export const useTableSelection = ({ onShowToast }) => {
     const copySelectedCells = useCallback(async () => {
         if (selectedCells.length === 0) return;
 
-        const values = selectedCells.map(cell => formatCellValue(cell.value)).join('\t');
+        // Determine display order from items/columns arrays
+        const itemOrder = items.map(i => i._id);
+        const colOrder  = columns.map(c => c.key);
+
+        // Group cells: byRow[itemId][field] = value
+        const byRow = {};
+        for (const cell of selectedCells) {
+            if (!byRow[cell.itemId]) byRow[cell.itemId] = {};
+            byRow[cell.itemId][cell.field] = cell.value;
+        }
+
+        const rowIds = itemOrder.filter(id => byRow[id]);
+        if (rowIds.length === 0) return;
+
+        const selectedFields = [...new Set(selectedCells.map(c => c.field))];
+        const orderedFields  = colOrder.filter(k => selectedFields.includes(k));
+
+        let text;
+        if (rowIds.length === 1) {
+            // Single row → tab-separated (horizontal)
+            text = orderedFields.map(k => formatCellValue(byRow[rowIds[0]][k])).join('\t');
+        } else if (orderedFields.length === 1) {
+            // Single column → newline-separated (vertical)
+            text = rowIds.map(id => formatCellValue(byRow[id]?.[orderedFields[0]])).join('\n');
+        } else {
+            // Multi-row multi-col → full grid
+            text = rowIds
+                .map(id => orderedFields.map(k => formatCellValue(byRow[id]?.[k])).join('\t'))
+                .join('\n');
+        }
+
         try {
-            await navigator.clipboard.writeText(values);
+            await navigator.clipboard.writeText(text);
             if (onShowToast) onShowToast(`${selectedCells.length} תאים הועתקו`, 'success');
-        } catch (err) {
+        } catch {
             if (onShowToast) onShowToast('שגיאה בהעתקה', 'error');
         }
-    }, [selectedCells, onShowToast]);
+    }, [selectedCells, items, columns, onShowToast]);
 
     const handleCellMouseDown = useCallback((e, item, field, value) => {
         if (e.button !== 0) return;
+
+        // Ctrl/Meta click = row selection only, don't capture cell
+        if (e.ctrlKey || e.metaKey) return;
 
         e.preventDefault();
         e.stopPropagation();
         const cellKey = `${item._id}-${field}`;
 
-        if (e.ctrlKey || e.metaKey) {
-            setIsDragging(true);
-            setDragStart({ itemId: item._id, field, value });
-            setSelectedCells(prev => {
-                const existing = prev.find(c => c.key === cellKey);
-                if (existing) return prev.filter(c => c.key !== cellKey);
-                return [...prev, { key: cellKey, itemId: item._id, field, value }];
-            });
-        } else {
-            setSelectedCells(prev => {
-                const isOnlySelectedCell = prev.length === 1 && prev[0].key === cellKey;
-                if (isOnlySelectedCell) return [];
-                return [{ key: cellKey, itemId: item._id, field, value }];
-            });
-        }
+        setIsDragging(true);
+        setDragStart({ itemId: item._id, field, value });
+        // Plain click: start a fresh single-cell selection
+        setSelectedCells([{ key: cellKey, itemId: item._id, field, value }]);
     }, []);
 
     const handleCellMouseEnter = useCallback((e, item, field, value) => {
-        if (isDragging && (e.ctrlKey || e.metaKey) && dragStart) {
-            const cellKey = `${item._id}-${field}`;
-            setSelectedCells(prev => {
-                if (!prev.find(c => c.key === cellKey)) {
-                    return [...prev, { key: cellKey, itemId: item._id, field, value }];
-                }
-                return prev;
-            });
-        }
+        if (!isDragging || !dragStart) return;
+        const cellKey = `${item._id}-${field}`;
+        setSelectedCells(prev => {
+            if (!prev.find(c => c.key === cellKey)) {
+                return [...prev, { key: cellKey, itemId: item._id, field, value }];
+            }
+            return prev;
+        });
     }, [isDragging, dragStart]);
 
     const handleMouseUp = useCallback(() => {
@@ -108,4 +129,3 @@ export const useTableSelection = ({ onShowToast }) => {
     };
 };
 
-export default useTableSelection;

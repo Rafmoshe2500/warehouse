@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import logService from '../api/services/logService';
 import { QUERY_KEYS } from '../lib/queryKeys';
 

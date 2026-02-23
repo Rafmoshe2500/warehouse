@@ -9,7 +9,7 @@ import { useState } from 'react';
  * @param {Function} options.onError - Callback on error
  * @returns {Object} - State and handlers for permission management
  */
-const useCollectionPermissions = ({ onSuccess, onError } = {}) => {
+export const useCollectionPermissions = ({ onSuccess, onError } = {}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -121,4 +121,3 @@ const useCollectionPermissions = ({ onSuccess, onError } = {}) => {
   };
 };
 
-export default useCollectionPermissions;

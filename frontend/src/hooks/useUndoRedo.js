@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+﻿import { useState, useCallback, useEffect } from 'react';
 
 /**
  * Action types for undo/redo
@@ -200,4 +200,3 @@ export const useUndoRedo = (callbacks, maxEditHistory = 20, maxDeleteHistory = 1
     };
 };
 
-export default useUndoRedo;

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+﻿import { useState, useCallback } from 'react';
 
 export const useCellEditing = ({ onEdit, executeEdit, immutableFields = [] }) => {
     const [editingCell, setEditingCell] = useState(null);
@@ -48,4 +48,3 @@ export const useCellEditing = ({ onEdit, executeEdit, immutableFields = [] }) =>
     };
 };
 
-export default useCellEditing;

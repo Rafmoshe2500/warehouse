@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+﻿import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { FiArrowUp, FiArrowDown, FiSave, FiX } from 'react-icons/fi';
 import Input from '../../common/Input/Input';
 import { useUndoRedo } from '../../../hooks/useUndoRedo';
@@ -158,7 +158,7 @@ const ItemTable = ({
     clearSelection,
     handleCellMouseDown,
     handleCellMouseEnter
-  } = useTableSelection({ onShowToast });
+  } = useTableSelection({ onShowToast, items, columns });
 
   // Cell editing hook
   const {

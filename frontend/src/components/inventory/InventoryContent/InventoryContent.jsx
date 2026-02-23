@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import ItemTable from '../ItemTable/ItemTable';
 import { Pagination, ScrollableTableLayout, SkeletonTable } from '../../common';
 import Spinner from '../../common/Spinner/Spinner';

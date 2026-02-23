@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+﻿import { useState, useCallback, useEffect, useRef } from 'react';
 
 /**
  * Hook for managing column resizing
@@ -117,4 +117,3 @@ export const useColumnResize = (columns, storageKey = 'inventory-column-widths')
     };
 };
 
-export default useColumnResize;

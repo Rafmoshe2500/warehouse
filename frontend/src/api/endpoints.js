@@ -46,7 +46,7 @@ export const API_ENDPOINTS = {
   PROCUREMENT_FILE_BY_ID: (orderId, fileId) => `/procurement/orders/${orderId}/files/${fileId}`,
 
   // Collections
-  COLLECTIONS: '/collections',
+  COLLECTIONS: '/collections/',
   COLLECTION_BY_ID: (id) => `/collections/${id}`,
   COLLECTION_ITEMS: (id) => `/collections/${id}/items`,
   COLLECTION_ITEM_BY_ID: (collectionId, itemId) => `/collections/${collectionId}/items/${itemId}`,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaArrowRight, FaCog, FaPlus, FaBoxOpen } from 'react-icons/fa';
 import { Button, Spinner } from '../../components/common';
@@ -26,6 +26,7 @@ const CollectionDetails = () => {
     handleUnassignItem,
     handleBulkRemoveItems,
     handleUpdateItem,
+    handleBulkEditItems,
     navigate
   } = useCollectionDetails(id);
 
@@ -117,6 +118,7 @@ const CollectionDetails = () => {
                             onUnassign={handleUnassignItem}
                             onBulkDelete={handleBulkRemoveItems}
                             onUpdateCustomValue={handleUpdateItem}
+                            onBulkEdit={handleBulkEditItems}
                             onAddItem={() => setIsAssignDialogOpen(true)}
                         />
                     )}

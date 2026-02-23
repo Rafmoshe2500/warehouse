@@ -1,6 +1,7 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import collectionsService from '../api/services/collectionsService';
+import itemService from '../api/services/itemService';
 import { useToast } from '../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -70,6 +71,17 @@ export const useCollectionDetails = (collectionId) => {
     updateItemMutation.mutate({ itemId, data });
   };
 
+  // Bulk-edit: update inventory fields (purpose/notes/target_site) on the actual items
+  const handleBulkEditItems = async (itemIds, changes) => {
+    try {
+      await itemService.bulkUpdate(itemIds, changes);
+      queryClient.invalidateQueries(['collectionItems', collectionId]);
+      showToast(`עודכנו ${itemIds.length} פריטים בהצלחה`, 'success');
+    } catch {
+      showToast('שגיאה בעדכון הפריטים', 'error');
+    }
+  };
+
   const isOwner = collection?.role?.toUpperCase() === 'OWNER';
   const canEdit = collection?.role?.toUpperCase() === 'OWNER' || collection?.role?.toUpperCase() === 'RW';
 
@@ -85,6 +97,7 @@ export const useCollectionDetails = (collectionId) => {
     handleUnassignItem,
     handleBulkRemoveItems,
     handleUpdateItem,
+    handleBulkEditItems,
     navigate
   };
 };

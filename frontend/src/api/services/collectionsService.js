@@ -74,7 +74,7 @@ export const createCollectionsService = (apiClient) => {
      * @param {Object} data - { item_ids: [], custom_values: {} }
      */
     bulkAddItem: async (collectionId, data) => {
-      const response = await apiClient.post(`${API_ENDPOINTS.COLLECTIONS}/${collectionId}/items/bulk`, data);
+      const response = await apiClient.post(`${API_ENDPOINTS.COLLECTIONS}${collectionId}/items/bulk`, data);
       return response.data;
     },
 
@@ -113,7 +113,7 @@ export const createCollectionsService = (apiClient) => {
      */
     removePermission: async (collectionId, targetId) => {
         // We'll assume the endpoint pattern DELETE /collections/{id}/permissions/{targetId}
-        const response = await apiClient.delete(`${API_ENDPOINTS.COLLECTIONS}/${collectionId}/permissions/${targetId}`);
+        const response = await apiClient.delete(`${API_ENDPOINTS.COLLECTIONS}${collectionId}/permissions/${targetId}`);
         return response.data;
     },
 
@@ -124,7 +124,7 @@ export const createCollectionsService = (apiClient) => {
      */
     bulkRemoveItems: async (collectionId, itemIds) => {
       // Changed to POST to avoid issues with DELETE bodies
-      const response = await apiClient.post(`${API_ENDPOINTS.COLLECTIONS}/${collectionId}/items/bulk-delete`, {
+      const response = await apiClient.post(`${API_ENDPOINTS.COLLECTIONS}${collectionId}/items/bulk-delete`, {
         item_ids: itemIds
       });
       return response.data;

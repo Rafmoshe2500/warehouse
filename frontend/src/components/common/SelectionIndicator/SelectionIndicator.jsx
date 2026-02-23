@@ -2,16 +2,9 @@ import React from 'react';
 import './SelectionIndicator.css';
 
 /**
- * Selection indicator showing number of selected cells
+ * Selection indicator – intentionally hidden per UX decision.
+ * Ctrl+C still works silently when cells are selected.
  */
-const SelectionIndicator = ({ count }) => {
-    if (count === 0) return null;
-
-    return (
-        <div className="selection-indicator">
-            {count} תאים נבחרו (Ctrl+C להעתקה)
-        </div>
-    );
-};
+const SelectionIndicator = () => null;
 
 export default SelectionIndicator;
