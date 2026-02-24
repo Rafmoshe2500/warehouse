@@ -10,7 +10,9 @@
   --dash-text: var(--text-primary);
   --dash-text-muted: var(--text-muted);
 
-  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   background: var(--dash-bg);
   color: var(--dash-text);
   font-family: 'Segoe UI', system-ui, sans-serif;
@@ -19,11 +21,16 @@
 
 /* === Dashboard Container === */
 .dashboard-container {
-  max-width: 1600px;
-  margin: 0 auto; /* Removed negative margin to fix overlap */
-  padding: 2rem;
+  max-width: var(--page-max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
   position: relative;
   z-index: 3;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .dashboard-section-title {
@@ -42,7 +49,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .stat-tile {
@@ -58,7 +65,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 160px;
+  height: 120px;
   box-shadow: var(--shadow-md);
 }
 
@@ -128,9 +135,10 @@
 .bento-grid-main {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  /* Use explicit heights for rows to better support percentage-based children */
-  grid-auto-rows: 450px; 
+  grid-auto-rows: minmax(450px, 1fr); 
   gap: 1.5rem;
+  flex: 1;
+  min-height: 0;
 }
 
 .bento-card {
@@ -277,4 +285,112 @@
       flex-direction: column;
       align-items: flex-start;
   }
+}
+
+/* === Splunk-Style Date Filter === */
+.splunk-date-filter {
+  display: inline-flex;
+  align-items: stretch;
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--radius-lg);
+  color: var(--dash-text);
+  box-shadow: var(--dash-shadow);
+  overflow: hidden;
+  height: 38px;
+}
+
+.splunk-date-filter-label {
+  padding: 0 1rem;
+  background: var(--dash-surface-hover);
+  border-left: 1px solid var(--dash-border);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--dash-text-muted); /* Default color */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.splunk-date-filter-label.clickable {
+  cursor: pointer;
+}
+
+.splunk-date-filter-label.clickable:hover {
+  background: var(--dash-surface);
+  color: var(--dash-text);
+}
+
+.splunk-date-filter-label.active {
+  color: var(--accent-success); /* neon green when active */
+  background: var(--dash-surface-hover);
+}
+
+.splunk-date-filter-label.clickable.active:hover {
+  color: var(--accent-danger); /* turn red on hover to indicate clearing */
+  background: rgba(239, 68, 68, 0.1); /* Subtle red background */
+}
+
+.splunk-date-input-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 0 0.8rem;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.splunk-date-input-wrapper:hover {
+  background: var(--dash-surface-hover);
+}
+
+.splunk-date-input-wrapper + .splunk-date-input-wrapper::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: var(--dash-border);
+}
+
+.splunk-date-input-wrapper label {
+  color: var(--dash-text-muted);
+  font-size: 0.75rem;
+  margin-left: 0.4rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.splunk-date-filter input[type="date"] {
+  background: transparent;
+  border: none;
+  color: var(--dash-text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+}
+
+.splunk-date-filter input[type="date"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.splunk-date-filter input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+/* Invert calendar icon only in dark mode if needed, though system usually handles it */
+[data-theme='dark'] .splunk-date-filter input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+}
+
+.splunk-date-filter input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }

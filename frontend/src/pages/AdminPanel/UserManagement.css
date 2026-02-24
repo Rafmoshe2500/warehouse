@@ -1,6 +1,7 @@
 .user-management {
   padding: 2rem;
   max-width: var(--page-max-width);
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -89,7 +90,7 @@
 }
 
 .user-management .users-table th {
-  padding: 1rem;
+  padding: 0.4rem 1rem;
   text-align: right;
   font-weight: 600;
   color: var(--text-primary);
@@ -97,7 +98,7 @@
 }
 
 .user-management .users-table td {
-  padding: 1rem;
+  padding: 0.4rem 1rem;
   text-align: right;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);

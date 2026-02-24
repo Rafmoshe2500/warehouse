@@ -10,7 +10,7 @@
 
 .collections-table th,
 .collections-table td {
-  padding: 0.75rem;
+  padding: 0.4rem 0.75rem;
   border-bottom: 1px solid var(--border-color);
   text-align: right;
   color: var(--text-primary);

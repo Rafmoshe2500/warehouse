@@ -1,6 +1,7 @@
 .access-control-page {
     padding: 2rem;
     max-width: var(--page-max-width); /* Enforcing standard width */
+    width: 100%;
     margin: 0 auto;
     direction: rtl;
 }

@@ -5,11 +5,15 @@ import { QUERY_KEYS } from '../lib/queryKeys';
 export const useAnalytics = () => {
     
     // 1. Dashboard General Stats
-    const useDashboardStats = () => {
+    const useDashboardStats = (dateRange = {}) => {
         return useQuery({
-            queryKey: QUERY_KEYS.analytics.dashboard,
+            // Include dateRange in queryKey to trigger refetch when dates change
+            queryKey: [...QUERY_KEYS.analytics.dashboard, dateRange],
             queryFn: async () => {
-                const data = await analyticsService.getDashboardStats();
+                const params = {};
+                if (dateRange?.startDate) params.start_date = dateRange.startDate;
+                if (dateRange?.endDate) params.end_date = dateRange.endDate;
+                const data = await analyticsService.getDashboardStats(params);
                 return data;
             },
             staleTime: 1000 * 60 * 5, // 5 minutes cache

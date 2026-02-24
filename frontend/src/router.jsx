@@ -119,14 +119,16 @@ const PrivateRoute = ({ children }) => {
 
   return (
     <BrowserRouter>
-      {isAuthenticated && (
-        <>
-          <Header />
-          <Navigation />
-        </>
-      )}
+      <div className="app-root-layout">
+        {isAuthenticated && (
+          <>
+            <Header />
+            <Navigation />
+          </>
+        )}
 
-      <Suspense fallback={<PageLoader />}>
+        <main className="app-main-content">
+          <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route
@@ -202,8 +204,10 @@ const PrivateRoute = ({ children }) => {
             }
           />
           <Route path="/" element={<Navigate to="/dashboard" />} />
-        </Routes>
-      </Suspense>
+          </Routes>
+        </Suspense>
+        </main>
+      </div>
     </BrowserRouter>
   );
 };

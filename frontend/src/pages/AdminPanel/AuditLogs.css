@@ -1,6 +1,7 @@
 .audit-logs {
   height: 100%;
   max-width: var(--page-max-width);
+  width: 100%;
   margin: 0 auto;
   padding-top: 2rem; /* Added space from top navigation */
 }
@@ -86,7 +87,7 @@
 }
 
 .logs-table th {
-  padding: 1rem;
+  padding: 0.4rem 1rem;
   text-align: right;
   font-weight: 600;
   color: var(--text-primary);
@@ -95,7 +96,7 @@
 }
 
 .logs-table td {
-  padding: 1rem;
+  padding: 0.4rem 1rem;
   text-align: right;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);

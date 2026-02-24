@@ -106,13 +106,6 @@ def get_auth_service(
 ) -> AuthService:
     return AuthService(user_service, group_service, adfs_service, auth_auditor)
 
-def get_analytics_service(
-    items_repo: ItemsRepository = Depends(get_items_repository),
-    audit_service: AuditService = Depends(get_audit_service)
-) -> AnalyticsService:
-    return AnalyticsService(items_repo, audit_service)
-
-
 from app.services.procurement_service import ProcurementService
 from app.db.repositories.procurement_repository import ProcurementRepository
 from app.services.s3_service import S3Service
@@ -121,6 +114,12 @@ from app.services.audit.procurement_auditor import ProcurementAuditor
 def get_procurement_repository() -> ProcurementRepository:
     return ProcurementRepository()
 
+def get_analytics_service(
+    items_repo: ItemsRepository = Depends(get_items_repository),
+    audit_service: AuditService = Depends(get_audit_service),
+    procurement_repo: ProcurementRepository = Depends(get_procurement_repository)
+) -> AnalyticsService:
+    return AnalyticsService(items_repo, audit_service, procurement_repo)
 def get_s3_service() -> S3Service:
     return S3Service()
 

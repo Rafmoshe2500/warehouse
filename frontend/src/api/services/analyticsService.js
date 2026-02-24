@@ -2,8 +2,9 @@ import apiClient from '../client';
 import { API_ENDPOINTS } from '../endpoints';
 
 export const analyticsService = {
-  getDashboardStats: async () => {
-    const response = await apiClient.get(API_ENDPOINTS.ANALYTICS);
+  getDashboardStats: async (params = {}) => {
+    // params expected: { start_date, end_date }
+    const response = await apiClient.get(API_ENDPOINTS.ANALYTICS, { params });
     return response.data;
   },
   

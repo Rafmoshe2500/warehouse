@@ -282,7 +282,7 @@ tbody tr.row-selected td.th-frozen {
 }
 
 .item-table th {
-  padding: 1.25rem 1rem;
+  padding: 0.5rem 1rem;
   text-align: right;
   font-size: 0.875rem;
   font-weight: 700;
@@ -295,7 +295,7 @@ tbody tr.row-selected td.th-frozen {
 .item-table tbody tr {
   border-bottom: 1px solid var(--border-subtle);
   transition: background 0.2s ease;
-  min-height: 50px;
+  min-height: 35px;
 }
 
 .item-table tbody tr:hover {
@@ -303,7 +303,7 @@ tbody tr.row-selected td.th-frozen {
 }
 
 .item-table td {
-  padding: 0.875rem 1rem;
+  padding: 0.4rem 1rem;
   color: var(--text-secondary);
   font-size: 0.9rem;
 }
@@ -554,9 +554,9 @@ tbody tr.row-selected td.th-frozen {
 
 /* תא רגיל */
 .item-table__cell {
-  padding: 0.75rem;
+  padding: 0.4rem 0.75rem;
   border-radius: 6px;
-  min-height: 40px;
+  min-height: 30px;
   display: flex;
   align-items: center;
   color: var(--text-primary);

@@ -5,12 +5,16 @@ from app.dependencies import get_analytics_service
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
+from typing import Optional
+
 @router.get("/dashboard")
 async def get_dashboard_stats(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
     current_user: dict = Depends(get_current_user),
     service: AnalyticsService = Depends(get_analytics_service)
 ):
-    return await service.get_dashboard_stats()
+    return await service.get_dashboard_stats(start_date, end_date)
 
 @router.get("/activity")
 async def get_activity_stats(

@@ -1,6 +1,7 @@
 .inventory-tabbed-page {
   padding: 2rem;
   max-width: var(--page-max-width);
+  width: 100%;
   margin: 0 auto;
   direction: rtl;
   height: calc(100vh - 80px);

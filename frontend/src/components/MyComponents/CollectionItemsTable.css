@@ -135,7 +135,7 @@
 
 .collection-items-table th,
 .collection-items-table td {
-    padding: 1rem;
+    padding: 0.4rem 1rem;
     text-align: right;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
@@ -172,7 +172,7 @@
 
 .items-table th,
 .items-table td {
-    padding: 1rem;
+    padding: 0.4rem 1rem;
     text-align: right;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);

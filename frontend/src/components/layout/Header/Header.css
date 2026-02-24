@@ -23,7 +23,7 @@
 }
 
 .header__container {
-  max-width: 100%;
+  max-width: var(--page-max-width);
   margin: 0 auto;
   padding: 1.25rem 2rem;
   display: flex;

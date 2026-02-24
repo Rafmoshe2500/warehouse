@@ -70,7 +70,7 @@ class ItemAuditor:
             target_resource="item",
             resource_id=str(item.get("_id")),
             target_resource_name=self._get_resource_name(item),
-            changes={"name": item.get("name"), "description": item.get("description")},
+            changes={},
             details=details
         )
 
@@ -98,7 +98,7 @@ class ItemAuditor:
     
     async def log_bulk_delete_item(self, user: Dict[str, Any], item: Dict[str, Any], reason: str):
          """Logs a bulk delete for a single item."""
-         await self.log_deletion(user, item, f"מחיקה מרובה - סיבה: {reason}")
+         await self.log_deletion(user, item, reason)
     
     async def log_delete_all(self, user: Dict[str, Any], count: int, reason: str):
         """Logs deletion of all items."""

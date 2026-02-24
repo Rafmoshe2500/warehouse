@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿import React, { useState } from 'react';
 import { 
     FiBox, 
     FiPackage, 
@@ -7,7 +7,11 @@ import {
     FiCalendar,
     FiTrendingUp,
     FiActivity,
-    FiSearch
+    FiSearch,
+    FiFileText,
+    FiList,
+    FiTruck,
+    FiDollarSign
 } from 'react-icons/fi';
 import Spinner from '../../components/common/Spinner/Spinner';
 import { useAnalytics } from '../../hooks/useAnalytics';
@@ -26,8 +30,11 @@ import LocationChart from '../../components/dashboard/charts/LocationChart';
 import './DashboardPage.css';
 
 const DashboardPage = () => {
+    // State for Procurement Date Filter
+    const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
+
     const { useDashboardStats } = useAnalytics();
-    const { data: stats, isLoading: loading, error } = useDashboardStats();
+    const { data: stats, isLoading: loading, error } = useDashboardStats(dateRange);
     const { user, hasPermission } = useAuth(); // Get current user
     
     // Check permissions
@@ -55,15 +62,55 @@ const DashboardPage = () => {
         <div className="dashboard-wrapper" dir="rtl">
             <main className="dashboard-container">
                 
-                {/* Stats Row - Highlighted */}
-                <div className="dashboard-section-title">
-                    <FiActivity /> מדדים מרכזיים
+                {/* Global Date Filter & Header */}
+                <div className="dashboard-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <div className="dashboard-section-title" style={{ margin: 0 }}>
+                        <FiActivity style={{ marginRight: '0.5rem' }} /> תמונת מצב כללית
+                    </div>
+                    
+                    <div className="splunk-date-filter">
+                        <div 
+                            className={`splunk-date-filter-label ${(dateRange.startDate || dateRange.endDate) ? 'clickable active' : 'clickable'}`}
+                            onClick={() => setDateRange({ startDate: '', endDate: '' })}
+                            title="חזור לזמן נוכחי (נקה סינון)"
+                        >
+                            <FiCalendar style={{ fontSize: '1.1rem' }}/> 
+                            <span>זמן נוכחי</span>
+                        </div>
+                        <div className="splunk-date-input-wrapper">
+                            <label>מ:</label>
+                            <input 
+                                type="date" 
+                                value={dateRange.startDate}
+                                onChange={(e) => {
+                                    const newStart = e.target.value;
+                                    setDateRange(prev => {
+                                        // If end date exists and is BEFORE new start date, clear the end date
+                                        let newEnd = prev.endDate;
+                                        if (newEnd && new Date(newEnd) < new Date(newStart)) {
+                                            newEnd = '';
+                                        }
+                                        return { startDate: newStart, endDate: newEnd };
+                                    });
+                                }}
+                            />
+                        </div>
+                        <div className="splunk-date-input-wrapper">
+                            <label>עד:</label>
+                            <input 
+                                type="date" 
+                                value={dateRange.endDate}
+                                min={dateRange.startDate} // Prevent selecting a date before startDate
+                                onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+                            />
+                        </div>
+                    </div>
                 </div>
                 
-                <div className="bento-grid-stats">
-                    {hasInventoryAccess && (
-                        <>
-                            <div className="stat-tile blue">
+                {/* Inventory Stats Row */}
+                {hasInventoryAccess && (
+                    <div className="bento-grid-stats">
+                        <div className="stat-tile blue">
                                 <div className="stat-icon-bg"><FiBox /></div>
                                 <div className="stat-content">
                                     <h3>סה"כ פריטים</h3>
@@ -106,11 +153,61 @@ const DashboardPage = () => {
                                     ניהול כמותי
                                 </div>
                             </div>
-                        </>
+                        </div>
                     )}
-                </div>
 
-                {/* Main Content Grid */}
+                {/* Procurement Stats Row */}
+                {hasProcurementAccess && stats?.procurement && (
+                    <>
+                        <div className="bento-grid-stats">
+                            <div className="stat-tile blue">
+                                <div className="stat-icon-bg"><FiDollarSign /></div>
+                                <div className="stat-content">
+                                    <h3>סך הכל רכש</h3>
+                                    <div className="stat-number">
+                                        ${stats.procurement.total_spend?.toLocaleString() || 0}
+                                    </div>
+                                </div>
+                                <div className="stat-trend">
+                                    הוצאות מצטברות
+                                </div>
+                            </div>
+
+                            <div className="stat-tile amber">
+                                <div className="stat-icon-bg"><FiFileText /></div>
+                                <div className="stat-content">
+                                    <h3>ממתין ל-EMF</h3>
+                                    <div className="stat-number">{stats.procurement.waiting_emf || 0}</div>
+                                </div>
+                                <div className="stat-trend neutral">
+                                    דורש פעולה
+                                </div>
+                            </div>
+
+                            <div className="stat-tile purple">
+                                <div className="stat-icon-bg"><FiList /></div>
+                                <div className="stat-content">
+                                    <h3>ממתין ל-BOM</h3>
+                                    <div className="stat-number">{stats.procurement.waiting_bom || 0}</div>
+                                </div>
+                                <div className="stat-trend neutral">
+                                    דורש פעולה
+                                </div>
+                            </div>
+
+                            <div className="stat-tile green">
+                                <div className="stat-icon-bg"><FiTruck /></div>
+                                <div className="stat-content">
+                                    <h3>בדרך אלינו</h3>
+                                    <div className="stat-number">{stats.procurement.ordered || 0}</div>
+                                </div>
+                                <div className="stat-trend positive">
+                                    הזמנות פתוחות
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
                 <div className="bento-grid-main">
                     
                     {/* Inventory-Specific Charts */}

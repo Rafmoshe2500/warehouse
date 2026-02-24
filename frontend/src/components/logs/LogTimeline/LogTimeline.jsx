@@ -78,9 +78,11 @@ const LogTimeline = ({ logs }) => {
               </div>
             )}
 
-            {/* Generic details - hide if we have specific changes to avoid duplication */}
-            {log.details && (!log.changes || Object.keys(log.changes).length === 0) && (
-              <div className="log-item__detail">{log.details}</div>
+            {/* Generic details */}
+            {log.details && (
+              <div className="log-item__detail">
+                {<strong>{log.details}</strong>}
+              </div>
             )}
 
             {log.changes && Object.keys(log.changes).length > 0 && (
