@@ -43,6 +43,8 @@ TEST_COLLECTIONS = {
     "warehouse-audit-logs": f"{TEST_COLLECTION_PREFIX}warehouse_audit_logs",
     "users": f"{TEST_COLLECTION_PREFIX}users",
     "groups": f"{TEST_COLLECTION_PREFIX}groups",
+    "collections": f"{TEST_COLLECTION_PREFIX}collections",
+    "collection_items": f"{TEST_COLLECTION_PREFIX}collection_items",
 }
 
 
@@ -108,6 +110,22 @@ async def test_users_collection(test_db) -> AsyncGenerator[AsyncIOMotorCollectio
 async def test_groups_collection(test_db) -> AsyncGenerator[AsyncIOMotorCollection, None]:
     """Get groups test collection, cleaned after each test."""
     collection = test_db[TEST_COLLECTIONS["groups"]]
+    yield collection
+    await collection.delete_many({})
+
+
+@pytest_asyncio.fixture(scope="function")
+async def test_collections_collection(test_db) -> AsyncGenerator[AsyncIOMotorCollection, None]:
+    """Get collections test collection, cleaned after each test."""
+    collection = test_db[TEST_COLLECTIONS["collections"]]
+    yield collection
+    await collection.delete_many({})
+
+
+@pytest_asyncio.fixture(scope="function")
+async def test_collection_items_collection(test_db) -> AsyncGenerator[AsyncIOMotorCollection, None]:
+    """Get collection_items test collection, cleaned after each test."""
+    collection = test_db[TEST_COLLECTIONS["collection_items"]]
     yield collection
     await collection.delete_many({})
 
@@ -297,16 +315,21 @@ def sample_item_data() -> dict:
 
 @pytest.fixture
 def sample_procurement_data() -> dict:
-    """Sample procurement order data for tests."""
+    """Sample procurement order data for tests (matches current BOM-based schema)."""
     return {
-        "catalog_number": "PROC-001",
-        "manufacturer": "Test Vendor",
-        "description": "Test Procurement Item",
-        "quantity": 5,
+        "bom_items": [
+            {
+                "item_id": 1,
+                "catalog_number": "PROC-001",
+                "manufacturer": "Test Vendor",
+                "description": "Test Procurement Item",
+                "quantity": 5
+            }
+        ],
         "order_date": datetime.now(timezone.utc),
-        "amount": 1000.00,
-        "status": "waiting_emf",
-        "received_emf": False,
+        "total_amount": 1000.00,
+        "status": "waiting_bom_emf",
+        "emf_number": None,
         "received_bom": False,
         "created_by": "test_user",
         "files": [],

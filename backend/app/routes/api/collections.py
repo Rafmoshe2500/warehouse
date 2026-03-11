@@ -1,5 +1,6 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import StreamingResponse
 
 from app.core.security import get_current_user, get_current_user_groups
 from app.services.collection_service import CollectionService
@@ -81,6 +82,42 @@ async def list_collection_items(
 ):
     """List items in collection"""
     return await collection_service.get_collection_items(collection_id, current_user["username"], user_groups, current_user.get("role"))
+
+
+@router.get("/{collection_id}/export")
+async def export_collection_to_excel(
+    collection_id: str,
+    current_user: dict = Depends(get_current_user),
+    user_groups: List[str] = Depends(get_current_user_groups),
+    collection_service: CollectionService = Depends(get_collection_service)
+):
+    """Export items from a collection to Excel"""
+    try:
+        excel_file = await collection_service.export_collection(
+            collection_id, 
+            current_user["username"], 
+            user_groups, 
+            current_user.get("role")
+        )
+
+        from datetime import datetime
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        filename = f"collection_{collection_id}_export_{date_str}.xlsx"
+
+        return StreamingResponse(
+            excel_file,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+    except Exception as e:
+        from app.core.exceptions import ExcelFileException
+        if isinstance(e, ExcelFileException):
+            raise HTTPException(status_code=400, detail=str(e))
+        import logging
+        logging.error(f"Error exporting collection {collection_id}: {e}")
+        raise HTTPException(status_code=500, detail="שגיאה פנימית בייצוא האוסף")
 
 @router.post("/{collection_id}/items", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def add_item_to_collection(

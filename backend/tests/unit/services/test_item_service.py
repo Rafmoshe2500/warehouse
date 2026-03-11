@@ -142,3 +142,32 @@ class TestItemService:
         last_call = audit_service.log_user_action.call_args_list[-1]
         assert last_call.kwargs["action"] == "item_delete"
         assert "Test deletion" in last_call.kwargs["details"]
+
+    @pytest.mark.asyncio
+    async def test_bulk_delete_items(self, item_service, audit_service, mock_admin_user):
+        """Test bulk deleting items removes them all and logs audit."""
+        c1 = await item_service.create_item(ItemCreate(catalog_number="BDEL-01"), mock_admin_user)
+        c2 = await item_service.create_item(ItemCreate(catalog_number="BDEL-02"), mock_admin_user)
+        ids = [c1["_id"], c2["_id"]]
+
+        result = await item_service.bulk_delete_items(
+            ids, mock_admin_user, reason="Bulk test"
+        )
+
+        assert result["deleted_count"] == 2
+
+        # Verify both deleted in repo
+        assert await item_service.items_repo.get_by_id(c1["_id"]) is None
+        assert await item_service.items_repo.get_by_id(c2["_id"]) is None
+
+    @pytest.mark.asyncio
+    async def test_get_items_with_catalog_filter(self, item_service, mock_admin_user):
+        """Test get_items filters correctly by catalog_number."""
+        await item_service.create_item(ItemCreate(catalog_number="FILTER-MATCH"), mock_admin_user)
+        await item_service.create_item(ItemCreate(catalog_number="NO-MATCH"), mock_admin_user)
+
+        filter_params = ItemFilter(catalog_number="FILTER", page=1, limit=10)
+        result = await item_service.get_items(filter_params)
+
+        assert result["total"] == 1
+        assert result["items"][0]["catalog_number"] == "FILTER-MATCH"

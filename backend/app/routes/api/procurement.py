@@ -26,8 +26,10 @@ procurement_rw = require_permission(Permission.PROCUREMENT_RW)
 async def get_orders(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
+    search: Optional[str] = None,
     catalog_number: Optional[str] = None,
     manufacturer: Optional[str] = None,
+    emf_number: Optional[str] = None,
     # Use generic Query for list: ?status_in=a&status_in=b
     status_in: Optional[List[str]] = Query(None),
     status_ne: Optional[str] = None,
@@ -38,8 +40,10 @@ async def get_orders(
     orders, total = await procurement_service.get_orders(
         page=page,
         page_size=page_size,
+        search=search,
         catalog_number=catalog_number,
         manufacturer=manufacturer,
+        emf_number=emf_number,
         status_in=status_in,
         status_ne=status_ne
     )

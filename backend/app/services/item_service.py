@@ -83,6 +83,18 @@ class ItemService:
         # Skip logging if this is an undo operation (log created separately)
         if not is_undo:
             await self.item_auditor.log_creation(user, created_item)
+            
+        # Update catalog
+        if created_item.get("catalog_number"):
+            from app.services.catalog_service import CatalogService
+            catalog_service = CatalogService()
+            # Running asynchronously without blocking might be better, but awaiting is safer for now
+            await catalog_service.upsert_catalog_item(
+                catalog_number=created_item.get("catalog_number"),
+                description=created_item.get("description"),
+                manufacturer=created_item.get("manufacturer")
+            )
+            
         return created_item
 
     async def update_item_field(self, item_id: str, update: ItemUpdate, user: Dict[str, Any], undo_log_id: Optional[str] = None, is_undo: bool = False):
@@ -104,6 +116,17 @@ class ItemService:
         if not is_undo:
             changes = {update.field: {"old": old_value, "new": update.value}}
             await self.item_auditor.log_update(user, updated_item, changes, f"עדכון שדה '{update.field}'")
+            
+        # Update catalog
+        if updated_item and updated_item.get("catalog_number"):
+            if update.field in ["catalog_number", "description", "manufacturer"]:
+                from app.services.catalog_service import CatalogService
+                catalog_service = CatalogService()
+                await catalog_service.upsert_catalog_item(
+                    catalog_number=updated_item.get("catalog_number"),
+                    description=updated_item.get("description"),
+                    manufacturer=updated_item.get("manufacturer")
+                )
         
         return updated_item
 
@@ -134,6 +157,19 @@ class ItemService:
 
         for item in items_before:
             await self.item_auditor.log_bulk_update_item(user, item, update_data, changes_description)
+            
+        # Update catalog for all updated items if relevant fields changed
+        if any(f in update_data for f in ["catalog_number", "description", "manufacturer"]):
+            from app.services.catalog_service import CatalogService
+            catalog_service = CatalogService()
+            items_after = await self.items_repo.get_many_by_ids(update.ids)
+            for item in items_after:
+                if item.get("catalog_number"):
+                    await catalog_service.upsert_catalog_item(
+                        catalog_number=item.get("catalog_number"),
+                        description=item.get("description"),
+                        manufacturer=item.get("manufacturer")
+                    )
 
         return {
             "message": f"עודכנו {modified_count} פריטים",

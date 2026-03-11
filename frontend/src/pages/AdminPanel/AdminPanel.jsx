@@ -60,18 +60,7 @@ const AdminPanel = () => {
           value={stats?.active_users || 0}
           color="green"
         />
-        <StatCard
-          icon={FiShield}
-          title="אדמינים"
-          value={stats?.admins || 0}
-          color="purple"
-        />
-        <StatCard
-          icon={FiUser}
-          title="משתמשים רגילים"
-          value={stats?.regular_users || 0}
-          color="amber"
-        />
+
       </div>
 
       <div className="admin-actions">

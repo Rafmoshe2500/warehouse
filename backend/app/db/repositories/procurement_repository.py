@@ -29,8 +29,10 @@ class ProcurementRepository:
         self,
         skip: int = 0,
         limit: int = 50,
+        search: Optional[str] = None,
         catalog_number: Optional[str] = None,
         manufacturer: Optional[str] = None,
+        emf_number: Optional[str] = None,
         status_in: Optional[List[str]] = None,
         status_ne: Optional[str] = None
     ) -> tuple[List[Dict[str, Any]], int]:
@@ -38,14 +40,26 @@ class ProcurementRepository:
         # Build filter
         filter_query = {}
         
-        # Search in bom_items array for catalog_number and manufacturer
-        if catalog_number or manufacturer:
-            bom_filter = {}
-            if catalog_number:
-                bom_filter["bom_items.catalog_number"] = {"$regex": catalog_number, "$options": "i"}
-            if manufacturer:
-                bom_filter["bom_items.manufacturer"] = {"$regex": manufacturer, "$options": "i"}
-            filter_query.update(bom_filter)
+        # Generic search across bom_items and emf_number
+        if search:
+            search_regex = {"$regex": search, "$options": "i"}
+            filter_query["$or"] = [
+                {"bom_items.catalog_number": search_regex},
+                {"bom_items.manufacturer": search_regex},
+                {"emf_number": search_regex}
+            ]
+        else:
+            # Fallback to specific column searches if provided (legacy)
+            if catalog_number or manufacturer:
+                bom_filter = {}
+                if catalog_number:
+                    bom_filter["bom_items.catalog_number"] = {"$regex": catalog_number, "$options": "i"}
+                if manufacturer:
+                    bom_filter["bom_items.manufacturer"] = {"$regex": manufacturer, "$options": "i"}
+                filter_query.update(bom_filter)
+            
+            if emf_number:
+                filter_query["emf_number"] = {"$regex": emf_number, "$options": "i"}
         
         if status_in:
             filter_query["status"] = {"$in": status_in}

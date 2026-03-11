@@ -80,7 +80,6 @@ class AuthService:
 
     async def domain_login(self, login_data: DomainLoginRequest, response: Response, request: Request):
         """התחברות דומיין (ADFS) - with existing user check"""      
-        # 1. Get token and user info from ADFS
         token = await self.adfs_service.get_token_from_hashed_token(login_data.hashed_token, request)
         user_information = await self.adfs_service.get_user_information(token)
         
@@ -91,11 +90,9 @@ class AuthService:
         if not username:
             raise UnauthorizedException("Username not found in ADFS response")
         
-        # 2. Check if user already exists in our system
         existing_user = await self.user_service.get_user_by_username(username)
         
         if existing_user:
-            # User exists - validate they're an AD user and use their permissions
             if existing_user.get("user_type") != "ad":
                 raise UnauthorizedException("User exists but is not an AD user")
             
@@ -105,21 +102,17 @@ class AuthService:
             permissions = existing_user.get("permissions", [])
             role = existing_user.get("role", "user")
             
-            # Update last login
             await self.user_service.update_last_login(username)
             
         else:
-            # New user - fetch from AD groups and auto-create
             user_ad_groups = user_information.get("groups", [])
             
             if not user_ad_groups:
                 raise UnauthorizedException("No AD groups found for user")
             
-            # Get all system groups
             all_app_groups_result = await self.group_service.get_groups()
             all_app_groups = all_app_groups_result.get("groups", [])
             
-            # Match groups using O(N+M) hash set approach
             user_group_names = {g.lower() for g in user_ad_groups}
             matched_groups = [
                 g for g in all_app_groups 
@@ -129,22 +122,13 @@ class AuthService:
             if not matched_groups:
                 raise UnauthorizedException("No matching groups found - access denied")
             
-            # Aggregate permissions from all matched groups
             all_permissions = set()
             for group in matched_groups:
                 all_permissions.update(group.get("permissions", []))
             
             permissions = list(all_permissions)
             role = "user"
-            
-            # Auto-create AD user
-            await self.user_service.create_ad_user(
-                username=username,
-                permissions=permissions,
-                role=role
-            )
         
-        # 3. Create access token
         access_token = create_access_token(
             data={
                 "sub": username,
@@ -166,7 +150,6 @@ class AuthService:
             secure=False
         )
 
-        # Audit Log
         if self.auth_auditor:
             try:
                 await self.auth_auditor.log_domain_login(

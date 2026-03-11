@@ -32,8 +32,10 @@ export const FIELD_LABELS = {
 };
 
 export const PROCUREMENT_STATUS_OPTIONS = [
-  { value: 'waiting_emf', label: 'מחכה ל-EMF' },
+  { value: 'waiting_bom_emf', label: 'מחכה ל-BOM ו-EMF' },
   { value: 'waiting_bom', label: 'מחכה ל-BOM' },
+  { value: 'waiting_emf', label: 'מחכה ל-EMF' },
+  { value: 'waiting_order', label: 'מחכה שרכש ייצא' },
   { value: 'ordered', label: 'רכש יצא' },
   { value: 'received', label: 'רכש הגיע' }
 ];

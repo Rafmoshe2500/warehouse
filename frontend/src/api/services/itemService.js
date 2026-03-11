@@ -17,7 +17,7 @@ export const createItemService = (apiClient) => {
 
       const allowedFields = [
         'search', 'page', 'limit',
-        'catalog_number', 'manufacturer', 'location',
+        'catalog_number', 'manufacturer', 'location', 'serial',
         'description', 'current_stock', 'purpose', 'notes',
         'target_site', 'project_allocations', 'warranty_expiry',
         'sort_by', 'sort_order'

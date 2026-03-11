@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FiPackage, FiClock, FiActivity } from 'react-icons/fi';
 import InventoryPage from './InventoryPage';
+import CatalogPage from '../CatalogPage/CatalogPage';
 import StaleItemsPage from '../StaleItemsPage/StaleItemsPage';
 import LogsPage from '../LogsPage/LogsPage';
+import { Tabs } from '../../components/common';
 import './InventoryTabbedPage.css';
 
 const InventoryTabbedPage = () => {
@@ -18,33 +20,21 @@ const InventoryTabbedPage = () => {
 
   return (
     <div className="inventory-tabbed-page">
-      <div className="access-tabs">
-        <button 
-          className={`tab-btn ${activeTab === 'current' ? 'active' : ''}`}
-          onClick={() => handleTabChange('current')}
-        >
-          <FiPackage />
-          מלאי נוכחי
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'stale' ? 'active' : ''}`}
-          onClick={() => handleTabChange('stale')}
-        >
-          <FiClock />
-          מלאי ישן
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'logs' ? 'active' : ''}`}
-          onClick={() => handleTabChange('logs')}
-        >
-          <FiActivity />
-          תנועות
-        </button>
-      </div>
+      <Tabs 
+        tabs={[
+          { id: 'current', label: 'מלאי נוכחי', icon: <FiPackage /> },
+          { id: 'stale', label: 'מלאי ישן', icon: <FiClock /> },
+          { id: 'catalog', label: 'קטלוג פריטים', icon: <FiPackage /> },
+          { id: 'logs', label: 'תנועות', icon: <FiActivity /> }
+        ]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <div className="inventory-tab-content">
         {activeTab === 'current' && <InventoryPage isEmbedded={true} />}
         {activeTab === 'stale' && <StaleItemsPage isEmbedded={true} />}
+        {activeTab === 'catalog' && <CatalogPage isEmbedded={true} />}
         {activeTab === 'logs' && <LogsPage isEmbedded={true} />}
       </div>
     </div>

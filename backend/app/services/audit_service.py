@@ -138,3 +138,12 @@ class AuditService:
         """Get count of specific actions in the last N days."""
         start_date = datetime.now(timezone.utc) - timedelta(days=days)
         return await self.repository.count_actions(actions, start_date)
+
+    async def delete_resource_logs(self, target_resource: str, resource_id: str) -> int:
+        """Delete all audit logs associated with a specific resource."""
+        deleted_count = await self.repository.delete_logs_by_resource(
+            target_resource=target_resource,
+            resource_id=resource_id
+        )
+        logger.info(f"Deleted {deleted_count} audit logs for {target_resource}:{resource_id}")
+        return deleted_count

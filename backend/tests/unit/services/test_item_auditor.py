@@ -64,7 +64,7 @@ async def test_log_deletion(item_auditor, mock_audit_service):
         target_resource="item",
         resource_id="789",
         target_resource_name="Desc",
-        changes={"name": "Delete Me", "description": "Desc"},
+        changes={},
         details=f"סיבת מחיקה: {reason}"
     )
 

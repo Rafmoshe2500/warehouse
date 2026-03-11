@@ -789,8 +789,8 @@
             - 'textbox "למשל: פריט פגום, סיום פרויקט, טעות בהזנה..." [active] [ref=e835]'
             - generic [ref=e836]: 💡 הסיבה תישמר ביומן הפעולות
         - generic [ref=e838]:
-          - button "מחק לצמיתות" [ref=e839] [cursor=pointer]:
-            - generic [ref=e840]: מחק לצמיתות
+          - button "מחק" [ref=e839] [cursor=pointer]:
+            - generic [ref=e840]: מחק
           - button "ביטול" [ref=e841] [cursor=pointer]:
             - generic [ref=e842]: ביטול
 ```

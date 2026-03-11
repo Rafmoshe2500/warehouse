@@ -1,14 +1,16 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { FaTrash, FaEdit, FaCheck, FaTimes, FaPlus, FaFilter } from 'react-icons/fa';
+import { FaTrash, FaEdit, FaCheck, FaTimes, FaPlus, FaFilter, FaFileExcel } from 'react-icons/fa';
 import { FiEdit2, FiColumns } from 'react-icons/fi';
-import { Button, Input } from '../common';
+import { Button, Input, Pagination, ScrollableTableLayout } from '../common';
+import { usePagination } from '../../hooks/usePagination';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
 import { useCollectionTableData }    from '../../hooks/useCollectionTableData';
 import { useCollectionRowSelection } from '../../hooks/useCollectionRowSelection';
 import { useCollectionCellSelection } from '../../hooks/useCollectionCellSelection';
 import { COLLECTION_TABLE_COLUMNS }  from '../../constants/tableConfig';
 import { useToast } from '../../context/ToastContext';
+import collectionsService from '../../api/services/collectionsService';
 import BulkEditModal from '../inventory/BulkEditModal/BulkEditModal';
 import './CollectionItemsTable.css';
 
@@ -69,6 +71,27 @@ const CollectionItemsTable = ({
     clearSelection();
   };
 
+  const handleExportExcel = async () => {
+    try {
+      showToast('מייצא נתונים לאקסל...', 'info');
+      await collectionsService.exportCollection(collectionId);
+      showToast('הקובץ יוצא בהצלחה', 'success');
+    } catch (error) {
+      console.error('Export error:', error);
+      showToast('שגיאה בייצוא לאקסל', 'error');
+    }
+  };
+
+  // ── Pagination ────────────────────────────────────────────────────────────
+  const { currentPage, itemsPerPage, goToPage, setItemsPerPage } = usePagination(1, 25);
+  const totalItems = processedItems.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return processedItems.slice(start, start + itemsPerPage);
+  }, [processedItems, currentPage, itemsPerPage]);
+
   // ── Empty state ───────────────────────────────────────────────────────────
   if (items.length === 0) {
     return (
@@ -86,76 +109,95 @@ const CollectionItemsTable = ({
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
-  return (
-    <div className="collection-items-table-container" dir="rtl">
+  // ── Render ────────────────────────────────────────────────────────────────
+  const headerContent = (
+    <div className="table-toolbar" dir="rtl" style={{ margin: 0 }}>
+      {/* Filters toggle */}
+      <Button variant={showFilters ? 'primary' : 'ghost'} size="sm"
+        onClick={() => setShowFilters(v => !v)} className="column-filter-button"
+        title={showFilters ? 'הסתר פילטרים' : 'הצג פילטרים'}>
+        <FaFilter /> {showFilters ? 'הסתרה' : 'פילטרים'}
+      </Button>
 
-      {/* ── Toolbar ── */}
-      <div className="table-toolbar" dir="rtl">
-
-        {/* Search */}
-        <div className="collection-search-wrapper">
-          <input type="text" className="collection-search-input" placeholder="חיפוש חופשי..."
-            value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-        </div>
-
-        {/* Filters toggle */}
-        <Button variant={showFilters ? 'primary' : 'ghost'} size="sm"
-          onClick={() => setShowFilters(v => !v)} className="column-filter-button"
-          title={showFilters ? 'הסתר פילטרים' : 'הצג פילטרים'}>
-          <FaFilter /> {showFilters ? 'הסתרה' : 'פילטרים'}
+      {/* Column visibility */}
+      <div className="column-filter-wrapper relative" ref={filterRef}>
+        <Button variant="ghost" size="sm" onClick={() => setShowColumnDropdown(!showColumnDropdown)} className="column-filter-button">
+          <FiColumns /> הצגת עמודות
         </Button>
-
-        {/* Column visibility */}
-        <div className="column-filter-wrapper relative" ref={filterRef}>
-          <Button variant="ghost" size="sm" onClick={() => setShowColumnDropdown(!showColumnDropdown)} className="column-filter-button">
-            <FiColumns /> הצגת עמודות
-          </Button>
-          {showColumnDropdown && (
-            <div className="column-filter-dropdown" style={{ right: 0, top: '100%', position: 'absolute', zIndex: 1000 }}>
-              <div className="filter-dropdown-header">בחר עמודות להצגה</div>
-              <div className="filter-dropdown-content">
-                {COLLECTION_TABLE_COLUMNS.map(col => (
-                  <label key={col.key} className="column-checkbox-label">
-                    <input type="checkbox" checked={visibleColumns[col.key] !== false} onChange={() => toggleColumn(col.key)} />
-                    <span>{col.label}</span>
-                  </label>
-                ))}
-              </div>
+        {showColumnDropdown && (
+          <div className="column-filter-dropdown" style={{ right: 0, top: '100%', position: 'absolute', zIndex: 1000 }}>
+            <div className="filter-dropdown-header">בחר עמודות להצגה</div>
+            <div className="filter-dropdown-content">
+              {COLLECTION_TABLE_COLUMNS.map(col => (
+                <label key={col.key} className="column-checkbox-label">
+                  <input type="checkbox" checked={visibleColumns[col.key] !== false} onChange={() => toggleColumn(col.key)} />
+                  <span>{col.label}</span>
+                </label>
+              ))}
             </div>
-          )}
-        </div>
-
-        {/* Add */}
-        {!isReadOnly && onAddItem && (
-          <Button variant="ghost" size="sm" onClick={onAddItem}><FaPlus /> הוסף פריטים</Button>
-        )}
-
-        {/* Bulk Edit */}
-        {!isReadOnly && onBulkEdit && (
-          <Button variant="ghost" size="sm"
-            onClick={() => { if (selectedItems.size === 0) { showToast('יש לבחור פריטים לעריכה', 'warning'); return; } setIsBulkEditOpen(true); }}
-            disabled={selectedItems.size === 0}
-            title={selectedItems.size === 0 ? 'בחר פריטים לעריכה' : `ערוך ${selectedItems.size} פריטים`}>
-            <FiEdit2 /> עריכה {selectedItems.size > 0 ? `(${selectedItems.size})` : ''}
-          </Button>
-        )}
-
-        {/* Bulk Delete */}
-        {!isReadOnly && onBulkDelete && (
-          <Button variant="danger" size="sm" onClick={handleBulkDelete} disabled={selectedItems.size === 0}
-            title={selectedItems.size === 0 ? 'בחר פריטים למחיקה' : ''}>
-            <FaTrash /> מחק {selectedItems.size > 0 ? `(${selectedItems.size})` : ''}
-          </Button>
-        )}
-
-        {/* Cell selection hint */}
-        {selectedCells.length > 0 && (
-          <span className="cell-selection-hint">{selectedCells.length} תאים נבחרו &nbsp;·&nbsp; Ctrl+C להעתקה</span>
+          </div>
         )}
       </div>
 
-      {/* ── Table ── */}
-      <div className="items-table-container">
+      {/* Add */}
+      {!isReadOnly && onAddItem && (
+        <Button variant="ghost" size="sm" onClick={onAddItem}><FaPlus /> הוסף פריטים</Button>
+      )}
+
+      
+      {/* Export */}
+      <Button variant="ghost" size="sm" onClick={handleExportExcel} title="ייצוא לאקסל">
+        <FaFileExcel className="mr-2" style={{ color: '#107c41' }} /> ייצוא
+      </Button>
+
+      {/* Bulk Edit */}
+      {!isReadOnly && onBulkEdit && (
+        <Button variant="ghost" size="sm"
+          onClick={() => { if (selectedItems.size === 0) { showToast('יש לבחור פריטים לעריכה', 'warning'); return; } setIsBulkEditOpen(true); }}
+          disabled={selectedItems.size === 0}
+          title={selectedItems.size === 0 ? 'בחר פריטים לעריכה' : `ערוך ${selectedItems.size} פריטים`}>
+          <FiEdit2 /> עריכה {selectedItems.size > 0 ? `(${selectedItems.size})` : ''}
+        </Button>
+      )}
+
+      {/* Bulk Delete */}
+      {!isReadOnly && onBulkDelete && (
+        <Button variant="danger" size="sm" onClick={handleBulkDelete} disabled={selectedItems.size === 0}
+          title={selectedItems.size === 0 ? 'בחר פריטים למחיקה' : ''}>
+          <FaTrash /> מחק {selectedItems.size > 0 ? `(${selectedItems.size})` : ''}
+        </Button>
+      )}
+
+      {/* Cell selection hint */}
+      {selectedCells.length > 0 && (
+        <span className="cell-selection-hint">{selectedCells.length} תאים נבחרו &nbsp;·&nbsp; Ctrl+C להעתקה</span>
+      )}
+
+      <div style={{ flex: 1 }}></div>
+
+      {/* Search */}
+      <div className="collection-search-wrapper" style={{ marginRight: 'auto' }}>
+        <input type="text" className="collection-search-input" placeholder="חיפוש חופשי באוסף..."
+          value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+      </div>
+    </div>
+  );
+
+  const paginationContent = totalPages > 1 ? (
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      totalItems={totalItems}
+      limit={itemsPerPage}
+      onPageChange={goToPage}
+      onItemsPerPageChange={setItemsPerPage}
+    />
+  ) : null;
+
+  return (
+    <div className="collection-items-table-container min-h-0 flex-1 flex flex-col" dir="rtl">
+      <ScrollableTableLayout header={headerContent} pagination={paginationContent}>
+        <div className="items-table-container">
         <table className="collection-items-table" dir="rtl">
           <thead>
             <tr>
@@ -195,7 +237,7 @@ const CollectionItemsTable = ({
           </thead>
 
           <tbody>
-            {processedItems.map(item => {
+            {paginatedItems.map(item => {
               const isEditing     = editingId === item.item_id;
               const isRowSelected = selectedItems.has(item.item_id);
 
@@ -275,6 +317,7 @@ const CollectionItemsTable = ({
           </tbody>
         </table>
       </div>
+      </ScrollableTableLayout>
 
       {!isReadOnly && onBulkEdit && (
         <BulkEditModal isOpen={isBulkEditOpen} onClose={() => setIsBulkEditOpen(false)}

@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaArrowRight, FaCog, FaPlus, FaBoxOpen } from 'react-icons/fa';
-import { Button, Spinner } from '../../components/common';
+import { Button, Spinner, Tabs } from '../../components/common';
 import CollectionSettings from '../../components/MyComponents/Settings/CollectionSettings';
 import CollectionItemsTable from '../../components/MyComponents/CollectionItemsTable';
 import AssignItemDialog from '../../components/MyComponents/AssignItemDialog';
@@ -71,42 +71,31 @@ const CollectionDetails = () => {
     return <div className="p-8 text-center text-lg text-gray-500">האוסף לא נמצא</div>;
   }
 
-  // Header Content
-  const header = (
-    <div className="collection-header" dir="rtl">
-        <div className="flex items-center justify-center mb-4 relative min-h-[40px]">
-             <div className="absolute right-0">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/my-components')} className="text-gray-500 hover:text-gray-900">
-                    <FaArrowRight /> חזרה
-                </Button>
-            </div>
-            <h1 className="text-xl font-bold text-gray-900">{collection.name}</h1>
-        </div>
-        
-        <div className="access-tabs">
-            <button
-                className={`tab-btn ${activeTab === 'items' ? 'active' : ''}`}
-                onClick={() => setActiveTab('items')}
-            >
-                <FaBoxOpen />
-                פריטים ({items.length})
-            </button>
-            <button
-                className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
-                onClick={() => setActiveTab('settings')}
-            >
-                <FaCog />
-                הגדרות
-            </button>
-        </div>
-    </div>
-  );
-
   return (
-    <ScrollableTableLayout header={header}>
-        <div className="p-6 my-components-page bg-gray-50 min-h-full" dir="rtl">
+    <div className="my-components-page" dir="rtl">
+        
+        {/* TABS */}
+        <Tabs 
+            tabs={[
+                { id: 'items', label: `פריטים (${items.length})`, icon: <FaBoxOpen /> },
+                { id: 'settings', label: 'הגדרות', icon: <FaCog /> }
+            ]}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+        />
+        
+        {/* Title and Back Button Row */}
+        <div className="flex items-center justify-center relative mb-4">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/my-components')} className="text-gray-500 hover:text-gray-900 absolute right-0">
+                <FaArrowRight className="ml-2" /> חזרה
+            </Button>
+            <h3 className="text-xl font-bold text-gray-900">{collection.name}</h3>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-h-0">
             {activeTab === 'items' && (
-                <div className="space-y-4">
+                <div className="flex-1 flex flex-col min-h-0">
                     {isItemsLoading ? (
                         <div className="flex justify-center py-12"><Spinner /></div>
                     ) : (
@@ -126,11 +115,13 @@ const CollectionDetails = () => {
             )}
             
             {activeTab === 'settings' && (
-                <CollectionSettings 
-                    collection={collection}
-                    isOwner={isOwner}
-                    canEdit={canEdit}
-                />
+                <div style={{ paddingTop: '1rem' }}>
+                    <CollectionSettings 
+                        collection={collection}
+                        isOwner={isOwner}
+                        canEdit={canEdit}
+                    />
+                </div>
             )}
         </div>
 
@@ -140,7 +131,7 @@ const CollectionDetails = () => {
             onAssign={handleAssignItems}
             isAssigning={isAssigning}
         />
-    </ScrollableTableLayout>
+    </div>
   );
 };
 

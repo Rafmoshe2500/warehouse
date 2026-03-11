@@ -9,9 +9,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  /* Removed margin-bottom here, added in 2-pane styles section */
 }
 
+/* Added specific style for a header that might be outside the layout */
+.page-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+}
 .user-management .user-management-header h1 {
   font-size: 2rem;
   color: var(--text-primary);
@@ -147,6 +157,38 @@
 .user-management .status-badge.inactive {
   background: #e74c3c;
   color: white;
+}
+
+/* Form Read-Only Display Styles */
+.readonly-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.readonly-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.readonly-info-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.readonly-info-value {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .user-management .actions-cell {
@@ -378,4 +420,139 @@
 
 [data-theme="dark"] .user-management .delete-warning {
   background: rgba(255, 193, 7, 0.15);
+}
+
+/* 2-Pane Layout Styles */
+.user-management {
+  height: calc(100vh - 120px); /* Adjust based on your header height */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.management-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex: 1;
+  overflow: hidden;
+}
+
+.list-pane {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.user-management-header {
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.users-table-container {
+  flex: 1;
+  overflow-y: auto;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+}
+
+/* Custom Scrollbar for list and details */
+.users-table-container::-webkit-scrollbar,
+.details-pane::-webkit-scrollbar {
+  width: 6px;
+}
+
+.users-table-container::-webkit-scrollbar-track,
+.details-pane::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.users-table-container::-webkit-scrollbar-thumb,
+.details-pane::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 10px;
+}
+
+.users-table-container::-webkit-scrollbar-thumb:hover,
+.details-pane::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-muted);
+}
+
+.details-pane {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+[data-theme="dark"] .details-pane {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.empty-selection-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-height: 400px;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  opacity: 0.5;
+  color: var(--text-muted);
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.users-table tbody tr.clickable-row {
+  transition: all 0.2s ease-in-out;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.users-table tbody tr.clickable-row:hover {
+  background: var(--bg-tertiary);
+  transform: translateX(-4px);
+}
+
+.users-table tbody tr.selected-row {
+  background: var(--bg-tertiary);
+  border-right: 4px solid var(--accent-primary);
+  border-left: none;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .users-table tbody tr.selected-row {
+  background: var(--bg-tertiary);
+}
+
+@media (max-width: 1024px) {
+  .management-layout {
+    flex-direction: column;
+  }
+  .details-pane {
+    width: 100%;
+    position: static;
+  }
 }

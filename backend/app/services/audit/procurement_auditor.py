@@ -63,3 +63,10 @@ class ProcurementAuditor:
             resource_id=order_id,
             changes={"filename": filename}
         )
+
+    async def delete_all_order_logs(self, order_id: str):
+        """Deletes all audit logs associated to a specific procurement order."""
+        await self.audit_service.delete_resource_logs(
+            target_resource="procurement_order",
+            resource_id=order_id
+        )

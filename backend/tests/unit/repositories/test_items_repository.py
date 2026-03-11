@@ -197,6 +197,44 @@ class TestItemsRepository:
         assert items[1]["catalog_number"] == "B-001"
         assert items[2]["catalog_number"] == "C-001"
 
+    @pytest.mark.asyncio
+    async def test_search_with_location_filter(self, test_items_collection, sample_item_data):
+        """Test search filters by location field."""
+        repo = ItemsRepository(test_items_collection)
+
+        for loc in ["SHELF-A", "SHELF-B", "SHELF-A"]:
+            data = sample_item_data.copy()
+            data["catalog_number"] = f"LOC-{loc}"
+            data["location"] = loc
+            data["created_at"] = datetime.now(timezone.utc)
+            data["updated_at"] = datetime.now(timezone.utc)
+            await repo.create(data)
+
+        filter_params = ItemFilter(location="SHELF-A", page=1, limit=10)
+        items, total = await repo.search(filter_params)
+
+        assert total == 2
+        assert all("SHELF-A" in item["location"] for item in items)
+
+    @pytest.mark.asyncio
+    async def test_search_with_manufacturer_filter(self, test_items_collection, sample_item_data):
+        """Test search filters by manufacturer field."""
+        repo = ItemsRepository(test_items_collection)
+
+        for mfr in ["Cisco", "HP", "Cisco"]:
+            data = sample_item_data.copy()
+            data["catalog_number"] = f"MFR-{mfr}"
+            data["manufacturer"] = mfr
+            data["created_at"] = datetime.now(timezone.utc)
+            data["updated_at"] = datetime.now(timezone.utc)
+            await repo.create(data)
+
+        filter_params = ItemFilter(manufacturer="Cisco", page=1, limit=10)
+        items, total = await repo.search(filter_params)
+
+        assert total == 2
+        assert all("Cisco" in item["manufacturer"] for item in items)
+
     # ========== Update Tests ==========
 
     @pytest.mark.asyncio

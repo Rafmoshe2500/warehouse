@@ -3,7 +3,7 @@ import { Button, Input } from '../common';
 import PermissionSelector from './PermissionSelector';
 import './GroupForm.css';
 
-const GroupForm = ({ group, onSubmit, onCancel }) => {
+const GroupForm = ({ group, onSubmit, onCancel, onDelete }) => {
     const [formData, setFormData] = useState({
         name: '',
         role: 'user',
@@ -20,6 +20,13 @@ const GroupForm = ({ group, onSubmit, onCancel }) => {
                 role: group.role || 'user',
                 permissions: group.permissions || [],
                 is_active: group.is_active !== false,
+            });
+        } else {
+            setFormData({
+                name: '',
+                role: 'user',
+                permissions: [],
+                is_active: true,
             });
         }
     }, [group]);
@@ -54,25 +61,53 @@ const GroupForm = ({ group, onSubmit, onCancel }) => {
     };
 
     return (
-        <div className="group-form-overlay" onClick={onCancel}>
-            <div className="group-form" onClick={e => e.stopPropagation()}>
-                <h2>{group ? 'עריכת קבוצה' : 'הוספת קבוצה חדשה'}</h2>
-
+        <div className="group-form">
                 {error && <div className="group-form__error">{error}</div>}
+
+                {group && (
+                    <div className="readonly-info-grid">
+                        <div className="readonly-info-item">
+                            <span className="readonly-info-label">שם קבוצה</span>
+                            <span className="readonly-info-value">{group.name}</span>
+                        </div>
+                        <div className="readonly-info-item">
+                            <span className="readonly-info-label">סטטוס</span>
+                            <span className="readonly-info-value">
+                                <span className={`status-badge ${group.is_active ? 'active' : 'inactive'}`}>
+                                    {group.is_active ? 'פעילה' : 'לא פעילה'}
+                                </span>
+                            </span>
+                        </div>
+                        <div className="readonly-info-item">
+                            <span className="readonly-info-label">תפקיד מערכת</span>
+                            <span className="readonly-info-value">
+                                <span className={`role-badge role-${group.role || 'user'}`}>
+                                    {group.role === 'admin' ? 'מנהל' : 'משתמש'}
+                                </span>
+                            </span>
+                        </div>
+                        <div className="readonly-info-item">
+                            <span className="readonly-info-label">תאריך יצירה</span>
+                            <span className="readonly-info-value">{new Date(group.created_at).toLocaleDateString('he-IL')}</span>
+                        </div>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-grid">
-                        <Input
-                            label="שם קבוצה"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required={!group}
-                            minLength={2}
-                            placeholder="הכנס שם קבוצה"
-                        />
+                        {!group && (
+                            <Input
+                                label="שם קבוצה"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                required={!group}
+                                minLength={2}
+                                placeholder="הכנס שם קבוצה"
+                            />
+                        )}
                         
-                        <div className="full-width">
+                        <div className="full-width" style={{ marginTop: group ? '0.5rem' : '0' }}>
                             <PermissionSelector
                                 selectedPermissions={formData.permissions}
                                 onChange={(newPermissions) => setFormData({ ...formData, permissions: newPermissions })}
@@ -94,17 +129,23 @@ const GroupForm = ({ group, onSubmit, onCancel }) => {
                         )}
                     </div>
 
-                    <div className="group-form__actions">
-                        <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
-                            ביטול
-                        </Button>
-                        <Button type="submit" variant="primary" disabled={loading}>
-                            {loading ? 'שומר...' : group ? 'עדכון' : 'הוספה'}
-                        </Button>
+                    <div className="group-form__actions" style={{ display: 'flex', justifyContent: onDelete ? 'space-between' : 'flex-end', width: '100%' }}>
+                        {onDelete && (
+                            <Button type="button" variant="danger" onClick={onDelete} disabled={loading}>
+                                מחיקה
+                            </Button>
+                        )}
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
+                                ביטול
+                            </Button>
+                            <Button type="submit" variant="primary" disabled={loading}>
+                                {loading ? 'שומר...' : group ? 'עדכון' : 'הוספה'}
+                            </Button>
+                        </div>
                     </div>
                 </form>
             </div>
-        </div>
     );
 };
 

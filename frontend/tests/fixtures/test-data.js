@@ -6,29 +6,29 @@ export const testUsers = {
   admin: {
     username: 'admin',
     password: 'password',  // Updated to match actual DB password
-    role: 'admin',
+    role: 'superadmin',
     userType: 'local'
   },
   
   user: {
-    username: 'testuser',
-    password: 'user123',
+    username: 'm123ro',
+    password: 'password',
     role: 'user',
     userType: 'local',
     permissions: ['inventory:ro']
   },
   
   inventoryManager: {
-    username: 'invmanager',
-    password: 'inv123',
+    username: 'm123rw',
+    password: 'password',
     role: 'user',
     userType: 'local',
     permissions: ['inventory:rw']
   },
   
   procurementUser: {
-    username: 'procuser',
-    password: 'proc123',
+    username: 'p123ro',
+    password: 'password',
     role: 'user',
     userType: 'local',
     permissions: ['procurement:ro']

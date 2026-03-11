@@ -241,3 +241,32 @@ class AuditRepository:
             })
             
         return await self.collection.count_documents({"$or": conditions})
+
+    async def delete_logs_by_resource(self, target_resource: str, resource_id: str) -> int:
+        """Delete all audit logs for a specific resource."""
+        wrappers = ["user_action", "item_action", "procurement_action", "general_action"]
+        query_wrappers = wrappers
+        
+        if target_resource == "user" or target_resource == "group":
+            query_wrappers = ["user_action"]
+        elif target_resource == "item":
+            query_wrappers = ["item_action"]
+        elif target_resource == "procurement_order":
+            query_wrappers = ["procurement_action"]
+
+        conditions = []
+        for w in query_wrappers:
+            # We want to delete where the inner document has this resource_id
+            # Note: We must also filter by target_resource to avoid deleting the wrong type's logs if IDs collide
+            conditions.append({
+                "$and": [
+                    {f"{w}.target_resource": target_resource},
+                    {f"{w}.resource_id": resource_id}
+                ]
+            })
+
+        query = {"$or": conditions}
+        
+        result = await self.collection.delete_many(query)
+        return result.deleted_count
+

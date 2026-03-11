@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { FiArrowRight, FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { FiArrowRight, FiPlus, FiEdit2, FiTrash2, FiUsers } from 'react-icons/fi';
 import { Button, SkeletonTable } from '../../components/common';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
@@ -25,7 +25,7 @@ const UserManagement = ({ isEmbedded = false }) => {
     deleteUser 
   } = useUsers();
 
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -40,12 +40,12 @@ const UserManagement = ({ isEmbedded = false }) => {
 
   const handleCreateClick = () => {
     setSelectedUser(null);
-    setShowCreateModal(true);
+    setIsCreating(true);
   };
 
-  const handleEditClick = (user) => {
+  const handleRowClick = (user) => {
     setSelectedUser(user);
-    setShowCreateModal(true);
+    setIsCreating(false);
   };
 
   const handleUserSubmit = async (userData) => {
@@ -57,7 +57,7 @@ const UserManagement = ({ isEmbedded = false }) => {
         await createUser(userData);
         success('משתמש נוצר בהצלחה!');
       }
-      setShowCreateModal(false);
+      setIsCreating(false);
     } catch (err) {
       // Rethrow to let UserForm handle the error display
       throw err;
@@ -103,15 +103,8 @@ const UserManagement = ({ isEmbedded = false }) => {
   return (
     <div className="user-management">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
-      
-      <div className="user-management-header">
-        <Button 
-          variant="primary" 
-          icon={<FiPlus />} 
-          onClick={() => setShowCreateModal(true)}
-        >
-          משתמש חדש
-        </Button>
+      <div className="page-top-header">
+        <h2>ניהול משתמשים</h2>
         {!isEmbedded && (
           <Button 
             variant="secondary" 
@@ -122,71 +115,81 @@ const UserManagement = ({ isEmbedded = false }) => {
           </Button>
         )}
       </div>
+      
+      <div className="management-layout">
+        <div className="list-pane">
+          <div className="user-management-header">
+            <Button 
+              variant="primary" 
+              icon={<FiPlus />} 
+              onClick={handleCreateClick}
+              style={{ width: '100%' }}
+            >
+              משתמש חדש
+            </Button>
+          </div>
 
-      <div className="users-table-container">
-        <table className="users-table">
-          <thead>
-            <tr>
-              <th>שם משתמש</th>
-              <th>סוג משתמש</th>
-              <th>תפקיד</th>
-              <th>סטטוס</th>
-              <th>נוצר על ידי</th>
-              <th>תאריך יצירה</th>
-              <th>פעולות</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(user => (
-              <tr key={user.id}>
-                <td>{user.username}</td>
-                <td>
-                  <span className={`status-badge ${user.user_type === 'ad' ? 'ad-user' : 'local-user'}`}>
-                    {user.user_type === 'ad' ? 'Active Directory' : 'מקומי'}
-                  </span>
-                </td>
-                <td>{getRoleBadge(user.role)}</td>
-                <td>
-                  <span className={`status-badge ${user.is_active ? 'active' : 'inactive'}`}>
-                    {user.is_active ? 'פעיל' : 'לא פעיל'}
-                  </span>
-                </td>
-                <td>{user.created_by || 'system'}</td>
-                <td>{new Date(user.created_at).toLocaleDateString('he-IL')}</td>
-                <td>
-                  {user.role !== 'superadmin' && (
-                    <div className="actions-cell">
-                      <button 
-                        className="icon-btn"
-                        onClick={() => handleEditClick(user)}
-                        title="ערוך משתמש"
-                      >
-                        <FiEdit2 />
-                      </button>
-                      <button
-                        className="icon-btn delete-btn"
-                        onClick={() => handleDeleteClick(user)}
-                        title="מחק משתמש"
-                      >
-                        <FiTrash2 />
-                      </button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <div className="users-table-container">
+            <table className="users-table">
+              <thead>
+                <tr>
+                  <th>משתמשים ({users.length})</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map(user => (
+                  <tr 
+                    key={user.id} 
+                    onClick={() => handleRowClick(user)}
+                    className={selectedUser?.id === user.id ? 'selected-row clickable-row' : 'clickable-row'}
+                  >
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ 
+                          width: '32px', 
+                          height: '32px', 
+                          borderRadius: '50%', 
+                          background: 'var(--accent-primary)', 
+                          color: 'white', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          fontWeight: 'bold'
+                        }}>
+                          {user.username.charAt(0).toUpperCase()}
+                        </div>
+                        {user.username}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="details-pane">
+          {(selectedUser || isCreating) ? (
+            <UserForm
+              user={selectedUser}
+              onSubmit={handleUserSubmit}
+              onCancel={() => {
+                setSelectedUser(null);
+                setIsCreating(false);
+              }}
+              onDelete={selectedUser?.role !== 'superadmin' ? () => handleDeleteClick(selectedUser) : null}
+            />
+          ) : (
+            <div className="empty-selection-placeholder">
+              <div className="placeholder-content">
+                <FiUsers className="placeholder-icon" />
+                <h3>ניהול משתמשים</h3>
+                <p>בחר משתמש מהרשימה כדי לצפות בפרטים, לערוך הרשאות או למחוק.</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-
-      {/* Create/Edit User Modal */}
-      {showCreateModal && (
-        <UserForm
-          user={selectedUser}
-          onSubmit={handleUserSubmit}
-          onCancel={() => setShowCreateModal(false)}
-        />
-      )}
 
       {/* Delete User Modal */}
       {showDeleteModal && userToDelete && (

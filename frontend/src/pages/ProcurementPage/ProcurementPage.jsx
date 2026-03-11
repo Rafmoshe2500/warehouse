@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { FiPlus, FiSearch, FiClock, FiCheckCircle, FiX } from 'react-icons/fi';
-import { Button, Input, Pagination, Spinner, ToastContainer, SkeletonTable } from '../../components/common';
+import { Button, Input, Pagination, Spinner, ToastContainer, SkeletonTable, Tabs } from '../../components/common';
 import ProcurementTable from '../../components/procurement/ProcurementTable';
 import ProcurementModal from '../../components/procurement/ProcurementModal';
 import ProcurementFilesModal from '../../components/procurement/ProcurementFilesModal';
@@ -20,10 +20,7 @@ const ProcurementPage = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
-  const [filters, setFilters] = useState({
-    catalog_number: '',
-    manufacturer: ''
-  });
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Modal states
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -47,12 +44,14 @@ const ProcurementPage = () => {
   const fetchOrders = async (filtersOverride = null) => {
     setLoading(true);
     try {
-      const currentFilters = filtersOverride || filters;
       const queryParams = {
         page,
         page_size: pageSize,
-        ...currentFilters
       };
+
+      if (searchTerm) {
+        queryParams.search = searchTerm;
+      }
 
       // Add status filter based on active tab
       if (activeTab === 'process') {
@@ -78,13 +77,9 @@ const ProcurementPage = () => {
   };
 
   const handleClearFilters = () => {
-    const emptyFilters = {
-      catalog_number: '',
-      manufacturer: ''
-    };
-    setFilters(emptyFilters);
+    setSearchTerm('');
     setPage(1);
-    fetchOrders(emptyFilters);
+    fetchOrders(); // This will not use searchTerm anymore
   };
 
   const handleTabChange = (tab) => {
@@ -143,6 +138,26 @@ const ProcurementPage = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleMarkAsOrdered = async (order) => {
+    try {
+      await procurementService.updateOrder(order.id, { status: 'ordered' });
+      success('הסטטוס עודכן ל"יצא לדרך"');
+      fetchOrders();
+    } catch (err) {
+      error(err.response?.data?.detail || 'שגיאה בעדכון הסטטוס');
+    }
+  };
+
+  const handleMarkAsReceived = async (order) => {
+    try {
+      await procurementService.updateOrder(order.id, { status: 'received' });
+      success('הסטטוס עודכן ל"רכש הגיע"');
+      fetchOrders();
+    } catch (err) {
+      error(err.response?.data?.detail || 'שגיאה בעדכון הסטטוס');
+    }
+  };
+
   const openFilesModal = (order) => {
     setSelectedOrderForFiles(order);
     setIsFilesModalOpen(true);
@@ -156,12 +171,14 @@ const ProcurementPage = () => {
   const handleFileChange = async () => {
     try {
       // Refetch with current tab filters
-      const currentFilters = filters;
       const queryParams = {
         page,
         page_size: pageSize,
-        ...currentFilters
       };
+
+      if (searchTerm) {
+        queryParams.search = searchTerm;
+      }
 
       // Add status filter based on active tab
       if (activeTab === 'process') {
@@ -196,7 +213,16 @@ const ProcurementPage = () => {
     <div className="procurement-page">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       
-      <div className="procurement-header">
+      <Tabs 
+        tabs={[
+          { id: 'process', label: 'בתהליך', icon: <FiClock /> },
+          { id: 'completed', label: 'הסתיים', icon: <FiCheckCircle /> }
+        ]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
+
+      <div className="procurement-controls-row">
         {canEdit && (
           <Button 
             variant="primary" 
@@ -206,50 +232,23 @@ const ProcurementPage = () => {
             הזמנה חדשה
           </Button>
         )}
-      </div>
 
-      <div className="access-tabs">
-        <button 
-          className={`tab-btn ${activeTab === 'process' ? 'active' : ''}`}
-          onClick={() => handleTabChange('process')}
-        >
-          <FiClock />
-          בתהליך
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'completed' ? 'active' : ''}`}
-          onClick={() => handleTabChange('completed')}
-        >
-          <FiCheckCircle />
-          הסתיים
-        </button>
-      </div>
-
-      <div className="procurement-controls">
         <form onSubmit={handleSearch} className="search-form">
           <Input
-            placeholder="חפש לפי מק&quot;ט..."
-            value={filters.catalog_number}
-            onChange={(e) => setFilters({...filters, catalog_number: e.target.value})}
-            className="search-input"
+            placeholder="חיפוש לפי מק&quot;ט, יצרן או מספר EMF..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input global-search"
+            icon={<FiSearch />}
           />
-          <Input
-            placeholder="חפש לפי יצרן..."
-            value={filters.manufacturer}
-            onChange={(e) => setFilters({...filters, manufacturer: e.target.value})}
-            className="search-input"
-          />
-          <Button type="submit" variant="secondary" icon={<FiSearch />}>
-            חפש
-          </Button>
-          {(filters.catalog_number || filters.manufacturer) && (
+          {searchTerm && (
             <Button 
               type="button" 
               variant="tertiary" 
               onClick={handleClearFilters}
               icon={<FiX />}
+              style={{ padding: '0.5rem' }}
             >
-              נקה
             </Button>
           )}
         </form>
@@ -267,6 +266,8 @@ const ProcurementPage = () => {
             onDelete={openDeleteModal}
             onManageFiles={openFilesModal}
             onHistory={openHistoryModal}
+            onMarkAsOrdered={handleMarkAsOrdered}
+            onMarkAsReceived={handleMarkAsReceived}
           />
 
           <Pagination

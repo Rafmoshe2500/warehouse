@@ -2,7 +2,7 @@
 import { FaPlus, FaSearch, FaLayerGroup } from 'react-icons/fa';
 import CollectionCard from '../../components/MyComponents/CollectionCard';
 import CreateCollectionDialog from '../../components/MyComponents/CreateCollectionDialog';
-import { Button, Input, Spinner, SkeletonCards } from '../../components/common';
+import { Button, Input, Spinner, SkeletonCards, ScrollableTableLayout, Tabs } from '../../components/common';
 import { useMyComponents } from '../../hooks/useMyComponents';
 import './MyComponents.css';
 
@@ -50,19 +50,17 @@ const MyComponentsDashboard = () => {
     );
   }
 
-  return (
-    <div className="my-components-page" dir="rtl">
-      {/* Header */}
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">
-            <FaLayerGroup className="page-title-icon" />
-            המלאי שלי
-          </h1>
-          <p className="page-subtitle">
-            ניהול אוספי רכיבים ומעקב אחריהם.
-          </p>
-        </div>
+  const header = (
+    <div dir="rtl">
+      {/* Tabs */}
+      <Tabs 
+        tabs={[{ id: 'collections', label: 'אוספים', icon: <FaLayerGroup /> }]}
+        activeTab="collections"
+        onTabChange={() => {}}
+      />
+
+      {/* Controls Row */}
+      <div className="mycomponents-controls-row">
         {showHeaderCreateButton && (
           <Button 
               variant="primary" 
@@ -72,45 +70,50 @@ const MyComponentsDashboard = () => {
               אוסף חדש
           </Button>
         )}
-      </div>
 
-      {/* Toolbar */}
-      <div className="toolbar">
         <div className="search-container">
             <Input 
                 placeholder="חפש באוספים..." 
                 icon={<FaSearch className="search-input-icon" />}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input global-search"
             />
         </div>
       </div>
+    </div>
+  );
 
-      {/* Grid */}
-      {filteredCollections.length > 0 ? (
-        <div className="collections-grid">
-          {filteredCollections.map(collection => (
-            <CollectionCard key={collection.id} collection={collection} />
-          ))}
-        </div>
-      ) : (
-        <div className="empty-state">
-            <div className="empty-state__icon">
-                <FaLayerGroup size={32} />
-            </div>
-            <h3 className="empty-state__title">לא נמצאו אוספים</h3>
-            <p className="empty-state__description">
-                {searchQuery 
-                    ? `לא נמצאו תוצאות עבור "${searchQuery}"` 
-                    : "צור את האוסף הראשון שלך כדי להתחיל לעקוב אחר רכיבים."}
-            </p>
-            {!searchQuery && (
-                <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
-                    צור אוסף
-                </Button>
-            )}
-        </div>
-      )}
+  return (
+    <div className="my-components-page" dir="rtl">
+      {header}
+      <div className="px-6 pb-6 pt-2">
+        {/* Grid */}
+        {filteredCollections.length > 0 ? (
+          <div className="collections-grid">
+            {filteredCollections.map(collection => (
+              <CollectionCard key={collection.id} collection={collection} />
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state">
+              <div className="empty-state__icon">
+                  <FaLayerGroup size={32} />
+              </div>
+              <h3 className="empty-state__title">לא נמצאו אוספים</h3>
+              <p className="empty-state__description">
+                  {searchQuery 
+                      ? `לא נמצאו תוצאות עבור "${searchQuery}"` 
+                      : "צור את האוסף הראשון שלך כדי להתחיל לעקוב אחר רכיבים."}
+              </p>
+              {!searchQuery && (
+                  <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
+                      צור אוסף
+                  </Button>
+              )}
+          </div>
+        )}
+      </div>
 
       {/* Dialogs */}
       <CreateCollectionDialog 

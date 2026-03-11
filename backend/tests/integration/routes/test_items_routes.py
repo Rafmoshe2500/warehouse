@@ -82,3 +82,29 @@ class TestItemsRoutes:
         response = await async_client.get("/api/items/stale")
         assert response.status_code == 200
         assert "items" in response.json()
+
+    async def test_bulk_delete_route(self, async_client):
+        """POST /items/bulk-delete - Bulk delete multiple items."""
+        c1 = await async_client.post("/api/items", json={"catalog_number": "BDEL-R1"})
+        c2 = await async_client.post("/api/items", json={"catalog_number": "BDEL-R2"})
+        ids = [c1.json()["_id"], c2.json()["_id"]]
+
+        response = await async_client.post("/api/items/bulk-delete", json={
+            "ids": ids,
+            "reason": "Route bulk delete test"
+        })
+
+        assert response.status_code == 200
+        assert response.json()["deleted_count"] == 2
+
+    async def test_get_items_with_catalog_filter(self, async_client):
+        """GET /items?catalog_number=... - Filter items by catalog number."""
+        await async_client.post("/api/items", json={"catalog_number": "FILTER-ROUTE-MATCH"})
+        await async_client.post("/api/items", json={"catalog_number": "DIFFERENT-ITEM"})
+
+        response = await async_client.get("/api/items?catalog_number=FILTER-ROUTE")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["total"] == 1
+        assert data["items"][0]["catalog_number"] == "FILTER-ROUTE-MATCH"

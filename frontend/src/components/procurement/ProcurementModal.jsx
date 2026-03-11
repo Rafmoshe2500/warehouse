@@ -4,6 +4,8 @@ import { Button, Input, Select } from '../common';
 import Spinner from '../common/Spinner/Spinner';
 import { PROCUREMENT_STATUS_OPTIONS } from '../../utils/constants';
 import { useToast } from '../../hooks/useToast';
+import { useCatalog } from '../../hooks/useCatalog';
+import { useDebounce } from '../../hooks/useDebounce';
 import './ProcurementModal.css';
 
 const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdit = false }) => {
@@ -19,33 +21,85 @@ const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdi
       }
     ],
     total_amount: 0,
-    status: 'waiting_emf',
-    received_emf: false,
+    status: 'waiting_bom_emf',
+    emf_number: '',
     received_bom: false
   });
   const [loading, setLoading] = useState(false);
   const [expandedItemId, setExpandedItemId] = useState(1);
   const { error: toastError } = useToast();
 
-  // Calculate status based on checkboxes
-  const calculateStatus = (received_emf, received_bom) => {
-    if (received_emf && received_bom) return 'ordered';
-    if (received_emf || received_bom) return received_emf ? 'waiting_bom' : 'waiting_emf';
-    return 'waiting_emf';
+  // --- Auto-Complete State ---
+  const [activeSuggestionItemId, setActiveSuggestionItemId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  
+  // Fetch suggestions only when query length is >= 5 chars
+  const { items: catalogSuggestions, loading: loadingSuggestions } = useCatalog({
+      search: debouncedSearchQuery,
+      limit: 10
+  });
+
+  // Automatically check for exact match or show dropdown
+  useEffect(() => {
+    if (!activeSuggestionItemId || debouncedSearchQuery.length < 5) return;
+
+    // Check exact match (100% matched by text, case-insensitive)
+    const exactMatch = catalogSuggestions?.find(
+        (c) => c.catalog_number.trim().toLowerCase() === debouncedSearchQuery.trim().toLowerCase()
+    );
+
+    if (exactMatch) {
+       // Auto-fill manufacturer and description if exact match!
+       setFormData(prev => ({
+           ...prev,
+           bom_items: prev.bom_items.map(item => 
+               item.item_id === activeSuggestionItemId
+                   ? { 
+                       ...item, 
+                       manufacturer: exactMatch.manufacturer, 
+                       description: exactMatch.description 
+                   }
+                   : item
+           )
+       }));
+       // Optionally close suggestions immediately upon exact match
+       // setActiveSuggestionItemId(null); 
+    }
+  }, [catalogSuggestions, debouncedSearchQuery, activeSuggestionItemId]);
+
+  const handleSuggestionSelect = (itemId, suggestion) => {
+    setFormData(prev => ({
+       ...prev,
+       bom_items: prev.bom_items.map(item => 
+           item.item_id === itemId
+               ? { 
+                   ...item, 
+                   catalog_number: suggestion.catalog_number,
+                   manufacturer: suggestion.manufacturer, 
+                   description: suggestion.description 
+               }
+               : item
+       )
+    }));
+    setActiveSuggestionItemId(null);
+    setSearchQuery('');
   };
 
   // Get status label
   const getStatusLabel = () => {
-    const { received_emf, received_bom } = formData;
-    if (received_emf && received_bom) return '✓ סטטוס יצא לדרך';
-    if (received_emf && !received_bom) return 'מחכים ל-BOM';
-    if (!received_emf && received_bom) return 'מחכים ל-EMF';
-    return 'מחכים ל-BOM + EMF';
+    const { emf_number, received_bom, status } = formData;
+    if (status === 'received') return '✓ רכש הגיע';
+    if (status === 'ordered') return '✓ רכש יצא';
+    if (emf_number && received_bom) return 'מחכה שרכש ייצא';
+    if (emf_number && !received_bom) return 'מחכה ל-BOM';
+    if (!emf_number && received_bom) return 'מחכה ל-EMF';
+    return 'מחכה ל-BOM ו-EMF';
   };
 
   // Check if both EMF and BOM are received
   const canMarkAsCompleted = () => {
-    return formData.received_emf && formData.received_bom;
+    return !!formData.emf_number && formData.received_bom;
   };
 
   // Check if at least one is received
@@ -57,7 +111,8 @@ const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdi
     if (initialData) {
       setFormData({
         ...initialData,
-        order_date: new Date(initialData.order_date).toISOString().split('T')[0]
+        order_date: new Date(initialData.order_date).toISOString().split('T')[0],
+        emf_number: initialData.emf_number || ''
       });
     } else {
       setFormData({
@@ -72,8 +127,8 @@ const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdi
           }
         ],
         total_amount: 0,
-        status: 'waiting_emf',
-        received_emf: false,
+        status: 'waiting_bom_emf',
+        emf_number: '',
         received_bom: false
       });
     }
@@ -101,7 +156,7 @@ const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdi
     }
 
     // Determine status based on submission type
-    let statusToSubmit = calculateStatus(formData.received_emf, formData.received_bom);
+    let statusToSubmit = formData.status;
     if (isEdit && submissionType === 'complete') {
       statusToSubmit = 'received'; // Mark as received/completed
     }
@@ -119,37 +174,34 @@ const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdi
     }
   };;
 
-  // Filter options based on checkbox state
+  // Filter options based on state
   const getFilteredOptions = () => {
     return PROCUREMENT_STATUS_OPTIONS.filter(option => {
-      if (formData.received_emf && option.value === 'waiting_emf') return false;
+      if (formData.emf_number && option.value === 'waiting_bom_emf') return false;
+      if (formData.emf_number && option.value === 'waiting_emf') return false;
+      if (formData.received_bom && option.value === 'waiting_bom_emf') return false;
       if (formData.received_bom && option.value === 'waiting_bom') return false;
       return true;
     });
   };
 
   const handleStatusChange = (e) => {
-    const newStatus = e.target.value;
-    let updates = { status: newStatus };
-
-    // Auto-check boxes if Ordered is selected
-    if (newStatus === 'ordered' || newStatus === 'received') {
-      updates.received_emf = true;
-      updates.received_bom = true;
-    }
-
-    setFormData({ ...formData, ...updates });
+    setFormData({ ...formData, status: e.target.value });
   };
 
   const handleCheckboxChange = (field, checked) => {
-    const updates = { [field]: checked };
+    setFormData({ ...formData, [field]: checked });
+  };
+
+  const handleEmfNumberChange = (e) => {
+    const val = e.target.value;
+    const updates = { emf_number: val };
     
-    if (checked) {
-      if (field === 'received_emf' && formData.status === 'waiting_emf') {
-        updates.status = 'waiting_bom';
-      } else if (field === 'received_bom' && formData.status === 'waiting_bom') {
-        updates.status = 'ordered';
-      }
+    // Add temporary logic here just in case, but actual calculation happens on backend
+    if (!val && formData.status !== 'received' && formData.status !== 'ordered') {
+      updates.status = formData.received_bom ? 'waiting_emf' : 'waiting_bom_emf';
+    } else if (val && formData.status !== 'received' && formData.status !== 'ordered') {
+      updates.status = formData.received_bom ? 'waiting_order' : 'waiting_bom';
     }
     
     setFormData({ ...formData, ...updates });
@@ -193,6 +245,15 @@ const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdi
         item.item_id === itemId ? { ...item, [field]: value } : item
       )
     });
+
+    if (field === 'catalog_number') {
+        setSearchQuery(value);
+        if (value.length >= 5) {
+            setActiveSuggestionItemId(itemId);
+        } else {
+            setActiveSuggestionItemId(null);
+        }
+    }
   };
 
   // Check if current item is valid
@@ -285,13 +346,50 @@ const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdi
                   expandedItemId === item.item_id && (
                     <div key={item.item_id} className="bom-item-content">
                       <div className="bom-item-grid">
-                        <Input
-                          label='מק"ט'
-                          value={item.catalog_number}
-                          onChange={e => updateBomItem(item.item_id, 'catalog_number', e.target.value)}
-                          required
-                          placeholder='הכנס מק"ט'
-                        />
+                        <div className="autocomplete-container" style={{ position: 'relative' }}>
+                          <Input
+                            label='מק"ט'
+                            value={item.catalog_number}
+                            onChange={e => updateBomItem(item.item_id, 'catalog_number', e.target.value)}
+                            onFocus={() => {
+                               if (item.catalog_number.length >= 5) {
+                                  setSearchQuery(item.catalog_number);
+                                  setActiveSuggestionItemId(item.item_id);
+                               }
+                            }}
+                            onBlur={() => {
+                               // Delay hiding to allow click events on suggestions
+                               setTimeout(() => setActiveSuggestionItemId(null), 200);
+                            }}
+                            required
+                            placeholder='הכנס מק"ט'
+                          />
+                          
+                          {/* Auto-Complete Dropdown */}
+                          {activeSuggestionItemId === item.item_id && debouncedSearchQuery.length >= 5 && (
+                             <div className="autocomplete-dropdown">
+                                {loadingSuggestions ? (
+                                   <div className="autocomplete-loading"><Spinner inline size="small" /> מחפש...</div>
+                                ) : catalogSuggestions?.length > 0 ? (
+                                   catalogSuggestions.map(suggestion => (
+                                      <div 
+                                         key={suggestion._id} 
+                                         className="autocomplete-item"
+                                         onMouseDown={(e) => {
+                                             e.preventDefault(); // Prevent input onBlur from firing before click
+                                             handleSuggestionSelect(item.item_id, suggestion);
+                                         }}
+                                      >
+                                          <div className="ac-cat">{suggestion.catalog_number}</div>
+                                          <div className="ac-details">{suggestion.manufacturer} | {suggestion.description}</div>
+                                      </div>
+                                   ))
+                                ) : (
+                                   <div className="autocomplete-empty">לא נמצאו התאמות</div>
+                                )}
+                             </div>
+                          )}
+                        </div>
 
                         <Input
                           label="יצרן"
@@ -338,17 +436,46 @@ const ProcurementModal = ({ isOpen, onClose, onSubmit, initialData = null, isEdi
               >
                 <FiPlus /> הוסף מק"ט נוסף
               </button>
-              <div className="bom-controls-left">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={formData.received_emf}
-                    onChange={e => setFormData({...formData, received_emf: e.target.checked})}
-                  />
-                  <span>התקבל EMF</span>
-                </label>
+              <div className="bom-controls-left" style={{ alignItems: 'center' }}>
+                {(!formData.emf_number && formData.emf_number !== null && !formData.emf_number.trim()) ? (
+                   <div style={{ width: '220px', display: 'flex', alignItems: 'center', height: '38px' }}>
+                     <label className="checkbox-label" style={{ marginBottom: 0 }}>
+                       <input
+                         type="checkbox"
+                         checked={false}
+                         onChange={(e) => {
+                           if (e.target.checked) setFormData({...formData, emf_number: ' '}); // Space to trigger input
+                         }}
+                       />
+                       <span>התקבל EMF</span>
+                     </label>
+                   </div>
+                ) : (
+                   <div style={{ width: '220px', display: 'flex', alignItems: 'center', gap: '8px', height: '38px' }}>
+                     <Input
+                        placeholder="מספר EMF..."
+                        value={formData.emf_number.trim()}
+                        onChange={handleEmfNumberChange}
+                        onBlur={(e) => {
+                           if (!e.target.value.trim()) {
+                               handleEmfNumberChange({ target: { value: '' } });
+                           }
+                        }}
+                        autoFocus
+                     />
+                     <Button 
+                       variant="icon" 
+                       type="button" 
+                       onClick={() => handleEmfNumberChange({ target: { value: '' } })} 
+                       title="נקה EMF"
+                       className="delete-btn"
+                     >
+                       <FiTrash2 size={14} />
+                     </Button>
+                   </div>
+                )}
 
-                <label className="checkbox-label">
+                <label className="checkbox-label" style={{ marginBottom: 0 }}>
                   <input
                     type="checkbox"
                     checked={formData.received_bom}

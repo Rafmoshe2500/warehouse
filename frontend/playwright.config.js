@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Playwright configuration for warehouse management UI tests

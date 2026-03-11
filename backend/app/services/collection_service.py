@@ -441,6 +441,26 @@ class CollectionService:
         return enriched_items
 
 
+    async def export_collection(
+        self,
+        collection_id: str,
+        user_id: str,
+        user_groups: List[str] = [],
+        user_role: Optional[str] = None
+    ):
+        """Export collection items to Excel"""
+        from app.core.excel_parser import ExcelParser
+        
+        # Reuse existing logic to get fully enriched items, which includes permission checks
+        items = await self.get_collection_items(collection_id, user_id, user_groups, user_role)
+        
+        if not items:
+            from app.core.exceptions import ExcelFileException
+            raise ExcelFileException("לא נמצאו פריטים לאוסף זה")
+            
+        return ExcelParser.generate_inventory_excel(items)
+
+
     async def update_item_custom_values(
         self,
         collection_id: str,

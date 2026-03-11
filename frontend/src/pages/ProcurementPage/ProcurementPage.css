@@ -10,35 +10,21 @@
   direction: rtl;
 }
 
-.procurement-header {
+.procurement-controls-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-}
-
-.procurement-header h1 {
-  font-size: 2rem;
-  color: var(--text-primary);
-  margin: 0;
-}
-
-.procurement-controls {
-  margin-bottom: 2rem;
+  margin: 1.5rem 0;
 }
 
 .search-form {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   align-items: center;
-  background: var(--bg-secondary);
-  padding: 1rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
 }
 
 .search-input {
-  min-width: 200px;
+  width: 400px;
 }
 
 

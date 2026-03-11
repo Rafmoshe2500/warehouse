@@ -18,6 +18,9 @@ export const API_ENDPOINTS = {
   IMPORT_PROJECTS: '/items/import-projects',
   EXPORT_EXCEL: '/items/export-excel',
 
+  // Catalog
+  CATALOG: '/catalog',
+
   // Logs
   LOGS: '/audit/logs',
 
@@ -51,4 +54,5 @@ export const API_ENDPOINTS = {
   COLLECTION_ITEMS: (id) => `/collections/${id}/items`,
   COLLECTION_ITEM_BY_ID: (collectionId, itemId) => `/collections/${collectionId}/items/${itemId}`,
   COLLECTION_PERMISSIONS: (id) => `/collections/${id}/permissions`,
+  EXPORT_COLLECTION: (id) => `/collections/${id}/export`,
 };

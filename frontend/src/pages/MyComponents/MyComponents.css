@@ -1,16 +1,14 @@
 /* My Components Pages Styles */
 
 .my-components-page {
-  padding: var(--spacing-lg);
-  height: 100%;
+  padding: 2rem;
+  min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition: all 0.3s ease;
   max-width: var(--page-max-width);
-  margin: 0 auto;
   width: 100%;
+  margin: 0 auto;
+  direction: rtl;
 }
 
 /* Button Icon Spacing - For manual icons inside children */
@@ -65,13 +63,21 @@
     padding: 1rem 1.5rem 0;
 }
 
-/* Toolbar */
-.toolbar {
+/* Controls Row mirroring Procurement/Inventory */
+.mycomponents-controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: var(--spacing-lg);
 }
 
 .search-container {
-  max-width: 28rem;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 400px;
 }
 
 .search-input-icon {

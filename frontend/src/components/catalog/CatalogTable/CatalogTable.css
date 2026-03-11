@@ -1,0 +1,118 @@
+.catalog-table-container {
+  overflow-x: auto;
+  border-radius: 16px;
+  background-color: var(--bg-secondary);
+  position: relative;
+  user-select: none;
+  outline: none;
+}
+
+.catalog-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  text-align: right;
+  direction: rtl;
+}
+
+.catalog-table th,
+.catalog-table td {
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.catalog-table th {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 45px;
+  box-shadow: 0 1px 0 var(--border-color);
+}
+
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable-header:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-icon {
+  display: flex;
+  align-items: center;
+  color: var(--accent-primary);
+}
+
+.active-sort {
+  background-color: var(--bg-tertiary) !important;
+}
+
+
+
+.filter-cell, .filter-cell-empty {
+  position: sticky;
+  top: 45px;
+  z-index: 15;
+  height: 45px;
+  padding: 0 0.5rem !important;
+  background: var(--bg-secondary);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--border-color);
+  vertical-align: middle;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.filter-cell input {
+  height: 25px !important;
+  min-height: 25px !important;
+  padding: 0 0.5rem !important;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 25px;
+}
+
+.filter-cell input:focus {
+  background: var(--input-bg-focus);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--input-focus-shadow);
+  outline: none;
+}
+
+.catalog-table tbody tr {
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.2s ease;
+  min-height: 35px;
+}
+
+.catalog-table-row:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.catalog-table td {
+  color: var(--text-secondary);
+}
+
+.col-total_in_stock {
+  font-weight: bold;
+  color: var(--accent-primary);
+}

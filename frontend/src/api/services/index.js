@@ -28,6 +28,7 @@ export { createExcelService, default as excelService } from './excelService';
 export { createLogService, default as logService } from './logService';
 export { createAuthService, default as authService } from './authService';
 export { createCollectionsService, default as collectionsService } from './collectionsService';
+export { createCatalogService, default as catalogService } from './catalogService';
 
 // Utility Services
 export { 
@@ -36,10 +37,7 @@ export {
   ERROR_TYPES,
   ERROR_MESSAGES,
 } from './errorService';
-export { 
-  createCachingService, 
-  default as cachingService,
-} from './cachingService';
+
 
 /**
  * Service factory creator that creates all services with same apiClient
@@ -60,9 +58,9 @@ export const createServices = (apiClient, options = {}) => {
     itemService: require('./itemService').createItemService(apiClient),
     excelService: require('./excelService').createExcelService(apiClient),
     logService: require('./logService').createLogService(apiClient),
-    logService: require('./logService').createLogService(apiClient),
     authService: require('./authService').createAuthService(apiClient),
     collectionsService: require('./collectionsService').createCollectionsService(apiClient),
+    catalogService: require('./catalogService').createCatalogService(apiClient),
 
     // Utility Services
     errorService: require('./errorService').createErrorService(errorServiceOptions),

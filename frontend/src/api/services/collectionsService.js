@@ -128,6 +128,28 @@ export const createCollectionsService = (apiClient) => {
         item_ids: itemIds
       });
       return response.data;
+    },
+
+    /**
+     * Export collection items to Excel
+     * @param {string} collectionId
+     */
+    exportCollection: async (collectionId) => {
+      const response = await apiClient.get(API_ENDPOINTS.EXPORT_COLLECTION(collectionId), {
+        responseType: 'blob' // Important for file download
+      });
+
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      
+      const date = new Date().toISOString().split('T')[0];
+      link.setAttribute('download', `collection_${collectionId}_export_${date}.xlsx`);
+      
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     }
   };
 };

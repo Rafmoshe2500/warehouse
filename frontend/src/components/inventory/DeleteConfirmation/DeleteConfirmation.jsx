@@ -53,7 +53,7 @@ const DeleteConfirmation = ({
   const footer = (
     <div className="delete-confirmation__footer">
       <Button variant="danger" onClick={handleConfirm}>
-        מחק לצמיתות
+        מחק
       </Button>
       <Button variant="secondary" onClick={handleClose}>
         ביטול

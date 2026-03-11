@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiEdit2, FiTrash2, FiClock, FiPaperclip } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiClock, FiPaperclip, FiTruck, FiCheck } from 'react-icons/fi';
 import { Button } from '../common';
 import { useAuth } from '../../context/AuthContext';
 import './ProcurementTable.css';
@@ -10,6 +10,8 @@ const ProcurementTable = ({
   onDelete, 
   onManageFiles, 
   onHistory,
+  onMarkAsOrdered,
+  onMarkAsReceived,
   canEdit = false,
   isAdmin = false
 }) => {
@@ -96,15 +98,17 @@ const ProcurementTable = ({
                 </td>
                 <td>{new Date(order.order_date).toLocaleDateString('he-IL')}</td>
                 <td>
-                  <span className={`status-badge status-${order.status || 'waiting_emf'}`}>
+                  <span className={`status-badge status-${order.status || 'waiting_bom_emf'}`}>
                     {order.status === 'received' ? 'רכש הגיע' :
                      order.status === 'ordered' ? 'רכש יצא' :
+                     order.status === 'waiting_order' ? 'מחכה שרכש ייצא' :
                      order.status === 'waiting_bom' ? 'מחכה ל-BOM' :
-                     'מחכה ל-EMF'}
+                     order.status === 'waiting_emf' ? 'מחכה ל-EMF' :
+                     'מחכה ל-BOM ו-EMF'}
                   </span>
                 </td>
                 <td>
-                  <span className={`status-dot ${order.received_emf ? 'green' : 'red'}`}></span>
+                  <span>{order.emf_number || '-'}</span>
                 </td>
                 <td>
                   <span className={`status-dot ${order.received_bom ? 'green' : 'red'}`}></span>
@@ -122,32 +126,57 @@ const ProcurementTable = ({
                 </td>
                 {canEdit && (
                   <td>
-                    <Button 
-                      variant="icon"
-                      onClick={() => onHistory(order)}
-                      title="היסטוריה"
-                      icon={<FiClock size={16} />}
-                    />
-                    
-                    {/* Allow Edit/Delete only if Admin OR (Not Finished) */}
-                    {(isAdmin || order.status !== 'received') && (
-                        <>
+                    <div className="action-buttons-grid">
+                        {/* 1. Edit */}
+                        {(isAdmin || (order.status !== 'received' && order.status !== 'ordered')) ? (
                             <Button 
-                            variant="icon"
-                            onClick={() => onEdit(order)}
-                            title="ערוך"
-                            icon={<FiEdit2 size={16} />}
-                            className="edit-btn"
+                              variant="icon"
+                              onClick={() => onEdit(order)}
+                              title="ערוך"
+                              icon={<FiEdit2 size={16} />}
+                              className="edit-btn"
                             />
+                        ) : <div />}
+
+                        {/* 2. Delete */}
+                        {(isAdmin || (order.status !== 'received' && order.status !== 'ordered')) ? (
                             <Button 
-                            variant="icon"
-                            onClick={() => onDelete(order)}
-                            title="מחק"
-                            icon={<FiTrash2 size={16} />}
-                            className="delete-btn"
+                              variant="icon"
+                              onClick={() => onDelete(order)}
+                              title="מחק"
+                              icon={<FiTrash2 size={16} />}
+                              className="delete-btn"
                             />
-                        </>
-                    )}
+                        ) : <div />}
+
+                        {/* 3. History */}
+                        <Button 
+                          variant="icon"
+                          onClick={() => onHistory(order)}
+                          title="היסטוריה"
+                          icon={<FiClock size={16} />}
+                          className="history-btn"
+                        />
+                        
+                        {/* 4. Truck or Check */}
+                        {order.status === 'ordered' ? (
+                            <Button 
+                              variant="icon"
+                              onClick={() => onMarkAsReceived(order)}
+                              title='סמן כ"הגיע"'
+                              icon={<FiCheck size={16} />}
+                              className="received-btn"
+                            />
+                        ) : (order.status === 'waiting_order' ? (
+                            <Button 
+                              variant="icon"
+                              onClick={() => onMarkAsOrdered(order)}
+                              title='סמן כ"יצא לדרך"'
+                              icon={<FiTruck size={16} />}
+                              className="ordered-btn"
+                            />
+                        ) : <div />)}
+                    </div>
                   </td>
                 )}
               </tr>

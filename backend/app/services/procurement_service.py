@@ -46,20 +46,25 @@ class ProcurementService:
         
         # Ensure default status if not set
         if "status" not in order_dict:
-            order_dict["status"] = ProcurementStatus.WAITING_FOR_EMF
+            order_dict["status"] = ProcurementStatus.WAITING_BOM_EMF
         
         # Business Logic Validation
-        if order_dict.get("status") == ProcurementStatus.ORDERED:
-            order_dict["received_emf"] = True
+        # Auto-update status based on presence of EMF and BOM
+        if order_dict.get("status") not in [ProcurementStatus.ORDERED, ProcurementStatus.RECEIVED]:
+            has_emf = bool(order_dict.get("emf_number"))
+            has_bom = order_dict.get("received_bom", False)
+            
+            if has_emf and has_bom:
+                order_dict["status"] = ProcurementStatus.WAITING_ORDER
+            elif has_emf and not has_bom:
+                order_dict["status"] = ProcurementStatus.WAITING_BOM
+            elif not has_emf and has_bom:
+                order_dict["status"] = ProcurementStatus.WAITING_EMF
+            else:
+                order_dict["status"] = ProcurementStatus.WAITING_BOM_EMF
+        elif order_dict.get("status") == ProcurementStatus.ORDERED:
+            # If manually set to ORDERED, BOM and EMF should logically be present
             order_dict["received_bom"] = True
-            
-        if order_dict.get("received_emf") and order_dict.get("status") == ProcurementStatus.WAITING_FOR_EMF:
-            from fastapi import HTTPException
-            raise HTTPException(status_code=400, detail="לא ניתן לבחור סטטוס 'מחכה ל-EMF' כאשר סומן שהתקבל EMF")
-            
-        if order_dict.get("received_bom") and order_dict.get("status") == ProcurementStatus.WAITING_FOR_BOM:
-            from fastapi import HTTPException
-            raise HTTPException(status_code=400, detail="לא ניתן לבחור סטטוס 'מחכה ל-BOM' כאשר סומן שהתקבל BOM")
 
         created_order = await self.repository.create_order(order_dict)
         
@@ -79,8 +84,10 @@ class ProcurementService:
         self,
         page: int = 1,
         page_size: int = 50,
+        search: Optional[str] = None,
         catalog_number: Optional[str] = None,
         manufacturer: Optional[str] = None,
+        emf_number: Optional[str] = None,
         status_in: Optional[List[str]] = None,
         status_ne: Optional[str] = None
     ) -> tuple[List[dict], int]:
@@ -89,8 +96,10 @@ class ProcurementService:
         return await self.repository.get_orders(
             skip=skip,
             limit=page_size,
+            search=search,
             catalog_number=catalog_number,
             manufacturer=manufacturer,
+            emf_number=emf_number,
             status_in=status_in,
             status_ne=status_ne
         )
@@ -119,23 +128,28 @@ class ProcurementService:
         # Prepare updated values for validation
         # We need to merge existing values with updates to check the final state
         current_status = update_dict.get("status", existing_order.get("status"))
-        # Note: received_emf/bom might be booleans in update_dict or existing_order
-        current_received_emf = update_dict.get("received_emf") if "received_emf" in update_dict else existing_order.get("received_emf")
+        # Note: received_bom might be boolean in update_dict or existing_order
         current_received_bom = update_dict.get("received_bom") if "received_bom" in update_dict else existing_order.get("received_bom")
+        current_emf = update_dict.get("emf_number") if "emf_number" in update_dict else existing_order.get("emf_number")
 
-        # Business Logic Logic
-        if current_status == ProcurementStatus.ORDERED:
-            update_dict["received_emf"] = True
+        # Business Logic
+        # Auto-update status based on EMF and BOM if not manually moved to ordered/received
+        if current_status not in [ProcurementStatus.ORDERED, ProcurementStatus.RECEIVED]:
+            has_emf = bool(current_emf)
+            has_bom = current_received_bom
+            
+            if has_emf and has_bom:
+                update_dict["status"] = ProcurementStatus.WAITING_ORDER
+            elif has_emf and not has_bom:
+                update_dict["status"] = ProcurementStatus.WAITING_BOM
+            elif not has_emf and has_bom:
+                update_dict["status"] = ProcurementStatus.WAITING_EMF
+            else:
+                update_dict["status"] = ProcurementStatus.WAITING_BOM_EMF
+        elif current_status == ProcurementStatus.ORDERED:
+            # Enforce BOM is true if ordered
             update_dict["received_bom"] = True
-            # Update local variables for subsequent checks (though not strictly needed if we return here/continue)
-            current_received_emf = True
             current_received_bom = True
-            
-        if current_received_emf and current_status == ProcurementStatus.WAITING_FOR_EMF:
-            raise HTTPException(status_code=400, detail="לא ניתן לבחור סטטוס 'מחכה ל-EMF' כאשר סומן שהתקבל EMF")
-            
-        if current_received_bom and current_status == ProcurementStatus.WAITING_FOR_BOM:
-            raise HTTPException(status_code=400, detail="לא ניתן לבחור סטטוס 'מחכה ל-BOM' כאשר סומן שהתקבל BOM")
 
         # Calculate changes for audit
         changes = {}
@@ -187,14 +201,11 @@ class ProcurementService:
         if not success:
             raise HTTPException(status_code=404, detail="הזמנה לא נמצאה")
         
-        # Audit Log
+        # Delete all existing audit logs for this order
         try:
-            await self.auditor.log_delete_order(
-                username=username,
-                order_id=order_id
-            )
+            await self.auditor.delete_all_order_logs(order_id=order_id)
         except Exception as e:
-            logger.error(f"Failed to log audit for delete order: {e}")
+            logger.error(f"Failed to delete audit logs for deleted order {order_id}: {e}")
             
         return True
     

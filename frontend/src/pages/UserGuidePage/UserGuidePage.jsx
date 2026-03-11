@@ -27,46 +27,54 @@ const UserGuidePage = () => {
   const hasInventoryAccess = hasPermission('inventory:ro') || hasPermission('inventory:rw');
   const hasProcurementAccess = hasPermission('procurement:ro') || hasPermission('procurement:rw');
 
-  // Sections Configuration - filtered by permissions
-  const baseSections = [
-    { id: 'intro', label: 'מבוא למערכת', icon: <FiBox />, visible: true },
-    { id: 'dashboard', label: 'דשבורד', icon: <FiLayout />, visible: true },
-    { id: 'interface', label: 'ממשק וטבלאות', icon: <FiLayout />, visible: hasInventoryAccess },
-    { id: 'collections', label: 'המלאי שלי', icon: <FiLayers />, visible: hasInventoryAccess },
-    { id: 'stale-items', label: 'פריטים ישנים', icon: <FiArchive />, visible: hasInventoryAccess },
-    { id: 'procurement', label: 'רכש והצטיידות', icon: <FiShoppingCart />, visible: hasProcurementAccess },
-    { id: 'audit-logs', label: 'יומן פעילות', icon: <FiClipboard />, visible: true },
-    { id: 'pro-tips', label: 'טיפים למתקדמים', icon: <FiZap />, visible: true },
-    { id: 'faq', label: 'שאלות נפוצות', icon: <FiHelpCircle />, visible: true },
-  ];
+  // Sections Configuration - filtered by permissions and matching DOM order
+  const sections = React.useMemo(() => {
+    const baseSections = [
+      { id: 'intro', label: 'מבוא למערכת', icon: <FiBox />, visible: true },
+      { id: 'interface', label: 'ממשק וטבלאות', icon: <FiLayout />, visible: hasInventoryAccess },
+      { id: 'collections', label: 'המלאי שלי', icon: <FiLayers />, visible: hasInventoryAccess },
+      { id: 'dashboard', label: 'דשבורד', icon: <FiLayout />, visible: true },
+      { id: 'stale-items', label: 'פריטים ישנים', icon: <FiArchive />, visible: hasInventoryAccess },
+      { id: 'audit-logs', label: 'יומן פעילות', icon: <FiClipboard />, visible: true },
+      { id: 'procurement', label: 'רכש והצטיידות', icon: <FiShoppingCart />, visible: hasProcurementAccess },
+      { id: 'pro-tips', label: 'טיפים למתקדמים', icon: <FiZap />, visible: true },
+      { id: 'faq', label: 'שאלות נפוצות', icon: <FiHelpCircle />, visible: true },
+    ];
+    return baseSections.filter(s => s.visible);
+  }, [hasInventoryAccess, hasProcurementAccess]);
 
-  const sections = baseSections.filter(s => s.visible);
-
-  // Scroll Spy Effect
+  // Scroll Spy Effect using IntersectionObserver
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 150; // Offset for header
-
-      for (const section of sections) {
-        const element = document.getElementById(section.id);
-        if (element && element.offsetTop <= scrollPosition && (element.offsetTop + element.offsetHeight) > scrollPosition) {
-          setActiveSection(section.id);
-          break;
-        }
-      }
+    const observerOptions = {
+      root: null, // use viewport (or closest scroll container)
+      rootMargin: '-150px 0px -60% 0px', // Trigger when section passes the top offset
+      threshold: 0
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    sections.forEach((section) => {
+      const element = document.getElementById(section.id);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => observer.disconnect();
   }, [sections]);
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      window.scrollTo({
-        top: element.offsetTop - 100, // Offset for sticky header
-        behavior: 'smooth'
-      });
+      element.scrollIntoView({ behavior: 'smooth' });
       setActiveSection(id);
       setIsMobileMenuOpen(false);
     }
@@ -127,18 +135,24 @@ const UserGuidePage = () => {
             
             <div className="cards-grid">
               <div className="feature-card">
-                <div className="card-icon blue"><FiBox /></div>
-                <h3>ניהול מלאי</h3>
+                <h3 className="feature-card-header">
+                  <div className="card-icon blue"><FiBox /></div>
+                  <span>ניהול מלאי</span>
+                </h3>
                 <p>צפייה בזמן אמת בכמויות, מיקומים וסטטוסים של פריטים במחסן המרכזי.</p>
               </div>
               <div className="feature-card">
-                <div className="card-icon purple"><FiLayers /></div>
-                <h3>אוספים אישיים</h3>
+                <h3 className="feature-card-header">
+                  <div className="card-icon purple"><FiLayers /></div>
+                  <span>אוספים אישיים</span>
+                </h3>
                 <p>יצירת רשימות ציוד מותאמות לפרויקטים עליהם אתם עובדים.</p>
               </div>
               <div className="feature-card">
-                <div className="card-icon green"><FiShoppingCart /></div>
-                <h3>תהליכי רכש</h3>
+                <h3 className="feature-card-header">
+                  <div className="card-icon green"><FiShoppingCart /></div>
+                  <span>תהליכי רכש</span>
+                </h3>
                 <p>ביצוע הזמנות, מעקב אחר סטטוסים וניהול ספקים במקום אחד.</p>
               </div>
             </div>
@@ -193,7 +207,7 @@ const UserGuidePage = () => {
               <div className="section-header">
                 <h2 className="section-title">המלאי שלי (Collections)</h2>
                 <p className="section-description">
-                  האזור האישי שלכם לניהול פרויקטים. כאן אתם בונים את ה-"BOM" (רשימת חומרים) שלכם.
+                  האזור האישי שלכם לניהול פרויקטים. בנו, ערכו וייצאו BOM מותאם לכל פרויקט.
                 </p>
               </div>
 
@@ -210,15 +224,43 @@ const UserGuidePage = () => {
                 </div>
               </div>
 
-              <div className="feature-block">
-                 <h3>איך משייכים פריטים לאוסף?</h3>
-                 <p>הדרך הקלה ביותר היא דרך מסך המלאי הראשי:</p>
-                 <ol className="modern-list">
-                   <li>סמנו את הפריטים הרצויים בטבלה (Ctrl / Shift לבחירה מרובה).</li>
-                   <li>לחצו <strong>קליק ימני</strong> על אחד הפריטים המסומנים.</li>
-                   <li>עמדו על <strong>"שייך למלאי שלי"</strong> ובחרו את האוסף הרצוי מהרשימה.</li>
-                   <li>זהו! הפריטים ממתינים לכם באוסף.</li>
-                 </ol>
+              <div className="guide-step">
+                <div className="step-number">01</div>
+                <div className="step-content">
+                  <h3>הוספת פריטים לאוסף</h3>
+                  <p>שתי דרכים להוסיף פריטים:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>מהמלאי הראשי:</strong> סמנו פריטים ← קליק ימני ← "שייך למלאי שלי" ← בחרו אוסף.</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>מתוך האוסף:</strong> לחצו כפתור <strong>"+"</strong> (הוסף פריט) לפתוח חלון חיפוש ובחירה ישירה.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">02</div>
+                <div className="step-content">
+                  <h3>ניהול האוסף — טאב פריטים</h3>
+                  <p>טאב <strong>"פריטים"</strong> מציג את כל הפריטים באוסף. תוכלו:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> לערוך שדות מותאמים אישית שהגדרתם לאוסף</li>
+                    <li><FiCheckCircle className="list-icon" /> לבחור מספר פריטים ולמחוק בבת-אחת (מחיקה מרובה)</li>
+                    <li><FiCheckCircle className="list-icon" /> לבחור מספר פריטים ולערוך שדות בו-זמנית (עריכה מרובה)</li>
+                    <li><FiCheckCircle className="list-icon" /> לייצא את האוסף לאקסל עם כפתור <strong>"ייצוא"</strong></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">03</div>
+                <div className="step-content">
+                  <h3>הגדרות האוסף — טאב הגדרות</h3>
+                  <p>טאב <strong>"הגדרות"</strong> (זמין לבעלים ועורכים) מאפשר:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> שינוי שם האוסף ותיאורו</li>
+                    <li><FiCheckCircle className="list-icon" /> הוספת שדות מותאמים אישית (Custom Fields) לכל הפריטים באוסף</li>
+                    <li><FiCheckCircle className="list-icon" /> ניהול הרשאות — מי יכול לצפות ומי יכול לערוך</li>
+                  </ul>
+                </div>
               </div>
             </section>
           )}
@@ -228,40 +270,58 @@ const UserGuidePage = () => {
             <div className="section-header">
               <h2 className="section-title">דשבורד - מרכז הבקרה</h2>
               <p className="section-description">
-                דשבורד הבית מציג סקירה כללית של מצב המערכת, מטרים חשובים וקישורים מהירים.
+                דשבורד הבית מציג סקירה כללית חיה של כל המערכת — מלאי, רכש ופעילות אחרונה.
               </p>
             </div>
 
             <div className="guide-step">
               <div className="step-number">1</div>
               <div className="step-content">
-                <h3>כרטיסי מטרים (KPIs)</h3>
-                <p>כרטיסים בראש העמוד מציגים מספרים חשובים:</p>
-                  <ul className="feature-list">
-                    <li><FiCheckCircle className="list-icon" /> <strong>סך הפריטים:</strong> מספר כל הפריטים במלאי + שינוי מאתמול</li>
-                    <li><FiCheckCircle className="list-icon" /> <strong>סך ההזמנות:</strong> כמות הזמנות פתוחות</li>
-                    <li><FiCheckCircle className="list-icon" /> <strong>משתמשים פעילים:</strong> כמה משתמשים משתמשים כרגע</li>
-                  </ul>
+                <h3>פילטר תאריך (Splunk-style)</h3>
+                <p>בפינה השמאלית של הדשבורד תמצאו פילטר תאריכים. בחרו תאריכי התחלה וסיום לסנן את נתוני הרכש לפי טווח זמן. לחצו <strong>"זמן נוכחי"</strong> לאיפוס הפילטר.</p>
               </div>
             </div>
 
             <div className="guide-step">
               <div className="step-number">2</div>
               <div className="step-content">
-                <h3>תרשימים ותרends</h3>
-                <p>הגרפים מציגים מגמות על פני הזמן. ניתן להמתין מעל גרף לראות ערכים מדויקים בתאריכים ספציפיים.</p>
+                <h3>כרטיסי מלאי (KPIs)</h3>
+                <p>שורת כרטיסים צבעוניים מציגה נתוני מלאי בזמן אמת:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>סה"כ פריטים:</strong> סך הפריטים הפעילים במחסן</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>שריונים פעילים:</strong> פריטים ששוריינו לפרויקטים</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>ציוד סריאלי:</strong> פריטים עם מעקב אישי (SN)</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>ציוד נלווה:</strong> פריטים בניהול כמותי</li>
+                  </ul>
               </div>
             </div>
 
             <div className="guide-step">
               <div className="step-number">3</div>
               <div className="step-content">
-                <h3>התראות וביוטי ❗</h3>
-                <p>בחלק התחתון תראו הודעות על דברים החשובים:</p>
+                <h3>כרטיסי רכש (KPIs)</h3>
+                <p>שורת כרטיסים נוספת מציגה נתוני רכש (לבעלי הרשאת רכש):</p>
                   <ul className="feature-list">
-                    <li><FiAlertCircle className="list-icon" /> פריטים עם מלאי נמוך</li>
-                    <li><FiAlertCircle className="list-icon" /> הזמנות שדורשות תשומת לב</li>
-                    <li><FiAlertCircle className="list-icon" /> פריטים שלא עודכנו זמן רב</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>סך הכל רכש:</strong> הוצאות מצטברות בתקופה</li>
+                    <li><FiAlertCircle className="list-icon" /> <strong>ממתין ל-EMF:</strong> הזמנות שעעדיין לא קיבלו מספר EMF</li>
+                    <li><FiAlertCircle className="list-icon" /> <strong>ממתין ל-BOM:</strong> הזמנות שממתינות לאישור BOM</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>בדרך אלינו:</strong> הזמנות שכבר יצאו מהספק</li>
+                  </ul>
+              </div>
+            </div>
+
+            <div className="guide-step">
+              <div className="step-number">4</div>
+              <div className="step-content">
+                <h3>תרשימים ותובנות</h3>
+                <p>הדשבורד כולל מגוון תרשימים אינטראקטיביים:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>מיקומים במחסן:</strong> פילוג הפריטים לפי מיקום</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>חיפוש לפי מק"ט:</strong> ניתוח מהיר של פריט ספציפי</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>פילוג לפי פרויקט:</strong> אחוז הפריטים לכל פרויקט</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>פילוג לפי אתר יעד:</strong> לאיזה אתר מיועד כל ציוד</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>יצרנים מובילים:</strong> אילו יצרנים הכי נפוצים במחסן</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>פעילות אחרונה:</strong> פעולות שנעשו לאחרונה במערכת</li>
                   </ul>
               </div>
             </div>
@@ -354,34 +414,33 @@ const UserGuidePage = () => {
               <div className="section-header">
                 <h2 className="section-title">רכש והצטיידות</h2>
                 <p className="section-description">
-                  ניהול כל תהליך הרכש, מדרישה ועד קליטה במחסן.
+                  ניהול כל תהליך הרכש — מיצירת הזמנה ועד קליטתה במחסן.
                 </p>
               </div>
-              
+
               <div className="guide-step">
                 <div className="step-number">1</div>
                 <div className="step-content">
-                  <h3>יצירת הזמנה חדשה</h3>
-                  <p>לחצו על כפתור "הזמנה חדשה" בראש הדף. מלאו את הפרטים:</p>
-                    <ul className="feature-list">
-                      <li><FiCheckCircle className="list-icon" /> <strong>מק"ט ויצרן:</strong> זהות הפריט</li>
-                      <li><FiCheckCircle className="list-icon" /> <strong>תיאור:</strong> פרטים נוספים</li>
-                      <li><FiCheckCircle className="list-icon" /> <strong>כמות וסכום:</strong> כמה להזמין ובאיזה תקציב</li>
-                      <li><FiCheckCircle className="list-icon" /> <strong>סטטוס:</strong> המצב ההתחלתי של ההזמנה</li>
-                    </ul>
+                  <h3>טאבים: בתהליך / הסתיים</h3>
+                  <p>הדף מחולק לשני טאבים:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>בתהליך:</strong> כל ההזמנות הפעילות (שטרם התקבלו)</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>הסתיים:</strong> הזמנות שהגיעו ונסגרו</li>
+                  </ul>
                 </div>
               </div>
 
               <div className="guide-step">
                 <div className="step-number">2</div>
                 <div className="step-content">
-                  <h3>מעקב אחר סטטוסים</h3>
-                  <p>כל הזמנה עובדת דרך שלבים:</p>
+                  <h3>מסלול הסטטוסים</h3>
+                  <p>כל הזמנה עוברת את השלבים הבאים לפי הסדר:</p>
                     <ul className="feature-list">
-                      <li>⏳ <strong>בהמתנה:</strong> הזמנה חדשה שעדיין בעריכה</li>
-                      <li>📤 <strong>בהזמנה:</strong> שודרה לספק</li>
-                      <li>📦 <strong>בדרך:</strong> בהשהיה לקליטה</li>
-                      <li>✅ <strong>הגיעה:</strong> קלוטה ברשותנו</li>
+                      <li>🔴 <strong>מחכה ל-BOM ו-EMF:</strong> הסטטוס ההתחלתי — ממתין לשני המסמכים</li>
+                      <li>🟡 <strong>מחכה ל-EMF / מחכה ל-BOM:</strong> אחד המסמכים התקבל, ממתין לשני</li>
+                      <li>🔵 <strong>מחכה שרכש ייצא:</strong> שני המסמכים התקבלו — ניתן לסמן כ"יצא לדרך"</li>
+                      <li>🚛 <strong>רכש יצא:</strong> ההזמנה שודרה לספק — ניתן לסמן כ"הגיע"</li>
+                      <li>✅ <strong>רכש הגיע:</strong> קלוט ונסגר (עובר לטאב "הסתיים")</li>
                     </ul>
                 </div>
               </div>
@@ -389,16 +448,31 @@ const UserGuidePage = () => {
               <div className="guide-step">
                 <div className="step-number">3</div>
                 <div className="step-content">
-                  <h3>הוספת קבצים</h3>
-                  <p>לכל הזמנה ניתן להוסיף קבצים - חשמליות, EMF, BOM, דוקומנטציה. לחצו על ההזמנה לפתיחת הפרטים, ואז "הוסף קבצים".</p>
+                  <h3>כפתורי הפעולה (2×2)</h3>
+                  <p>לכל הזמנה יש עד 4 כפתורי פעולה המסודרים ברשת:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>עריכה (עיפרון):</strong> עריכת פרטי ההזמנה — זמינה עד לסטטוס "רכש יצא"</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>מחיקה (פח):</strong> מחיקת ההזמנה — זמינה עד לסטטוס "רכש יצא"</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>היסטוריה (שעון):</strong> צפייה בכל השינויים שנעשו בהזמנה</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>שלח לדרך (משאית):</strong> מעבר לסטטוס "רכש יצא" — מוצג רק כשמחכה שרכש ייצא</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>סמן כהגיע (וי):</strong> מעבר לסטטוס "רכש הגיע" — מוצג רק כשסטטוס "רכש יצא"</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">4</div>
+                <div className="step-content">
+                  <h3>קבצים ומסמכים</h3>
+                  <p>לכל הזמנה ניתן לצרף קבצים — EMF, BOM, חשבוניות ותמונות. לחצו על אייקון <strong>המהדק</strong> (📎) בטור הקבצים לניהול המסמכים.</p>
                 </div>
               </div>
 
               <div className="tip-box highlight">
                 <div className="tip-icon"><FiAlertCircle /></div>
                 <div className="tip-content">
-                  <h4>💡 עצה: סמנו כשהגיע</h4>
-                  <p>כאשר קבלתם את ההזמנה, סמנו "BOM התקבל" ו"EMF התקבל" כדי שהמערכת תדע שהתהליך הושלם.</p>
+                  <h4>💡 הסטטוס מתעדכן אוטומטית</h4>
+                  <p>כשמסמן BOM ו-EMF כהתקבלו, הסטטוס עולה אוטומטית ל"מחכה שרכש ייצא", ורק אז כפתור המשאית הופך פעיל.</p>
                 </div>
               </div>
             </section>

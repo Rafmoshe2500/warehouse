@@ -11,15 +11,24 @@ from app.db.repositories.items import ItemsRepository
 from app.services.audit_service import AuditService
 
 
+async def _async_empty_cursor():
+    """Async generator that yields nothing — represents an empty MongoDB cursor."""
+    return
+    yield  # makes it an async generator
+
+
 class TestAnalyticsService:
     """Test suite for AnalyticsService."""
 
     @pytest.fixture
     def analytics_service(self, test_db, test_items_collection, test_audit_collection):
+        from unittest.mock import MagicMock
         items_repo = ItemsRepository(test_items_collection)
         audit_service = AuditService()
         audit_service.repository.collection = test_audit_collection
-        return AnalyticsService(items_repo, audit_service)
+        mock_procurement_repo = MagicMock()
+        mock_procurement_repo.collection.aggregate = MagicMock(return_value=_async_empty_cursor())
+        return AnalyticsService(items_repo, audit_service, mock_procurement_repo)
 
     @pytest.mark.asyncio
     async def test_get_dashboard_stats_empty(self, analytics_service):

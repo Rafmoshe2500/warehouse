@@ -4,51 +4,32 @@
   flex: 1;
   min-height: 0; /* Critical for consistency in nested flex layouts */
   width: 100%;
-  gap: 1.5rem;
+  gap: 0; /* Removed gap to eliminate bottom padding of toolbar */
   direction: rtl;
 }
 
 /* Fixed Header Section */
 .scrollable-table-layout__header {
   flex-shrink: 0;
+  margin-bottom: 0.5rem; /* Re-add a small margin directly to the header instead of a flex gap */
 }
 
 /* Scrollable Content Area */
 .scrollable-table-layout__content {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: auto; /* Allow horizontal scroll for wide tables */
+  overflow-y: visible; /* Changed from auto to visible to allow sticky headers to work relative to scrollable-table-layout__content */
+  overflow-x: auto;
   background: var(--bg-secondary);
   border-radius: 16px;
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   padding: 0;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Custom Scrollbar Styling */
-.scrollable-table-layout__content::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.scrollable-table-layout__content::-webkit-scrollbar-track {
-  background: var(--bg-tertiary);
-  border-radius: 8px;
-  margin: 8px 0;
-}
-
-.scrollable-table-layout__content::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--accent-primary), rgba(79, 70, 229, 0.7));
-  border-radius: 8px;
-  border: 2px solid var(--bg-tertiary);
-  transition: background 0.3s ease;
-}
-
-.scrollable-table-layout__content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--accent-primary), var(--accent-primary));
-  box-shadow: 0 0 8px rgba(79, 70, 229, 0.4);
-}
+/* Custom Scrollbar Styling (Now moved to global index.css) */
 
 /* Fixed Pagination Footer */
 .scrollable-table-layout__footer {
@@ -86,13 +67,4 @@
   height: 4px;
   background: var(--bg-tertiary);
   z-index: -1;
-}
-
-[data-theme="light"] .scrollable-table-layout__content::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-[data-theme="light"] .scrollable-table-layout__content::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--accent-primary), rgba(79, 70, 229, 0.7));
-  border-color: var(--bg-tertiary);
 }

@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiUsers } from 'react-icons/fi';
 import { Button, SkeletonTable } from '../../components/common';
 import { useToast } from '../../hooks/useToast';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
@@ -21,7 +21,7 @@ const GroupManagement = () => {
         deleteGroup 
     } = useGroups();
 
-    const [showModal, setShowModal] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -34,12 +34,12 @@ const GroupManagement = () => {
 
     const handleCreate = () => {
         setSelectedGroup(null);
-        setShowModal(true);
+        setIsCreating(true);
     };
 
-    const handleEdit = (group) => {
+    const handleRowClick = (group) => {
         setSelectedGroup(group);
-        setShowModal(true);
+        setIsCreating(false);
     };
 
     const handleDeleteClick = (group) => {
@@ -56,7 +56,7 @@ const GroupManagement = () => {
                 await createGroup(formData);
                 success('קבוצה חדשה נוצרה בהצלחה');
             }
-            setShowModal(false);
+            setIsCreating(false);
         } catch (err) {
             toastError(err.response?.data?.detail || 'שגיאה בשמירת הקבוצה');
         }
@@ -77,65 +77,82 @@ const GroupManagement = () => {
     return (
         <div className="user-management">
             <ToastContainer toasts={toasts} removeToast={removeToast} />
-            <div className="user-management-header">
-                <Button 
-                    variant="primary" 
-                    icon={<FiPlus />} 
-                    onClick={handleCreate}
-                >
-                    קבוצה חדשה
-                </Button>
+            <div className="page-top-header">
+                <h2>ניהול קבוצות</h2>
             </div>
+            
+            <div className="management-layout">
+                <div className="list-pane">
+                    <div className="user-management-header">
+                        <Button 
+                            variant="primary" 
+                            icon={<FiPlus />} 
+                            onClick={handleCreate}
+                            style={{ width: '100%' }}
+                        >
+                            קבוצה חדשה
+                        </Button>
+                    </div>
 
-            <div className="users-table-container">
-                <table className="users-table">
-                    <thead>
-                        <tr>
-                            <th>שם קבוצה</th>
-                            <th>תפקיד</th>
-                            <th>סטטוס</th>
-                            <th>נוצר בתאריך</th>
-                            <th>פעולות</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                    <div className="users-table-container">
+                        <table className="users-table">
+                            <thead>
+                                <tr>
+                                    <th>קבוצות ({groups.length})</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                         {groups.map(group => (
-                            <tr key={group.id}>
-                                <td>{group.name}</td>
+                            <tr 
+                                key={group.id}
+                                onClick={() => handleRowClick(group)}
+                                className={selectedGroup?.id === group.id ? 'selected-row clickable-row' : 'clickable-row'}
+                            >
                                 <td>
-                                    <span className={`role-badge role-${group.role || 'user'}`}>
-                                        {group.role === 'admin' ? 'מנהל' : 'משתמש'}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span className={`status-badge ${group.is_active ? 'active' : 'inactive'}`}>
-                                        {group.is_active ? 'פעיל' : 'לא פעיל'}
-                                    </span>
-                                </td>
-                                <td>{new Date(group.created_at).toLocaleDateString('he-IL')}</td>
-                                <td>
-                                    <div className="actions-cell">
-                                        <button className="icon-btn" onClick={() => handleEdit(group)}>
-                                            <FiEdit2 />
-                                        </button>
-                                        <button className="icon-btn delete-btn" onClick={() => handleDeleteClick(group)}>
-                                            <FiTrash2 />
-                                        </button>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <div style={{ 
+                                      width: '32px', 
+                                      height: '32px', 
+                                      borderRadius: '8px', 
+                                      background: 'var(--bg-tertiary)', 
+                                      display: 'flex', 
+                                      alignItems: 'center', 
+                                      justifyContent: 'center'
+                                    }}>
+                                      <FiUsers style={{ color: 'var(--text-muted)' }} />
                                     </div>
+                                    {group.name}
+                                  </div>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+        </div>
 
-            {showModal && (
+        <div className="details-pane">
+            {(selectedGroup || isCreating) ? (
                 <GroupForm 
                     group={selectedGroup}
                     onSubmit={handleSubmit}
-                    onCancel={() => setShowModal(false)}
+                    onCancel={() => {
+                        setSelectedGroup(null);
+                        setIsCreating(false);
+                    }}
+                    onDelete={selectedGroup ? () => handleDeleteClick(selectedGroup) : null}
                 />
+            ) : (
+                <div className="empty-selection-placeholder">
+                    <div className="placeholder-content">
+                        <FiUsers className="placeholder-icon" />
+                        <h3>ניהול קבוצות</h3>
+                        <p>בחר קבוצה מהרשימה כדי לצפות בפרטים, לערוך הרשאות או למחוק.</p>
+                    </div>
+                </div>
             )}
+        </div>
+    </div>
 
             {showDeleteModal && (
                 <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>

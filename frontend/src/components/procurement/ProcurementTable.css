@@ -180,6 +180,16 @@
     color: var(--accent-warning);
 }
 
+.status-waiting_bom_emf {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--accent-danger);
+}
+
+.status-waiting_order {
+    background: rgba(139, 92, 246, 0.15);
+    color: #8b5cf6; /* purple */
+}
+
 .status-ordered {
     background: rgba(59, 130, 246, 0.15);
     color: var(--accent-primary);
@@ -196,6 +206,16 @@
     color: var(--accent-warning);
 }
 
+[data-theme='dark'] .status-waiting_bom_emf {
+    background: rgba(239, 68, 68, 0.25);
+    color: var(--accent-danger);
+}
+
+[data-theme='dark'] .status-waiting_order {
+    background: rgba(139, 92, 246, 0.25);
+    color: #a78bfa; /* lighter purple for dark mode */
+}
+
 [data-theme='dark'] .status-ordered {
     background: rgba(59, 130, 246, 0.25);
     color: var(--accent-primary);
@@ -204,4 +224,21 @@
 [data-theme='dark'] .status-received {
     background: rgba(16, 185, 129, 0.25);
     color: var(--accent-success);
+}
+
+/* Action Buttons Grid */
+.action-buttons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.received-btn {
+  color: var(--accent-success);
+}
+
+.received-btn:hover {
+  background: rgba(16, 185, 129, 0.1);
 }

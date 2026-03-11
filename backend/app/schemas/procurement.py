@@ -6,10 +6,12 @@ from enum import Enum
 
 class ProcurementStatus(str, Enum):
     """Status of procurement order"""
-    WAITING_FOR_EMF = "waiting_emf"  # מחכה ל-EMF
-    WAITING_FOR_BOM = "waiting_bom"  # מחכה ל-BOM
-    ORDERED = "ordered"              # רכש יצא
-    RECEIVED = "received"            # רכש הגיע
+    WAITING_BOM_EMF = "waiting_bom_emf" # מחכה ל-BOM ו-EMF
+    WAITING_BOM = "waiting_bom"         # מחכה ל-BOM (יש EMF)
+    WAITING_EMF = "waiting_emf"         # מחכה ל-EMF (יש BOM)
+    WAITING_ORDER = "waiting_order"     # מחכה שרכש ייצא (יש שניהם)
+    ORDERED = "ordered"                 # רכש יצא
+    RECEIVED = "received"               # רכש הגיע
 
 
 class ProcurementFileMetadata(BaseModel):
@@ -38,8 +40,8 @@ class ProcurementOrderBase(BaseModel):
     order_date: datetime = Field(..., description="תאריך הזמנה")
     bom_items: List[BOMItem] = Field(..., min_length=1, description="פריטי BOM")
     total_amount: float = Field(..., ge=0, description="סכום כולל")
-    status: ProcurementStatus = Field(default=ProcurementStatus.WAITING_FOR_EMF, description="סטטוס הזמנה")
-    received_emf: bool = Field(default=False, description="התקבל EMF")
+    status: ProcurementStatus = Field(default=ProcurementStatus.WAITING_BOM_EMF, description="סטטוס הזמנה")
+    emf_number: Optional[str] = Field(default=None, description="מספר EMF")
     received_bom: bool = Field(default=False, description="התקבל BOM")
 
 
@@ -54,7 +56,7 @@ class ProcurementOrderUpdate(BaseModel):
     bom_items: Optional[List[BOMItem]] = None
     total_amount: Optional[float] = Field(None, ge=0)
     status: Optional[ProcurementStatus] = None
-    received_emf: Optional[bool] = None
+    emf_number: Optional[str] = None
     received_bom: Optional[bool] = None
 
 
