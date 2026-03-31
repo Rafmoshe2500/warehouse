@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { FiUsers, FiShield, FiActivity } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiUsers, FiActivity } from 'react-icons/fi';
 import UserManagement from './UserManagement';
-import GroupManagement from './GroupManagement';
 import AuditLogs from './AuditLogs';
 import { Tabs } from '../../components/common';
 import './AccessControlPage.css';
@@ -11,12 +10,10 @@ const AccessControlPage = () => {
 
     return (
         <div className="access-control-page">
-
-            <Tabs 
+            <Tabs
                 tabs={[
-                    { id: 'users', label: 'ניהול משתמשים', icon: <FiUsers /> },
-                    { id: 'groups', label: 'ניהול קבוצות', icon: <FiShield /> },
-                    { id: 'logs', label: 'לוגים', icon: <FiActivity /> }
+                    { id: 'users', label: 'ניהול משתמשים וקבוצות', icon: <FiUsers /> },
+                    { id: 'logs',  label: 'לוגים', icon: <FiActivity /> }
                 ]}
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
@@ -25,8 +22,6 @@ const AccessControlPage = () => {
             <div className="access-content">
                 {activeTab === 'users' ? (
                     <UserManagement isEmbedded={true} />
-                ) : activeTab === 'groups' ? (
-                    <GroupManagement />
                 ) : (
                     <AuditLogs isEmbedded={true} />
                 )}

@@ -1,0 +1,92 @@
+כבל
+json
+{ "input": "Cable,Cntlr-Switch OM4,MPO/MPO,5m,-C",
+  "label": "כבל", "confidence": "90%",
+  "attributes": { "cable_type": "MPO-MPO", "length": "5m", "fiber": "OM4/MMF" }}
+
+{ "input": "Cable,12Gb,Mini SAS HD,2m,-C",
+  "label": "כבל", "confidence": "90%",
+  "attributes": { "cable_type": "MiniSAS", "length": "2m", "speed": "12G" }}
+
+{ "input": "Cable,100GbE,QSFP28-QSFP28,Cu,0.5m,-C",
+  "label": "כבל", "confidence": "87%",
+  "attributes": { "cable_type": "QSFP-QSFP", "length": "0.5m", "speed": "100G" }}
+
+{ "input": "100G Q28 to 4x25G SFP28 DAC 3M CABLE",
+  "label": "כבל", "confidence": "66%",
+  "attributes": { "cable_type": "Breakout", "length": "3m" }}
+ג'יביק
+json
+{ "input": "QSFP28,100GbE,SR,-C",
+  "label": "ג'יביק", "confidence": "94%",
+  "attributes": { "form_factor": "QSFP28", "protocol": "ETH", "speed": "100G", "mode": "MMF" }}
+
+{ "input": "SFP28,25GbE,SR,-C",
+  "label": "ג'יביק", "confidence": "92%",
+  "attributes": { "form_factor": "SFP28", "protocol": "ETH", "speed": "25G", "mode": "MMF" }}
+
+{ "input": "Transceiver, 100GbE QSFP28 SR4, No FEC, MPO, MMF",
+  "label": "ג'יביק", "confidence": "42%",
+  "attributes": { "form_factor": "QSFP28", "protocol": "ETH", "speed": "100G", "connector": "MPO", "mode": "MMF" }}
+כרטיסיה
+json
+{ "input": "IO Module,2PT,100GbE,B,-C",
+  "label": "כרטיסיה", "confidence": "95%",
+  "attributes": { "ports": "2 ports", "protocol": "ETH", "speed": "100G" }}
+
+{ "input": "IO Module,4PT,FC,Target,w/SFP,-C",
+  "label": "כרטיסיה", "confidence": "93%",
+  "attributes": { "ports": "4 ports", "connector_type": "SFP", "protocol": "FC" }}
+
+{ "input": "IO Module,4-PT miniSAS,-C",
+  "label": "כרטיסיה", "confidence": "93%",
+  "attributes": { "ports": "4 ports", "connector_type": "miniSAS" }}
+
+{ "input": "IO Module,4P,64Gb FC,Target-Init,w/32Gb SFP",
+  "label": "כרטיסיה", "confidence": "80%",
+  "attributes": { "connector_type": "SFP", "protocol": "FC", "speed": "32G/64G" }}
+
+{ "input": "MCX755106AS-HEAT:CX-7 2x200GbE QSFP112 PCIe Gen5x16, VPI NIC",
+  "label": "כרטיסיה", "confidence": "84%",
+  "attributes": { "connector_type": "QSFP112", "protocol": "ETH", "speed": "200G" }}
+דיסק
+json
+{ "input": "Drive Pack 2X15.3TB,NVMe4,SED,-C",
+  "label": "דיסק", "confidence": "94%",
+  "attributes": { "disk_type": "NVMe", "capacity": "15.3TB", "drive_count": "2" }}
+
+{ "input": "Drive Pack,HDD,12G,10x22TB,DS460C,-C",
+  "label": "דיסק", "confidence": "94%",
+  "attributes": { "disk_type": "HDD", "capacity": "22TB", "drive_count": "10" }}
+
+{ "input": "ISE 800GB SSD - A3100",
+  "label": "דיסק", "confidence": "66%",
+  "attributes": { "disk_type": "SSD", "capacity": "800GB" }}
+מדף דיסקים
+json
+{ "input": "Disk Shelf,4U60,12G,Empty,DS460C,-C",
+  "label": "מדף דיסקים", "confidence": "94%",
+  "attributes": { "slots": "60 slots", "interface": "12G SAS" }}
+
+{ "input": "NVMe SHLF,2U24,Empty,NSM100B,-C",
+  "label": "מדף דיסקים", "confidence": "83%",
+  "attributes": { "slots": "24 slots", "disk_type_support": "NVMe", "interface": "NVMe" }}
+מתג
+json
+{ "input": "Cluster Switch,N9336C 36Pt PTSX10/25/40/100G",
+  "label": "מתג", "confidence": "79%",
+  "attributes": { "ports": "36 ports", "protocol": "ETH", "speed": "100G" }}
+
+{ "input": "Switch,NetApp,Cluster,SAN,Storage,24-Node",
+  "label": "מתג", "confidence": "64%",
+  "attributes": { "ports": "24 ports", "protocol": "FC" }}
+
+{ "input": "Z9264F Dell Networking Switch",
+  "label": "מתג", "confidence": "70%",
+  "attributes": { "ports": "64 ports" }}
+שרת אחסון / רישוי / ציוד נלווה
+json
+{ "input": "AFF A90 HA System,-C",         "label": "שרת אחסון",    "confidence": "94%", "attributes": {} }
+{ "input": "SW,ONTAP One Package,...",      "label": "רישוי ותמיכה", "confidence": "86%", "attributes": {} }
+{ "input": "Rail Kit,4-Post,...",           "label": "ציוד נלווה",   "confidence": "92%", "attributes": {} }
+{ "input": "Power Supply,2000W Titanium",   "label": "ציוד נלווה",   "confidence": "88%", "attributes": {} }

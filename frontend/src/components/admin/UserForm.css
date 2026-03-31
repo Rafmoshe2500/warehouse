@@ -1,84 +1,252 @@
-.user-form {
-  width: 100%;
-  padding: 2rem;
-  color: var(--text-primary);
-  animation: fadeIn 0.3s ease-out;
-  flex: 1;
+/* UserForm — compact two-column detail panel */
+
+/* Root — fills the detail panel completely */
+.uf-root {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  animation: uf-in 0.2s ease-out;
 }
 
-.user-form h2 {
+@keyframes uf-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ──────────────────────────────────────── */
+.uf-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  background: var(--bg-tertiary);
+}
+
+.uf-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: white;
+  font-size: 1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.uf-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.uf-header-name {
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 2rem;
-  text-align: center;
 }
 
-.user-form__error {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--accent-danger);
-  padding: 0.75rem;
+.uf-header-badges {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+/* ── Error banner ────────────────────────────────── */
+.uf-error {
+  margin: 0.5rem 1rem 0;
+  padding: 0.45rem 0.75rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 6px;
-  margin-bottom: 1.5rem;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  text-align: center;
+  color: var(--accent-danger);
+  font-size: 0.82rem;
+  flex-shrink: 0;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+/* ── Two-column body ─────────────────────────────── */
+.uf-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
 }
 
-/* Row container for username and user type */
-.form-row {
+/* Left column */
+.uf-col-left {
+  width: 55%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0.75rem 0.875rem;
+  border-left: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+/* Right column */
+.uf-col-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 0.875rem;
+  overflow-y: auto;
+}
+
+/* ── Readonly meta grid ──────────────────────────── */
+.uf-meta-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 0.35rem 0.75rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Wrapper div for full width grid item */
-.full-width {
-  grid-column: 1 / -1;
-}
-
-.form-checkboxes {
-  grid-column: 1 / -1;
+.uf-meta-item {
   display: flex;
-  gap: 2rem;
-  margin-top: 0.5rem;
-  padding-top: 1rem;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.uf-meta-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+}
+
+.uf-meta-value {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ── Editable fields ─────────────────────────────── */
+.uf-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.uf-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+/* ── Toggle switch ───────────────────────────────── */
+.uf-toggle-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.uf-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.55rem 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: border-color 0.2s;
+  height: 42px; /* match input height */
+}
+
+.uf-toggle:hover { border-color: var(--accent-primary); }
+
+.uf-toggle input[type="checkbox"] {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+.uf-toggle-track {
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--border-color);
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.uf-toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;         /* start LEFT = inactive/off */
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  transition: left 0.2s ease;
+}
+
+.uf-toggle.is-active .uf-toggle-track {
+  background: var(--accent-success);
+}
+
+.uf-toggle.is-active .uf-toggle-track::after {
+  left: 16px;        /* move RIGHT = active/on  (32 - 14 - 2 = 16) */
+}
+
+.uf-toggle-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ── Section label (right col) ───────────────────── */
+.uf-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent-primary);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* ── Action bar ──────────────────────────────────── */
+.uf-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
   border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+  gap: 0.5rem;
 }
 
-.form-divider {
-  width: 100%;
-  height: 1px;
-  background-color: var(--border-color);
-  margin: 1.5rem 0;
-}
-
-.user-form__actions {
+.uf-actions-right {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  /* margin-top managed by divider */
-  /* border-top managed by divider */
+  gap: 0.5rem;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@media (max-width: 500px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
+/* Override global input padding inside the form to be more compact */
+.uf-root input:not([type="checkbox"]),
+.uf-root select {
+  padding: 0.55rem 0.75rem !important;
+  font-size: 0.83rem !important;
+  border-radius: 8px !important;
 }

@@ -1,0 +1,366 @@
+.analytics-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1rem 0;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.analytics-page-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 0 0.25rem;
+}
+
+.analytics-dual-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+/* ── Panel Card ─────────────────────────────────────────────────── */
+.analytics-panel {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+}
+
+/* header row */
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* === Splunk-Style Date Filter === */
+.splunk-date-filter {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  height: 38px;
+}
+
+.splunk-date-filter-label {
+  padding: 0 1rem;
+  background: var(--bg-tertiary);
+  border-left: 1px solid var(--border-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.splunk-date-filter-label.clickable {
+  cursor: pointer;
+}
+
+.splunk-date-filter-label.clickable:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.splunk-date-filter-label.active {
+  color: var(--accent-success);
+  background: var(--bg-tertiary);
+}
+
+.splunk-date-filter-label.clickable.active:hover {
+  color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.splunk-date-input-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 0 0.8rem;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.splunk-date-input-wrapper:hover {
+  background: var(--bg-tertiary);
+}
+
+.splunk-date-input-wrapper + .splunk-date-input-wrapper::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: var(--border-color);
+}
+
+.splunk-date-input-wrapper label {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-left: 0.4rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.splunk-date-filter input[type="date"] {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+}
+
+.splunk-date-filter input[type="date"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.splunk-date-filter input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.splunk-date-filter input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Resolution select inside the splunk date filter */
+.splunk-resolution-select {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0 0.25rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.splunk-resolution-select option {
+  background: var(--surface-color);
+  color: var(--text-primary);
+}
+
+/* Vendor spending panel (full-width row below the dual grid) */
+.vendor-spending-panel {
+  min-height: 320px;
+}
+
+.vendor-res-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  background: color-mix(in srgb, var(--accent-primary, #22c55e), transparent 85%);
+  color: var(--accent-primary, #22c55e);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: auto;
+}
+
+
+.panel-title {
+  flex: 1;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.seed-btn-sm {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  background: var(--background-color);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.seed-btn-sm:hover:not(:disabled) {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.seed-btn-sm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* search */
+.part-search-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.part-search-input {
+  flex: 1;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--background-color);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.part-search-input:focus {
+  border-color: var(--accent, var(--primary-color));
+}
+
+.part-search-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.part-search-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.part-search-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Autocomplete Dropdown ────────────────────────────────────────── */
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 50;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.autocomplete-item {
+  padding: 0.6rem 0.85rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover {
+  background: var(--surface-hover, var(--background-color));
+  color: var(--accent, var(--primary-color));
+}
+
+.autocomplete-item.text-muted {
+  cursor: default;
+  color: var(--text-muted);
+}
+.autocomplete-item.text-muted:hover {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+/* tags */
+.active-parts-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.part-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.65rem;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.remove-part-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.2s;
+}
+.remove-part-btn:hover { color: var(--error-color, #ef4444); }
+
+/* chart */
+.panel-chart {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  min-height: 300px;
+}
+
+.no-data {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 2rem;
+  background: var(--background-color);
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .analytics-dual-grid { grid-template-columns: 1fr; }
+}
+

@@ -6,12 +6,16 @@ from enum import Enum
 
 class ProcurementStatus(str, Enum):
     """Status of procurement order"""
-    WAITING_BOM_EMF = "waiting_bom_emf" # מחכה ל-BOM ו-EMF
-    WAITING_BOM = "waiting_bom"         # מחכה ל-BOM (יש EMF)
-    WAITING_EMF = "waiting_emf"         # מחכה ל-EMF (יש BOM)
-    WAITING_ORDER = "waiting_order"     # מחכה שרכש ייצא (יש שניהם)
-    ORDERED = "ordered"                 # רכש יצא
-    RECEIVED = "received"               # רכש הגיע
+    # ─── Active pipeline (new) ───────────────────────────────
+    WAITING_BOM_EMF    = "waiting_bom_emf"    # ממתין לקבלת BOM ו-EMF
+    WAITING_SHIPMENT   = "waiting_shipment"   # ממתין לשילוח
+    SHIPPED            = "shipped"            # נשלח
+    RECEIVED           = "received"           # התקבל
+    # ─── Legacy values (old data in DB) ──────────────────────
+    WAITING_BOM        = "waiting_bom"        # [legacy]
+    WAITING_EMF        = "waiting_emf"        # [legacy]
+    WAITING_ORDER      = "waiting_order"      # [legacy]
+    ORDERED            = "ordered"            # [legacy]
 
 
 class ProcurementFileMetadata(BaseModel):
@@ -33,21 +37,30 @@ class BOMItem(BaseModel):
     manufacturer: str = Field(..., min_length=1, description="יצרן")
     description: str = Field(default="", description="תיאור")
     quantity: int = Field(..., gt=0, description="כמות")
+    bom_vendor: Optional[str] = Field(default=None, description="ספק BOM (DELL/NETAPP/HPE)")
 
 
 class ProcurementOrderBase(BaseModel):
     """Base procurement order schema"""
     order_date: datetime = Field(..., description="תאריך הזמנה")
     bom_items: List[BOMItem] = Field(..., min_length=1, description="פריטי BOM")
-    total_amount: float = Field(..., ge=0, description="סכום כולל")
+    total_amount: float = Field(default=0.0, ge=0, description="סכום כולל (מתעדכן מ-BOM)")
     status: ProcurementStatus = Field(default=ProcurementStatus.WAITING_BOM_EMF, description="סטטוס הזמנה")
     emf_number: Optional[str] = Field(default=None, description="מספר EMF")
     received_bom: bool = Field(default=False, description="התקבל BOM")
+    bom_vendor: Optional[str] = Field(default=None, description="ספק ה-BOM (DELL/NETAPP/HPE)")
+    bom_data: Optional[dict] = Field(default=None, description="תוצאות סריקת BOM")
+    bom_received_at: Optional[datetime] = Field(default=None, description="תאריך קבלת BOM")
+    emf_received_at: Optional[datetime] = Field(default=None, description="תאריך קבלת EMF")
+    waiting_shipment_at: Optional[datetime] = Field(default=None, description="תאריך שבו עבר להמתנה לשילוח")
+    shipped_at: Optional[datetime] = Field(default=None, description="תאריך שילוח")
+    received_at: Optional[datetime] = Field(default=None, description="תאריך קבלת הסחורה")
 
 
 class ProcurementOrderCreate(ProcurementOrderBase):
     """Schema for creating procurement order"""
-    pass
+    bom_file_s3_key: Optional[str] = Field(default=None, description="S3 key of the pre-scanned BOM file")
+    bom_filename: Optional[str] = Field(default=None, description="Original filename of the BOM file")
 
 
 class ProcurementOrderUpdate(BaseModel):
@@ -58,6 +71,10 @@ class ProcurementOrderUpdate(BaseModel):
     status: Optional[ProcurementStatus] = None
     emf_number: Optional[str] = None
     received_bom: Optional[bool] = None
+    bom_vendor: Optional[str] = None
+    bom_data: Optional[dict] = None
+    bom_file_s3_key: Optional[str] = None
+    bom_filename: Optional[str] = None
 
 
 

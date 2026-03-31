@@ -1,0 +1,160 @@
+/* ── BOM Pre-scan Modal ─────────────────────────────────────
+   Theme-aware: uses CSS variables from index.css
+   ─────────────────────────────────────────────────────────── */
+.bps-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: var(--overlay-medium);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.bps-modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg), 0 30px 80px rgba(0,0,0,0.4);
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  animation: bps-in 0.3s cubic-bezier(0.34,1.4,0.64,1);
+  direction: rtl;
+}
+
+@keyframes bps-in {
+  from { opacity: 0; transform: scale(0.88) translateY(24px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.bps-close {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.bps-close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}
+
+/* Header */
+.bps-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+.bps-header-icon { font-size: 2rem; }
+.bps-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0.3rem 0 0.2rem;
+}
+.bps-subtitle {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+}
+
+/* Vendor selection */
+.bps-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.85rem;
+  text-align: center;
+}
+
+.bps-vendor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+}
+
+.bps-vendor-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 0.75rem;
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.bps-vendor-card:hover {
+  border-color: var(--vc);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--vc) 25%, transparent);
+  background: var(--bg-secondary);
+}
+.bps-vendor-logo { font-size: 1.8rem; }
+.bps-vendor-name { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); }
+
+/* Upload dropzone */
+.bps-upload { display: flex; flex-direction: column; align-items: center; gap: 0.85rem; }
+
+.bps-dropzone {
+  width: 100%;
+  border: 2px dashed var(--border-color);
+  border-radius: 14px;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.bps-dropzone:hover,
+.bps-dropzone.dragging {
+  border-color: var(--vc);
+  background: color-mix(in srgb, var(--vc) 5%, var(--bg-tertiary));
+}
+.bps-dz-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin: 0; }
+.bps-dz-hint  { font-size: 0.78rem; color: var(--text-muted); margin: 0; }
+
+/* Scanning */
+.bps-scanning { display: flex; align-items: center; justify-content: center; min-height: 160px; }
+
+/* Error */
+.bps-error { text-align: center; }
+.bps-error-text { color: var(--accent-danger); font-size: 0.9rem; margin-bottom: 1rem; }
+.bps-error-actions { display: flex; gap: 0.5rem; justify-content: center; }
+
+/* Back button */
+.bps-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+.bps-back-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+}

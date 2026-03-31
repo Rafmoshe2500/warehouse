@@ -110,6 +110,7 @@ from app.services.procurement_service import ProcurementService
 from app.db.repositories.procurement_repository import ProcurementRepository
 from app.services.s3_service import S3Service
 from app.services.audit.procurement_auditor import ProcurementAuditor
+from app.services.bom_analytics_service import BomAnalyticsService
 
 def get_procurement_repository() -> ProcurementRepository:
     return ProcurementRepository()
@@ -120,17 +121,22 @@ def get_analytics_service(
     procurement_repo: ProcurementRepository = Depends(get_procurement_repository)
 ) -> AnalyticsService:
     return AnalyticsService(items_repo, audit_service, procurement_repo)
+
 def get_s3_service() -> S3Service:
     return S3Service()
 
 def get_procurement_auditor(audit_service: AuditService = Depends(get_audit_service)) -> ProcurementAuditor:
     return ProcurementAuditor(audit_service)
 
+def get_bom_analytics_service() -> BomAnalyticsService:
+    """Singleton-like factory — FastAPI caches per-request, but since BomAnalyticsService
+    holds no per-request state this is effectively a lightweight singleton."""
+    return BomAnalyticsService()
+
 def get_procurement_service(
     repo: ProcurementRepository = Depends(get_procurement_repository),
     s3_service: S3Service = Depends(get_s3_service),
-    auditor: ProcurementAuditor = Depends(get_procurement_auditor)
+    auditor: ProcurementAuditor = Depends(get_procurement_auditor),
+    analytics_service: BomAnalyticsService = Depends(get_bom_analytics_service),
 ) -> ProcurementService:
-    return ProcurementService(repo, s3_service, auditor)
-
-
+    return ProcurementService(repo, s3_service, auditor, analytics_service)

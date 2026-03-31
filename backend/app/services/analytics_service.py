@@ -380,16 +380,22 @@ class AnalyticsService:
         
         async for doc in cursor:
             status = doc["_id"]
-            if status == "waiting_emf":
-                stats["waiting_emf"] += doc["count"]
-            elif status == "waiting_bom":
-                stats["waiting_bom"] += doc["count"]
-            elif status == "ordered":
-                stats["ordered"] += doc["count"]
-            elif status == "received":
-                stats["received"] += doc["count"]
+            count = doc["count"]
+            
+            # waiting_emf: need EMF (either both missing, or only EMF missing)
+            if status in ["waiting_bom_emf", "waiting_emf"]:
+                stats["waiting_emf"] += count
+            # waiting_bom: only the legacy status where EMF was received but BOM is still missing
+            # waiting_bom_emf is already shown in waiting_emf, no need to double-count
+            if status == "waiting_bom":
+                stats["waiting_bom"] += count
+            if status in ["waiting_shipment", "shipped", "ordered", "waiting_order"]:
+                stats["ordered"] += count
+            if status == "received":
+                stats["received"] += count
                 
-            # Add to total spend regardless of status (or we can filter to specific statuses if needed)
+            # Add to total spend regardless of status
             stats["total_spend"] += doc.get("total_spend", 0.0)
+
             
         return stats

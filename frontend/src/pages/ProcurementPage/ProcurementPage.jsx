@@ -1,11 +1,16 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { FiPlus, FiSearch, FiClock, FiCheckCircle, FiX } from 'react-icons/fi';
+import { FiPlus, FiSearch, FiClock, FiCheckCircle, FiX, FiLayers, FiTrendingUp } from 'react-icons/fi';
 import { Button, Input, Pagination, Spinner, ToastContainer, SkeletonTable, Tabs } from '../../components/common';
 import ProcurementTable from '../../components/procurement/ProcurementTable';
 import ProcurementModal from '../../components/procurement/ProcurementModal';
+import OrderTypeModal from '../../components/procurement/OrderTypeModal';
+import BomPrescanModal from '../../components/procurement/BomPrescanModal';
 import ProcurementFilesModal from '../../components/procurement/ProcurementFilesModal';
 import DeleteConfirmModal from '../../components/admin/DeleteConfirmModal';
 import OrderHistoryModal from '../../components/procurement/OrderHistoryModal';
+import BomScannerTab from '../../components/procurement/BomScannerTab/BomScannerTab';
+import BomPreviewModal from '../../components/procurement/BomPreviewModal';
+import ProcurementAnalyticsTab from '../../components/procurement/AnalyticsTab/ProcurementAnalyticsTab';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
 import procurementService from '../../api/services/procurementService';
@@ -32,13 +37,25 @@ const ProcurementPage = () => {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [selectedOrderForHistory, setSelectedOrderForHistory] = useState(null);
 
+  // BOM preview modal
+  const [isBomPreviewOpen, setIsBomPreviewOpen] = useState(false);
+  const [selectedOrderForBom, setSelectedOrderForBom] = useState(null);
+
+  // Order type selection + BOM prescan
+  const [isOrderTypeModalOpen, setIsOrderTypeModalOpen] = useState(false);
+  const [newOrderType, setNewOrderType] = useState(null);       // 'bom' | 'manual'
+  const [isBomPrescanOpen, setIsBomPrescanOpen] = useState(false);
+  const [bomPrescanData, setBomPrescanData] = useState(null);   // { result, vendor }
+
   // Tab state: 'process' (default) or 'completed'
   const [activeTab, setActiveTab] = useState('process');
 
   const canEdit = hasPermission('procurement:rw');
 
   useEffect(() => {
-    fetchOrders();
+    if (activeTab !== 'bom-netapp' && activeTab !== 'analytics') {
+      fetchOrders();
+    }
   }, [page, pageSize, activeTab]); // Reload when tab changes
 
   const fetchOrders = async (filtersOverride = null) => {
@@ -56,7 +73,7 @@ const ProcurementPage = () => {
       // Add status filter based on active tab
       if (activeTab === 'process') {
         queryParams.status_ne = 'received';
-      } else {
+      } else if (activeTab === 'completed') {
         queryParams.status_in = ['received'];
       }
 
@@ -125,6 +142,27 @@ const ProcurementPage = () => {
 
   const openCreateModal = () => {
     setEditingOrder(null);
+    setIsOrderTypeModalOpen(true); // Show type selection first
+  };
+
+  const handleOrderTypeSelect = (type) => {
+    setNewOrderType(type);
+    setIsOrderTypeModalOpen(false);
+    if (type === 'bom') {
+      // BOM flow: prescan first, then open form pre-filled
+      setBomPrescanData(null);
+      setIsBomPrescanOpen(true);
+    } else {
+      // Manual flow: open form directly
+      setBomPrescanData(null);
+      setIsEditModalOpen(true);
+    }
+  };
+
+  const handleBomPrescanDone = (data) => {
+    // data = { result, vendor } from BomPrescanModal
+    setIsBomPrescanOpen(false);
+    setBomPrescanData(data);
     setIsEditModalOpen(true);
   };
 
@@ -140,8 +178,8 @@ const ProcurementPage = () => {
 
   const handleMarkAsOrdered = async (order) => {
     try {
-      await procurementService.updateOrder(order.id, { status: 'ordered' });
-      success('הסטטוס עודכן ל"יצא לדרך"');
+      await procurementService.updateOrder(order.id, { status: 'shipped' });
+      success('הסטטוס עודכן ל"נשלח"');
       fetchOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה בעדכון הסטטוס');
@@ -151,7 +189,7 @@ const ProcurementPage = () => {
   const handleMarkAsReceived = async (order) => {
     try {
       await procurementService.updateOrder(order.id, { status: 'received' });
-      success('הסטטוס עודכן ל"רכש הגיע"');
+      success('הסטטוס עודכן ל"התקבל"');
       fetchOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה בעדכון הסטטוס');
@@ -166,6 +204,11 @@ const ProcurementPage = () => {
   const openHistoryModal = (order) => {
     setSelectedOrderForHistory(order);
     setIsHistoryModalOpen(true);
+  };
+
+  const openBomPreviewModal = (order) => {
+    setSelectedOrderForBom(order);
+    setIsBomPreviewOpen(true);
   };
 
   const handleFileChange = async () => {
@@ -216,78 +259,106 @@ const ProcurementPage = () => {
       <Tabs 
         tabs={[
           { id: 'process', label: 'בתהליך', icon: <FiClock /> },
-          { id: 'completed', label: 'הסתיים', icon: <FiCheckCircle /> }
+          { id: 'completed', label: 'הסתיים', icon: <FiCheckCircle /> },
+          { id: 'bom-netapp', label: 'סריקת BOM', icon: <FiLayers /> },
+          { id: 'analytics', label: 'השוואת מחירים', icon: <FiTrendingUp /> },
         ]}
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />
 
-      <div className="procurement-controls-row">
-        {canEdit && (
-          <Button 
-            variant="primary" 
-            onClick={openCreateModal}
-            icon={<FiPlus />}
-          >
-            הזמנה חדשה
-          </Button>
-        )}
-
-        <form onSubmit={handleSearch} className="search-form">
-          <Input
-            placeholder="חיפוש לפי מק&quot;ט, יצרן או מספר EMF..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input global-search"
-            icon={<FiSearch />}
-          />
-          {searchTerm && (
-            <Button 
-              type="button" 
-              variant="tertiary" 
-              onClick={handleClearFilters}
-              icon={<FiX />}
-              style={{ padding: '0.5rem' }}
-            >
-            </Button>
-          )}
-        </form>
-      </div>
-
-      {loading ? (
-        <SkeletonTable rows={8} columns={7} />
+      {/* Analytics Tab */}
+      {activeTab === 'analytics' ? (
+        <ProcurementAnalyticsTab />
+      ) : activeTab === 'bom-netapp' ? (
+        <BomScannerTab />
       ) : (
         <>
-          <ProcurementTable
-            orders={orders}
-            canEdit={canEdit}
-            isAdmin={isAdmin || isSuperAdmin}
-            onEdit={openEditModal}
-            onDelete={openDeleteModal}
-            onManageFiles={openFilesModal}
-            onHistory={openHistoryModal}
-            onMarkAsOrdered={handleMarkAsOrdered}
-            onMarkAsReceived={handleMarkAsReceived}
-          />
+          <div className="procurement-controls-row">
+            {canEdit && (
+              <Button 
+                variant="primary" 
+                onClick={openCreateModal}
+                icon={<FiPlus />}
+              >
+                הזמנה חדשה
+              </Button>
+            )}
 
-          <Pagination
-            currentPage={page}
-            totalPages={Math.ceil(total / pageSize)}
-            totalItems={total}
-            limit={pageSize}
-            onPageChange={handlePageChange}
-            onItemsPerPageChange={handlePageSizeChange}
-          />
+            <form onSubmit={handleSearch} className="search-form">
+              <Input
+                placeholder="חיפוש לפי מק&quot;ט, יצרן או מספר EMF..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input global-search"
+                icon={<FiSearch />}
+              />
+              {searchTerm && (
+                <Button 
+                  type="button" 
+                  variant="tertiary" 
+                  onClick={handleClearFilters}
+                  icon={<FiX />}
+                  style={{ padding: '0.5rem' }}
+                >
+                </Button>
+              )}
+            </form>
+          </div>
+
+          {loading ? (
+            <SkeletonTable rows={8} columns={7} />
+          ) : (
+            <>
+              <ProcurementTable
+                orders={orders}
+                canEdit={canEdit}
+                isAdmin={isAdmin || isSuperAdmin}
+                onEdit={openEditModal}
+                onDelete={openDeleteModal}
+                onManageFiles={openFilesModal}
+                onHistory={openHistoryModal}
+                onViewBom={openBomPreviewModal}
+                onMarkAsOrdered={handleMarkAsOrdered}
+                onMarkAsReceived={handleMarkAsReceived}
+              />
+
+              <Pagination
+                currentPage={page}
+                totalPages={Math.ceil(total / pageSize)}
+                totalItems={total}
+                limit={pageSize}
+                onPageChange={handlePageChange}
+                onItemsPerPageChange={handlePageSizeChange}
+              />
+            </>
+          )}
         </>
       )}
 
-      {/* Modals */}
+      {/* Order type selection (new orders only) */}
+      <OrderTypeModal
+        isOpen={isOrderTypeModalOpen}
+        onClose={() => setIsOrderTypeModalOpen(false)}
+        onSelect={handleOrderTypeSelect}
+      />
+
+      {/* BOM pre-scan (for BOM orders before form opens) */}
+      <BomPrescanModal
+        isOpen={isBomPrescanOpen}
+        onClose={() => setIsBomPrescanOpen(false)}
+        onDone={handleBomPrescanDone}
+      />
+
+      {/* Main procurement form (create/edit) */}
       <ProcurementModal
         isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
+        onClose={() => { setIsEditModalOpen(false); setNewOrderType(null); setBomPrescanData(null); }}
         onSubmit={editingOrder ? handleUpdate : handleCreate}
         initialData={editingOrder}
         isEdit={!!editingOrder}
+        orderType={editingOrder ? null : newOrderType}
+        bomPrescanData={editingOrder ? null : bomPrescanData}
       />
 
       <ProcurementFilesModal
@@ -311,6 +382,14 @@ const ProcurementPage = () => {
         onClose={() => setIsHistoryModalOpen(false)}
         orderId={selectedOrderForHistory?.id}
         orderNumber={selectedOrderForHistory?.catalog_number}
+      />
+
+      <BomPreviewModal
+        isOpen={isBomPreviewOpen}
+        onClose={() => setIsBomPreviewOpen(false)}
+        bomData={selectedOrderForBom?.bom_data}
+        vendor={selectedOrderForBom?.bom_vendor}
+        orderId={selectedOrderForBom?.id}
       />
     </div>
   );

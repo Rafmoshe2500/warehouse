@@ -1,62 +1,70 @@
 import React from 'react';
 import './PermissionSelector.css';
 
+const PERMISSION_GROUPS = [
+  {
+    id: 'inventory',
+    label: 'מלאי',
+    color: '#3b82f6',
+    permissions: [
+      { id: 'inventory:ro', label: 'קריאה' },
+      { id: 'inventory:rw', label: 'קריאה/כתיבה' },
+    ],
+  },
+  {
+    id: 'procurement',
+    label: 'רכש',
+    color: '#10b981',
+    permissions: [
+      { id: 'procurement:ro', label: 'קריאה' },
+      { id: 'procurement:rw', label: 'קריאה/כתיבה' },
+    ],
+  },
+  {
+    id: 'system',
+    label: 'מערכת',
+    color: '#8b5cf6',
+    permissions: [
+      { id: 'admin', label: 'אדמין' },
+    ],
+  },
+];
+
 const PermissionSelector = ({ selectedPermissions = [], onChange }) => {
-    const handleToggle = (permissionId) => {
-        if (selectedPermissions.includes(permissionId)) {
-            onChange(selectedPermissions.filter(id => id !== permissionId));
-        } else {
-            onChange([...selectedPermissions, permissionId]);
-        }
-    };
+  const toggle = (id) => {
+    if (selectedPermissions.includes(id)) {
+      onChange(selectedPermissions.filter(p => p !== id));
+    } else {
+      onChange([...selectedPermissions, id]);
+    }
+  };
 
-    const groups = [
-        {
-            title: 'מלאי',
-            permissions: [
-                { id: 'inventory:ro', label: 'קריאה' },
-                { id: 'inventory:rw', label: 'קריאה/כתיבה' }
-            ]
-        },
-        {
-            title: 'רכש',
-            permissions: [
-                { id: 'procurement:ro', label: 'קריאה' },
-                { id: 'procurement:rw', label: 'קריאה/כתיבה' }
-            ]
-        },
-        {
-            title: 'מערכת',
-            permissions: [
-                { id: 'admin', label: 'אדמיניסטרטור' }
-            ]
-        }
-    ];
-
-    return (
-        <div className="permission-selector">
-            <label className="permission-selector__label">הרשאות מפורטות</label>
-            <div className="permission-groups">
-                {groups.map((group) => (
-                    <div key={group.title} className="permission-group">
-                        <div className="permission-group__header">{group.title}</div>
-                        <div className="permission-group__options">
-                            {group.permissions.map((perm) => (
-                                <label key={perm.id} className={`permission-option ${selectedPermissions.includes(perm.id) ? 'active' : ''}`}>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedPermissions.includes(perm.id)}
-                                        onChange={() => handleToggle(perm.id)}
-                                    />
-                                    <span className="permission-option__label">{perm.label}</span>
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
+  return (
+    <div className="ps-root">
+      {PERMISSION_GROUPS.map(group => (
+        <div key={group.id} className="ps-group">
+          <span className="ps-group-label" style={{ color: group.color }}>{group.label}</span>
+          <div className="ps-chips">
+            {group.permissions.map(perm => {
+              const active = selectedPermissions.includes(perm.id);
+              return (
+                <button
+                  key={perm.id}
+                  type="button"
+                  className={`ps-chip ${active ? 'active' : ''}`}
+                  style={active ? { borderColor: group.color, background: `${group.color}20`, color: group.color } : {}}
+                  onClick={() => toggle(perm.id)}
+                >
+                  <span className="ps-chip-dot" style={active ? { background: group.color } : {}} />
+                  {perm.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
 export default PermissionSelector;

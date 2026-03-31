@@ -8,6 +8,7 @@ from app.core.constants import UserRole
 from app.db.repositories.procurement_repository import ProcurementRepository
 from app.services.s3_service import S3Service
 from app.services.audit.procurement_auditor import ProcurementAuditor
+from app.services.bom_analytics_service import BomAnalyticsService, _resolve_datetime
 from app.schemas.procurement import (
     ProcurementOrderCreate,
     ProcurementOrderUpdate,
@@ -30,10 +31,17 @@ MAX_FILE_SIZE = 10 * 1024 * 1024
 class ProcurementService:
     """Service for procurement business logic"""
     
-    def __init__(self, repository: ProcurementRepository, s3_service: S3Service, auditor: ProcurementAuditor):
-        self.repository = repository
-        self.s3_service = s3_service
-        self.auditor = auditor
+    def __init__(
+        self,
+        repository: ProcurementRepository,
+        s3_service: S3Service,
+        auditor: ProcurementAuditor,
+        analytics_service: BomAnalyticsService,   # injected — satisfies DIP
+    ):
+        self.repository        = repository
+        self.s3_service        = s3_service
+        self.auditor           = auditor
+        self.analytics_service = analytics_service
     
     async def create_order(
         self,
@@ -48,25 +56,79 @@ class ProcurementService:
         if "status" not in order_dict:
             order_dict["status"] = ProcurementStatus.WAITING_BOM_EMF
         
-        # Business Logic Validation
-        # Auto-update status based on presence of EMF and BOM
-        if order_dict.get("status") not in [ProcurementStatus.ORDERED, ProcurementStatus.RECEIVED]:
+        # Business Logic: if both BOM and EMF received → WAITING_SHIPMENT
+        if order_dict.get("status") not in [ProcurementStatus.SHIPPED, ProcurementStatus.RECEIVED]:
             has_emf = bool(order_dict.get("emf_number"))
             has_bom = order_dict.get("received_bom", False)
-            
             if has_emf and has_bom:
-                order_dict["status"] = ProcurementStatus.WAITING_ORDER
-            elif has_emf and not has_bom:
-                order_dict["status"] = ProcurementStatus.WAITING_BOM
-            elif not has_emf and has_bom:
-                order_dict["status"] = ProcurementStatus.WAITING_EMF
+                order_dict["status"] = ProcurementStatus.WAITING_SHIPMENT
             else:
                 order_dict["status"] = ProcurementStatus.WAITING_BOM_EMF
-        elif order_dict.get("status") == ProcurementStatus.ORDERED:
-            # If manually set to ORDERED, BOM and EMF should logically be present
-            order_dict["received_bom"] = True
 
-        created_order = await self.repository.create_order(order_dict)
+        # Extract BOM file keys (not stored as order fields in DB)
+        bom_s3_key  = order_dict.pop("bom_file_s3_key", None)
+        bom_filename = order_dict.pop("bom_filename", None) or "bom_file.xlsx"
+
+        # Populate initial tracking timestamps
+        now = datetime.now(timezone.utc)
+        if order_dict.get("received_bom"):
+            order_dict["bom_received_at"] = now
+        if order_dict.get("emf_number"):
+            order_dict["emf_received_at"] = now
+            
+        status = order_dict.get("status")
+        if status == ProcurementStatus.WAITING_SHIPMENT:
+            order_dict["waiting_shipment_at"] = now
+        elif status == ProcurementStatus.SHIPPED:
+            order_dict["shipped_at"] = now
+        elif status == ProcurementStatus.RECEIVED:
+            order_dict["received_at"] = now
+
+        # Strip unknown_parts from bom_data — saves significant DB space
+        if order_dict.get("bom_data") and isinstance(order_dict["bom_data"], dict):
+            order_dict["bom_data"].pop("unknown_parts", None)
+
+        # Build initial files list — embed the BOM file directly on creation
+        initial_files = []
+        if bom_s3_key:
+            initial_files.append({
+                "file_id": str(uuid.uuid4()),
+                "filename": bom_filename,
+                "file_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "file_size": 0,
+                "s3_key": bom_s3_key,
+                "local_path": bom_s3_key if not bom_s3_key.startswith("s3://") else None,
+                "uploaded_by": created_by,
+                "uploaded_at": datetime.now(timezone.utc),
+            })
+
+        created_order = await self.repository.create_order(order_dict, initial_files=initial_files)
+        
+        # BOM Analytics Integration
+        if created_order.get("bom_data") and created_order.get("bom_vendor"):
+            try:
+                raw_date = created_order.get("order_date") or created_order.get("created_at")
+                await self.analytics_service.record_bom_prices(
+                    order_id=str(created_order.get("id") or created_order.get("_id", uuid.uuid4())),
+                    recorded_at=_resolve_datetime(raw_date),
+                    vendor=created_order["bom_vendor"],
+                    bom_groups=created_order["bom_data"].get("groups", [])
+                )
+            except Exception as e:
+                logger.error("Failed to record BOM prices for analytics: %s", e)
+        elif created_order.get("bom_items"):
+            # Manual order (no BOM file) — record product names so they appear in search
+            try:
+                raw_date = created_order.get("order_date") or created_order.get("created_at")
+                vendor = (created_order.get("bom_items") or [{}])[0].get("manufacturer", "")
+                await self.analytics_service.record_manual_prices(
+                    order_id=str(created_order.get("id") or created_order.get("_id", uuid.uuid4())),
+                    recorded_at=_resolve_datetime(raw_date),
+                    vendor=vendor,
+                    bom_items=created_order["bom_items"],
+                )
+            except Exception as e:
+                logger.error("Failed to record manual prices for analytics: %s", e)
         
         # Audit Log
         try:
@@ -133,23 +195,41 @@ class ProcurementService:
         current_emf = update_dict.get("emf_number") if "emf_number" in update_dict else existing_order.get("emf_number")
 
         # Business Logic
-        # Auto-update status based on EMF and BOM if not manually moved to ordered/received
-        if current_status not in [ProcurementStatus.ORDERED, ProcurementStatus.RECEIVED]:
+        # Status auto-update: both BOM+EMF → WAITING_SHIPMENT, otherwise WAITING_BOM_EMF
+        if current_status not in [ProcurementStatus.SHIPPED, ProcurementStatus.RECEIVED]:
             has_emf = bool(current_emf)
             has_bom = current_received_bom
-            
             if has_emf and has_bom:
-                update_dict["status"] = ProcurementStatus.WAITING_ORDER
-            elif has_emf and not has_bom:
-                update_dict["status"] = ProcurementStatus.WAITING_BOM
-            elif not has_emf and has_bom:
-                update_dict["status"] = ProcurementStatus.WAITING_EMF
+                update_dict["status"] = ProcurementStatus.WAITING_SHIPMENT
             else:
                 update_dict["status"] = ProcurementStatus.WAITING_BOM_EMF
-        elif current_status == ProcurementStatus.ORDERED:
-            # Enforce BOM is true if ordered
-            update_dict["received_bom"] = True
-            current_received_bom = True
+
+        # Populate tracking timestamps for transitions
+        now = datetime.now(timezone.utc)
+        
+        # BOM received transition
+        if "received_bom" in update_dict:
+            if update_dict["received_bom"] and not existing_order.get("received_bom"):
+                update_dict["bom_received_at"] = now
+            elif not update_dict["received_bom"]:
+                update_dict["bom_received_at"] = None
+                
+        # EMF received transition
+        if "emf_number" in update_dict:
+            if update_dict["emf_number"] and not existing_order.get("emf_number"):
+                update_dict["emf_received_at"] = now
+            elif not update_dict["emf_number"]:
+                update_dict["emf_received_at"] = None
+
+        # Status transitions
+        if "status" in update_dict and update_dict["status"] != existing_order.get("status"):
+            new_status = update_dict["status"]
+            if new_status == ProcurementStatus.WAITING_SHIPMENT and not existing_order.get("waiting_shipment_at"):
+                update_dict["waiting_shipment_at"] = now
+            elif new_status == ProcurementStatus.SHIPPED and not existing_order.get("shipped_at"):
+                update_dict["shipped_at"] = now
+            elif new_status == ProcurementStatus.RECEIVED and not existing_order.get("received_at"):
+                update_dict["received_at"] = now
 
         # Calculate changes for audit
         changes = {}
@@ -169,6 +249,32 @@ class ProcurementService:
         updated_order = await self.repository.update_order(order_id, update_dict)
         if not updated_order:
             raise HTTPException(status_code=404, detail="הזמנה לא נמצאה")
+            
+        # BOM Analytics Integration
+        if updated_order.get("bom_data") and updated_order.get("bom_vendor") and "bom_data" in update_dict:
+            try:
+                raw_date = updated_order.get("order_date") or updated_order.get("created_at")
+                await self.analytics_service.record_bom_prices(
+                    order_id=str(order_id),
+                    recorded_at=_resolve_datetime(raw_date),
+                    vendor=updated_order["bom_vendor"],
+                    bom_groups=updated_order["bom_data"].get("groups", [])
+                )
+            except Exception as e:
+                logger.error("Failed to update BOM prices for analytics: %s", e)
+        elif updated_order.get("bom_items") and "bom_items" in update_dict:
+            # Manual order updated — re-record manual placeholders
+            try:
+                raw_date = updated_order.get("order_date") or updated_order.get("created_at")
+                vendor = (updated_order.get("bom_items") or [{}])[0].get("manufacturer", "")
+                await self.analytics_service.record_manual_prices(
+                    order_id=str(order_id),
+                    recorded_at=_resolve_datetime(raw_date),
+                    vendor=vendor,
+                    bom_items=updated_order["bom_items"],
+                )
+            except Exception as e:
+                logger.error("Failed to update manual prices for analytics: %s", e)
         
         # Audit Log
         if changes:
@@ -206,6 +312,12 @@ class ProcurementService:
             await self.auditor.delete_all_order_logs(order_id=order_id)
         except Exception as e:
             logger.error(f"Failed to delete audit logs for deleted order {order_id}: {e}")
+
+        # Delete analytics price history for this order
+        try:
+            await self.analytics_service.delete_order_history(order_id)
+        except Exception as e:
+            logger.error("Failed to delete analytics history for order %s: %s", order_id, e)
             
         return True
     

@@ -11,11 +11,11 @@ class ProcurementRepository:
     def __init__(self):
         self.collection = MongoDB.get_collection("procurement_orders")
     
-    async def create_order(self, order_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_order(self, order_data: Dict[str, Any], initial_files: list = None) -> Dict[str, Any]:
         """Create new procurement order"""
         order_doc = {
             **order_data,
-            "files": [],
+            "files": initial_files or [],
             "created_at": datetime.now(timezone.utc),
             "updated_at": datetime.now(timezone.utc)
         }
@@ -42,12 +42,24 @@ class ProcurementRepository:
         
         # Generic search across bom_items and emf_number
         if search:
-            search_regex = {"$regex": search, "$options": "i"}
-            filter_query["$or"] = [
-                {"bom_items.catalog_number": search_regex},
-                {"bom_items.manufacturer": search_regex},
-                {"emf_number": search_regex}
+            words = [w for w in search.strip().split() if w]
+            searchable_fields = [
+                "bom_items.catalog_number",
+                "bom_items.product_name",
+                "bom_items.description",
+                "bom_items.manufacturer",
+                "bom_data.groups.main.part_alias",
+                "emf_number",
             ]
+            if len(words) == 1:
+                r = {"$regex": words[0], "$options": "i"}
+                filter_query["$or"] = [{f: r} for f in searchable_fields]
+            else:
+                # Every word must appear in at least one searchable field (AND across words, OR across fields)
+                filter_query["$and"] = [
+                    {"$or": [{f: {"$regex": w, "$options": "i"}} for f in searchable_fields]}
+                    for w in words
+                ]
         else:
             # Fallback to specific column searches if provided (legacy)
             if catalog_number or manufacturer:

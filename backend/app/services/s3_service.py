@@ -27,11 +27,13 @@ class S3Service:
         
         if self.use_s3:
             try:
+                endpoint_url = getattr(settings, 'S3_ENDPOINT_URL', '')
                 self.s3_client = boto3.client(
                     's3',
                     aws_access_key_id=getattr(settings, 'S3_ACCESS_KEY', ''),
                     aws_secret_access_key=getattr(settings, 'S3_SECRET_KEY', ''),
-                    region_name=getattr(settings, 'S3_REGION', 'us-east-1')
+                    region_name=getattr(settings, 'S3_REGION', 'us-east-1'),
+                    endpoint_url=endpoint_url if endpoint_url else None
                 )
                 self.bucket_name = getattr(settings, 'S3_BUCKET_NAME', '')
                 logger.info(f"S3 service initialized with bucket: {self.bucket_name}")

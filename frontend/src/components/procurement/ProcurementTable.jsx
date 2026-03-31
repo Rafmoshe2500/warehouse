@@ -4,192 +4,202 @@ import { Button } from '../common';
 import { useAuth } from '../../context/AuthContext';
 import './ProcurementTable.css';
 
-const ProcurementTable = ({ 
-  orders, 
-  onEdit, 
-  onDelete, 
-  onManageFiles, 
-  onHistory,
-  onMarkAsOrdered,
-  onMarkAsReceived,
-  canEdit = false,
-  isAdmin = false
-}) => {
+// ── Status pipeline config ────────────────────────────────
+const PIPELINE_STEPS = [
+  { key: 'waiting_bom_emf',  label: 'BOM + EMF' },
+  { key: 'waiting_shipment', label: 'ממתין לשילוח' },
+  { key: 'shipped',          label: 'נשלח' },
+  { key: 'received',         label: 'התקבל' },
+];
+
+// ── Vendor color / label map ──────────────────────────────
+const VENDOR_META = {
+  NETAPP: { color: '#f59e0b', logo: '🟠', label: 'NetApp' },
+  DELL:   { color: '#3b82f6', logo: '🔵', label: 'Dell'   },
+  HPE:    { color: '#22c55e', logo: '🟢', label: 'HPE'    },
+};
+
+const STATUS_LABELS = {
+  received:         'התקבל',
+  shipped:          'נשלח',
+  waiting_shipment: 'ממתין לשילוח',
+  waiting_bom_emf:  'ממתין לBOM ו-EMF',
+};
+
+// ── Simple pipeline bar ───────────────────────────────────
+const PipelineBar = ({ order }) => {
+  const steps = [
+    { label: 'נוצר',       date: order.created_at || order.order_date, isDone: true },
+    { label: 'התקבל BOM',  date: order.bom_received_at, isDone: !!order.received_bom },
+    { label: 'התקבל EMF',  date: order.emf_received_at, isDone: !!order.emf_number },
+    { label: 'ממתין לשילוח', date: order.waiting_shipment_at, isDone: ['waiting_shipment', 'shipped', 'received'].includes(order.status) },
+    { label: 'נשלח',       date: order.shipped_at, isDone: ['shipped', 'received'].includes(order.status) },
+    { label: 'התקבל',      date: order.received_at, isDone: order.status === 'received' },
+  ];
+
+  // For the current pulsing animation, we'll light the first non-done step, or none if all done
+  const currentIndex = steps.findIndex(s => !s.isDone);
 
   return (
-    <div className="procurement-table-container">
-      <table className="procurement-table">
-        <thead>
-          <tr>
-            <th>מק"ט</th>
-            <th>יצרן</th>
-            <th className="desc-col">תיאור</th>
-            <th>כמות</th>
-            <th>סכום</th>
-            <th>תאריך הזמנה</th>
-            <th>סטטוס</th>
-            <th>EMF</th>
-            <th>BOM</th>
-            <th>קבצים</th>
-            {canEdit && <th>פעולות</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {orders.length > 0 ? (
-            orders.map(order => (
-              <tr key={order.id}>
-                <td>
-                  <div className="bom-items-list">
-                    {order.bom_items ? (
-                      order.bom_items.map((item, idx) => (
-                        <div key={idx} className="bom-item-row">
-                          {item.catalog_number}
-                        </div>
-                      ))
-                    ) : (
-                      <span>{order.catalog_number || '-'}</span>
-                    )}
-                  </div>
-                </td>
-                <td>
-                  <div className="bom-items-list">
-                    {order.bom_items ? (
-                      order.bom_items.map((item, idx) => (
-                        <div key={idx} className="bom-item-row">
-                          {item.manufacturer}
-                        </div>
-                      ))
-                    ) : (
-                      <span>{order.manufacturer || '-'}</span>
-                    )}
-                  </div>
-                </td>
-                <td className="desc-col">
-                  <div className="bom-items-list">
-                    {order.bom_items ? (
-                      order.bom_items.map((item, idx) => (
-                        <div key={idx} className="bom-item-row" title={item.description}>
-                          {item.description || item.catalog_number}
-                        </div>
-                      ))
-                    ) : (
-                      <span title={order.description}>{order.description || '-'}</span>
-                    )}
-                  </div>
-                </td>
-                <td>
-                  <div className="bom-items-list">
-                    {order.bom_items ? (
-                      order.bom_items.map((item, idx) => (
-                        <div key={idx} className="bom-item-row">
-                          {item.quantity}x
-                        </div>
-                      ))
-                    ) : (
-                      <span>{order.quantity || 1}</span>
-                    )}
-                  </div>
-                </td>
-                <td className="amount-cell">
-                  ${order.total_amount ? order.total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : order.amount?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
-                  {order.bom_items && order.bom_items.length > 1 && (
-                    <small className="item-count">({order.bom_items.length} items)</small>
-                  )}
-                </td>
-                <td>{new Date(order.order_date).toLocaleDateString('he-IL')}</td>
-                <td>
-                  <span className={`status-badge status-${order.status || 'waiting_bom_emf'}`}>
-                    {order.status === 'received' ? 'רכש הגיע' :
-                     order.status === 'ordered' ? 'רכש יצא' :
-                     order.status === 'waiting_order' ? 'מחכה שרכש ייצא' :
-                     order.status === 'waiting_bom' ? 'מחכה ל-BOM' :
-                     order.status === 'waiting_emf' ? 'מחכה ל-EMF' :
-                     'מחכה ל-BOM ו-EMF'}
-                  </span>
-                </td>
-                <td>
-                  <span>{order.emf_number || '-'}</span>
-                </td>
-                <td>
-                  <span className={`status-dot ${order.received_bom ? 'green' : 'red'}`}></span>
-                </td>
-                <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                     <Button 
-                        variant="icon"
-                        onClick={() => onManageFiles(order)}
-                        title="קבצים"
-                        icon={<FiPaperclip size={16} />}
-                     />
-                     <span style={{ fontSize: '0.8rem' }}>{order.files?.length || 0}</span>
-                    </div>
-                </td>
-                {canEdit && (
-                  <td>
-                    <div className="action-buttons-grid">
-                        {/* 1. Edit */}
-                        {(isAdmin || (order.status !== 'received' && order.status !== 'ordered')) ? (
-                            <Button 
-                              variant="icon"
-                              onClick={() => onEdit(order)}
-                              title="ערוך"
-                              icon={<FiEdit2 size={16} />}
-                              className="edit-btn"
-                            />
-                        ) : <div />}
+    <div className="pipeline">
+      {steps.map((step, i) => {
+        const isCurrent = i === currentIndex;
+        return (
+          <React.Fragment key={step.label}>
+            <div className={`step ${step.isDone ? 'done' : ''} ${isCurrent ? 'current' : ''}`}>
+              <div className="step-dot" />
+              <span className="step-label">{step.label}</span>
+              <span className="step-date">
+                {step.isDone ? (step.date ? new Date(step.date).toLocaleDateString('he-IL') : '✓') : '\u00A0'}
+              </span>
+            </div>
+            {i < steps.length - 1 && (
+              <div className={`step-line ${steps[i + 1].isDone ? 'done' : ''}`} />
+            )}
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+};
 
-                        {/* 2. Delete */}
-                        {(isAdmin || (order.status !== 'received' && order.status !== 'ordered')) ? (
-                            <Button 
-                              variant="icon"
-                              onClick={() => onDelete(order)}
-                              title="מחק"
-                              icon={<FiTrash2 size={16} />}
-                              className="delete-btn"
-                            />
-                        ) : <div />}
+// ── Order Card ────────────────────────────────────────────
+const OrderCard = ({ order, onEdit, onDelete, onManageFiles, onHistory, onViewBom, onMarkAsOrdered, onMarkAsReceived, canEdit, isAdmin }) => {
+  const vendor = VENDOR_META[order.bom_vendor];
+  const statusLabel = STATUS_LABELS[order.status] || order.status;
 
-                        {/* 3. History */}
-                        <Button 
-                          variant="icon"
-                          onClick={() => onHistory(order)}
-                          title="היסטוריה"
-                          icon={<FiClock size={16} />}
-                          className="history-btn"
-                        />
-                        
-                        {/* 4. Truck or Check */}
-                        {order.status === 'ordered' ? (
-                            <Button 
-                              variant="icon"
-                              onClick={() => onMarkAsReceived(order)}
-                              title='סמן כ"הגיע"'
-                              icon={<FiCheck size={16} />}
-                              className="received-btn"
-                            />
-                        ) : (order.status === 'waiting_order' ? (
-                            <Button 
-                              variant="icon"
-                              onClick={() => onMarkAsOrdered(order)}
-                              title='סמן כ"יצא לדרך"'
-                              icon={<FiTruck size={16} />}
-                              className="ordered-btn"
-                            />
-                        ) : <div />)}
-                    </div>
-                  </td>
-                )}
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={canEdit ? 11 : 10} className="no-data">
-                אין הזמנות להצגה
-              </td>
-            </tr>
+  // Collect unique manufacturers from items
+  const manufacturers = [...new Set((order.bom_items || []).map(i => i.manufacturer).filter(Boolean))];
+  const hasMultipleItems = (order.bom_items || []).length > 1;
+
+  return (
+    <div className={`order-card status-card-${order.status || 'waiting_bom_emf'}`}>
+      {/* Top row */}
+      <div className="oc-top">
+        {/* Vendor badge */}
+        {vendor ? (
+          <span className="oc-vendor" style={{ color: vendor.color }}>
+            {vendor.logo} {vendor.label}
+          </span>
+        ) : (
+          <span className="oc-vendor manual">✏️ ידני</span>
+        )}
+
+        {/* Items summary */}
+        <div className="oc-items">
+          {(order.bom_items || []).slice(0, 2).map((item, i) => (
+            <span key={i} className="oc-item-chip"
+              title={[item.product_name, item.catalog_number, item.description].filter(Boolean).join(' | ')}>
+              {item.product_name || item.catalog_number || item.manufacturer || `פריט ${i+1}`}
+            </span>
+          ))}
+          {(order.bom_items || []).length > 2 && (
+            <span
+              className="oc-item-more"
+              title={(order.bom_items || []).slice(2).map(item =>
+                [item.product_name, item.catalog_number, item.description].filter(Boolean).join(' | ') || 'פריט'
+              ).join('\n')}
+            >
+              +{(order.bom_items || []).length - 2}
+            </span>
           )}
-        </tbody>
-      </table>
+        </div>
+
+        {/* Date + Amount */}
+        <div className="oc-meta">
+          <span className="oc-date">📅 {new Date(order.order_date).toLocaleDateString('he-IL')}</span>
+          {(order.total_amount > 0 || order.amount > 0) && (
+            <span className="oc-amount">
+              ${(order.total_amount || order.amount || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom row — pipeline + actions */}
+      <div className="oc-bottom">
+        <PipelineBar order={order} />
+
+        <div className="oc-actions">
+          {/* EMF badge */}
+          {order.emf_number && (
+            <span className="oc-emf-badge" title={`EMF: ${order.emf_number}`}>EMF ✓</span>
+          )}
+          {/* BOM icon */}
+          {order.bom_data && onViewBom && (
+            <button className="oc-icon-btn bom-icon" title="צפה ב-BOM" onClick={() => onViewBom(order)}>📊</button>
+          )}
+          {/* Files */}
+          <button className="oc-icon-btn" title="קבצים" onClick={() => onManageFiles(order)}>
+            <FiPaperclip size={14} />
+            {order.files?.length > 0 && <span className="oc-file-count">{order.files.length}</span>}
+          </button>
+          {/* History */}
+          <button className="oc-icon-btn history" title="היסטוריה" onClick={() => onHistory(order)}>
+            <FiClock size={14} />
+          </button>
+
+          {canEdit && (
+            <>
+              {order.status === 'shipped' && (
+                <button className="oc-icon-btn received" title='סמן כ"התקבל"' onClick={() => onMarkAsReceived(order)}>
+                  <FiCheck size={14} />
+                </button>
+              )}
+              {order.status === 'waiting_shipment' && (
+                <button className="oc-icon-btn truck" title='סמן כ"נשלח"' onClick={() => onMarkAsOrdered(order)}>
+                  <FiTruck size={14} />
+                </button>
+              )}
+              {(isAdmin || order.status !== 'received') && (
+                <button className="oc-icon-btn edit" title="ערוך" onClick={() => onEdit(order)}>
+                  <FiEdit2 size={14} />
+                </button>
+              )}
+              {(isAdmin || order.status !== 'received') && (
+                <button className="oc-icon-btn delete" title="מחק" onClick={() => onDelete(order)}>
+                  <FiTrash2 size={14} />
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── Main Table Component ──────────────────────────────────
+const ProcurementTable = ({
+  orders, onEdit, onDelete, onManageFiles, onHistory, onViewBom,
+  onMarkAsOrdered, onMarkAsReceived, canEdit = false, isAdmin = false,
+}) => {
+  if (!orders || orders.length === 0) {
+    return (
+      <div className="orders-empty">
+        <span>📋</span>
+        <p>אין הזמנות להצגה</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="orders-card-list">
+      {orders.map(order => (
+        <OrderCard
+          key={order.id}
+          order={order}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onManageFiles={onManageFiles}
+          onHistory={onHistory}
+          onViewBom={onViewBom}
+          onMarkAsOrdered={onMarkAsOrdered}
+          onMarkAsReceived={onMarkAsReceived}
+          canEdit={canEdit}
+          isAdmin={isAdmin}
+        />
+      ))}
     </div>
   );
 };

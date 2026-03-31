@@ -1,0 +1,287 @@
+/* ── Unknown Parts Modal ──────────────────────────────── */
+/* All colours read from CSS variables defined in index.css  */
+/* so this modal automatically adapts to Light / Dark mode.  */
+
+.unknown-parts-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.unknown-parts-modal {
+  background: var(--upm-modal-bg);
+  border: 1px solid var(--upm-modal-border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  padding: 2rem;
+  box-shadow: var(--upm-modal-shadow);
+  animation: upm-slide-in 0.25s ease;
+  color: var(--text-primary);
+}
+
+@keyframes upm-slide-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.upm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.upm-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.upm-counter {
+  font-size: 0.8rem;
+  background: var(--upm-counter-bg);
+  color: var(--upm-counter-color);
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* ── Progress bar ───────────────────────────────────── */
+.upm-progress-bar {
+  height: 4px;
+  background: var(--upm-progress-track);
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.upm-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 4px;
+  transition: width 0.35s ease;
+}
+
+/* ── Part info card ─────────────────────────────────── */
+.upm-part-info {
+  background: var(--upm-part-info-bg);
+  border: 1px solid var(--upm-part-info-border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.upm-part-number {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--upm-part-number-color);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.3rem;
+}
+
+.upm-excel-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  direction: ltr;
+  text-align: left;
+}
+
+/* ── AI confidence badge ────────────────────────────── */
+.upm-ai-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.upm-confidence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid;
+  border-radius: 20px;
+  background: var(--upm-part-info-bg);
+  letter-spacing: 0.02em;
+}
+
+/* ── Attribute tags ─────────────────────────────────── */
+.upm-attrs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.upm-attr-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 6px;
+  background: var(--upm-attr-bg);
+  border: 1px solid var(--upm-attr-border);
+  font-size: 0.7rem;
+}
+
+.upm-attr-key {
+  color: var(--upm-attr-key-color);
+  font-weight: 600;
+}
+
+.upm-attr-val {
+  color: var(--text-primary);
+  font-weight: 500;
+  direction: ltr;
+}
+
+/* ── Form fields ────────────────────────────────────── */
+.upm-field {
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.upm-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.upm-input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  background: var(--upm-input-bg);
+  border: 1px solid var(--upm-input-border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.upm-input::placeholder {
+  color: var(--text-muted);
+}
+
+.upm-input:focus {
+  border-color: var(--accent-primary, #6366f1);
+  background: var(--upm-modal-bg);
+}
+
+.upm-char-count {
+  position: absolute;
+  left: 0.75rem;
+  bottom: -1.2rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* ── Category grid ──────────────────────────────────── */
+.upm-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.upm-cat-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.65rem 0.5rem;
+  background: var(--upm-cat-tile-bg);
+  border: 1.5px solid var(--upm-cat-tile-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.upm-cat-tile:hover {
+  background: var(--upm-cat-tile-hover-bg);
+  border-color: var(--upm-cat-tile-hover-border);
+  transform: translateY(-1px);
+}
+
+.upm-cat-tile.selected {
+  background: var(--cat-bg);
+  border-color: var(--cat-color);
+  color: var(--cat-color);
+}
+
+/* ── Action buttons ─────────────────────────────────── */
+.upm-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+  justify-content: flex-end;
+}
+
+.upm-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.upm-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.upm-btn-unimportant {
+  background: var(--upm-btn-ghost-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--upm-cat-tile-border);
+  margin-left: auto;
+}
+
+.upm-btn-unimportant:hover:not(:disabled) {
+  background: var(--upm-btn-ghost-hover-bg);
+}
+
+.upm-btn-skip {
+  background: var(--upm-btn-ghost-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--upm-cat-tile-border);
+}
+
+.upm-btn-skip:hover:not(:disabled) {
+  background: var(--upm-btn-ghost-hover-bg);
+}
+
+.upm-btn-save {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  min-width: 90px;
+  border: none;
+}
+
+.upm-btn-save:hover:not(:disabled) {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}

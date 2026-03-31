@@ -468,6 +468,67 @@ const UserGuidePage = () => {
                 </div>
               </div>
 
+              <div className="guide-step">
+                <div className="step-number">5</div>
+                <div className="step-content">
+                  <h3>סורק הצעות מחיר (BOM Scanner)</h3>
+                  <p>ייבוא מהיר של קבצי Excel/CSV מהספקים השונים:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> זיהוי אוטומטי של עמודות (מק"ט, כמות, תיאור ומחיר) לפורמטים של יצרנים כמו Dell, HPE, NetApp</li>
+                    <li><FiCheckCircle className="list-icon" /> גרירה ושחרור קבצים (Drag & Drop) ויצירת קבוצות רכש לפי היצרן באופן אוטומטי</li>
+                    <li><FiAlertCircle className="list-icon" /> התרעה והצגת פריטים שאינם קיימים במאגר (Unknown Parts) למניעת שגיאות בהזמנה</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">5א</div>
+                <div className="step-content">
+                  <h3>סיווג אוטומטי חכם (AI / ML)</h3>
+                  <p>
+                    המערכת מפעילה מנוע בינה מלאכותית שמנתח את תיאור כל רכיב BOM ומסווג אותו אוטומטית לקטגוריה:
+                  </p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>קטגוריות נתמכות:</strong> כבל, ג׳יביק / משדר (SFP/QSFP), כרטיסיה (IO Module), דיסק, מדף דיסקים, מתג, שרת אחסון, רישוי ותמיכה, ציוד נלווה</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>חילוץ מאפיינים:</strong> מהירות (100G/25G), אורך כבל (5m, 10m), מספר פורטים (Dual/Quad), קיבולת דיסק (15.3TB, NVMe) — ומציג תיאור מובנה בעברית</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>תג ביטחון (Confidence):</strong> כל רכיב מקבל ציון ביטחון — ירוק (גבוה) / צהוב (בינוני) / אדום (נמוך). פריט עם תג <strong>⚠ ביטחון נמוך</strong> סיווגו טעון אימות ידני</li>
+                    <li><FiCheckCircle className="list-icon" /> ניתן לתקן קטגוריה שגויה ידנית בחלון "רכיבים שלא זוהו" לפני אישור סופי</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="tip-box highlight">
+                <div className="tip-icon"><FiAlertCircle /></div>
+                <div className="tip-content">
+                  <h4>⚠ חשוב — אמת את תוצאות ה-AI לפני שמירה</h4>
+                  <p>
+                    המודל עובד היטב על פריטים נפוצים, אך <strong>אינו מושלם</strong>. לפני שמירת הסיווג בדקו:
+                  </p>
+                  <ul className="feature-list" style={{ marginTop: '0.5rem' }}>
+                    <li><FiAlertCircle className="list-icon" /> <strong>הקטגוריה נכונה?</strong> — האם הרכיב אכן כבל / ג׳יביק / רישוי?</li>
+                    <li><FiAlertCircle className="list-icon" /> <strong>התיאור בעברית נכון?</strong> — האורך / המהירות / הפורטים חולצו נכון?</li>
+                    <li><FiAlertCircle className="list-icon" /> <strong>שימו לב לתג ביטחון אדום</strong> — אלו הפריטים הנוטים ביותר לסיווג שגוי</li>
+                    <li><FiCheckCircle className="list-icon" /> ניתן לדרוס את הסיווג ידנית בחלון "רכיבים שלא זוהו" לפני אישור</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">6</div>
+                <div className="step-content">
+                  <h3>השוואת מחירים (Price Intel)</h3>
+                  <p>לשונית השוואת המחירים מאפשרת מעקב וניתוח מחירי הרכש לאורך זמן:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>גרף השוואת מחירים:</strong> הוסיפו מק"טים לגרף כדי לעקוב אחר מחיר כל מוצר לאורך זמן. תומך בחיפוש אוטומטי (Autocomplete).</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>רזולוציה וזמן:</strong> בחרו להציג ביומי, חודשי או שנתי. ניתן לסנן לפי טווח תאריכים מדויק.</li>
+                    <li><FiLayers className="list-icon" /> <strong>השוואה מתקדמת — שרשרת מוצר:</strong> לחצו כפתור "השוואה מתקדמת" כדי לבנות שרשרת מוצר. כל שרשרת מכילה דורות של מוצר — לדוגמה AFF-A800 ואחריו AFF-A90. כל דור יכול לכלול גם רכיבים משניים (כמו דיסקים ורשת). כל דורות השרשרת מופיעים כקו אחד רציף על הגרף.</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>גרף הוצאות לפי יצרן:</strong> גרף עמודות נוסף בתחתית הדשבורד מציג את סכומי הרכש לפי יצרן (NetApp, Dell, HPE וכו') מחולק לפי הרזולוציה הנבחרת.</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>בנה היסטוריה:</strong> לחצו "בנה היסטוריה" כדי לסרוק את כל הזמנות העבר ולמלא את מסד הנתונים — נדרש פעם אחת בלבד.</li>
+                  </ul>
+                </div>
+              </div>
+
+
               <div className="tip-box highlight">
                 <div className="tip-icon"><FiAlertCircle /></div>
                 <div className="tip-content">

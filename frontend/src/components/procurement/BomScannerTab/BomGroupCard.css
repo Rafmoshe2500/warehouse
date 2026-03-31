@@ -1,0 +1,302 @@
+/* ── BOM Group Card ─────────────────────────────────────────
+   Theme-aware: uses CSS variables from index.css
+   ─────────────────────────────────────────────────────────── */
+.bom-group-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-top: 3px solid var(--card-color);
+  border-radius: 14px;
+  padding: 1.25rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.bom-group-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  background: var(--card-color);
+  opacity: 0.04;
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+  pointer-events: none;
+}
+
+.bom-group-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Header */
+.bgc-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bgc-icon-wrap {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: var(--card-bg, var(--bg-tertiary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
+}
+
+.bgc-title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.bgc-part-number {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--card-color);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.2rem;
+}
+
+.bgc-part-alias {
+  display: inline-block;
+  margin-top: 0.18rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--card-color);
+  background: var(--card-bg, var(--bg-tertiary));
+  border: 1px solid var(--card-color);
+  border-radius: 6px;
+  padding: 0.05rem 0.5rem;
+  letter-spacing: 0.01em;
+  opacity: 0.85;
+}
+
+.bgc-description {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.bgc-qty-badge {
+  background: var(--card-bg, var(--bg-tertiary));
+  color: var(--card-color);
+  border: 1px solid var(--card-color);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+/* Price bar */
+.bgc-price-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.bgc-price-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.bgc-price-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-success);
+  letter-spacing: 0.02em;
+}
+
+.bgc-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin-bottom: 1rem;
+}
+
+/* Children list */
+.bgc-children {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  max-height: 160px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  padding-right: 2px;
+}
+
+.bgc-children::-webkit-scrollbar { width: 4px; }
+.bgc-children::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.bgc-child-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 7px;
+  background: var(--bg-tertiary);
+  transition: background 0.15s;
+}
+
+.bgc-child-row:hover {
+  background: var(--bg-primary);
+}
+
+.bgc-child-muted { opacity: 0.6; }
+
+.bgc-child-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.bgc-child-qty {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 30px;
+}
+
+.bgc-child-label {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.bgc-child-price {
+  font-size: 0.8rem;
+  color: var(--accent-success);
+  font-weight: 600;
+  margin-right: auto;
+}
+
+/* Footer */
+.bgc-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.bgc-expand-btn,
+.bgc-unimportant-btn {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.2rem 0;
+  transition: color 0.15s;
+  font-family: inherit;
+}
+
+.bgc-expand-btn {
+  color: var(--card-color);
+  font-weight: 600;
+}
+
+.bgc-expand-btn:hover { opacity: 0.8; }
+
+.bgc-unimportant-btn {
+  color: var(--text-muted);
+  margin-right: auto;
+}
+
+.bgc-unimportant-btn:hover { color: var(--text-secondary); }
+
+/* Detail table */
+.bgc-detail {
+  margin-top: 0.65rem;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.65rem;
+  overflow-x: auto;
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.bgc-detail::-webkit-scrollbar { width: 4px; }
+.bgc-detail::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.bgc-detail-header,
+.bgc-detail-row {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr 0.6fr 1fr;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  align-items: center;
+  padding: 0.3rem 0;
+}
+
+.bgc-detail-header {
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.2rem;
+}
+
+.bgc-detail-row {
+  color: var(--text-secondary);
+  border-radius: 5px;
+  transition: background 0.1s;
+}
+
+.bgc-detail-row:hover { background: var(--bg-tertiary); }
+
+.bgc-detail-pn {
+  font-family: monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.bgc-detail-desc { color: var(--text-primary); }
+
+.bgc-detail-price {
+  color: var(--accent-success);
+  font-weight: 600;
+}
+
+.bgc-unimportant-list {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border-subtle);
+  max-height: 140px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.bgc-unimportant-list::-webkit-scrollbar { width: 4px; }
+.bgc-unimportant-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}

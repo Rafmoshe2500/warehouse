@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     S3_REGION: str = "us-east-1"
     S3_ACCESS_KEY: str = ""
     S3_SECRET_KEY: str = ""
+    S3_ENDPOINT_URL: str = ""
 
     # ADFS Settings
     ADFS_LOGIN_URL: str = "https://adfs.example.com/adfs/oauth2/token"

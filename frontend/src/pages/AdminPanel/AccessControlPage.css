@@ -1,14 +1,19 @@
 .access-control-page {
-    padding: 2rem;
-    max-width: var(--page-max-width); /* Enforcing standard width */
+    padding: 1.25rem 1.5rem 0;
+    max-width: var(--page-max-width);
     width: 100%;
     margin: 0 auto;
     direction: rtl;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 60px);
+    overflow: hidden;
 }
 
 .access-header {
     margin-bottom: 2rem;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .access-header h1 {
@@ -26,11 +31,14 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
+    flex-shrink: 0;
 }
 
-
 .access-content {
-    background: var(--bg-card); /* Ensure better contrast if needed, or transparent */
-    border-radius: 12px;
-    min-height: 400px;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-bottom: 1.25rem;
 }

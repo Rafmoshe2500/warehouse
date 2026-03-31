@@ -96,6 +96,28 @@
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+  /* UnknownPartsModal variables */
+  --upm-modal-bg: #1a1d2e;
+  --upm-modal-border: rgba(255, 255, 255, 0.10);
+  --upm-modal-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  --upm-part-info-bg: rgba(255, 255, 255, 0.04);
+  --upm-part-info-border: rgba(255, 255, 255, 0.06);
+  --upm-progress-track: rgba(255, 255, 255, 0.08);
+  --upm-input-bg: rgba(255, 255, 255, 0.05);
+  --upm-input-border: rgba(255, 255, 255, 0.12);
+  --upm-cat-tile-bg: rgba(255, 255, 255, 0.04);
+  --upm-cat-tile-border: rgba(255, 255, 255, 0.08);
+  --upm-cat-tile-hover-bg: rgba(255, 255, 255, 0.08);
+  --upm-cat-tile-hover-border: rgba(255, 255, 255, 0.20);
+  --upm-btn-ghost-bg: rgba(255, 255, 255, 0.06);
+  --upm-btn-ghost-hover-bg: rgba(255, 255, 255, 0.12);
+  --upm-counter-bg: rgba(99, 102, 241, 0.20);
+  --upm-counter-color: #818cf8;
+  --upm-attr-bg: rgba(99, 102, 241, 0.10);
+  --upm-attr-border: rgba(99, 102, 241, 0.25);
+  --upm-attr-key-color: #818cf8;
+  --upm-part-number-color: var(--accent-warning);
+
   /* Layout */
   --page-max-width: 95%;
 }
@@ -179,6 +201,28 @@
   --log-change-color: #64748b;
   --log-old-value-color: #dc2626;
   --log-new-value-color: #16a34a;
+
+  /* UnknownPartsModal variables (Light Mode) */
+  --upm-modal-bg: #ffffff;
+  --upm-modal-border: #e2e8f0;
+  --upm-modal-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+  --upm-part-info-bg: #f8fafc;
+  --upm-part-info-border: #e2e8f0;
+  --upm-progress-track: #e2e8f0;
+  --upm-input-bg: #f8fafc;
+  --upm-input-border: #cbd5e1;
+  --upm-cat-tile-bg: #f8fafc;
+  --upm-cat-tile-border: #e2e8f0;
+  --upm-cat-tile-hover-bg: #f1f5f9;
+  --upm-cat-tile-hover-border: #94a3b8;
+  --upm-btn-ghost-bg: #f1f5f9;
+  --upm-btn-ghost-hover-bg: #e2e8f0;
+  --upm-counter-bg: rgba(99, 102, 241, 0.12);
+  --upm-counter-color: #4f46e5;
+  --upm-attr-bg: rgba(99, 102, 241, 0.08);
+  --upm-attr-border: rgba(99, 102, 241, 0.20);
+  --upm-attr-key-color: #4f46e5;
+  --upm-part-number-color: #b45309;
 }
 
 /* === Wood Theme Overrides === */

@@ -1,233 +1,367 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { FiArrowRight, FiPlus, FiEdit2, FiTrash2, FiUsers } from 'react-icons/fi';
-import { Button, SkeletonTable } from '../../components/common';
-import { useAuth } from '../../context/AuthContext';
+import {
+  FiArrowRight, FiPlus, FiUsers, FiUser, FiSearch
+} from 'react-icons/fi';
+import { Button } from '../../components/common';
 import { useToast } from '../../hooks/useToast';
 import { useUsers } from '../../hooks/useUsers';
+import { useGroups } from '../../hooks/useGroups';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
 import UserForm from '../../components/admin/UserForm';
+import GroupForm from '../../components/admin/GroupForm';
 import './UserManagement.css';
 
+/* ── helpers ──────────────────────────────────────── */
+const ROLE_LABELS = {
+  superadmin: 'SuperAdmin',
+  admin: 'Admin',
+  user: 'User',
+};
+
+const avatarColors = [
+  'linear-gradient(135deg,#3b82f6,#8b5cf6)',
+  'linear-gradient(135deg,#10b981,#3b82f6)',
+  'linear-gradient(135deg,#f59e0b,#ef4444)',
+  'linear-gradient(135deg,#8b5cf6,#ec4899)',
+  'linear-gradient(135deg,#06b6d4,#3b82f6)',
+];
+const groupColors = [
+  'linear-gradient(135deg,#8b5cf6,#3b82f6)',
+  'linear-gradient(135deg,#10b981,#8b5cf6)',
+  'linear-gradient(135deg,#f59e0b,#10b981)',
+  'linear-gradient(135deg,#3b82f6,#06b6d4)',
+];
+
+const getAvatarColor = (name = '') =>
+  avatarColors[name.charCodeAt(0) % avatarColors.length];
+const getGroupColor = (name = '') =>
+  groupColors[name.charCodeAt(0) % groupColors.length];
+
+/* ── Main component ───────────────────────────────── */
 const UserManagement = ({ isEmbedded = false }) => {
   const navigate = useNavigate();
-  const { isSuperAdmin } = useAuth();
   const { toasts, removeToast, success, error: toastError } = useToast();
-  
-  // Use React Query Hook
-  const { 
-    users, 
-    loading, 
-    error: loadError,
-    createUser, 
-    updateUser, 
-    deleteUser 
-  } = useUsers();
 
-  const [isCreating, setIsCreating] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [deleteReason, setDeleteReason] = useState('');
+  /* ── Users ─────────────────────────────────── */
+  const { users, loading: usersLoading, error: usersError, createUser, updateUser, deleteUser } = useUsers();
 
-  // Handle load error
+  const [activeTab,    setActiveTab]    = useState('users');
+  const [searchQuery,  setSearchQuery]  = useState('');
+
+  // User selection state
+  const [selectedUser, setSelectedUser]     = useState(null);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [showUserDeleteModal, setShowUserDeleteModal] = useState(false);
+  const [userToDelete,  setUserToDelete]    = useState(null);
+  const [userDeleteReason, setUserDeleteReason] = useState('');
+
+  /* ── Groups ────────────────────────────────── */
+  const { groups, loading: groupsLoading, error: groupsError, createGroup, updateGroup, deleteGroup } = useGroups();
+
+  const [groupSearch,    setGroupSearch]    = useState('');
+  const [selectedGroup,  setSelectedGroup]  = useState(null);
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [showGroupDeleteModal, setShowGroupDeleteModal] = useState(false);
+
   React.useEffect(() => {
-    if (loadError) {
-      toastError('שגיאה בטעינת משתמשים');
-    }
-  }, [loadError, toastError]);
+    if (usersError)  toastError('שגיאה בטעינת משתמשים');
+    if (groupsError) toastError('שגיאה בטעינת קבוצות');
+  }, [usersError, groupsError, toastError]);
 
-  const handleCreateClick = () => {
+  /* ── Tab switch ─────────────────────────────── */
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSearchQuery('');
+    setGroupSearch('');
     setSelectedUser(null);
-    setIsCreating(true);
+    setIsCreatingUser(false);
+    setSelectedGroup(null);
+    setIsCreatingGroup(false);
   };
 
-  const handleRowClick = (user) => {
-    setSelectedUser(user);
-    setIsCreating(false);
-  };
+  /* ── User handlers ──────────────────────────── */
+  const handleUserClick   = (u)  => { setSelectedUser(u); setIsCreatingUser(false); };
+  const handleCreateUser  = ()   => { setSelectedUser(null); setIsCreatingUser(true); };
 
-  const handleUserSubmit = async (userData) => {
+  const handleUserSubmit = async (data) => {
     try {
       if (selectedUser) {
-        await updateUser({ id: selectedUser.id, data: userData });
+        await updateUser({ id: selectedUser.id, data });
         success('משתמש עודכן בהצלחה');
       } else {
-        await createUser(userData);
+        await createUser(data);
         success('משתמש נוצר בהצלחה!');
+        setIsCreatingUser(false);
       }
-      setIsCreating(false);
-    } catch (err) {
-      // Rethrow to let UserForm handle the error display
-      throw err;
-    }
+    } catch (err) { throw err; }
   };
 
-  const handleDeleteClick = (user) => {
-    setUserToDelete(user);
-    setShowDeleteModal(true);
-  };
+  const handleUserDeleteClick = (u) => { setUserToDelete(u); setShowUserDeleteModal(true); };
 
-  const handleDeleteConfirm = async () => {
-    if (!deleteReason.trim()) {
-      toastError('נא להזין סיבה למחיקה');
-      return;
-    }
-
+  const handleUserDeleteConfirm = async () => {
+    if (!userDeleteReason.trim()) { toastError('נא להזין סיבה למחיקה'); return; }
     try {
-      await deleteUser({ id: userToDelete.id, reason: deleteReason });
+      await deleteUser({ id: userToDelete.id, reason: userDeleteReason });
       success('משתמש נמחק בהצלחה');
-      setShowDeleteModal(false);
+      setShowUserDeleteModal(false);
       setUserToDelete(null);
-      setDeleteReason('');
+      setUserDeleteReason('');
+      setSelectedUser(null);
     } catch (err) {
       toastError(err.response?.data?.detail || 'שגיאה במחיקת משתמש');
     }
   };
 
-  const getRoleBadge = (role) => {
-    const badges = {
-      superadmin: { text: 'SuperAdmin', class: 'role-superadmin' },
-      admin: { text: 'Admin', class: 'role-admin' },
-      user: { text: 'User', class: 'role-user' }
-    };
-    const badge = badges[role] || badges.user;
-    return <span className={`role-badge ${badge.class}`}>{badge.text}</span>;
+  /* ── Group handlers ─────────────────────────── */
+  const handleGroupClick   = (g)  => { setSelectedGroup(g); setIsCreatingGroup(false); };
+  const handleCreateGroup  = ()   => { setSelectedGroup(null); setIsCreatingGroup(true); };
+
+  const handleGroupSubmit = async (data) => {
+    try {
+      if (selectedGroup) {
+        await updateGroup({ id: selectedGroup.id, data });
+        success('קבוצה עודכנה בהצלחה');
+      } else {
+        await createGroup(data);
+        success('קבוצה נוצרה בהצלחה!');
+        setIsCreatingGroup(false);
+      }
+    } catch (err) { throw err; }
   };
 
-  if (loading) {
-    return <SkeletonTable rows={8} columns={6} />;
-  }
+  const handleGroupDeleteConfirm = async () => {
+    try {
+      await deleteGroup({ id: selectedGroup.id, reason: 'מחיקה ידנית' });
+      success('קבוצה נמחקה בהצלחה');
+      setShowGroupDeleteModal(false);
+      setSelectedGroup(null);
+    } catch (err) {
+      toastError(err.response?.data?.detail || 'שגיאה במחיקת קבוצה');
+    }
+  };
 
+  /* ── Filtered lists ─────────────────────────── */
+  const filteredUsers  = users.filter(u =>
+    u.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const filteredGroups = groups.filter(g =>
+    g.name.toLowerCase().includes(groupSearch.toLowerCase())
+  );
+
+  /* ── Render ───────────────────────────────────────── */
   return (
-    <div className="user-management">
+    <div className={`um-wrapper ${isEmbedded ? 'um-wrapper--embedded' : ''}`}>
       <ToastContainer toasts={toasts} removeToast={removeToast} />
-      <div className="page-top-header">
-        <h2>ניהול משתמשים</h2>
-        {!isEmbedded && (
-          <Button 
-            variant="secondary" 
-            icon={<FiArrowRight />} 
-            onClick={() => navigate('/admin')}
-          >
+
+      {/* Top header — standalone only */}
+      {!isEmbedded && (
+        <div className="um-top-header">
+          <h2>ניהול משתמשים וקבוצות</h2>
+          <Button variant="secondary" icon={<FiArrowRight />} onClick={() => navigate('/admin')}>
             חזרה
           </Button>
-        )}
-      </div>
-      
-      <div className="management-layout">
-        <div className="list-pane">
-          <div className="user-management-header">
-            <Button 
-              variant="primary" 
-              icon={<FiPlus />} 
-              onClick={handleCreateClick}
-              style={{ width: '100%' }}
+        </div>
+      )}
+
+      {/* Two-panel layout: list RIGHT, detail LEFT (RTL) */}
+      <div className="um-panels">
+
+        {/* ── List panel (RIGHT in RTL — first child) ── */}
+        <div className="um-list-panel">
+
+          {/* Tab switcher */}
+          <div className="um-tabs">
+            <button
+              className={`um-tab ${activeTab === 'users' ? 'active' : ''}`}
+              onClick={() => handleTabChange('users')}
             >
-              משתמש חדש
-            </Button>
+              <FiUser /> משתמשים
+              <span style={{ fontSize: '0.72rem', marginRight: '0.25rem', opacity: 0.7 }}>({users.length})</span>
+            </button>
+            <button
+              className={`um-tab ${activeTab === 'groups' ? 'active' : ''}`}
+              onClick={() => handleTabChange('groups')}
+            >
+              <FiUsers /> קבוצות
+              <span style={{ fontSize: '0.72rem', marginRight: '0.25rem', opacity: 0.7 }}>({groups.length})</span>
+            </button>
           </div>
 
-          <div className="users-table-container">
-            <table className="users-table">
-              <thead>
-                <tr>
-                  <th>משתמשים ({users.length})</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map(user => (
-                  <tr 
-                    key={user.id} 
-                    onClick={() => handleRowClick(user)}
-                    className={selectedUser?.id === user.id ? 'selected-row clickable-row' : 'clickable-row'}
+          {/* ── USERS list ──────────────────────────── */}
+          {activeTab === 'users' && (
+            <>
+              <div className="um-list-controls">
+                <div className="um-search-wrapper">
+                  <FiSearch className="um-search-icon" />
+                  <input
+                    className="um-search-input"
+                    placeholder="חפש משתמש..."
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <button className="um-add-btn" title="הוסף משתמש" onClick={handleCreateUser}>
+                  <FiPlus />
+                </button>
+              </div>
+
+              <div className="um-list-scroll">
+                {usersLoading ? (
+                  [1,2,3,4,5].map(i => <div key={i} className="um-skeleton-card" />)
+                ) : filteredUsers.length === 0 ? (
+                  <div className="um-empty-placeholder" style={{ padding: '2rem 1rem' }}>
+                    <FiUser /><p>לא נמצאו משתמשים</p>
+                  </div>
+                ) : filteredUsers.map(user => (
+                  <div
+                    key={user.id}
+                    className={`um-card ${selectedUser?.id === user.id ? 'selected' : ''}`}
+                    onClick={() => handleUserClick(user)}
                   >
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ 
-                          width: '32px', 
-                          height: '32px', 
-                          borderRadius: '50%', 
-                          background: 'var(--accent-primary)', 
-                          color: 'white', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center',
-                          fontWeight: 'bold'
-                        }}>
-                          {user.username.charAt(0).toUpperCase()}
-                        </div>
-                        {user.username}
+                    <div className="um-avatar" style={{ background: getAvatarColor(user.username) }}>
+                      {user.username.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="um-card-info">
+                      <div className="um-card-name">{user.username}</div>
+                      <div className="um-card-meta">
+                        <div className={`um-status-dot ${user.is_active ? 'active' : 'inactive'}`} />
+                        <span className={`um-badge ${user.role}`}>{ROLE_LABELS[user.role] || 'User'}</span>
                       </div>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </>
+          )}
+
+          {/* ── GROUPS list ─────────────────────────── */}
+          {activeTab === 'groups' && (
+            <>
+              <div className="um-list-controls">
+                <div className="um-search-wrapper">
+                  <FiSearch className="um-search-icon" />
+                  <input
+                    className="um-search-input"
+                    placeholder="חפש קבוצה..."
+                    value={groupSearch}
+                    onChange={e => setGroupSearch(e.target.value)}
+                  />
+                </div>
+                <button className="um-add-btn" title="הוסף קבוצה" onClick={handleCreateGroup}>
+                  <FiPlus />
+                </button>
+              </div>
+
+              <div className="um-list-scroll">
+                {groupsLoading ? (
+                  [1,2,3,4].map(i => <div key={i} className="um-skeleton-card" />)
+                ) : filteredGroups.length === 0 ? (
+                  <div className="um-empty-placeholder" style={{ padding: '2rem 1rem' }}>
+                    <FiUsers /><p>לא נמצאו קבוצות</p>
+                  </div>
+                ) : filteredGroups.map(group => (
+                  <div
+                    key={group.id}
+                    className={`um-card ${selectedGroup?.id === group.id ? 'selected' : ''}`}
+                    onClick={() => handleGroupClick(group)}
+                  >
+                    <div className="um-avatar group-avatar" style={{ background: getGroupColor(group.name) }}>
+                      {group.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="um-card-info">
+                      <div className="um-card-name">{group.name}</div>
+                      <div className="um-card-meta">
+                        <div className={`um-status-dot ${group.is_active ? 'active' : 'inactive'}`} />
+                        <span className={`um-badge ${group.role === 'admin' ? 'admin' : 'user'}`}>
+                          {group.role === 'admin' ? 'Admin' : 'User'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
-        <div className="details-pane">
-          {(selectedUser || isCreating) ? (
-            <UserForm
-              user={selectedUser}
-              onSubmit={handleUserSubmit}
-              onCancel={() => {
-                setSelectedUser(null);
-                setIsCreating(false);
-              }}
-              onDelete={selectedUser?.role !== 'superadmin' ? () => handleDeleteClick(selectedUser) : null}
-            />
-          ) : (
-            <div className="empty-selection-placeholder">
-              <div className="placeholder-content">
-                <FiUsers className="placeholder-icon" />
+        {/* ── Detail panel (LEFT in RTL — second child) ── */}
+        <div className="um-detail-panel">
+          {/* Users detail */}
+          {activeTab === 'users' && (
+            (selectedUser || isCreatingUser) ? (
+              <UserForm
+                user={selectedUser}
+                onSubmit={handleUserSubmit}
+                onCancel={() => { setSelectedUser(null); setIsCreatingUser(false); }}
+                onDelete={selectedUser?.role !== 'superadmin' ? () => handleUserDeleteClick(selectedUser) : null}
+              />
+            ) : (
+              <div className="um-empty-placeholder">
+                <FiUsers />
                 <h3>ניהול משתמשים</h3>
-                <p>בחר משתמש מהרשימה כדי לצפות בפרטים, לערוך הרשאות או למחוק.</p>
+                <p>בחר משתמש מהרשימה כדי לצפות בפרטים ולערוך הרשאות.</p>
               </div>
-            </div>
+            )
+          )}
+
+          {/* Groups detail */}
+          {activeTab === 'groups' && (
+            (selectedGroup || isCreatingGroup) ? (
+              <GroupForm
+                group={selectedGroup}
+                onSubmit={handleGroupSubmit}
+                onCancel={() => { setSelectedGroup(null); setIsCreatingGroup(false); }}
+                onDelete={selectedGroup ? () => setShowGroupDeleteModal(true) : null}
+              />
+            ) : (
+              <div className="um-empty-placeholder">
+                <FiUsers />
+                <h3>ניהול קבוצות</h3>
+                <p>בחר קבוצה מהרשימה כדי לצפות בפרטים ולערוך הרשאות.</p>
+              </div>
+            )
           )}
         </div>
       </div>
 
-      {/* Delete User Modal */}
-      {showDeleteModal && userToDelete && (
-        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      {/* ── User delete modal ──────────────────── */}
+      {showUserDeleteModal && userToDelete && (
+        <div className="um-modal-overlay" onClick={() => setShowUserDeleteModal(false)}>
+          <div className="um-modal" onClick={e => e.stopPropagation()}>
             <h2>מחיקת משתמש</h2>
-            <p className="delete-warning">
-              האם אתה בטוח שברצונך למחוק את המשתמש <strong>{userToDelete.username}</strong>?
-            </p>
-            
-            <div className="form-group">
-              <label>סיבה למחיקה:</label>
+            <div className="um-modal-warning">
+              האם אתה בטוח שברצונך למחוק את <strong>{userToDelete.username}</strong>? פעולה זו אינה הפיכה.
+            </div>
+            <div>
+              <label className="input-label" style={{ marginBottom: '0.4rem', display: 'block' }}>סיבה למחיקה</label>
               <input
                 type="text"
-                value={deleteReason}
-                onChange={(e) => setDeleteReason(e.target.value)}
+                value={userDeleteReason}
+                onChange={e => setUserDeleteReason(e.target.value)}
                 placeholder="הזן סיבה למחיקה..."
-                required
               />
             </div>
+            <div className="um-modal-actions">
+              <Button variant="secondary" onClick={() => setShowUserDeleteModal(false)}>ביטול</Button>
+              <Button variant="danger" onClick={handleUserDeleteConfirm}>מחק</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
-            <div className="modal-actions">
-              <button 
-                className="btn-danger"
-                onClick={handleDeleteConfirm}
-              >
-                מחק
-              </button>
-              <button 
-                className="btn-secondary"
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setUserToDelete(null);
-                  setDeleteReason('');
-                }}
-              >
-                ביטול
-              </button>
+      {/* ── Group delete modal ─────────────────── */}
+      {showGroupDeleteModal && selectedGroup && (
+        <div className="um-modal-overlay" onClick={() => setShowGroupDeleteModal(false)}>
+          <div className="um-modal" onClick={e => e.stopPropagation()}>
+            <h2>מחיקת קבוצה</h2>
+            <div className="um-modal-warning">
+              האם אתה בטוח שברצונך למחוק את <strong>{selectedGroup.name}</strong>? פעולה זו אינה הפיכה.
+            </div>
+            <div className="um-modal-actions">
+              <Button variant="secondary" onClick={() => setShowGroupDeleteModal(false)}>ביטול</Button>
+              <Button variant="danger" onClick={handleGroupDeleteConfirm}>מחק</Button>
             </div>
           </div>
         </div>
@@ -237,7 +371,7 @@ const UserManagement = ({ isEmbedded = false }) => {
 };
 
 UserManagement.propTypes = {
-  isEmbedded: PropTypes.bool
+  isEmbedded: PropTypes.bool,
 };
 
 export default UserManagement;

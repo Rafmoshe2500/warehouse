@@ -1,558 +1,542 @@
-.user-management {
-  padding: 2rem;
-  max-width: var(--page-max-width);
-  width: 100%;
-  margin: 0 auto;
-}
+/* ============================================================
+   User & Group Management — New Layout
+   Fixed two-panel design; no outer page scrolling.
+   ============================================================ */
 
-.user-management .user-management-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  /* Removed margin-bottom here, added in 2-pane styles section */
-}
-
-/* Added specific style for a header that might be outside the layout */
-.page-top-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  flex-shrink: 0;
-}
-.user-management .user-management-header h1 {
-  font-size: 2rem;
-  color: var(--text-primary);
-}
-
-.user-management .back-btn {
-  padding: 0.55rem 1rem;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.user-management .back-btn:hover {
-  background: var(--bg-secondary);
-  color: var(--accent-primary);
-  border: 1px solid var(--accent-primary);
-}
-
-.user-management .create-user-btn {
-  padding: 0.55rem 1rem;
-  background: var(--accent-primary);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.user-management .create-user-btn:hover {
-  filter: brightness(0.9);
-  transform: translateY(-2px);
-}
-
-.user-management .create-user-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.user-management .user-management-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-}
-
-.user-management .users-table-container {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.user-management .users-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.user-management .users-table thead {
-  background: var(--bg-tertiary);
-}
-
-.user-management .users-table th {
-  padding: 0.4rem 1rem;
-  text-align: right;
-  font-weight: 600;
-  color: var(--text-primary);
-  border-bottom: 2px solid var(--border-color);
-}
-
-.user-management .users-table td {
-  padding: 0.4rem 1rem;
-  text-align: right;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
-}
-
-.user-management .users-table tbody tr:hover {
-  background: var(--bg-tertiary);
-}
-
-.user-management .role-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.user-management .role-superadmin {
-  background: #ff6b6b;
-  color: white;
-}
-
-.user-management .role-admin {
-  background: #4ecdc4;
-  color: white;
-}
-
-.user-management .role-user {
-  background: #95a5a6;
-  color: white;
-}
-
-.user-management .status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.user-management .status-badge.active {
-  background: #2ecc71;
-  color: white;
-}
-
-.user-management .status-badge.inactive {
-  background: #e74c3c;
-  color: white;
-}
-
-/* Form Read-Only Display Styles */
-.readonly-info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  background: var(--bg-tertiary);
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-}
-
-.readonly-info-item {
+/* ── Outer wrapper ─────────────────────────────────────── */
+.um-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-}
-
-.readonly-info-label {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.readonly-info-value {
-  font-size: 1.05rem;
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.user-management .actions-cell {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-}
-
-.user-management .icon-btn {
-  padding: 0.4rem 0.8rem;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid transparent;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-management .icon-btn:hover {
-  background: var(--bg-secondary);
-  color: var(--accent-primary);
-  border-color: var(--accent-primary);
-}
-
-.user-management .delete-btn {
-  background: var(--accent-danger);
-  color: white;
-}
-
-.user-management .delete-btn:hover {
-  background: var(--accent-danger);
-  color: white;
-  filter: brightness(0.9);
-  border-color: transparent;
-}
-
-/* Modal styles - Scoped where possible, but Modals are often portals. 
-   Assuming Modal content is inside .user-management wrapper or similar context, 
-   but usually Modals are high level. 
-   However, styling internal elements like .form-group usually works if the modal content has a specific class.
-   The UserManagement component wraps Modal content in .modal-content but not necessarily .user-management.
-   We will keep modal styles less scoped or global if they are generic, OR better: use specific classes.
-   Here they seem to rely on generic classes (.modal-content, .btn-primary).
-   We will prefix what we can, but be careful.
-*/
-
-.user-management .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--overlay-medium);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px);
-}
-
-.user-management .modal-content {
-  background: var(--bg-secondary);
-  padding: 2rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border-color);
-}
-
-.user-management .modal-content h2 {
-  margin-bottom: 1.5rem;
-  color: var(--text-primary);
-}
-
-.user-management .delete-warning {
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: var(--warning-bg, rgba(255, 193, 7, 0.1));
-  border-radius: 8px;
-  border-left: 4px solid #ffc107;
-}
-
-.user-management .checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-}
-
-.user-management .checkbox-label:hover {
-  border-color: var(--accent-primary);
-}
-
-.user-management .checkbox-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-}
-
-.user-management .form-group {
-  margin-bottom: 1.5rem;
-}
-
-.user-management .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.user-management .form-group input,
-.user-management .form-group select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 1rem;
-  background: var(--input-bg);
-  color: var(--text-primary);
-  transition: border-color 0.3s ease;
-}
-
-.user-management .form-group input:focus,
-.user-management .form-group select:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-}
-
-.user-management .form-group input:disabled,
-.user-management .form-group select:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.user-management .modal-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
-}
-
-.user-management .modal-spinner {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 1rem 0;
-}
-
-/* These generic buttons inside UserManagement need scoping to not affect others if they are global classes */
-.user-management .btn-primary {
-  padding: 0.55rem 1rem;
-  background: var(--accent-primary);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-management .btn-primary:hover {
-  filter: brightness(0.9);
-}
-
-.user-management .btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.user-management .btn-secondary {
-  padding: 0.55rem 1rem;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-management .btn-secondary:hover {
-  background: var(--bg-secondary);
-  color: var(--accent-primary);
-}
-
-.user-management .btn-danger {
-  padding: 0.55rem 1rem;
-  background: var(--accent-danger);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-management .btn-danger:hover {
-  filter: brightness(0.9);
-}
-
-/* Dark mode adjustments - Scoped */
-[data-theme="dark"] .user-management .users-table-container {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .user-management .modal-overlay {
-  background: rgba(0, 0, 0, 0.8);
-}
-
-[data-theme="dark"] .user-management .modal-content {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-}
-
-[data-theme="dark"] .user-management .delete-warning {
-  background: rgba(255, 193, 7, 0.15);
-}
-
-/* 2-Pane Layout Styles */
-.user-management {
-  height: calc(100vh - 120px); /* Adjust based on your header height */
-  display: flex;
-  flex-direction: column;
+  height: calc(100vh - 60px); /* subtract navbar height */
   overflow: hidden;
 }
 
-.management-layout {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-  flex: 1;
-  overflow: hidden;
-}
-
-.list-pane {
-  width: 320px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
+/* When embedded inside another page (e.g. AccessControlPage tabs) */
+.um-wrapper--embedded {
   height: 100%;
+  padding: 0;
 }
 
-.user-management-header {
-  margin-bottom: 1rem;
+/* ── Top header (title + back button) ─────────────────── */
+.um-top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-shrink: 0;
+  margin-bottom: 1rem;
 }
 
-.users-table-container {
+.um-top-header h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ── Two-panel row ─────────────────────────────────────── */
+.um-panels {
+  display: flex;
   flex: 1;
-  overflow-y: auto;
-  border-radius: 8px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  gap: 1.25rem;
+  overflow: hidden;
+  padding-bottom: 1.25rem;
 }
 
-/* Custom Scrollbar for list and details */
-.users-table-container::-webkit-scrollbar,
-.details-pane::-webkit-scrollbar {
-  width: 6px;
-}
-
-.users-table-container::-webkit-scrollbar-track,
-.details-pane::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.users-table-container::-webkit-scrollbar-thumb,
-.details-pane::-webkit-scrollbar-thumb {
-  background-color: var(--border-color);
-  border-radius: 10px;
-}
-
-.users-table-container::-webkit-scrollbar-thumb:hover,
-.details-pane::-webkit-scrollbar-thumb:hover {
-  background-color: var(--text-muted);
-}
-
-.details-pane {
+/* ── LEFT: Detail panel ────────────────────────────────── */
+.um-detail-panel {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  height: 100%;
-  overflow-y: auto;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ── RIGHT: List panel ─────────────────────────────────── */
+.um-list-panel {
+  width: 290px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
 }
 
-[data-theme="dark"] .details-pane {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.empty-selection-placeholder {
+/* ── List panel: tabs ──────────────────────────────────── */
+.um-tabs {
   display: flex;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.um-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  height: 100%;
-  min-height: 400px;
-  padding: 3rem 2rem;
-  text-align: center;
+  gap: 0.4rem;
+  padding: 0.9rem 0.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
   color: var(--text-muted);
-}
-
-.placeholder-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.placeholder-icon {
-  font-size: 4rem;
-  opacity: 0.5;
-  color: var(--text-muted);
-}
-
-.clickable-row {
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: -1px;
 }
 
-.users-table tbody tr.clickable-row {
-  transition: all 0.2s ease-in-out;
+.um-tab:hover {
+  color: var(--accent-primary);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.um-tab.active {
+  color: var(--accent-primary);
+  border-bottom-color: var(--accent-primary);
+}
+
+.um-tab svg {
+  font-size: 0.95rem;
+}
+
+/* ── List panel: search + add button ──────────────────── */
+.um-list-controls {
+  padding: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
   border-bottom: 1px solid var(--border-color);
 }
 
-.users-table tbody tr.clickable-row:hover {
-  background: var(--bg-tertiary);
-  transform: translateX(-4px);
+.um-search-wrapper {
+  position: relative;
+  flex: 1;
 }
 
-.users-table tbody tr.selected-row {
+.um-search-icon {
+  position: absolute;
+  right: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.um-search-input {
+  width: 100% !important;
+  padding: 0.55rem 2rem 0.55rem 0.75rem !important;
+  font-size: 0.85rem !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  background: var(--bg-tertiary) !important;
+}
+
+.um-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.um-add-btn:hover {
+  filter: brightness(1.15);
+  transform: scale(1.05);
+}
+
+/* ── List panel: scrollable list ──────────────────────── */
+.um-list-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* ── User / Group card ─────────────────────────────────── */
+.um-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.18s ease;
+  position: relative;
+}
+
+.um-card:hover {
   background: var(--bg-tertiary);
-  border-right: 4px solid var(--accent-primary);
-  border-left: none;
+  border-color: var(--border-subtle);
+}
+
+.um-card.selected {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-primary);
+  box-shadow: inset 3px 0 0 var(--accent-primary);
+}
+
+/* Avatar circle */
+.um-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.um-avatar.group-avatar {
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+}
+
+.um-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.um-card-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.um-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+}
+
+/* Status dot */
+.um-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.um-status-dot.active   { background: var(--accent-success); }
+.um-status-dot.inactive { background: var(--accent-danger); }
+
+/* ── Role / type badges (small) ────────────────────────── */
+.um-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.um-badge.superadmin { background: rgba(239, 68, 68, 0.15);  color: #ef4444; }
+.um-badge.admin      { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.um-badge.user       { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+.um-badge.active-badge   { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.um-badge.inactive-badge { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+/* ── Empty placeholder ─────────────────────────────────── */
+.um-empty-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 1rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem;
+}
+
+.um-empty-placeholder svg {
+  font-size: 3.5rem;
+  opacity: 0.35;
+}
+
+.um-empty-placeholder h3 {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.um-empty-placeholder p {
+  font-size: 0.88rem;
+  max-width: 260px;
+  line-height: 1.6;
+}
+
+/* ── Detail panel inner layout ─────────────────────────── */
+
+/* Header: avatar + name + badges */
+.um-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  background: var(--bg-tertiary);
+}
+
+.um-detail-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+}
+
+.um-detail-avatar.group-avatar {
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+}
+
+.um-detail-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.um-detail-title h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.um-detail-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Info grid ─────────────────────────────────────────── */
+.um-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.um-info-tile {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.um-info-tile-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.um-info-tile-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ── Detail body (scrolls if needed) ──────────────────── */
+.um-detail-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Form fields inside detail body ───────────────────── */
+.um-form-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--accent-primary);
+  margin-bottom: 0.6rem;
+}
+
+.um-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.um-form-row.single {
+  grid-template-columns: 1fr;
+}
+
+.um-active-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
   font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
 }
 
-[data-theme="dark"] .users-table tbody tr.selected-row {
-  background: var(--bg-tertiary);
+.um-active-toggle:hover {
+  border-color: var(--accent-primary);
 }
 
-@media (max-width: 1024px) {
-  .management-layout {
+/* Error banner */
+.um-form-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  color: var(--accent-danger);
+  font-size: 0.88rem;
+}
+
+/* ── Action bar ────────────────────────────────────────── */
+.um-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+}
+
+.um-action-bar-right { display: flex; gap: 0.75rem; }
+.um-action-bar-left  { display: flex; gap: 0.75rem; }
+
+/* ── Delete modal ──────────────────────────────────────── */
+.um-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-medium);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.um-modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 460px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.um-modal h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.um-modal-warning {
+  padding: 0.9rem 1rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.um-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+/* ── Skeleton / loading ────────────────────────────────── */
+.um-skeleton-card {
+  height: 58px;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    var(--bg-tertiary) 25%,
+    var(--border-color) 50%,
+    var(--bg-tertiary) 75%
+  );
+  background-size: 200% 100%;
+  animation: um-shimmer 1.4s infinite;
+}
+
+@keyframes um-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .um-panels {
     flex-direction: column;
   }
-  .details-pane {
+  .um-list-panel {
     width: 100%;
-    position: static;
+    max-height: 320px;
+  }
+  .um-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .um-info-grid {
+    grid-template-columns: 1fr;
+  }
+  .um-form-row {
+    grid-template-columns: 1fr;
   }
 }

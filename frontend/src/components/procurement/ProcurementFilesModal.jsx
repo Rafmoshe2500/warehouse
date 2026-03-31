@@ -1,11 +1,14 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import FileUploadZone from './FileUploadZone';
 import procurementService from '../../api/services/procurementService';
 import './ProcurementFilesModal.css';
-import { useToast } from '../../hooks/useToast';
+import { useToast } from '../../context/ToastContext';
 
 const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit = false }) => {
-  const { error, success } = useToast();
+  const { showToast } = useToast();
+  const error = (msg) => showToast(msg, 'error');
+  const success = (msg) => showToast(msg, 'success');
+
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
