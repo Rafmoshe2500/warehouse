@@ -51,16 +51,32 @@ class ExcelParser:
 
     @staticmethod
     def _clean_record(record: Dict[str, Any]) -> Dict[str, Any]:
-        """Cleans a single dictionary record: strips strings, formats dates, handles NaNs"""
+        """Cleans a single dictionary record: strips strings, formats dates, handles NaNs.
+        
+        Critical normalization: numeric values (e.g., serial numbers read as 1234567.0)
+        are converted to integers before stringifying to avoid mismatch with DB values
+        stored as '1234567'. Also handles 'nan' string produced by some pandas versions.
+        """
         clean_record = {}
         for key, value in record.items():
-            if pd.isna(value):
-                clean_record[key] = ''
+            # Catch float NaN / None
+            try:
+                if pd.isna(value):
+                    clean_record[key] = ''
+                    continue
+            except (TypeError, ValueError):
+                pass  # pd.isna may raise for non-scalar types
+
+            if isinstance(value, datetime):
+                clean_record[key] = value.strftime('%Y-%m-%d')
+            elif isinstance(value, float) and value == int(value):
+                # Whole-number float (e.g. 1234567.0) -> '1234567'
+                # This prevents serial/catalog mismatches when the DB stores the integer string.
+                clean_record[key] = str(int(value)).strip()
             else:
-                if isinstance(value, datetime):
-                    clean_record[key] = value.strftime('%Y-%m-%d')
-                else:
-                    clean_record[key] = str(value).strip()
+                raw = str(value).strip()
+                # Guard against residual 'nan' strings that slipped through
+                clean_record[key] = '' if raw.lower() == 'nan' else raw
         return clean_record
 
     @classmethod

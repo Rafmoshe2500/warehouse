@@ -1,5 +1,6 @@
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
+import logging
 
 import pandas as pd
 from fastapi import UploadFile
@@ -11,6 +12,8 @@ from app.schemas.audit import AuditAction
 from app.core.exceptions import ExcelFileException
 from app.core.excel_parser import ExcelParser
 from app.schemas.item import ItemFilter
+
+logger = logging.getLogger(__name__)
 
 
 class ExcelService:
@@ -43,6 +46,8 @@ class ExcelService:
         skipped_count = 0
         errors = []
 
+        logger.info(f"[ExcelImport] Starting import for user='{user}', total_records={len(records)}")
+
         # שדות שבודקים ומעדכנים כאשר יש סריאלי (לא כולל הערות ויעוד!)
         serial_update_fields = [
             'catalog_number', 'description', 'manufacturer',
@@ -54,17 +59,25 @@ class ExcelService:
 
         for index, record in enumerate(records, start=1):
             try:
-                has_serial = bool(record.get('serial') and record['serial'].strip())
+                serial_raw = record.get('serial', '')
+                # Guard: treat any form of empty/nan as no serial
+                serial_clean = serial_raw.strip() if isinstance(serial_raw, str) else ''
+                has_serial = bool(serial_clean and serial_clean.lower() != 'nan')
 
                 # --- תרחיש 1: יש סריאלי ---
                 if has_serial:
-                    existing_item = await self.items_repo.find_by_serial(record['serial'])
+                    logger.debug(f"[ExcelImport] Row {index}: serial item detected serial='{serial_clean}'")
+                    existing_item = await self.items_repo.find_by_serial(serial_clean)
 
                     if existing_item:
                         # הפריט קיים -> בדיקה אם משהו השתנה (חוץ מהערות ויעוד)
                         if self.has_changes(existing_item, record, serial_update_fields):
                             # יש שינוי -> מעדכנים
                             changes = self.get_changes(existing_item, record, serial_update_fields)
+                            logger.info(
+                                f"[ExcelImport] Row {index}: updating serial='{serial_clean}' "
+                                f"changes={list(changes.keys())}"
+                            )
 
                             # בונים את המידע לעדכון (רק השדות המותרים)
                             update_data = {k: self.normalize_value(record[k]) for k in serial_update_fields if k in record}
@@ -81,10 +94,12 @@ class ExcelService:
                             )
                         else:
                             # הכל זהה -> רק מעדכנים זמן עדכון (למניעת סטטוס stale)
+                            logger.debug(f"[ExcelImport] Row {index}: serial='{serial_clean}' unchanged, touching timestamp.")
                             await self.items_repo.update(str(existing_item["_id"]), {"updated_at": datetime.now(timezone.utc)})
                             skipped_count += 1
                     else:
                         # יש סריאלי אבל הוא לא קיים במערכת -> יוצרים חדש
+                        logger.info(f"[ExcelImport] Row {index}: serial='{serial_clean}' not found in DB, creating new item.")
                         record["created_at"] = datetime.now(timezone.utc)
                         record["updated_at"] = datetime.now(timezone.utc)
                         created_item = await self.items_repo.create(record)
@@ -132,6 +147,8 @@ class ExcelService:
                             skipped_count += 1
                     else:
                         # מיקום שונה או מק"ט לא קיים -> יוצרים חדש
+                        # Ensure residual 'nan' serial strings are not persisted
+                        record['serial'] = ''
                         record["created_at"] = datetime.now(timezone.utc)
                         record["updated_at"] = datetime.now(timezone.utc)
                         created_item = await self.items_repo.create(record)
@@ -147,6 +164,14 @@ class ExcelService:
                 continue
 
         # לוג סיכום
+        logger.info(
+            f"[ExcelImport] Import complete for user='{user}': "
+            f"added={added_count}, updated={updated_count}, skipped={skipped_count}, "
+            f"errors={len(errors)}, total={len(records)}"
+        )
+        if errors:
+            logger.warning(f"[ExcelImport] Errors during import: {errors}")
+
         if added_count > 0 or updated_count > 0:
             await self.item_auditor.log_import_summary(
                 user=user,
