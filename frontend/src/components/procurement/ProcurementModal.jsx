@@ -8,6 +8,7 @@ import BomPreviewModal from './BomPreviewModal';
 import BomGroupCard from './BomScannerTab/BomGroupCard';
 import bomService from '../../api/services/bomService';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 import { useCatalog } from '../../hooks/useCatalog';
 import { useDebounce } from '../../hooks/useDebounce';
 import './ProcurementModal.css';
@@ -34,6 +35,7 @@ const buildBomItemsFromGroups = (groups, vendor) => {
     if (!main.part_number && children.length === 0) continue;
     items.push({
       item_id: nextId++,
+      product_name: main.part_alias || '',
       catalog_number: rep.part_number || main.part_number || '',
       manufacturer: vendor,
       description: rep.product || main.product || '',
@@ -71,6 +73,8 @@ const ProcurementModal = ({
   const [expandedItemId, setExpandedItemId] = useState(1);
   const [showEmfInput, setShowEmfInput] = useState(false);
   const { showToast } = useToast();
+  const { hasPricePermission } = useAuth();
+  const showPrices = hasPricePermission();
   const toastError = (msg) => showToast(msg, 'error');
 
   // BOM inline scanner (for manual re-scan within form)
@@ -96,8 +100,15 @@ const ProcurementModal = ({
   useEffect(() => {
     if (!isOpen) return;
     if (initialData) {
+      const mappedInitialItems = (initialData.bom_items || []).map((item, idx) => {
+        const correspondingGroup = initialData.bom_data?.groups?.[idx];
+        const alias = correspondingGroup?.main?.part_alias || item.product_name || '';
+        return { ...item, product_name: alias };
+      });
+
       setFormData({
         ...initialData,
+        bom_items: mappedInitialItems,
         order_date: new Date(initialData.order_date).toISOString().split('T')[0],
         emf_number: initialData.emf_number || '',
         bom_vendor: initialData.bom_vendor || null,
@@ -297,11 +308,14 @@ const ProcurementModal = ({
 
   // ── Status helpers ────────────────────────────────────────────────────────
   const getStatusLabel = () => {
-    const { status } = formData;
+    const { status, received_bom, emf_number } = formData;
     if (status === 'received')         return '✓ התקבל';
     if (status === 'shipped')          return '✓ נשלח';
     if (status === 'waiting_shipment') return 'ממתין לשילוח';
-    return 'ממתין לBOM ו-EMF';
+    
+    if (received_bom && !emf_number)   return 'ממתין ל-EMF';
+    if (!received_bom && emf_number)   return 'ממתין ל-BOM';
+    return 'ממתין ל-BOM ו-EMF';
   };
 
   const canMarkAsShipped   = () => formData.status === 'waiting_shipment';
@@ -398,21 +412,20 @@ const ProcurementModal = ({
                   onChange={e => setFormData(prev => ({ ...prev, order_date: e.target.value }))}
                   required
                 />
-                <Input
-                  label="סכום ההזמנה"
-                  type={hasBomData || orderType === 'bom' ? 'text' : 'number'}
-                  value={hasBomData || orderType === 'bom' ? (formData.total_amount ? formatPrice(formData.total_amount) : '') : (formData.total_amount || '')}
-                  onChange={e => {
-                    if (!hasBomData && orderType !== 'bom') {
+                {showPrices && (
+                  <Input
+                    label="סכום ההזמנה ($)"
+                    type="number"
+                    value={formData.total_amount || ''}
+                    onChange={e => {
                       setFormData(prev => ({ ...prev, total_amount: parseFloat(e.target.value) || 0 }));
-                    }
-                  }}
-                  placeholder={hasBomData || orderType === 'bom' ? "יתעדכן לאחר העלאת BOM" : "הכנס סכום"}
-                  disabled={hasBomData || orderType === 'bom'}
-                  title={hasBomData ? 'סכום מה-BOM' : (orderType === 'bom' ? 'יתעדכן לאחר סריקת BOM' : 'סכום הזמנה (אופציונלי)')}
-                  min="0"
-                  step="0.01"
-                />
+                    }}
+                    placeholder={!hasBomData && orderType === 'bom' ? "יתעדכן לאחר העלאת BOM" : "הכנס סכום"}
+                    title={hasBomData ? 'ניתן לערוך במידה וחישוב הBOM איננו מדויק' : (orderType === 'bom' ? 'יתעדכן לאחר סריקת BOM' : 'סכום הזמנה (אופציונלי)')}
+                    min="0"
+                    step="0.01"
+                  />
+                )}
               </div>
 
               {/* BOM Items */}
@@ -591,7 +604,7 @@ const ProcurementModal = ({
                           {activeBomVendorMeta?.logo} {activeBomVendorMeta?.label}
                         </span>
                         <span className="bom-done-count">{(formData.bom_data.groups || []).length} מערכות</span>
-                        <span className="bom-done-price">{formatPrice(formData.total_amount)}</span>
+                        {showPrices && <span className="bom-done-price">{formatPrice(formData.total_amount)}</span>}
                       </div>
                       <div className="bom-done-actions">
                         <button type="button" className="bom-preview-btn" onClick={() => setShowBomPreview(true)}>
@@ -615,7 +628,7 @@ const ProcurementModal = ({
               <>
                 <div className="pm-preview-header">
                   <span className="pm-preview-title">תוצאות BOM</span>
-                  <span className="pm-preview-total">{formatPrice(formData.total_amount)}</span>
+                  {showPrices && <span className="pm-preview-total">{formatPrice(formData.total_amount)}</span>}
                 </div>
                 <div className="pm-preview-cards">
                   {(formData.bom_data.groups || []).map((group, idx) => (

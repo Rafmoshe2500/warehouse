@@ -114,3 +114,132 @@ def require_permission(permission: str):
         return current_user
     
     return permission_dependency
+
+
+def has_price_permission(user: dict) -> bool:
+    """
+    Check if user is allowed to view price fields.
+    SuperAdmin / Admin always have access.
+    Other users need 'procurement:view_prices' or 'procurement:rw'.
+    """
+    role = user.get("role")
+    if role in (UserRole.SUPERADMIN, UserRole.ADMIN):
+        return True
+    perms = user.get("permissions", [])
+    return (
+        Permission.PROCUREMENT_VIEW_PRICES in perms
+        or Permission.PROCUREMENT_RW in perms
+        or Permission.ADMIN in perms
+    )
+
+
+_VENDOR_RO_PERMS = (
+    Permission.PROCUREMENT_DELL_RO, Permission.PROCUREMENT_HPE_RO,
+    Permission.PROCUREMENT_NETAPP_RO, Permission.PROCUREMENT_CISCO_RO,
+    Permission.PROCUREMENT_COMMVAULT_RO,
+)
+_VENDOR_RW_PERMS = (
+    Permission.PROCUREMENT_DELL_RW, Permission.PROCUREMENT_HPE_RW,
+    Permission.PROCUREMENT_NETAPP_RW, Permission.PROCUREMENT_CISCO_RW,
+    Permission.PROCUREMENT_COMMVAULT_RW,
+)
+
+
+def has_procurement_read_access(user: dict) -> bool:
+    """True if user can read any procurement orders (global or vendor-specific)."""
+    role = user.get("role")
+    if role in (UserRole.SUPERADMIN, UserRole.ADMIN):
+        return True
+    perms = user.get("permissions", [])
+    if Permission.PROCUREMENT_RO in perms or Permission.PROCUREMENT_RW in perms or Permission.ADMIN in perms:
+        return True
+    # Any vendor-level permission (ro OR rw) grants read access
+    return any(p in perms for p in _VENDOR_RO_PERMS + _VENDOR_RW_PERMS)
+
+
+def has_procurement_write_access(user: dict) -> bool:
+    """True if user can write/edit any procurement order (global or vendor-specific)."""
+    role = user.get("role")
+    if role in (UserRole.SUPERADMIN, UserRole.ADMIN):
+        return True
+    perms = user.get("permissions", [])
+    if Permission.PROCUREMENT_RW in perms or Permission.ADMIN in perms:
+        return True
+    return any(p in perms for p in _VENDOR_RW_PERMS)
+
+
+# Map: vendor name (lowercase, as stored in bom_vendor) -> (ro perm, rw perm)
+_VENDOR_PERM_MAP = {
+    "DELL":      (Permission.PROCUREMENT_DELL_RO,      Permission.PROCUREMENT_DELL_RW),
+    "HPE":       (Permission.PROCUREMENT_HPE_RO,       Permission.PROCUREMENT_HPE_RW),
+    "NETAPP":    (Permission.PROCUREMENT_NETAPP_RO,    Permission.PROCUREMENT_NETAPP_RW),
+    "CISCO":     (Permission.PROCUREMENT_CISCO_RO,     Permission.PROCUREMENT_CISCO_RW),
+    "COMMVAULT": (Permission.PROCUREMENT_COMMVAULT_RO, Permission.PROCUREMENT_COMMVAULT_RW),
+}
+
+
+def get_allowed_vendors(user: dict) -> list[str] | None:
+    """
+    Return the list of vendor names the user may see.
+    - None  → no restriction (global access)
+    - [...]  → only these vendors (uppercase, matching bom_vendor field)
+    """
+    role = user.get("role")
+    if role in (UserRole.SUPERADMIN, UserRole.ADMIN):
+        return None  # unrestricted
+    perms = user.get("permissions", [])
+    # Global permissions → no restriction
+    if Permission.PROCUREMENT_RO in perms or Permission.PROCUREMENT_RW in perms or Permission.ADMIN in perms:
+        return None
+    # Build list of allowed vendors from specific perms
+    allowed = [
+        vendor
+        for vendor, (ro, rw) in _VENDOR_PERM_MAP.items()
+        if ro in perms or rw in perms
+    ]
+    return allowed  # may be empty if user somehow has no vendor perms
+
+
+# Price fields to strip from order-level and BOM data
+_ORDER_PRICE_FIELDS = ("total_amount",)
+_BOM_ITEM_PRICE_FIELDS = (
+    "ext_list_price", "ext_net_price",
+    "unit_list_price", "unit_net_price",
+    "net_discount",
+)
+
+
+def strip_price_fields(order: dict) -> dict:
+    """
+    Return a copy of the order dict with all price fields set to None.
+    Used when the requesting user lacks the 'procurement:view_prices' permission.
+    The response reaches the client but contains no numeric price data,
+    so browser DevTools cannot expose prices.
+    """
+    import copy
+    order = copy.deepcopy(order)
+
+    # Order-level price
+    for field in _ORDER_PRICE_FIELDS:
+        if field in order:
+            order[field] = None
+
+    # BOM data (raw scan results stored in bom_data)
+    bom_data = order.get("bom_data")
+    if isinstance(bom_data, dict):
+        for group in bom_data.get("groups", []):
+            group["total_net_price"] = None
+            for key in ("main",):
+                item = group.get(key, {})
+                if isinstance(item, dict):
+                    for f in _BOM_ITEM_PRICE_FIELDS:
+                        if f in item:
+                            item[f] = None
+            for child in group.get("children", []):
+                if isinstance(child, dict):
+                    for f in _BOM_ITEM_PRICE_FIELDS:
+                        if f in child:
+                            child[f] = None
+
+    return order
+

@@ -38,6 +38,7 @@ class BOMItem(BaseModel):
     description: str = Field(default="", description="תיאור")
     quantity: int = Field(..., gt=0, description="כמות")
     bom_vendor: Optional[str] = Field(default=None, description="ספק BOM (DELL/NETAPP/HPE)")
+    part_alias: Optional[str] = Field(default=None, description="כינוי למק\"ט קריא למשתמש")
 
 
 class ProcurementOrderBase(BaseModel):

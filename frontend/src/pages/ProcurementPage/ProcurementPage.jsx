@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiPlus, FiSearch, FiClock, FiCheckCircle, FiX, FiLayers, FiTrendingUp } from 'react-icons/fi';
 import { Button, Input, Pagination, Spinner, ToastContainer, SkeletonTable, Tabs } from '../../components/common';
 import ProcurementTable from '../../components/procurement/ProcurementTable';
@@ -17,8 +17,25 @@ import procurementService from '../../api/services/procurementService';
 import './ProcurementPage.css';
 
 const ProcurementPage = () => {
-  const { isAdmin, isSuperAdmin, hasPermission } = useAuth();
+  const { isAdmin, isSuperAdmin, hasPermission, hasVendorAccess, hasPricePermission } = useAuth();
   const { toasts, removeToast, success, error } = useToast();
+
+  const VENDORS = ['dell', 'hpe', 'netapp', 'cisco', 'commvault'];
+  // canEdit: גלובלי OR כל הרשאת עריכה של ספק ספציפי
+  const canEdit = hasPermission('procurement:rw') ||
+    VENDORS.some(v => hasPermission(`procurement:${v}:rw`));
+
+  // השוואת מחירים — רק עם הרשאה ספציפית
+  const canCompare = hasPermission('procurement:compare_prices');
+
+  // פונקציה שבודקת אם המשתמש יכול לערוך הזמנה ספציפית לפי ספק
+  const canEditOrder = (order) => {
+    if (isAdmin || isSuperAdmin) return true;
+    if (hasPermission('procurement:rw')) return true;
+    const vendor = order?.bom_vendor?.toLowerCase() || order?.manufacturer?.toLowerCase() || '';
+    if (!vendor) return hasPermission('procurement:rw'); // no vendor → only global rw
+    return hasVendorAccess(vendor, 'rw');
+  };
   
   const [orders, setOrders] = useState([]);
   const [total, setTotal] = useState(0);
@@ -50,7 +67,8 @@ const ProcurementPage = () => {
   // Tab state: 'process' (default) or 'completed'
   const [activeTab, setActiveTab] = useState('process');
 
-  const canEdit = hasPermission('procurement:rw');
+
+
 
   useEffect(() => {
     if (activeTab !== 'bom-netapp' && activeTab !== 'analytics') {
@@ -261,7 +279,7 @@ const ProcurementPage = () => {
           { id: 'process', label: 'בתהליך', icon: <FiClock /> },
           { id: 'completed', label: 'הסתיים', icon: <FiCheckCircle /> },
           { id: 'bom-netapp', label: 'סריקת BOM', icon: <FiLayers /> },
-          { id: 'analytics', label: 'השוואת מחירים', icon: <FiTrendingUp /> },
+          ...(canCompare ? [{ id: 'analytics', label: 'השוואת מחירים', icon: <FiTrendingUp /> }] : []),
         ]}
         activeTab={activeTab}
         onTabChange={handleTabChange}
@@ -313,6 +331,7 @@ const ProcurementPage = () => {
               <ProcurementTable
                 orders={orders}
                 canEdit={canEdit}
+                canEditOrder={canEditOrder}
                 isAdmin={isAdmin || isSuperAdmin}
                 onEdit={openEditModal}
                 onDelete={openDeleteModal}

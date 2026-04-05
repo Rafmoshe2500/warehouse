@@ -106,6 +106,20 @@ const PrivateRoute = ({ children }) => {
     permission: PropTypes.string.isRequired
   };
 
+  // מסלול פרטני לרכש — מאפשר כניסה בהרשאות ספק ספציפי
+  const ProcurementRoute = ({ children }) => {
+    const { isAuthenticated, hasProcurementAccess, loading } = useAuth();
+
+    if (loading) return <Spinner size="large" />;
+    if (!isAuthenticated) return <Navigate to="/login" />;
+    if (!hasProcurementAccess()) return <Navigate to="/dashboard" />;
+    return children;
+  };
+
+  ProcurementRoute.propTypes = {
+    children: PropTypes.node.isRequired
+  };
+
   const AppRouter = () => {
     const { isAuthenticated, loading } = useAuth();
 
@@ -174,9 +188,9 @@ const PrivateRoute = ({ children }) => {
           <Route
             path="/procurement"
             element={
-              <PermissionRoute permission="procurement:ro">
+              <ProcurementRoute>
                 <ProcurementPage />
-              </PermissionRoute>
+              </ProcurementRoute>
             }
           />
           <Route

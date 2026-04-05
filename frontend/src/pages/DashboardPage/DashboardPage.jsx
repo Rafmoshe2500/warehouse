@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
     FiBox, 
     FiPackage, 
@@ -35,11 +35,12 @@ const DashboardPage = () => {
 
     const { useDashboardStats } = useAnalytics();
     const { data: stats, isLoading: loading, error } = useDashboardStats(dateRange);
-    const { user, hasPermission } = useAuth(); // Get current user
+    const { user, hasPermission, hasProcurementAccess, hasPricePermission } = useAuth();
     
     // Check permissions
     const hasInventoryAccess = hasPermission('inventory:ro') || hasPermission('inventory:rw');
-    const hasProcurementAccess = hasPermission('procurement:ro') || hasPermission('procurement:rw');
+    const procurementAccess = hasProcurementAccess();
+    const priceAccess = hasPricePermission();
 
     if (loading) return (
         <div className="dashboard-loading">
@@ -157,21 +158,24 @@ const DashboardPage = () => {
                     )}
 
                 {/* Procurement Stats Row */}
-                {hasProcurementAccess && stats?.procurement && (
+                {procurementAccess && stats?.procurement && (
                     <>
                         <div className="bento-grid-stats">
-                            <div className="stat-tile blue">
-                                <div className="stat-icon-bg"><FiDollarSign /></div>
-                                <div className="stat-content">
-                                    <h3>סך הכל רכש</h3>
-                                    <div className="stat-number">
-                                        ${stats.procurement.total_spend?.toLocaleString() || 0}
+                            {/* כרטיס מחיר — רק למי שיש הרשאת מחירים */}
+                            {priceAccess && (
+                                <div className="stat-tile blue">
+                                    <div className="stat-icon-bg"><FiDollarSign /></div>
+                                    <div className="stat-content">
+                                        <h3>סך הכל רכש</h3>
+                                        <div className="stat-number">
+                                            ${stats.procurement.total_spend?.toLocaleString() || 0}
+                                        </div>
+                                    </div>
+                                    <div className="stat-trend">
+                                        הוצאות מצטברות
                                     </div>
                                 </div>
-                                <div className="stat-trend">
-                                    הוצאות מצטברות
-                                </div>
-                            </div>
+                            )}
 
                             <div className="stat-tile amber">
                                 <div className="stat-icon-bg"><FiFileText /></div>

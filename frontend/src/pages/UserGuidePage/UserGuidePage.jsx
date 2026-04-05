@@ -21,11 +21,11 @@ import './UserGuidePage.css';
 const UserGuidePage = () => {
   const [activeSection, setActiveSection] = useState('intro');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { hasPermission } = useAuth();
+  const { hasPermission, hasProcurementAccess } = useAuth();
 
   // Check permissions
   const hasInventoryAccess = hasPermission('inventory:ro') || hasPermission('inventory:rw');
-  const hasProcurementAccess = hasPermission('procurement:ro') || hasPermission('procurement:rw');
+  const procurementAccess = hasProcurementAccess();
 
   // Sections Configuration - filtered by permissions and matching DOM order
   const sections = React.useMemo(() => {
@@ -36,12 +36,12 @@ const UserGuidePage = () => {
       { id: 'dashboard', label: 'דשבורד', icon: <FiLayout />, visible: true },
       { id: 'stale-items', label: 'פריטים ישנים', icon: <FiArchive />, visible: hasInventoryAccess },
       { id: 'audit-logs', label: 'יומן פעילות', icon: <FiClipboard />, visible: true },
-      { id: 'procurement', label: 'רכש והצטיידות', icon: <FiShoppingCart />, visible: hasProcurementAccess },
+      { id: 'procurement', label: 'רכש והצטיידות', icon: <FiShoppingCart />, visible: procurementAccess },
       { id: 'pro-tips', label: 'טיפים למתקדמים', icon: <FiZap />, visible: true },
       { id: 'faq', label: 'שאלות נפוצות', icon: <FiHelpCircle />, visible: true },
     ];
     return baseSections.filter(s => s.visible);
-  }, [hasInventoryAccess, hasProcurementAccess]);
+  }, [hasInventoryAccess, procurementAccess]);
 
   // Scroll Spy Effect using IntersectionObserver
   useEffect(() => {
@@ -409,7 +409,7 @@ const UserGuidePage = () => {
           </section>
 
           {/* Procurement Section - Only for procurement access */}
-          {hasProcurementAccess && (
+          {procurementAccess && (
             <section id="procurement" className="content-section">
               <div className="section-header">
                 <h2 className="section-title">רכש והצטיידות</h2>
@@ -574,7 +574,7 @@ const UserGuidePage = () => {
               </>
             )}
 
-            {hasProcurementAccess && (
+            {procurementAccess && (
               <>
                 <h3>🛒 טיפים לניהול רכש</h3>
                 <div className="guide-step">

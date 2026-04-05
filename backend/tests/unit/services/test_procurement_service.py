@@ -1,4 +1,4 @@
-﻿"""
+"""
 Tests for ProcurementService.
 Tests business logic for procurement orders, status transitions, and file handling.
 """
@@ -43,8 +43,9 @@ class TestProcurementService:
         s3_service.upload_file = AsyncMock(return_value={"file_id": "f", "s3_key": "k"})
 
         auditor = AsyncMock()  # Mock ProcurementAuditor
+        analytics_service = AsyncMock()  # Mock BomAnalyticsService
 
-        return ProcurementService(repository, s3_service, auditor)
+        return ProcurementService(repository, s3_service, auditor, analytics_service)
 
     # ========== Create Tests ==========
 
@@ -54,7 +55,7 @@ class TestProcurementService:
         order_data = _make_order_create(
             bom_items=[
                 BOMItem(item_id=1, catalog_number="S-PROC-001",
-                        manufacturer="Service Mfr", description="Service Test", quantity=10)
+                        manufacturer="Service Mfr", description="Service Test", quantity=10, part_alias="Service Test Alias")
             ],
             total_amount=500.0
         )
@@ -62,6 +63,7 @@ class TestProcurementService:
         result = await procurement_service.create_order(order_data, mock_admin_user["username"])
 
         assert result["bom_items"][0]["catalog_number"] == "S-PROC-001"
+        assert result["bom_items"][0]["part_alias"] == "Service Test Alias"
         assert result["created_by"] == mock_admin_user["username"]
 
         # Verify auditor called
@@ -80,27 +82,27 @@ class TestProcurementService:
 
     @pytest.mark.asyncio
     async def test_auto_status_waiting_bom_when_emf_provided(self, procurement_service, mock_admin_user):
-        """Test that order with EMF but no BOM transitions to waiting_bom."""
+        """Test that order with EMF but no BOM transitions to waiting_bom_emf."""
         order_data = _make_order_create(emf_number="EMF-1234", received_bom=False)
         result = await procurement_service.create_order(order_data, mock_admin_user["username"])
 
-        assert result["status"] == "waiting_bom"
+        assert result["status"] == "waiting_bom_emf"
 
     @pytest.mark.asyncio
     async def test_auto_status_waiting_emf_when_bom_received(self, procurement_service, mock_admin_user):
-        """Test that order with BOM but no EMF transitions to waiting_emf."""
+        """Test that order with BOM but no EMF transitions to waiting_bom_emf."""
         order_data = _make_order_create(emf_number=None, received_bom=True)
         result = await procurement_service.create_order(order_data, mock_admin_user["username"])
 
-        assert result["status"] == "waiting_emf"
+        assert result["status"] == "waiting_bom_emf"
 
     @pytest.mark.asyncio
-    async def test_auto_status_waiting_order_when_both_present(self, procurement_service, mock_admin_user):
-        """Test that order with both EMF and BOM transitions to waiting_order."""
+    async def test_auto_status_waiting_shipment_when_both_present(self, procurement_service, mock_admin_user):
+        """Test that order with both EMF and BOM transitions to waiting_shipment."""
         order_data = _make_order_create(emf_number="EMF-9999", received_bom=True)
         result = await procurement_service.create_order(order_data, mock_admin_user["username"])
 
-        assert result["status"] == "waiting_order"
+        assert result["status"] == "waiting_shipment"
 
     # ========== Read Tests ==========
 
@@ -152,8 +154,8 @@ class TestProcurementService:
             _make_order_create(emf_number="EMF-123", received_bom=True),
             mock_admin_user["username"]
         )
-        # Should be waiting_order at this point
-        assert created["status"] == "waiting_order"
+        # Should be waiting_shipment at this point
+        assert created["status"] == "waiting_shipment"
 
         update_data = ProcurementOrderUpdate(status="received")
         result = await procurement_service.update_order(
@@ -164,19 +166,19 @@ class TestProcurementService:
 
     @pytest.mark.asyncio
     async def test_update_order_add_emf_transitions_status(self, procurement_service, mock_admin_user):
-        """Test that adding EMF to an order with BOM transitions to waiting_order."""
+        """Test that adding EMF to an order with BOM transitions to waiting_shipment."""
         created = await procurement_service.create_order(
             _make_order_create(emf_number=None, received_bom=True),
             mock_admin_user["username"]
         )
-        assert created["status"] == "waiting_emf"
+        assert created["status"] == "waiting_bom_emf"
 
         update_data = ProcurementOrderUpdate(emf_number="EMF-NEW")
         result = await procurement_service.update_order(
             created["id"], update_data, username=mock_admin_user["username"]
         )
 
-        assert result["status"] == "waiting_order"
+        assert result["status"] == "waiting_shipment"
         assert result["emf_number"] == "EMF-NEW"
 
     # ========== Delete Tests ==========
@@ -203,6 +205,9 @@ class TestProcurementService:
 
         # Verify auditor called
         procurement_service.auditor.delete_all_order_logs.assert_called_once()
+        
+        # Verify analytics cleanup called
+        procurement_service.analytics_service.delete_order_history.assert_called_once()
 
     # ========== File Tests ==========
 

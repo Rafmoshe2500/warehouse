@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useMemo, useCallback } from 'react';
 import { useAuthQuery } from '../hooks/useAuthQuery';
 
 const AuthContext = createContext(null);
@@ -31,6 +31,46 @@ export const AuthProvider = ({ children }) => {
     return false;
   }, [user?.permissions, isSuperAdmin, isAdmin]);
 
+  /**
+   * Check if the user can see/edit orders for a specific vendor.
+   * Global procurement:ro / procurement:rw always grants vendor access.
+   * mode: 'ro' | 'rw'
+   */
+  const hasVendorAccess = useCallback((vendor, mode = 'ro') => {
+    if (isSuperAdmin || isAdmin) return true;
+    // Global procurement access implies vendor access
+    if (hasPermission(`procurement:${mode}`)) return true;
+    // Vendor-specific permission
+    return hasPermission(`procurement:${vendor.toLowerCase()}:${mode}`);
+  }, [hasPermission, isSuperAdmin, isAdmin]);
+
+  /**
+   * Check if user is allowed to see price fields.
+   * procurement:rw grants price access implicitly (full access).
+   */
+  const hasPricePermission = useCallback(() => {
+    if (isSuperAdmin || isAdmin) return true;
+    return (
+      hasPermission('procurement:view_prices') ||
+      hasPermission('procurement:rw')
+    );
+  }, [hasPermission, isSuperAdmin, isAdmin]);
+
+  const PROCUREMENT_VENDORS = ['dell', 'hpe', 'netapp', 'cisco', 'commvault'];
+
+  /**
+   * Check if user has ANY procurement access (global or vendor-specific).
+   * Used to show/hide the procurement tab, nav link and dashboard cards.
+   */
+  const hasProcurementAccess = useCallback(() => {
+    if (isSuperAdmin || isAdmin) return true;
+    if (hasPermission('procurement:ro') || hasPermission('procurement:rw')) return true;
+    // Any vendor-specific permission grants access
+    return PROCUREMENT_VENDORS.some(
+      v => hasPermission(`procurement:${v}:ro`) || hasPermission(`procurement:${v}:rw`)
+    );
+  }, [hasPermission, isSuperAdmin, isAdmin]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Memoize only the stable values, not the mutation functions
   const value = useMemo(() => ({
     user,
@@ -39,10 +79,13 @@ export const AuthProvider = ({ children }) => {
     isSuperAdmin,
     permissions: user?.permissions || [],
     hasPermission,
+    hasVendorAccess,
+    hasPricePermission,
+    hasProcurementAccess,
     loading: isLoading,
-    login, // Mutation functions - intentionally not in deps
-    logout, // Mutation functions - intentionally not in deps
-  }), [user, isAuthenticated, isAdmin, isSuperAdmin, hasPermission, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+    login,
+    logout,
+  }), [user, isAuthenticated, isAdmin, isSuperAdmin, hasPermission, hasVendorAccess, hasPricePermission, hasProcurementAccess, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
       // Optional: Render a global loading spinner here if you want to block the app until auth is checked

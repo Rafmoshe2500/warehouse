@@ -50,20 +50,20 @@ class TestProcurementRoutes:
         assert data["status"] == "waiting_bom_emf"
 
     async def test_create_order_with_emf_transitions_to_waiting_bom(self, async_client):
-        """POST /procurement/orders - Order with EMF but no BOM → waiting_bom."""
+        """POST /procurement/orders - Order with EMF but no BOM → waiting_bom_emf."""
         payload = _order_payload(emf_number="EMF-555", received_bom=False)
         response = await async_client.post("/api/procurement/orders", json=payload)
 
         assert response.status_code == 200
-        assert response.json()["status"] == "waiting_bom"
+        assert response.json()["status"] == "waiting_bom_emf"
 
     async def test_create_order_with_emf_and_bom_transitions_to_waiting_order(self, async_client):
-        """POST /procurement/orders - Order with both EMF and BOM → waiting_order."""
+        """POST /procurement/orders - Order with both EMF and BOM → waiting_shipment."""
         payload = _order_payload(emf_number="EMF-888", received_bom=True)
         response = await async_client.post("/api/procurement/orders", json=payload)
 
         assert response.status_code == 200
-        assert response.json()["status"] == "waiting_order"
+        assert response.json()["status"] == "waiting_shipment"
 
     async def test_get_orders_route(self, async_client):
         """GET /procurement/orders - List orders."""

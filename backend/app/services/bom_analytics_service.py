@@ -92,7 +92,7 @@ class BomAnalyticsService:
         docs = []
         for item in bom_items:
             pn = (item.get("catalog_number") or "").strip()
-            product_name = (item.get("product_name") or item.get("description") or "").strip()
+            product_name = (item.get("part_alias") or item.get("product_name") or item.get("description") or "").strip()
             if not pn and not product_name:
                 continue
             # Use catalog_number as part_number; fall back to product_name slug

@@ -29,16 +29,20 @@ class AuthService:
 
     async def login(self, login_data: LoginRequest, response: Response, request: Request):
         """התחברות למערכת"""
+        logger.info(f"Login attempt for user: {login_data.username}")
         # Get user from MongoDB
         user = await self.user_service.get_user_by_username(login_data.username)
         
         if not user:
+            logger.warning(f"Failed login attempt: User {login_data.username} not found")
             raise UnauthorizedException()
         
         if not user.get("is_active", True):
+            logger.warning(f"Failed login attempt: User {login_data.username} is inactive")
             raise UnauthorizedException("המשתמש אינו פעיל")
         
         if not verify_password(login_data.password, user.get("password_hash", "")):
+            logger.warning(f"Failed login attempt: Invalid password for user {login_data.username}")
             raise UnauthorizedException()
 
         # Create token with role and permissions
@@ -76,6 +80,7 @@ class AuthService:
             except Exception as e:
                 logger.error(f"Failed to log login: {e}")
 
+        logger.info(f"User {login_data.username} logged in successfully")
         return {"access_token": access_token, "token_type": "bearer"}
 
     async def domain_login(self, login_data: DomainLoginRequest, response: Response, request: Request):
@@ -161,6 +166,7 @@ class AuthService:
             except Exception as e:
                 logger.error(f"Failed to log domain login: {e}")
 
+        logger.info(f"Domain User {username} logged in successfully")
         return {"access_token": access_token, "token_type": "bearer"}
 
     async def _get_user_groups_from_adfs_stub(self, username: str) -> list[str]:
@@ -186,5 +192,6 @@ class AuthService:
             except Exception as e:
                 logger.error(f"Failed to log logout: {e}")
                 
+        logger.info(f"User {user.get('username', 'unknown')} logged out")        
         return {"message": "התנתקת בהצלחה"}
 

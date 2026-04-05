@@ -2,16 +2,23 @@ import React, { useState, useRef, useCallback } from 'react';
 import { FiUploadCloud, FiRefreshCw } from 'react-icons/fi';
 import UploadAnimation from '../common/UploadAnimation/UploadAnimation';
 import bomService from '../../api/services/bomService';
+import { useAuth } from '../../context/AuthContext';
 import './BomPrescanModal.css';
 
 const BOM_VENDORS = [
-  { id: 'NETAPP', label: 'NetApp', logo: '🟠', color: '#f59e0b', format: 'netapp_pricing_template' },
-  { id: 'DELL',   label: 'Dell',   logo: '🔵', color: '#3b82f6', format: 'dell_quote'              },
+  { id: 'NETAPP', label: 'NetApp', logo: '🟣', color: '#a855f7', format: 'netapp_pricing_template' },
   { id: 'HPE',    label: 'HPE',    logo: '🟢', color: '#22c55e', format: 'hpe_quote'               },
+  { id: 'CISCO',  label: 'Cisco',  logo: '🟠', color: '#f97316', format: 'cisco_quote'             },
+  { id: 'DELL',   label: 'Dell',   logo: '🔵', color: '#3b82f6', format: 'dell_quote'              },
 ];
 
 const BomPrescanModal = ({ isOpen, onClose, onDone }) => {
-  const [phase, setPhase] = useState('vendor'); // vendor | upload | scanning | success | error
+  const { hasVendorAccess } = useAuth();
+
+  // סנן רק ספקים שיש למשתמש הרשאת עריכה עלייהם
+  const allowedVendors = BOM_VENDORS.filter(v => hasVendorAccess(v.id, 'rw'));
+
+  const [phase, setPhase] = useState('vendor');
   const [vendor, setVendor] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [fileName, setFileName] = useState('');
@@ -64,19 +71,25 @@ const BomPrescanModal = ({ isOpen, onClose, onDone }) => {
         {phase === 'vendor' && (
           <div className="bps-vendors">
             <p className="bps-label">בחר יצרן:</p>
-            <div className="bps-vendor-grid">
-              {BOM_VENDORS.map(v => (
-                <button
-                  key={v.id}
-                  className="bps-vendor-card"
-                  style={{ '--vc': v.color }}
-                  onClick={() => { setVendor(v); setPhase('upload'); }}
-                >
-                  <span className="bps-vendor-logo">{v.logo}</span>
-                  <span className="bps-vendor-name">{v.label}</span>
-                </button>
-              ))}
-            </div>
+            {allowedVendors.length === 0 ? (
+              <p className="bps-label" style={{ color: 'var(--color-text-muted)' }}>
+                אין לך הרשאות יצירת הזמנות BOM לאף ספק
+              </p>
+            ) : (
+              <div className="bps-vendor-grid">
+                {allowedVendors.map(v => (
+                  <button
+                    key={v.id}
+                    className="bps-vendor-card"
+                    style={{ '--vc': v.color }}
+                    onClick={() => { setVendor(v); setPhase('upload'); }}
+                  >
+                    <span className="bps-vendor-logo">{v.logo}</span>
+                    <span className="bps-vendor-name">{v.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

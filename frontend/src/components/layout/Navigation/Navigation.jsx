@@ -3,11 +3,10 @@ import { NavLink } from 'react-router-dom';
 import { FiPackage, FiShoppingCart, FiPieChart, FiUsers, FiHelpCircle } from 'react-icons/fi';
 import { FaBoxOpen } from 'react-icons/fa';
 import { useAuth } from '../../../context/AuthContext';
-import { PermissionGate } from '../../common';
 import './Navigation.css';
 
 const Navigation = () => {
-  const { isAdmin, hasPermission } = useAuth();
+  const { isAdmin, hasPermission, hasProcurementAccess } = useAuth();
 
   return (
     <nav className="navigation">
@@ -22,7 +21,7 @@ const Navigation = () => {
           <span>דשבורד</span>
         </NavLink>
 
-        <PermissionGate permission="inventory:ro">
+        {hasPermission('inventory:ro') && (
           <NavLink
             to="/inventory"
             className={({ isActive }) =>
@@ -32,7 +31,7 @@ const Navigation = () => {
             <FiPackage size={20} />
             <span>מלאי</span>
           </NavLink>
-        </PermissionGate>
+        )}
 
         <NavLink
           to="/my-components"
@@ -44,7 +43,7 @@ const Navigation = () => {
           <span>המלאי שלי</span>
         </NavLink>
 
-        <PermissionGate permission="procurement:ro">
+        {hasProcurementAccess() && (
           <NavLink
             to="/procurement"
             className={({ isActive }) =>
@@ -54,7 +53,7 @@ const Navigation = () => {
             <FiShoppingCart size={20} />
             <span>ניהול רכש</span>
           </NavLink>
-        </PermissionGate>
+        )}
 
         {/* Admin Link - handled by internal logic of PermissionGate or just keep simple check if complex */}
         {isAdmin && (

@@ -13,22 +13,11 @@ const VENDORS = [
     id: 'netapp',
     name: 'NetApp',
     description: 'Pricing Template',
-    logo: '🟠',
-    color: '#f59e0b',
-    bg: 'rgba(245,158,11,0.10)',
-    border: 'rgba(245,158,11,0.30)',
+    logo: '🟣',
+    color: '#a855f7',
+    bg: 'rgba(168,85,247,0.10)',
+    border: 'rgba(168,85,247,0.30)',
     format: 'netapp_pricing_template',
-    accept: '.xlsx,.xls',
-  },
-  {
-    id: 'dell',
-    name: 'Dell',
-    description: 'Quote Summary',
-    logo: '🔵',
-    color: '#3b82f6',
-    bg: 'rgba(59,130,246,0.10)',
-    border: 'rgba(59,130,246,0.30)',
-    format: 'dell_quote',
     accept: '.xlsx,.xls',
   },
   {
@@ -40,6 +29,28 @@ const VENDORS = [
     bg: 'rgba(34,197,94,0.10)',
     border: 'rgba(34,197,94,0.30)',
     format: 'hpe_quote',
+    accept: '.xlsx,.xls',
+  },
+  {
+    id: 'cisco',
+    name: 'Cisco',
+    description: 'Quote Summary',
+    logo: '🟠',
+    color: '#f97316',
+    bg: 'rgba(249,115,22,0.10)',
+    border: 'rgba(249,115,22,0.30)',
+    format: 'cisco_quote',
+    accept: '.xlsx,.xls',
+  },
+  {
+    id: 'dell',
+    name: 'Dell',
+    description: 'Quote Summary',
+    logo: '🔵',
+    color: '#3b82f6',
+    bg: 'rgba(59,130,246,0.10)',
+    border: 'rgba(59,130,246,0.30)',
+    format: 'dell_quote',
     accept: '.xlsx,.xls',
   },
 ];
@@ -177,13 +188,6 @@ const BomScannerTab = () => {
                 <div className="bst-vendor-arrow"><FiChevronRight /></div>
               </button>
             ))}
-
-            {/* Placeholder "coming soon" card */}
-            <div className="bst-vendor-card bst-vendor-soon">
-              <div className="bst-vendor-logo" style={{ opacity: 0.3 }}>＋</div>
-              <div className="bst-vendor-name" style={{ opacity: 0.4 }}>בקרוב</div>
-              <div className="bst-vendor-desc" style={{ opacity: 0.3 }}>יצרנים נוספים</div>
-            </div>
           </div>
         </div>
       )}

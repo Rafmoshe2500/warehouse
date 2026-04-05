@@ -9,11 +9,31 @@ import logging
 from app.services.bom_service import BomService
 from app.services.bom_catalog_service import BomCatalogService
 from app.services.s3_service import S3Service
-from app.core.security import get_current_user
+from app.core.security import get_current_user, has_procurement_write_access
+from app.core.constants import Permission, UserRole
+from app.core.exceptions import ForbiddenException
 from app.dependencies import get_s3_service
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/bom", tags=["BOM"])
+
+# מיפוי פורמט BOM לשם הספק (באותיות כמו ב-bom_vendor ב-MongoDB)
+_FORMAT_TO_VENDOR = {
+    "netapp_pricing_template": "NETAPP",
+    "dell_quote":              "DELL",
+    "hpe_quote":               "HPE",
+}
+
+
+def _has_vendor_write(user: dict, vendor: str) -> bool:
+    """True if user may create/edit orders for the given vendor (uppercase)."""
+    role = user.get("role")
+    if role in (UserRole.SUPERADMIN, UserRole.ADMIN):
+        return True
+    perms = user.get("permissions", [])
+    if Permission.PROCUREMENT_RW in perms or Permission.ADMIN in perms:
+        return True
+    return f"procurement:{vendor.lower()}:rw" in perms
 
 
 def get_bom_service() -> BomService:
@@ -48,6 +68,11 @@ async def scan_bom(
             status_code=400,
             detail=f"פורמט לא נתמך: {format}. פורמטים זמינים: {', '.join(SUPPORTED_FORMATS)}"
         )
+
+    # בדיקת הרשאת עריכה לספק המבוקש
+    vendor = _FORMAT_TO_VENDOR.get(format)
+    if vendor and not _has_vendor_write(current_user, vendor):
+        raise ForbiddenException(f"אין לך הרשאת יצירת הזמנות עבור {vendor}")
 
     file_bytes = await file.read()
     try:

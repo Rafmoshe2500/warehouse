@@ -1,0 +1,99 @@
+/* ── Items block ─────────────────────────────────────────── */
+.oc-items-block {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* 2-column grid — each cell gets ~50% width */
+.oc-items-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+/* ── Single item row ─────────────────────────────────────── */
+.oc-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 9px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  min-width: 0; /* allow text truncation inside flex */
+}
+
+.oc-item-icon {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.oc-item-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0; /* required for text-overflow to work */
+}
+
+.oc-item-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-item-catalog {
+  font-size: 0.67rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-item-qty {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 1px 6px;
+  flex-shrink: 0;
+  min-width: 28px;
+  text-align: center;
+}
+
+/* ── Show more row ───────────────────────────────────────── */
+.oc-show-more-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.oc-show-more-btn {
+  font-size: 0.7rem;
+  color: var(--accent-primary);
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 5px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.oc-show-more-btn:hover {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.oc-total-count {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-right: auto;
+}

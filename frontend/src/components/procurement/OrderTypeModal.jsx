@@ -8,7 +8,7 @@ const ORDER_TYPES = [
     title: 'רכש מ-BOM',
     subtitle: 'העלה קובץ BOM של יצרן',
     description: 'הסריקה תמלא אוטומטית את המחיר, המק"טים והרכיבים',
-    vendors: ['🟠 NetApp', '🔵 Dell', '🟢 HPE'],
+    vendors: ['🟣 NetApp', '🟢 HPE', '🟠 Cisco', '🔵 Dell'],
     color: '#6366f1',
     glow: 'rgba(99,102,241,0.25)',
   },

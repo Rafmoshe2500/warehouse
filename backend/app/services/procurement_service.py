@@ -49,6 +49,7 @@ class ProcurementService:
         created_by: str
     ) -> dict:
         """Create new procurement order"""
+        logger.info(f"Starting order creation for User={created_by}")
         order_dict = order_data.model_dump()
         order_dict["created_by"] = created_by
         
@@ -140,6 +141,7 @@ class ProcurementService:
         except Exception as e:
             logger.error(f"Failed to log audit for create order: {e}")
             
+        logger.info(f"Order created successfully: {created_order.get('id')}")
         return created_order
     
     async def get_orders(
@@ -151,7 +153,8 @@ class ProcurementService:
         manufacturer: Optional[str] = None,
         emf_number: Optional[str] = None,
         status_in: Optional[List[str]] = None,
-        status_ne: Optional[str] = None
+        status_ne: Optional[str] = None,
+        allowed_vendors: Optional[List[str]] = None
     ) -> tuple[List[dict], int]:
         """Get all procurement orders with pagination"""
         skip = (page - 1) * page_size
@@ -163,7 +166,8 @@ class ProcurementService:
             manufacturer=manufacturer,
             emf_number=emf_number,
             status_in=status_in,
-            status_ne=status_ne
+            status_ne=status_ne,
+            allowed_vendors=allowed_vendors
         )
     
     async def get_order_by_id(self, order_id: str) -> dict:
@@ -180,7 +184,7 @@ class ProcurementService:
         username: str = "unknown"
     ) -> dict:
         """Update procurement order"""
-        
+        logger.info(f"Updating order {order_id} by User={username}")
         # Get existing order
         existing_order = await self.get_order_by_id(order_id)
         
@@ -291,6 +295,7 @@ class ProcurementService:
     
     async def delete_order(self, order_id: str, username: str = "unknown") -> bool:
         """Delete procurement order and all associated files"""
+        logger.info(f"Deleting order {order_id} by User={username}")
         
         # Get order to delete files
         order = await self.get_order_by_id(order_id)

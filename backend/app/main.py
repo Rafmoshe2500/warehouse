@@ -9,12 +9,10 @@ from contextlib import asynccontextmanager
 from app.config import settings
 from app.db.mongodb import MongoDB
 from app.routes.api import api_router
+from app.core.logger import setup_logging
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+setup_logging()
 logger = logging.getLogger(__name__)
 
 # Rate Limiting
@@ -59,10 +57,10 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Global Exception Handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    logger.error(f"Unhandled exception on {request.method} {request.url.path}: {exc}")
     return JSONResponse(
         status_code=500,
-        content={"detail": "Internal Server Error", "message": str(exc)}
+        content={"detail": "Internal Server Error", "message": "An unexpected error occurred. Please try again later."}
     )
 
 # CORS Middleware
@@ -88,13 +86,18 @@ async def add_private_network_header(request: Request, call_next):
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
-    """Add response time header for monitoring."""
+    """Add response time header for monitoring and log request details."""
     start_time = time.time()
-    response = await call_next(request)
-    process_time = time.time() - start_time
-    response.headers["X-Process-Time"] = str(process_time)
-    logger.debug(f"{request.method} {request.url.path} - {process_time:.3f}s")
-    return response
+    try:
+        response = await call_next(request)
+        process_time = time.time() - start_time
+        response.headers["X-Process-Time"] = str(process_time)
+        logger.info(f"{request.method} {request.url.path} - {response.status_code} - {process_time:.3f}s")
+        return response
+    except BaseException as exc:
+        process_time = time.time() - start_time
+        logger.error(f"{request.method} {request.url.path} - FAILED - {process_time:.3f}s")
+        raise
 
 
 # Include API routes

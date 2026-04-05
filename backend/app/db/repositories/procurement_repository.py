@@ -34,10 +34,10 @@ class ProcurementRepository:
         manufacturer: Optional[str] = None,
         emf_number: Optional[str] = None,
         status_in: Optional[List[str]] = None,
-        status_ne: Optional[str] = None
+        status_ne: Optional[str] = None,
+        allowed_vendors: Optional[List[str]] = None
     ) -> tuple[List[Dict[str, Any]], int]:
         """Get all procurement orders with pagination and filters"""
-        # Build filter
         filter_query = {}
         
         # Generic search across bom_items and emf_number
@@ -55,13 +55,11 @@ class ProcurementRepository:
                 r = {"$regex": words[0], "$options": "i"}
                 filter_query["$or"] = [{f: r} for f in searchable_fields]
             else:
-                # Every word must appear in at least one searchable field (AND across words, OR across fields)
                 filter_query["$and"] = [
                     {"$or": [{f: {"$regex": w, "$options": "i"}} for f in searchable_fields]}
                     for w in words
                 ]
         else:
-            # Fallback to specific column searches if provided (legacy)
             if catalog_number or manufacturer:
                 bom_filter = {}
                 if catalog_number:
@@ -69,7 +67,6 @@ class ProcurementRepository:
                 if manufacturer:
                     bom_filter["bom_items.manufacturer"] = {"$regex": manufacturer, "$options": "i"}
                 filter_query.update(bom_filter)
-            
             if emf_number:
                 filter_query["emf_number"] = {"$regex": emf_number, "$options": "i"}
         
@@ -77,11 +74,19 @@ class ProcurementRepository:
             filter_query["status"] = {"$in": status_in}
         elif status_ne:
             filter_query["status"] = {"$ne": status_ne}
+
+        # סנן לפי ספקים מותרים (None = כל, רשימה = רק אלו)
+        if allowed_vendors is not None:
+            # תוצאות שבו-vendor מתאימות OR הזמנות ידניות (ללא ספק)
+            filter_query["$and"] = filter_query.get("$and", []) + [{
+                "$or": [
+                    {"bom_vendor": {"$in": allowed_vendors}},
+                    {"bom_vendor": {"$exists": False}},
+                    {"bom_vendor": None},
+                ]
+            }]
                     
-        # Get total count
         total = await self.collection.count_documents(filter_query)
-        
-        # Get orders
         cursor = self.collection.find(filter_query).sort("order_date", -1).skip(skip).limit(limit)
         orders = await cursor.to_list(length=limit)
         

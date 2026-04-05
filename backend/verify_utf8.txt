@@ -1,0 +1,573 @@
+================================== FAILURES ===================================
+tests\integration\routes\test_bom_analytics_routes.py:19: in test_seed_historical_data
+E   KeyError: 'processed'
+INFO     app.main:main.py:95 POST /api/bom-analytics/seed - 200 - 0.120s
+tests\integration\routes\test_bom_analytics_routes.py:28: in test_search_parts
+E   IndexError: list index out of range
+INFO     app.main:main.py:95 GET /api/bom-analytics/search-parts - 200 - 0.008s
+tests\integration\routes\test_bom_analytics_routes.py:38: in test_get_part_trends
+E   assert 0 == 1
+INFO     app.main:main.py:95 GET /api/bom-analytics/trends/P1 - 200 - 0.014s
+tests\integration\routes\test_bom_analytics_routes.py:51: in test_aggregate_trends
+E   IndexError: list index out of range
+INFO     app.main:main.py:95 POST /api/bom-analytics/aggregate-trends - 200 - 0.006s
+tests\integration\routes\test_bom_analytics_routes.py:60: in test_vendor_spending
+E   IndexError: list index out of range
+INFO     app.main:main.py:95 GET /api/bom-analytics/vendor-spending - 200 - 0.007s
+tests\integration\routes\test_bom_routes.py:50: in test_scan_bom_success
+E   assert 500 == 200
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+INFO     app.services.s3_service:s3_service.py:47 Using local storage at: uploads\procurement
+INFO     app.main:main.py:95 POST /api/bom/scan - 500 - 0.006s
+  |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 79, in collapse_excgroups
+  |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 192, in __call__
+  |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 783, in __aexit__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\runner.py", line 353, in from_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\runner.py", line 245, in <lambda>
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\logging.py", line 850, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\capture.py", line 900, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\skipping.py", line 268, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\runner.py", line 179, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pytest_asyncio\plugin.py", line 469, in runtest
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\python.py", line 1720, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 53, in run_old_style_hookwrapper
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_result.py", line 103, in get_result
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 38, in run_old_style_hookwrapper
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\python.py", line 166, in pytest_pyfunc_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pytest_asyncio\plugin.py", line 716, in inner
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 127, in run
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    |   File "C:\my project\warehouse\backend\tests\integration\routes\test_bom_routes.py", line 61, in test_save_part
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1859, in post
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1540, in request
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1629, in send
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_transports\asgi.py", line 170, in handle_async_request
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\applications.py", line 1135, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\applications.py", line 107, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |   File "C:\my project\warehouse\backend\app\main.py", line 92, in add_process_time_header
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |   File "C:\my project\warehouse\backend\app\main.py", line 82, in add_private_network_header
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 29, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 130, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 46, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 115, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 101, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 355, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 243, in run_endpoint_function
+    |   File "C:\my project\warehouse\backend\app\routes\api\bom.py", line 111, in save_part
+  File "C:\my project\warehouse\backend\tests\integration\routes\test_bom_routes.py", line 61, in test_save_part
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1859, in post
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1540, in request
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1629, in send
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_transports\asgi.py", line 170, in handle_async_request
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\applications.py", line 1135, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\applications.py", line 107, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+  File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+  File "C:\my project\warehouse\backend\app\main.py", line 92, in add_process_time_header
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+  File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+  File "C:\my project\warehouse\backend\app\main.py", line 82, in add_private_network_header
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 29, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 130, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 46, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 115, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 101, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 355, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 243, in run_endpoint_function
+  File "C:\my project\warehouse\backend\app\routes\api\bom.py", line 111, in save_part
+tests\integration\routes\test_bom_routes.py:61: in test_save_part
+.venv\Lib\site-packages\httpx\_client.py:1859: in post
+.venv\Lib\site-packages\httpx\_client.py:1540: in request
+.venv\Lib\site-packages\httpx\_client.py:1629: in send
+.venv\Lib\site-packages\httpx\_client.py:1657: in _send_handling_auth
+.venv\Lib\site-packages\httpx\_client.py:1694: in _send_handling_redirects
+.venv\Lib\site-packages\httpx\_client.py:1730: in _send_single_request
+.venv\Lib\site-packages\httpx\_transports\asgi.py:170: in handle_async_request
+.venv\Lib\site-packages\fastapi\applications.py:1135: in __call__
+.venv\Lib\site-packages\starlette\applications.py:107: in __call__
+.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+.venv\Lib\site-packages\starlette\middleware\base.py:191: in __call__
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py:162: in __exit__
+.venv\Lib\site-packages\starlette\_utils.py:85: in collapse_excgroups
+.venv\Lib\site-packages\starlette\middleware\base.py:193: in __call__
+app\main.py:92: in add_process_time_header
+.venv\Lib\site-packages\starlette\middleware\base.py:168: in call_next
+.venv\Lib\site-packages\starlette\middleware\base.py:144: in coro
+.venv\Lib\site-packages\starlette\middleware\base.py:191: in __call__
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py:162: in __exit__
+.venv\Lib\site-packages\starlette\_utils.py:85: in collapse_excgroups
+.venv\Lib\site-packages\starlette\middleware\base.py:193: in __call__
+app\main.py:82: in add_private_network_header
+.venv\Lib\site-packages\starlette\middleware\base.py:168: in call_next
+.venv\Lib\site-packages\starlette\middleware\base.py:144: in coro
+.venv\Lib\site-packages\starlette\middleware\gzip.py:29: in __call__
+.venv\Lib\site-packages\starlette\middleware\gzip.py:130: in __call__
+.venv\Lib\site-packages\starlette\middleware\gzip.py:46: in __call__
+.venv\Lib\site-packages\starlette\middleware\cors.py:85: in __call__
+.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+.venv\Lib\site-packages\starlette\routing.py:716: in __call__
+.venv\Lib\site-packages\starlette\routing.py:736: in app
+.venv\Lib\site-packages\starlette\routing.py:290: in handle
+.venv\Lib\site-packages\fastapi\routing.py:115: in app
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+.venv\Lib\site-packages\fastapi\routing.py:101: in app
+.venv\Lib\site-packages\fastapi\routing.py:355: in app
+.venv\Lib\site-packages\fastapi\routing.py:243: in run_endpoint_function
+app\routes\api\bom.py:111: in save_part
+E   TypeError: 'dict' object can't be awaited
+2026-04-03 16:07:57 [ERROR] [app.main] - POST /api/bom/parts/P1 - FAILED - 0.004s
+2026-04-03 16:07:57 [ERROR] [app.main] - Unhandled exception on POST /api/bom/parts/P1: 'dict' object can't be awaited
+ERROR    app.main:main.py:99 POST /api/bom/parts/P1 - FAILED - 0.004s
+ERROR    app.main:main.py:60 Unhandled exception on POST /api/bom/parts/P1: 'dict' object can't be awaited
+  |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 79, in collapse_excgroups
+  |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 192, in __call__
+  |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 783, in __aexit__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\runner.py", line 353, in from_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\runner.py", line 245, in <lambda>
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\logging.py", line 850, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\capture.py", line 900, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\skipping.py", line 268, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\runner.py", line 179, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pytest_asyncio\plugin.py", line 469, in runtest
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\python.py", line 1720, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 53, in run_old_style_hookwrapper
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_result.py", line 103, in get_result
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 38, in run_old_style_hookwrapper
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\python.py", line 166, in pytest_pyfunc_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pytest_asyncio\plugin.py", line 716, in inner
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 127, in run
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    |   File "C:\my project\warehouse\backend\tests\integration\routes\test_bom_routes.py", line 74, in test_get_all_parts
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1768, in get
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1540, in request
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1629, in send
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_transports\asgi.py", line 170, in handle_async_request
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\applications.py", line 1135, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\applications.py", line 107, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |   File "C:\my project\warehouse\backend\app\main.py", line 92, in add_process_time_header
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |   File "C:\my project\warehouse\backend\app\main.py", line 82, in add_private_network_header
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 29, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 130, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 46, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 115, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 101, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 355, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 243, in run_endpoint_function
+    |   File "C:\my project\warehouse\backend\app\routes\api\bom.py", line 129, in get_all_parts
+  File "C:\my project\warehouse\backend\tests\integration\routes\test_bom_routes.py", line 74, in test_get_all_parts
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1768, in get
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1540, in request
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1629, in send
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_transports\asgi.py", line 170, in handle_async_request
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\applications.py", line 1135, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\applications.py", line 107, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+  File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+  File "C:\my project\warehouse\backend\app\main.py", line 92, in add_process_time_header
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+  File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+  File "C:\my project\warehouse\backend\app\main.py", line 82, in add_private_network_header
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 29, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 130, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 46, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 115, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 101, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 355, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 243, in run_endpoint_function
+  File "C:\my project\warehouse\backend\app\routes\api\bom.py", line 129, in get_all_parts
+tests\integration\routes\test_bom_routes.py:74: in test_get_all_parts
+.venv\Lib\site-packages\httpx\_client.py:1768: in get
+.venv\Lib\site-packages\httpx\_client.py:1540: in request
+.venv\Lib\site-packages\httpx\_client.py:1629: in send
+.venv\Lib\site-packages\httpx\_client.py:1657: in _send_handling_auth
+.venv\Lib\site-packages\httpx\_client.py:1694: in _send_handling_redirects
+.venv\Lib\site-packages\httpx\_client.py:1730: in _send_single_request
+.venv\Lib\site-packages\httpx\_transports\asgi.py:170: in handle_async_request
+.venv\Lib\site-packages\fastapi\applications.py:1135: in __call__
+.venv\Lib\site-packages\starlette\applications.py:107: in __call__
+.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+.venv\Lib\site-packages\starlette\middleware\base.py:191: in __call__
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py:162: in __exit__
+.venv\Lib\site-packages\starlette\_utils.py:85: in collapse_excgroups
+.venv\Lib\site-packages\starlette\middleware\base.py:193: in __call__
+app\main.py:92: in add_process_time_header
+.venv\Lib\site-packages\starlette\middleware\base.py:168: in call_next
+.venv\Lib\site-packages\starlette\middleware\base.py:144: in coro
+.venv\Lib\site-packages\starlette\middleware\base.py:191: in __call__
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py:162: in __exit__
+.venv\Lib\site-packages\starlette\_utils.py:85: in collapse_excgroups
+.venv\Lib\site-packages\starlette\middleware\base.py:193: in __call__
+app\main.py:82: in add_private_network_header
+.venv\Lib\site-packages\starlette\middleware\base.py:168: in call_next
+.venv\Lib\site-packages\starlette\middleware\base.py:144: in coro
+.venv\Lib\site-packages\starlette\middleware\gzip.py:29: in __call__
+.venv\Lib\site-packages\starlette\middleware\gzip.py:130: in __call__
+.venv\Lib\site-packages\starlette\middleware\gzip.py:46: in __call__
+.venv\Lib\site-packages\starlette\middleware\cors.py:85: in __call__
+.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+.venv\Lib\site-packages\starlette\routing.py:716: in __call__
+.venv\Lib\site-packages\starlette\routing.py:736: in app
+.venv\Lib\site-packages\starlette\routing.py:290: in handle
+.venv\Lib\site-packages\fastapi\routing.py:115: in app
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+.venv\Lib\site-packages\fastapi\routing.py:101: in app
+.venv\Lib\site-packages\fastapi\routing.py:355: in app
+.venv\Lib\site-packages\fastapi\routing.py:243: in run_endpoint_function
+app\routes\api\bom.py:129: in get_all_parts
+E   TypeError: 'list' object can't be awaited
+2026-04-03 16:07:57 [ERROR] [app.main] - GET /api/bom/parts - FAILED - 0.002s
+2026-04-03 16:07:57 [ERROR] [app.main] - Unhandled exception on GET /api/bom/parts: 'list' object can't be awaited
+ERROR    app.main:main.py:99 GET /api/bom/parts - FAILED - 0.002s
+ERROR    app.main:main.py:60 Unhandled exception on GET /api/bom/parts: 'list' object can't be awaited
+  |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 79, in collapse_excgroups
+  |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 192, in __call__
+  |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 783, in __aexit__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\runner.py", line 353, in from_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\runner.py", line 245, in <lambda>
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\logging.py", line 850, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\capture.py", line 900, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\skipping.py", line 268, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\runner.py", line 179, in pytest_runtest_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pytest_asyncio\plugin.py", line 469, in runtest
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\python.py", line 1720, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 53, in run_old_style_hookwrapper
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_result.py", line 103, in get_result
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 38, in run_old_style_hookwrapper
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\_pytest\python.py", line 166, in pytest_pyfunc_call
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\pytest_asyncio\plugin.py", line 716, in inner
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 127, in run
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    |   File "C:\my project\warehouse\backend\tests\integration\routes\test_user_and_group_routes.py", line 28, in test_search_users
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1768, in get
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1540, in request
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1629, in send
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_transports\asgi.py", line 170, in handle_async_request
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\applications.py", line 1135, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\applications.py", line 107, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |   File "C:\my project\warehouse\backend\app\main.py", line 92, in add_process_time_header
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |   File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |   File "C:\my project\warehouse\backend\app\main.py", line 82, in add_private_network_header
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 29, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 130, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 46, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 115, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 101, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 377, in app
+    |   File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 215, in serialize_response
+    |   File "C:\my project\warehouse\backend\app\routes\api\users.py", line 12, in search_users
+  File "C:\my project\warehouse\backend\tests\integration\routes\test_user_and_group_routes.py", line 28, in test_search_users
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1768, in get
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1540, in request
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1629, in send
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\httpx\_transports\asgi.py", line 170, in handle_async_request
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\applications.py", line 1135, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\applications.py", line 107, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+  File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+  File "C:\my project\warehouse\backend\app\main.py", line 92, in add_process_time_header
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+  File "C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 162, in __exit__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+  File "C:\my project\warehouse\backend\app\main.py", line 82, in add_private_network_header
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 29, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 130, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\gzip.py", line 46, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 115, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 101, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 377, in app
+  File "C:\my project\warehouse\backend\.venv\Lib\site-packages\fastapi\routing.py", line 215, in serialize_response
+  File "C:\my project\warehouse\backend\app\routes\api\users.py", line 12, in search_users
+tests\integration\routes\test_user_and_group_routes.py:28: in test_search_users
+.venv\Lib\site-packages\httpx\_client.py:1768: in get
+.venv\Lib\site-packages\httpx\_client.py:1540: in request
+.venv\Lib\site-packages\httpx\_client.py:1629: in send
+.venv\Lib\site-packages\httpx\_client.py:1657: in _send_handling_auth
+.venv\Lib\site-packages\httpx\_client.py:1694: in _send_handling_redirects
+.venv\Lib\site-packages\httpx\_client.py:1730: in _send_single_request
+.venv\Lib\site-packages\httpx\_transports\asgi.py:170: in handle_async_request
+.venv\Lib\site-packages\fastapi\applications.py:1135: in __call__
+.venv\Lib\site-packages\starlette\applications.py:107: in __call__
+.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+.venv\Lib\site-packages\starlette\middleware\base.py:191: in __call__
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py:162: in __exit__
+.venv\Lib\site-packages\starlette\_utils.py:85: in collapse_excgroups
+.venv\Lib\site-packages\starlette\middleware\base.py:193: in __call__
+app\main.py:92: in add_process_time_header
+.venv\Lib\site-packages\starlette\middleware\base.py:168: in call_next
+.venv\Lib\site-packages\starlette\middleware\base.py:144: in coro
+.venv\Lib\site-packages\starlette\middleware\base.py:191: in __call__
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\contextlib.py:162: in __exit__
+.venv\Lib\site-packages\starlette\_utils.py:85: in collapse_excgroups
+.venv\Lib\site-packages\starlette\middleware\base.py:193: in __call__
+app\main.py:82: in add_private_network_header
+.venv\Lib\site-packages\starlette\middleware\base.py:168: in call_next
+.venv\Lib\site-packages\starlette\middleware\base.py:144: in coro
+.venv\Lib\site-packages\starlette\middleware\gzip.py:29: in __call__
+.venv\Lib\site-packages\starlette\middleware\gzip.py:130: in __call__
+.venv\Lib\site-packages\starlette\middleware\gzip.py:46: in __call__
+.venv\Lib\site-packages\starlette\middleware\cors.py:85: in __call__
+.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+.venv\Lib\site-packages\starlette\routing.py:716: in __call__
+.venv\Lib\site-packages\starlette\routing.py:736: in app
+.venv\Lib\site-packages\starlette\routing.py:290: in handle
+.venv\Lib\site-packages\fastapi\routing.py:115: in app
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+.venv\Lib\site-packages\fastapi\routing.py:101: in app
+.venv\Lib\site-packages\fastapi\routing.py:377: in app
+.venv\Lib\site-packages\fastapi\routing.py:215: in serialize_response
+E   fastapi.exceptions.ResponseValidationError: 1 validation error:
+E     {'type': 'missing', 'loc': ('response', 0, 'user_type'), 'msg': 'Field required', 'input': {'username': 'johndoe', 'email': 'john@example.com', 'role': 'user', 'is_active': True, 'created_at': datetime.datetime(2026, 4, 3, 13, 8, 0, 904000, tzinfo=FixedOffset(datetime.timedelta(0), 'UTC')), 'updated_at': datetime.datetime(2026, 4, 3, 13, 8, 0, 904000, tzinfo=FixedOffset(datetime.timedelta(0), 'UTC')), 'id': '69cfbbb01adcaae7484117e8'}}
+E   
+E     File "C:\my project\warehouse\backend\app\routes\api\users.py", line 12, in search_users
+E       GET /api/users/search
+2026-04-03 16:08:00 [ERROR] [app.main] - GET /api/users/search - FAILED - 0.006s
+2026-04-03 16:08:00 [ERROR] [app.main] - Unhandled exception on GET /api/users/search: 1 validation error:
+  File "C:\my project\warehouse\backend\app\routes\api\users.py", line 12, in search_users
+ERROR    app.main:main.py:99 GET /api/users/search - FAILED - 0.006s
+ERROR    app.main:main.py:60 Unhandled exception on GET /api/users/search: 1 validation error:
+  File "C:\my project\warehouse\backend\app\routes\api\users.py", line 12, in search_users
+tests\unit\services\test_bom_catalog_service.py:61: in test_classify_parts
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py:1503: in __enter__
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py:1473: in get_original
+E   AttributeError: <module 'app.services.bom_catalog_service' from 'C:\\my project\\warehouse\\backend\\app\\services\\bom_catalog_service.py'> does not have the attribute 'classify_batch'
+tests\unit\services\test_bom_catalog_service.py:101: in test_enrich_groups_with_ai
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py:1503: in __enter__
+C:\Users\user\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py:1473: in get_original
+E   AttributeError: <module 'app.services.bom_catalog_service' from 'C:\\my project\\warehouse\\backend\\app\\services\\bom_catalog_service.py'> does not have the attribute 'classify_batch'
+app\services\bom_service.py:412: in enrich_groups
+E   NameError: name '_logger' is not defined
+tests\unit\services\test_bom_service.py:128: in test_enrich_and_scan_bom
+app\services\bom_service.py:454: in scan_bom
+app\services\bom_service.py:424: in enrich_groups
+E   NameError: name '_logger' is not defined
+INFO     app.services.bom_service:bom_service.py:450 Starting BOM scan with format: netapp_pricing_template size: 4999 bytes
+INFO     app.services.bom_service:bom_service.py:406 Enrichment: Found 2 unknown parts. Triggering AI classifier.
+tests\unit\services\test_catalog_service.py:29: in test_upsert_and_search
+E   AttributeError: 'dict' object has no attribute 'catalog_number'
+.venv\Lib\site-packages\slowapi\extension.py:717
+.venv\Lib\site-packages\slowapi\extension.py:717
+  C:\my project\warehouse\backend\.venv\Lib\site-packages\slowapi\extension.py:717: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+tests/unit/services/test_bom_catalog_service.py::TestBomCatalogService::test_classify_parts
+  tests\unit\services\test_bom_catalog_service.py:53: PytestWarning: The test <Function test_classify_parts> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+tests/unit/services/test_bom_service.py::TestBomService::test_parse_excel_netapp
+  tests\unit\services\test_bom_service.py:71: PytestWarning: The test <Function test_parse_excel_netapp> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+tests/unit/services/test_bom_service.py::TestBomService::test_parse_excel_dell
+  tests\unit\services\test_bom_service.py:94: PytestWarning: The test <Function test_parse_excel_dell> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+tests/unit/services/test_bom_service.py::TestBomService::test_parse_excel_hpe
+  tests\unit\services\test_bom_service.py:103: PytestWarning: The test <Function test_parse_excel_hpe> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+FAILED tests/integration/routes/test_bom_analytics_routes.py::TestBomAnalyticsRoutes::test_seed_historical_data
+FAILED tests/integration/routes/test_bom_analytics_routes.py::TestBomAnalyticsRoutes::test_search_parts
+FAILED tests/integration/routes/test_bom_analytics_routes.py::TestBomAnalyticsRoutes::test_get_part_trends
+FAILED tests/integration/routes/test_bom_analytics_routes.py::TestBomAnalyticsRoutes::test_aggregate_trends
+FAILED tests/integration/routes/test_bom_analytics_routes.py::TestBomAnalyticsRoutes::test_vendor_spending
+FAILED tests/integration/routes/test_bom_routes.py::TestBomRoutes::test_scan_bom_success
+FAILED tests/integration/routes/test_bom_routes.py::TestBomRoutes::test_save_part
+FAILED tests/integration/routes/test_bom_routes.py::TestBomRoutes::test_get_all_parts
+FAILED tests/integration/routes/test_user_and_group_routes.py::TestUserAndGroupRoutes::test_search_users
+FAILED tests/unit/services/test_bom_catalog_service.py::TestBomCatalogService::test_classify_parts
+FAILED tests/unit/services/test_bom_catalog_service.py::TestBomCatalogService::test_enrich_groups_with_ai
+FAILED tests/unit/services/test_bom_service.py::TestBomService::test_enrich_and_scan_bom
+FAILED tests/unit/services/test_catalog_service.py::TestCatalogService::test_upsert_and_search

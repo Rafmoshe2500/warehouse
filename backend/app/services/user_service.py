@@ -255,6 +255,7 @@ class UserService:
             except Exception as e:
                 logger.error(f"Failed to create audit log: {e}")
         
+        logger.info(f"User updated: {target_username} by {updated_by}")
         return await self.get_user_by_id(user_id)
     
     async def delete_user(
