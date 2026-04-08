@@ -1,14 +1,17 @@
 import pytest
+import pytest_asyncio
 from unittest.mock import patch, MagicMock
 from datetime import datetime, timezone
 import json
 
 from app.services.bom_catalog_service import BomCatalogService
 
-@pytest.fixture
-def catalog_service(mock_mongodb):
+@pytest_asyncio.fixture
+async def catalog_service(mock_mongodb):
     """Fixture providing a BomCatalogService wired to test collections."""
-    return BomCatalogService()
+    svc = BomCatalogService()
+    await svc.collection.delete_many({})
+    return svc
 
 class TestBomCatalogService:
 
@@ -120,3 +123,27 @@ class TestBomCatalogService:
             child_catalog = enriched[0]["children"][0]["catalog"]
             assert child_catalog["category"] == "other"
             assert child_catalog["_ai"] is True
+
+    @pytest.mark.asyncio
+    async def test_apply_item_edits_valid(self, catalog_service):
+        """Test editing items with valid categories updates the catalog."""
+        result = await catalog_service.apply_item_edits([
+            {"part_number": "EDIT-1", "description_he": "שרת חדש", "category": "server"},
+            {"part_number": "EDIT-2", "description_he": "כונן SSD", "category": "disk"},
+        ])
+        assert len(result) == 2
+
+        # Verify persisted
+        all_parts = await catalog_service.get_all_parts()
+        pn_map = {p["part_number"]: p for p in all_parts}
+        assert "EDIT-1" in pn_map
+        assert pn_map["EDIT-1"]["category"] == "server"
+        assert pn_map["EDIT-2"]["category"] == "disk"
+
+    @pytest.mark.asyncio
+    async def test_apply_item_edits_invalid_category(self, catalog_service):
+        """Edits with an invalid category should raise ValueError."""
+        with pytest.raises(ValueError, match="קטגוריה לא חוקית"):
+            await catalog_service.apply_item_edits([
+                {"part_number": "BAD-1", "description_he": "לא חוקי", "category": "nonexistent"}
+            ])

@@ -27,10 +27,21 @@ LABEL_TO_CATEGORY: dict[str, str] = {
     "מתג":          "switch",
     "שרת אחסון":    "server-storage",
     "שרת":          "server",
-    "רישוי ותמיכה": "license",
-    "ציוד נלווה":   "accessory",
+    "מעבד":         "cpu",
+    "זכרונות":      "memory",
+    "מאוורר":       "fan",
+    "ספק כח":      "psu",
+    "רישוי נפח":    "license-capacity",
+    "רישוי תוכנה":  "license-software",
+    "תמיכה":        "support",
     "אחר":          "other",
     "לא בטוח":      "other",
+}
+
+# ── Reverse mapping: category slug → Hebrew label (for retraining) ────────────
+CATEGORY_TO_LABEL: dict[str, str] = {
+    v: k for k, v in LABEL_TO_CATEGORY.items()
+    if k not in ("גיביק", "שרת", "לא בטוח")
 }
 
 # ── Keyword override rules (applied when model is uncertain) ───────────────────
@@ -40,21 +51,29 @@ _KEYWORD_RULES = [
     # Storage arrays — NetApp AFF / FAS / ASA series (hardware)
     (_re_k.compile(r'\bAFF[-\s]?[AC]?\d+|\bFAS\d+|\bASA\s?A?\d+', _re_k.I),
      "שרת אחסון", "server-storage"),
-    # StorageGRID software → license (SW prefix = software upgrade)
-    (_re_k.compile(r'^SW[,\s].*StorageGRID|^SW[,\s].*(software|license|pack|bundle|subscription)', _re_k.I),
-     "רישוי ותמיכה", "license"),
-    # Support / maintenance contracts and license packs
-    (_re_k.compile(r'(support|maintenance|warranty|svc|service).*(contract|annual|yr|year)', _re_k.I),
-     "רישוי ותמיכה", "license"),
-    (_re_k.compile(r'(foundation|base|starter|essentials)\s*(pack|bundle|license)', _re_k.I),
-     "רישוי ותמיכה", "license"),
-    (_re_k.compile(r'(SaaS|subscription|backup).*(pack|bundle|\d+yr|\d+\s*year)', _re_k.I),
-     "רישוי ותמיכה", "license"),
+    # Capacity licensing — Per TB / per capacity pricing
+    (_re_k.compile(r'Per[\s-]*(0\.1\s*)?TB|Per[\s-]*(0\.1\s*)?Cap|Cap(acity)?\s*Pricing', _re_k.I),
+     "רישוי נפח", "license-capacity"),
+    # Software licensing — SW prefix, explicit software/license/encryption keywords
+    (_re_k.compile(r'^SW[,\s]|\bsoftware\b|\bONTAP\b|\bencrypt', _re_k.I),
+     "רישוי תוכנה", "license-software"),
+    # Support / maintenance contracts
+    (_re_k.compile(r'\b(support|ProSupport|maintenance|warranty|svc|service)\b', _re_k.I),
+     "תמיכה", "support"),
+    # CPU / Processor
+    (_re_k.compile(r'\b(processor|xeon|epyc|amd.*ghz|intel.*ghz|\d+\.\d+\s*ghz.*\d+c)\b', _re_k.I),
+     "מעבד", "cpu"),
+    # Fan / Heatsink
+    (_re_k.compile(r'\b(fan|heatsink|heat\s*sink|cfm|airflow)\b', _re_k.I),
+     "מאוורר", "fan"),
+    # Power Supply
+    (_re_k.compile(r'\bpower\s*supply\b|\bpsu\b|\b\d+w\s*(titanium|platinum|gold)\b', _re_k.I),
+     "ספק כח", "psu"),
     # Transceivers / SFP family
     (_re_k.compile(r'\b(SFP\+?|QSFP\+?|QSFP28|QSFP56|QSFP-DD|XFP|OSFP|QSFP112)\b', _re_k.I),
      "ג'יביק", "sfp-qsfp"),
     # Disk shelves
-    (_re_k.compile(r'\b(DS\d{3}[A-Z]?|Disk Shelf|shelf)', _re_k.I),
+    (_re_k.compile(r'\b(DS\d{3}[A-Z]?|Disk Shelf|shelf|\bDME\b|\bDAE\b)', _re_k.I),
      "מדף דיסקים", "disk-shelf"),
     # Individual drives / drive packs
     (_re_k.compile(r'\b(Drive Pack|Drive,|\bNVMe\b|\bHDD\b|\bSSD\b).*\d+\.?\d*(TB|GB)', _re_k.I),
@@ -64,6 +83,9 @@ _KEYWORD_RULES = [
     # Switches — Cisco Nexus / NetApp CN
     (_re_k.compile(r'\b(N9K|N3K|N5K|Nexus\s*\d+|Cluster\s+Switch)', _re_k.I),
      "מתג", "switch"),
+    # Memory / Flash Cache
+    (_re_k.compile(r'\b(DIMM|RDIMM|LRDIMM|Flash\s*Cache|DDR[45])\b', _re_k.I),
+     "זכרונות", "memory"),
 ]
 
 # ── Hebrew value formatter (mirrors frontend formatAttrValue) ─────────────────
@@ -149,6 +171,8 @@ def _desc_cable(label: str, attrs: dict) -> str:
         parts.append(f"אורך {_fmt('length', ln)}")
     if sp := attrs.get("speed"):
         parts.append(f"מהירות {_fmt('speed', sp)}")
+    if fb := attrs.get("fiber"):
+        parts.append(fb)
     return " ".join(parts)
 
 def _desc_transceiver(label: str, attrs: dict) -> str:
@@ -159,6 +183,8 @@ def _desc_transceiver(label: str, attrs: dict) -> str:
         parts.append(f"מהירות {_fmt('speed', sp)}")
     if pr := attrs.get("protocol"):
         parts.append(_fmt("protocol", pr))
+    if cn := attrs.get("connector"):
+        parts.append(cn)                          # MPO, LC — keep as-is
     return " ".join(parts)
 
 def _desc_nic(label: str, attrs: dict) -> str:
@@ -201,13 +227,53 @@ def _desc_shelf(label: str, attrs: dict) -> str:
         parts.append(_fmt("disk_type_support", dt))
     return " ".join(parts)
 
+def _desc_cpu(label: str, attrs: dict) -> str:
+    parts = ["מעבד"]
+    if cs := attrs.get("clock_speed"):
+        parts.append(cs)
+    if c := attrs.get("cores"):
+        parts.append(f"{c} ליבות")
+    if tdp := attrs.get("tdp"):
+        parts.append(tdp)
+    return " ".join(parts)
+
+def _desc_memory(label: str, attrs: dict) -> str:
+    parts = ["זכרון"]
+    if t := attrs.get("type"):
+        parts.append(t)
+    if cap := attrs.get("capacity"):
+        parts.append(_fmt("capacity", cap))
+    if sp := attrs.get("speed"):
+        parts.append(sp)
+    return " ".join(parts)
+
+def _desc_fan(label: str, attrs: dict) -> str:
+    parts = ["מאוורר"]
+    if cfm := attrs.get("cfm"):
+        parts.append(cfm)
+    if ad := attrs.get("airflow_direction"):
+        parts.append("פליטה" if ad == "exhaust" else "שאיבה")
+    return " ".join(parts)
+
+def _desc_psu(label: str, attrs: dict) -> str:
+    parts = ["ספק כח"]
+    if w := attrs.get("wattage"):
+        parts.append(w)
+    if eff := attrs.get("efficiency"):
+        parts.append(eff)
+    return " ".join(parts)
+
 _DESC_BUILDERS = {
-    "cable":        _desc_cable,
-    "sfp-qsfp":     _desc_transceiver,
-    "io-card":      _desc_nic,
-    "disk":         _desc_disk,
-    "switch":       _desc_switch,
-    "disk-shelf":   _desc_shelf,
+    "cable":            _desc_cable,
+    "sfp-qsfp":         _desc_transceiver,
+    "io-card":          _desc_nic,
+    "disk":             _desc_disk,
+    "switch":           _desc_switch,
+    "disk-shelf":       _desc_shelf,
+    "cpu":              _desc_cpu,
+    "memory":           _desc_memory,
+    "fan":              _desc_fan,
+    "psu":              _desc_psu,
 }
 
 
@@ -268,15 +334,20 @@ def _fallback() -> dict:
 def _keyword_override(description: str) -> Optional[dict]:
     """Return a high-confidence result when the description matches a known keyword rule.
     Runs AFTER the ML model so we only override 'uncertain' results.
-    For disk/transceiver rules, also runs the real attribute extractor."""
+    For hardware rules, also runs the real attribute extractor."""
     from app.ai.component_classifier import (
-        _extract_disk, _extract_transceiver, _extract_nic, _extract_switch
+        _extract_disk, _extract_transceiver, _extract_nic, _extract_switch,
+        _extract_cpu, _extract_memory, _extract_fan, _extract_psu,
     )
     _EXTRACTORS = {
         "disk":      _extract_disk,
         "sfp-qsfp":  _extract_transceiver,
         "io-card":   _extract_nic,
         "switch":    _extract_switch,
+        "cpu":       _extract_cpu,
+        "memory":    _extract_memory,
+        "fan":       _extract_fan,
+        "psu":       _extract_psu,
     }
     d = description.strip()
     for pattern, label, category in _KEYWORD_RULES:
@@ -333,3 +404,9 @@ def classify_batch(descriptions: list[str]) -> list[dict]:
     if not descriptions:
         return []
     return [classify(d) for d in descriptions]
+
+
+def reload():
+    """Clear the cached classifier so the next call loads a freshly trained model."""
+    _get_classifier.cache_clear()
+    logger.info("classifier cache cleared — next classify() will reload the model")

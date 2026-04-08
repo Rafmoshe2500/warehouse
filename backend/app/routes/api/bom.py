@@ -13,6 +13,7 @@ from app.core.security import get_current_user, has_procurement_write_access
 from app.core.constants import Permission, UserRole
 from app.core.exceptions import ForbiddenException
 from app.dependencies import get_s3_service
+from app.schemas.procurement import BOMItemEditRequest
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/bom", tags=["BOM"])
@@ -128,3 +129,40 @@ async def get_all_parts(
     """קבלת כל החלקים השמורים בקטלוג."""
     parts = await catalog_service.get_all_parts()
     return {"parts": parts, "total": len(parts)}
+
+
+@router.patch("/scan/items")
+async def edit_bom_items(
+    body: BOMItemEditRequest,
+    current_user: dict = Depends(get_current_user),
+    catalog_service: BomCatalogService = Depends(get_bom_catalog_service),
+):
+    """עריכת פריטי BOM לאחר סריקה וסיווג AI — לפני סיום ההזמנה.
+
+    דורש הרשאת כתיבה לספק (vendor-specific write permission).
+    העריכות נשמרות גם בקטלוג לשיפור המודל בעתיד.
+    """
+    vendor = body.vendor.upper()
+    if not _has_vendor_write(current_user, vendor):
+        logger.warning(
+            "BOM item edit denied: user=%s vendor=%s",
+            current_user.get("username"),
+            vendor,
+        )
+        raise ForbiddenException(f"אין לך הרשאת עריכה עבור {vendor}")
+
+    try:
+        edited_items = [item.model_dump(exclude_none=True) for item in body.items]
+        results = await catalog_service.apply_item_edits(edited_items)
+        logger.info(
+            "BOM items edited: user=%s vendor=%s count=%d",
+            current_user.get("username"),
+            vendor,
+            len(results),
+        )
+        return {"ok": True, "updated": results}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error("BOM item edit failed: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail="שגיאה בשמירת העריכות")

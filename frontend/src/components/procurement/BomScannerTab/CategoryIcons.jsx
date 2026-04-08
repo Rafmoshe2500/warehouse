@@ -195,15 +195,111 @@ export const LicenseIcon = ({ size = defaultSize, color = 'currentColor' }) => (
   </svg>
 );
 
-// ── Accessory Icon ────────────────────────────────────────────────────────────
-export const AccessoryIcon = ({ size = defaultSize, color = 'currentColor' }) => (
+// ── CPU / Processor Icon ──────────────────────────────────────────────────────
+export const CpuIcon = ({ size = defaultSize, color = 'currentColor' }) => (
   <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="3" y="14" width="26" height="8" rx="2" stroke={color} strokeWidth="1.5" fill="none"/>
-    <rect x="6" y="10" width="6" height="4" rx="1" stroke={color} strokeWidth="1.2" fill="none"/>
-    <rect x="20" y="10" width="6" height="4" rx="1" stroke={color} strokeWidth="1.2" fill="none"/>
-    <circle cx="9" cy="18" r="1.5" fill={color} opacity="0.6"/>
-    <circle cx="23" cy="18" r="1.5" fill={color} opacity="0.6"/>
-    <line x1="12" y1="18" x2="20" y2="18" stroke={color} strokeWidth="1.2" opacity="0.4" strokeDasharray="2 2"/>
+    <rect x="8" y="8" width="16" height="16" rx="2" stroke={color} strokeWidth="1.5" fill="none"/>
+    <rect x="11" y="11" width="10" height="10" rx="1" fill={color} opacity="0.2"/>
+    {/* Pins top */}
+    {[11,14,17,20].map((x, i) => (
+      <line key={`t${i}`} x1={x} y1="5" x2={x} y2="8" stroke={color} strokeWidth="1.2"/>
+    ))}
+    {/* Pins bottom */}
+    {[11,14,17,20].map((x, i) => (
+      <line key={`b${i}`} x1={x} y1="24" x2={x} y2="27" stroke={color} strokeWidth="1.2"/>
+    ))}
+    {/* Pins left */}
+    {[11,14,17,20].map((y, i) => (
+      <line key={`l${i}`} x1="5" y1={y} x2="8" y2={y} stroke={color} strokeWidth="1.2"/>
+    ))}
+    {/* Pins right */}
+    {[11,14,17,20].map((y, i) => (
+      <line key={`r${i}`} x1="24" y1={y} x2="27" y2={y} stroke={color} strokeWidth="1.2"/>
+    ))}
+  </svg>
+);
+
+// ── Memory / RAM Icon ─────────────────────────────────────────────────────────
+export const MemoryIcon = ({ size = defaultSize, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="8" width="26" height="14" rx="1.5" stroke={color} strokeWidth="1.5" fill="none"/>
+    {/* Chips */}
+    {[5, 9, 13, 17, 21, 25].map((x, i) => (
+      <rect key={i} x={x} y="10" width="2.5" height="8" rx="0.5" fill={color} opacity="0.5"/>
+    ))}
+    {/* Gold contacts */}
+    {[5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25].map((x, i) => (
+      <rect key={`c${i}`} x={x} y="22" width="1.5" height="3" rx="0.3" fill={color} opacity="0.7"/>
+    ))}
+    {/* Notch */}
+    <rect x="15" y="22" width="2" height="1.5" fill="white"/>
+  </svg>
+);
+
+// ── Fan / Heatsink Icon ───────────────────────────────────────────────────────
+export const FanIcon = ({ size = defaultSize, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="4" width="24" height="24" rx="3" stroke={color} strokeWidth="1.5" fill="none"/>
+    <circle cx="16" cy="16" r="9" stroke={color} strokeWidth="1.2" fill="none" opacity="0.5"/>
+    <circle cx="16" cy="16" r="2" fill={color} opacity="0.6"/>
+    {/* Fan blades */}
+    <path d="M16 14c-1-4 2-7 4-6s0 5-1 7" fill={color} opacity="0.4"/>
+    <path d="M18 16c4-1 7 2 6 4s-5 0-7-1" fill={color} opacity="0.4"/>
+    <path d="M16 18c1 4-2 7-4 6s0-5 1-7" fill={color} opacity="0.4"/>
+    <path d="M14 16c-4 1-7-2-6-4s5 0 7 1" fill={color} opacity="0.4"/>
+  </svg>
+);
+
+// ── Power Supply Icon ─────────────────────────────────────────────────────────
+export const PsuIcon = ({ size = defaultSize, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="8" width="26" height="16" rx="2" stroke={color} strokeWidth="1.5" fill="none"/>
+    {/* Fan grille */}
+    <circle cx="10" cy="16" r="5" stroke={color} strokeWidth="1" fill="none" opacity="0.5"/>
+    <circle cx="10" cy="16" r="2.5" stroke={color} strokeWidth="0.8" fill="none" opacity="0.3"/>
+    {/* Power socket */}
+    <rect x="20" y="12" width="6" height="8" rx="1" stroke={color} strokeWidth="1.2" fill="none"/>
+    <circle cx="22" cy="15" r="0.8" fill={color} opacity="0.6"/>
+    <circle cx="25" cy="15" r="0.8" fill={color} opacity="0.6"/>
+    <line x1="22" y1="18" x2="25" y2="18" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.6"/>
+    {/* LED */}
+    <circle cx="17" cy="11" r="0.8" fill="#22c55e"/>
+  </svg>
+);
+
+// ── License Capacity Icon ─────────────────────────────────────────────────────
+export const LicenseCapacityIcon = ({ size = defaultSize, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="4" width="24" height="24" rx="3" stroke={color} strokeWidth="1.5" fill="none"/>
+    <path d="M10 12h12M10 16h8" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+    {/* TB / capacity indicator */}
+    <text x="16" y="24" textAnchor="middle" fontSize="6" fill={color} opacity="0.8" fontFamily="monospace" fontWeight="bold">TB</text>
+  </svg>
+);
+
+// ── License Software Icon ─────────────────────────────────────────────────────
+export const LicenseSoftwareIcon = ({ size = defaultSize, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="4" width="24" height="24" rx="3" stroke={color} strokeWidth="1.5" fill="none"/>
+    <path d="M10 12h12M10 16h8" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+    {/* Software/code icon */}
+    <path d="M12 21l-3 2.5 3 2.5" stroke={color} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+    <path d="M20 21l3 2.5-3 2.5" stroke={color} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+  </svg>
+);
+
+// ── Support Icon ──────────────────────────────────────────────────────────────
+export const SupportIcon = ({ size = defaultSize, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="16" cy="16" r="12" stroke={color} strokeWidth="1.5" fill="none"/>
+    <circle cx="16" cy="16" r="5" stroke={color} strokeWidth="1.3" fill="none"/>
+    {/* Crosshair lines */}
+    <line x1="16" y1="4" x2="16" y2="11" stroke={color} strokeWidth="1.3"/>
+    <line x1="16" y1="21" x2="16" y2="28" stroke={color} strokeWidth="1.3"/>
+    <line x1="4" y1="16" x2="11" y2="16" stroke={color} strokeWidth="1.3"/>
+    <line x1="21" y1="16" x2="28" y2="16" stroke={color} strokeWidth="1.3"/>
+    {/* Wrench hint */}
+    <circle cx="16" cy="16" r="1.5" fill={color} opacity="0.5"/>
   </svg>
 );
 
@@ -258,17 +354,47 @@ export const CATEGORY_CONFIG = {
     color: '#ec4899',
     bg: 'rgba(236,72,153,0.12)',
   },
-  'license': {
-    label: 'רישוי ותמיכה',
-    Icon: LicenseIcon,
+  'cpu': {
+    label: 'מעבד',
+    Icon: CpuIcon,
+    color: '#e11d48',
+    bg: 'rgba(225,29,72,0.12)',
+  },
+  'memory': {
+    label: 'זכרונות',
+    Icon: MemoryIcon,
+    color: '#7c3aed',
+    bg: 'rgba(124,58,237,0.12)',
+  },
+  'fan': {
+    label: 'מאוורר',
+    Icon: FanIcon,
+    color: '#06b6d4',
+    bg: 'rgba(6,182,212,0.12)',
+  },
+  'psu': {
+    label: 'ספק כח',
+    Icon: PsuIcon,
+    color: '#d97706',
+    bg: 'rgba(217,119,6,0.12)',
+  },
+  'license-capacity': {
+    label: 'רישוי נפח',
+    Icon: LicenseCapacityIcon,
     color: '#a78bfa',
     bg: 'rgba(167,139,250,0.12)',
   },
-  'accessory': {
-    label: 'ציוד נלווה',
-    Icon: AccessoryIcon,
-    color: '#94a3b8',
-    bg: 'rgba(148,163,184,0.12)',
+  'license-software': {
+    label: 'רישוי תוכנה',
+    Icon: LicenseSoftwareIcon,
+    color: '#818cf8',
+    bg: 'rgba(129,140,248,0.12)',
+  },
+  'support': {
+    label: 'תמיכה',
+    Icon: SupportIcon,
+    color: '#34d399',
+    bg: 'rgba(52,211,153,0.12)',
   },
   'other': {
     label: 'אחר',

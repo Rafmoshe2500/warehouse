@@ -35,6 +35,27 @@ const bomService = {
     const res = await api.get('/bom/parts');
     return res.data;
   },
+
+  /**
+   * Batch-edit BOM items after AI scan (before order finalization).
+   * @param {string} vendor - Vendor slug (e.g. 'netapp', 'hpe')
+   * @param {Array<{part_number: string, description_he?: string, category?: string, part_alias?: string}>} items
+   */
+  updateBomItems: async (vendor, items) => {
+    const res = await api.patch('/bom/scan/items', {
+      vendor: vendor.toUpperCase(),
+      items,
+    });
+    return res.data;
+  },
+  /**
+   * Trigger retraining of the AI classification model from MongoDB catalog data.
+   * Admin/Superadmin only.
+   */
+  retrainModel: async () => {
+    const res = await api.post('/ai/retrain');
+    return res.data;
+  },
 };
 
 export default bomService;

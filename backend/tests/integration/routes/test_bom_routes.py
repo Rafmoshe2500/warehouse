@@ -80,3 +80,48 @@ class TestBomRoutes:
         
         assert res.status_code == 200
         assert res.json()["total"] == 2
+
+    async def test_edit_bom_items_success(self, async_client_superadmin, mock_catalog_service):
+        """Test successful batch edit of BOM items by superadmin."""
+        mock_catalog_service.apply_item_edits.return_value = [
+            {"part_number": "P1", "description_he": "תיאור חדש", "category": "server", "updated": True}
+        ]
+
+        res = await async_client_superadmin.patch(
+            "/api/bom/scan/items",
+            json={
+                "vendor": "NETAPP",
+                "items": [
+                    {"part_number": "P1", "description_he": "תיאור חדש", "category": "server"}
+                ],
+            },
+        )
+
+        assert res.status_code == 200
+        data = res.json()
+        assert data["ok"] is True
+        assert len(data["updated"]) == 1
+        mock_catalog_service.apply_item_edits.assert_called_once()
+
+    async def test_edit_bom_items_forbidden_for_user(self, async_client_user):
+        """Regular user without vendor write permission should be denied."""
+        res = await async_client_user.patch(
+            "/api/bom/scan/items",
+            json={
+                "vendor": "NETAPP",
+                "items": [
+                    {"part_number": "P1", "description_he": "hack"}
+                ],
+            },
+        )
+
+        assert res.status_code == 403
+
+    async def test_edit_bom_items_invalid_body(self, async_client_superadmin):
+        """Empty items list should fail validation."""
+        res = await async_client_superadmin.patch(
+            "/api/bom/scan/items",
+            json={"vendor": "NETAPP", "items": []},
+        )
+
+        assert res.status_code == 422

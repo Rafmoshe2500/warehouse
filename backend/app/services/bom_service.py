@@ -1,6 +1,7 @@
 from typing import List, Dict, Any, Optional, Tuple
 import io
 import logging
+import re
 import openpyxl
 from app.db.mongodb import MongoDB
 from app.services.bom_strategies import BomStrategyFactory
@@ -33,13 +34,60 @@ VALID_CATEGORIES = [
     "disk-shelf",
     "cable",
     "sfp-qsfp",
+    "cpu",
+    "memory",
+    "fan",
+    "psu",
+    "license-capacity",
+    "license-software",
+    "support",
     "other",
 ]
+
+# Categories that qualify as a top-level system (main item of a BOM group)
+MAIN_CATEGORIES = {"server-storage", "disk-shelf", "switch"}
 
 
 class BomService:
     def __init__(self):
         self.collection = MongoDB.get_collection("bom_part_catalog")
+
+    # ── Group Reorganisation ──────────────────────────────────────────────────
+
+    def _reorganize_groups(self, groups: List[Dict]) -> List[Dict]:
+        """
+        Ensure each group's main item belongs to MAIN_CATEGORIES.
+        If it does not, scan children for a qualifying category and swap.
+        Sets group["is_main_system"] = True/False on every group.
+        """
+        for group in groups:
+            main_cat = group["main"].get("catalog", {}).get("category", "other")
+
+            if main_cat not in MAIN_CATEGORIES:
+                swap_idx = None
+                for i, child in enumerate(group.get("children", [])):
+                    child_cat = child.get("catalog", {}).get("category", "other")
+                    if child_cat in MAIN_CATEGORIES:
+                        swap_idx = i
+                        break
+
+                if swap_idx is not None:
+                    old_main = group["main"]
+                    group["main"] = group["children"][swap_idx]
+                    group["children"][swap_idx] = old_main
+                    logger.info(
+                        "Reorganized BOM group: promoted child %s (cat: %s) to main, "
+                        "demoted %s (cat: %s) to child",
+                        group["main"].get("part_number"),
+                        group["main"].get("catalog", {}).get("category"),
+                        old_main.get("part_number"),
+                        main_cat,
+                    )
+
+            final_cat = group["main"].get("catalog", {}).get("category", "other")
+            group["is_main_system"] = final_cat in MAIN_CATEGORIES
+
+        return groups
 
     # ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -157,6 +205,12 @@ class BomService:
                         row_data[field] = float(row_data[field]) if row_data[field] is not None else 0.0
                     except (ValueError, TypeError):
                         row_data[field] = 0.0
+
+                # "Qty N" in product description means each unit is a pack-of-N
+                if row_data.get("product"):
+                    m_qty = re.search(r'\bqty\s*(\d+)\b', str(row_data["product"]), re.I)
+                    if m_qty:
+                        row_data["ext_qty"] *= int(m_qty.group(1))
 
                 if part_number:
                     seen_part_numbers.add(part_number)
@@ -282,6 +336,7 @@ class BomService:
         groups, all_part_numbers, extracted_descriptions = self.parse_excel(file_bytes, fmt)
         unknown_parts = await self.check_unknown_parts(all_part_numbers)
         enriched_groups = await self.enrich_groups(groups)
+        enriched_groups = self._reorganize_groups(enriched_groups)
 
         unknown_list = [
             {"part_number": pn, "excel_description": extracted_descriptions.get(pn, "")}

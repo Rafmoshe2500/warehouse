@@ -409,6 +409,9 @@ const ProcurementPage = () => {
         bomData={selectedOrderForBom?.bom_data}
         vendor={selectedOrderForBom?.bom_vendor}
         orderId={selectedOrderForBom?.id}
+        canEdit={selectedOrderForBom?.bom_vendor
+          ? hasVendorAccess(selectedOrderForBom.bom_vendor.toLowerCase(), 'rw')
+          : false}
       />
     </div>
   );

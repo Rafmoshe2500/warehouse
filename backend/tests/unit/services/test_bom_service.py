@@ -2,7 +2,7 @@ import pytest
 import io
 import openpyxl
 from unittest.mock import patch, MagicMock
-from app.services.bom_service import BomService, FORMAT_NETAPP, FORMAT_DELL, FORMAT_HPE
+from app.services.bom_service import BomService, FORMAT_NETAPP, FORMAT_DELL, FORMAT_HPE, MAIN_CATEGORIES
 
 @pytest.fixture
 def bom_service(mock_mongodb):
@@ -111,6 +111,34 @@ class TestBomService:
         # If no children, total_net_price matches main
         assert groups[0]["total_net_price"] == 2000.0
 
+    def test_parse_excel_qty_multiplier_in_description(self, bom_service):
+        """'Qty N' in product description should multiply ext_qty by N."""
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        headers = ["Part Number", "Product", "Ext Qty", "Ext Net Price"]
+        for col, h in enumerate(headers, start=1):
+            ws.cell(row=5, column=col, value=h)
+        # Main group header
+        cell = ws.cell(row=6, column=1, value="SYS-QTY")
+        cell.fill = openpyxl.styles.PatternFill(start_color="FFFFFF00", end_color="FFFFFF00", fill_type="solid")
+        ws.cell(row=6, column=2, value="Main System")
+        ws.cell(row=6, column=3, value=1)
+        ws.cell(row=6, column=4, value=5000)
+        # Child with "Qty 2" in description — ext_qty=10 should become 20
+        ws.cell(row=7, column=1, value="DRIVE-PACK")
+        ws.cell(row=7, column=2, value="NVMe Drive 1.92TB Qty 2")
+        ws.cell(row=7, column=3, value=10)
+        ws.cell(row=7, column=4, value=1000)
+
+        out = io.BytesIO()
+        wb.save(out)
+        file_bytes = out.getvalue()
+
+        groups, _, _ = bom_service.parse_excel(file_bytes, fmt=FORMAT_NETAPP)
+        child = groups[0]["children"][0]
+        assert child["part_number"] == "DRIVE-PACK"
+        assert child["ext_qty"] == 20.0  # 10 * 2 from "Qty 2"
+
     @pytest.mark.asyncio
     async def test_enrich_and_scan_bom(self, bom_service):
         """Mock out classification call and test entire sequence."""
@@ -134,3 +162,46 @@ class TestBomService:
             # Validate catalog dictionary exists on main and child items
             assert "catalog" in res["groups"][0]["main"]
             assert "catalog" in res["groups"][0]["children"][0]
+
+
+class TestReorganizeGroups:
+    """Unit tests for BomService._reorganize_groups()."""
+
+    def _make_group(self, main_cat: str, child_cats: list) -> dict:
+        main = {"part_number": "MAIN-1", "catalog": {"category": main_cat}}
+        children = [
+            {"part_number": f"CHILD-{i}", "catalog": {"category": c}}
+            for i, c in enumerate(child_cats)
+        ]
+        return {"main": main, "children": children, "total_net_price": 0.0}
+
+    def test_main_in_main_categories_sets_is_main_system_true(self, bom_service):
+        groups = [self._make_group("server-storage", ["disk", "cable"])]
+        result = bom_service._reorganize_groups(groups)
+        assert result[0]["is_main_system"] is True
+        assert result[0]["main"]["part_number"] == "MAIN-1"
+
+    def test_main_not_main_category_and_qualifying_child_swaps(self, bom_service):
+        groups = [self._make_group("other", ["disk", "disk-shelf"])]
+        result = bom_service._reorganize_groups(groups)
+        # Child with disk-shelf should be promoted
+        assert result[0]["main"]["catalog"]["category"] == "disk-shelf"
+        assert result[0]["is_main_system"] is True
+        # Original main now in children
+        child_cats = [c["catalog"]["category"] for c in result[0]["children"]]
+        assert "other" in child_cats
+
+    def test_main_not_main_category_switch_child_swaps(self, bom_service):
+        groups = [self._make_group("cable", ["sfp-qsfp", "switch", "memory"])]
+        result = bom_service._reorganize_groups(groups)
+        assert result[0]["main"]["catalog"]["category"] == "switch"
+        assert result[0]["is_main_system"] is True
+
+    def test_no_qualifying_child_sets_is_main_system_false(self, bom_service):
+        groups = [self._make_group("other", ["disk", "cable", "memory"])]
+        result = bom_service._reorganize_groups(groups)
+        assert result[0]["is_main_system"] is False
+        assert result[0]["main"]["part_number"] == "MAIN-1"
+
+    def test_main_categories_constant_values(self):
+        assert MAIN_CATEGORIES == {"server-storage", "disk-shelf", "switch"}

@@ -3,7 +3,8 @@ import UploadAnimation from '../../common/UploadAnimation/UploadAnimation';
 import BomGroupCard from './BomGroupCard';
 import UnknownPartsModal from './UnknownPartsModal';
 import bomService from '../../../api/services/bomService';
-import { FiUploadCloud, FiRefreshCw, FiChevronRight } from 'react-icons/fi';
+import { useAuth } from '../../../context/AuthContext';
+import { FiUploadCloud, FiRefreshCw, FiChevronRight, FiCpu } from 'react-icons/fi';
 import './BomScannerTab.css';
 
 // ── Vendor Registry ────────────────────────────────────────────────────────────
@@ -67,6 +68,51 @@ const BomScannerTab = () => {
   const [dragging, setDragging] = useState(false);
   const [fileName, setFileName] = useState('');
   const fileInputRef = useRef(null);
+
+  const { hasVendorAccess, isAdmin, isSuperAdmin } = useAuth();
+  const canEdit = selectedVendor ? hasVendorAccess(selectedVendor.id, 'rw') : false;
+  const canRetrain = isAdmin || isSuperAdmin;
+
+  const [retraining, setRetraining] = useState(false);
+  const [retrainResult, setRetrainResult] = useState(null);
+
+  // ── Save Edited Items ───────────────────────────────────────────────────────
+
+  const handleSaveEdits = useCallback(async (editedItems) => {
+    if (!selectedVendor || !editedItems.length) return;
+    const result = await bomService.updateBomItems(selectedVendor.id, editedItems);
+    // Update local state with saved edits
+    setEnrichedGroups(prev =>
+      prev.map(group => {
+        const updatedMain = editedItems.find(e => e.part_number === group.main.part_number);
+        const newMain = updatedMain
+          ? { ...group.main, catalog: { ...group.main.catalog, ...updatedMain }, part_alias: updatedMain.part_alias ?? group.main.part_alias }
+          : group.main;
+        const newChildren = group.children.map(child => {
+          const upd = editedItems.find(e => e.part_number === child.part_number);
+          return upd ? { ...child, catalog: { ...child.catalog, ...upd } } : child;
+        });
+        return { ...group, main: newMain, children: newChildren };
+      })
+    );
+    return result;
+  }, [selectedVendor]);
+
+  // ── Retrain AI Model ────────────────────────────────────────────────────────
+
+  const handleRetrain = useCallback(async () => {
+    setRetraining(true);
+    setRetrainResult(null);
+    try {
+      const result = await bomService.retrainModel();
+      setRetrainResult({ ok: true, metrics: result });
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.message || 'שגיאה בעדכון המודל';
+      setRetrainResult({ ok: false, msg });
+    } finally {
+      setRetraining(false);
+    }
+  }, []);
 
   // ── Vendor Selection ────────────────────────────────────────────────────────
 
@@ -279,7 +325,18 @@ const BomScannerTab = () => {
                 </span>
               )}
             </div>
-            <div style={{ display: 'flex', gap: '0.6rem' }}>
+            <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+              {canRetrain && (
+                <button
+                  className="bst-retrain-btn"
+                  onClick={handleRetrain}
+                  disabled={retraining}
+                  title="עדכן מחדש את מודל ה-AI מנתוני הקטלוג"
+                >
+                  <FiCpu size={15} />
+                  {retraining ? 'מאמן...' : 'Retrain AI'}
+                </button>
+              )}
               <button className="bst-new-scan-btn" onClick={() => handleReset(false)}>
                 <FiUploadCloud size={15} /> סריקה חדשה
               </button>
@@ -289,10 +346,28 @@ const BomScannerTab = () => {
             </div>
           </div>
 
+          {/* Retrain result toast */}
+          {retrainResult && (
+            <div className={`bst-retrain-result ${retrainResult.ok ? 'bst-retrain-ok' : 'bst-retrain-err'}`}>
+              {retrainResult.ok ? (
+                <>
+                  ✅ המודל עודכן בהצלחה —{' '}
+                  {retrainResult.metrics?.total_samples} דוגמאות,{' '}
+                  דיוק: {retrainResult.metrics?.test_accuracy
+                    ? `${(retrainResult.metrics.test_accuracy * 100).toFixed(1)}%`
+                    : '—'}
+                </>
+              ) : (
+                <>⚠ {retrainResult.msg}</>
+              )}
+              <button className="bst-retrain-result-close" onClick={() => setRetrainResult(null)}>✕</button>
+            </div>
+          )}
+
           {/* BOM Cards grid */}
           <div className="bst-cards-grid">
             {enrichedGroups.map((group, idx) => (
-              <BomGroupCard key={idx} group={group} />
+              <BomGroupCard key={idx} group={group} canEdit={canEdit} onSaveEdits={handleSaveEdits} />
             ))}
           </div>
         </div>

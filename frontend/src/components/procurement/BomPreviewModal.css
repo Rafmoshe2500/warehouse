@@ -536,3 +536,98 @@
   .bpv-search      { width: 100%; }
   .bpv-filter-right { width: 100%; }
 }
+
+/* ── Inline Edit (BomPreviewModal) ───────────────────────── */
+.bpv-card-head-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.bpv-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--cc, var(--border-color));
+  color: var(--cc, var(--text-muted));
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  flex-shrink: 0;
+}
+.bpv-edit-btn:hover { background: var(--cc, var(--border-color)); color: #fff; }
+
+.bpv-edit-actions {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.bpv-save-btn,
+.bpv-cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 0.2rem 0.45rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: opacity 0.15s;
+}
+.bpv-save-btn { background: var(--accent-success); color: #fff; border-color: var(--accent-success); }
+.bpv-save-btn:hover { opacity: 0.85; }
+.bpv-save-btn:disabled, .bpv-cancel-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.bpv-cancel-btn { background: none; color: var(--text-muted); border-color: var(--border-subtle); }
+.bpv-cancel-btn:hover { color: var(--text-secondary); }
+
+/* contentEditable description in BomPreviewModal */
+.bpv-desc-editable {
+  display: block;
+  min-height: 1.3em;
+  padding: 0.2rem 0.35rem;
+  border: 1px dashed var(--cc, var(--border-color));
+  border-radius: 4px;
+  outline: none;
+  font-size: inherit;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  cursor: text;
+  transition: border-color 0.15s;
+  white-space: pre-wrap;
+  word-break: break-word;
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+.bpv-desc-editable:focus { border-style: solid; border-color: var(--cc, var(--border-color)); }
+
+/* Description cell wrapper in detail grid */
+.bpv-desc-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+/* Inline category select */
+.bpv-cat-select {
+  width: 100%;
+  max-width: 180px;
+  padding: 0.15rem 0.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  outline: none;
+  cursor: pointer;
+}
+.bpv-cat-select:focus { border-color: var(--cc, var(--border-color)); }

@@ -60,7 +60,11 @@ def _extract_cable(t: str) -> dict:
     elif re.search(r'mpo.?lc|lc.?mpo', tl):       attrs["cable_type"] = "MPO-LC"
     elif re.search(r'mpo.?mpo|mpo type b', tl):    attrs["cable_type"] = "MPO-MPO"
     elif re.search(r'lc.?lc|lc-lc', tl):           attrs["cable_type"] = "LC-LC"
-    elif re.search(r'qsfp28.qsfp28|qsfp.*cu', tl): attrs["cable_type"] = "QSFP-QSFP"
+    elif re.search(r'sc.?lc|lc.?sc', tl):          attrs["cable_type"] = "SC-LC"
+    elif re.search(r'sc.?sc', tl):                  attrs["cable_type"] = "SC-SC"
+    elif re.search(r'qsfp112.qsfp112', tl):         attrs["cable_type"] = "QSFP112-QSFP112"
+    elif re.search(r'qsfp28.qsfp28', tl):           attrs["cable_type"] = "QSFP28-QSFP28"
+    elif re.search(r'qsfp.*cu', tl):                attrs["cable_type"] = "QSFP-QSFP"
     elif re.search(r'breakout|4sfp28|4x25g|4x10g', tl): attrs["cable_type"] = "Breakout"
     elif re.search(r'aoc|active optical', tl):      attrs["cable_type"] = "AOC"
     elif re.search(r'cat6a|cat6|patch cable', tl):  attrs["cable_type"] = "Ethernet Patch"
@@ -78,7 +82,7 @@ def _extract_cable(t: str) -> dict:
     if re.search(r'om4|mmf|multi.?mode|sr\b', tl): attrs["fiber"] = "OM4/MMF"
     elif re.search(r'smf|single.?mode|lr\b|lx', tl): attrs["fiber"] = "SMF"
 
-    spd = re.search(r'(100|40|25|12|10)gb[e/]?', tl)
+    spd = re.search(r'(400|100|40|25|12|10)gb[e/]?', tl)
     if spd: attrs["speed"] = f"{spd.group(1)}G"
     return attrs
 
@@ -86,11 +90,15 @@ def _extract_cable(t: str) -> dict:
 def _extract_transceiver(t: str) -> dict:
     tl = t.lower()
     attrs = {}
-    if re.search(r'qsfp112', tl):    attrs["form_factor"] = "QSFP112"
-    elif re.search(r'qsfp28', tl):   attrs["form_factor"] = "QSFP28"
-    elif re.search(r'\bqsfp\b', tl): attrs["form_factor"] = "QSFP"
-    elif re.search(r'sfp28', tl):    attrs["form_factor"] = "SFP28"
-    elif re.search(r'\bsfp\b', tl):  attrs["form_factor"] = "SFP"
+    if re.search(r'\bosfp\b', tl):               attrs["form_factor"] = "OSFP"
+    elif re.search(r'qsfp.?dd|qsfp-dd', tl):     attrs["form_factor"] = "QSFP-DD"
+    elif re.search(r'qsfp112', tl):               attrs["form_factor"] = "QSFP112"
+    elif re.search(r'qsfp56', tl):                attrs["form_factor"] = "QSFP56"
+    elif re.search(r'qsfp28', tl):                attrs["form_factor"] = "QSFP28"
+    elif re.search(r'\bqsfp\b', tl):              attrs["form_factor"] = "QSFP"
+    elif re.search(r'sfp28', tl):                 attrs["form_factor"] = "SFP28"
+    elif re.search(r'sfp\+|sfp plus', tl):        attrs["form_factor"] = "SFP+"
+    elif re.search(r'\bsfp\b', tl):               attrs["form_factor"] = "SFP"
 
     if re.search(r'\bfc\b|fibre channel|ficon', tl): attrs["protocol"] = "FC"
     elif re.search(r'gbe|eth', tl):                    attrs["protocol"] = "ETH"
@@ -114,9 +122,9 @@ def _extract_nic(t: str) -> dict:
     t  = _normalize(t)
     tl = t.lower()
     attrs = {}
-    m = re.search(r'(\d+).?p[to]|(\d+).?port|\b(\d+)-pt\b|\b(\d+)pt\b', tl)
+    m = re.search(r'(\d+).?p[to]|(\d+).?port|\b(\d+)-pt\b|\b(\d+)pt\b|\b(\d+)p\b', tl)
     if m:
-        p = m.group(1) or m.group(2) or m.group(3) or m.group(4)
+        p = m.group(1) or m.group(2) or m.group(3) or m.group(4) or m.group(5)
         attrs["ports"] = p + " ports"
 
     if re.search(r'mini.?sas|minisas', tl):   attrs["connector_type"] = "miniSAS"
@@ -224,6 +232,70 @@ def _extract_shelf(t: str) -> dict:
     return attrs
 
 
+def _extract_cpu(t: str) -> dict:
+    tl = t.lower()
+    attrs = {}
+    m = re.search(r'(\d+\.?\d*)\s*ghz', tl)
+    if m:
+        attrs["clock_speed"] = f"{m.group(1)} GHz"
+    m = re.search(r'(\d+)\s*c(?:/|,|\b)', tl)
+    if m:
+        attrs["cores"] = m.group(1) + "C"
+    m = re.search(r'(\d+)\s*t\b', tl)
+    if m:
+        attrs["threads"] = m.group(1) + "T"
+    m = re.search(r'(\d+\.?\d*)\s*m\s*cache|cache.*?(\d+\.?\d*)\s*m\b', tl)
+    if m:
+        val = m.group(1) or m.group(2)
+        attrs["cache"] = f"{val}M"
+    m = re.search(r'(\d+)\s*w\b', tl)
+    if m:
+        attrs["tdp"] = f"{m.group(1)}W"
+    return attrs
+
+
+def _extract_memory(t: str) -> dict:
+    tl = t.lower()
+    attrs = {}
+    caps = re.findall(r'(\d+\.?\d*)\s*(tb|gb)\b', tl)
+    if caps:
+        best = max(caps, key=lambda x: float(x[0]) * (1024 if x[1] == "tb" else 1))
+        attrs["capacity"] = f"{best[0]}{best[1].upper()}"
+    if re.search(r'ddr5', tl):         attrs["type"] = "DDR5"
+    elif re.search(r'ddr4', tl):       attrs["type"] = "DDR4"
+    elif re.search(r'nvme\s*ssd', tl): attrs["type"] = "NVMe SSD"
+    m = re.search(r'(\d+)\s*mt/s', tl)
+    if m:
+        attrs["speed"] = f"{m.group(1)}MT/s"
+    return attrs
+
+
+def _extract_fan(t: str) -> dict:
+    tl = t.lower()
+    attrs = {}
+    m = re.search(r'(\d+)\s*cfm\d?', tl)
+    if m:
+        attrs["cfm"] = f"{m.group(1)}CFM"
+    if re.search(r'exhaust', tl):
+        attrs["airflow_direction"] = "exhaust"
+    elif re.search(r'intake', tl):
+        attrs["airflow_direction"] = "intake"
+    return attrs
+
+
+def _extract_psu(t: str) -> dict:
+    tl = t.lower()
+    attrs = {}
+    m = re.search(r'(\d+)\s*w\b', tl)
+    if m:
+        attrs["wattage"] = f"{m.group(1)}W"
+    for eff in ("titanium", "platinum", "gold", "silver", "bronze"):
+        if eff in tl:
+            attrs["efficiency"] = eff.capitalize()
+            break
+    return attrs
+
+
 _EXTRACTORS = {
     "כבל":         _extract_cable,
     "גיביק":       _extract_transceiver,
@@ -231,6 +303,10 @@ _EXTRACTORS = {
     "דיסק":        _extract_disk,
     "מתג":         _extract_switch,
     "מדף דיסקים": _extract_shelf,
+    "מעבד":        _extract_cpu,
+    "זכרונות":     _extract_memory,
+    "מאוורר":      _extract_fan,
+    "ספק כח":     _extract_psu,
 }
 # תמיכה בשתי האיותים
 _EXTRACTORS["ג'יביק"] = _extract_transceiver

@@ -41,6 +41,21 @@ class BOMItem(BaseModel):
     part_alias: Optional[str] = Field(default=None, description="כינוי למק\"ט קריא למשתמש")
 
 
+class BOMItemEdit(BaseModel):
+    """Schema for editing a BOM item after AI scan (before finalization)."""
+    part_number: str = Field(..., min_length=1, description="מק\"ט")
+    description_he: Optional[str] = Field(default=None, description="תיאור בעברית")
+    category: Optional[str] = Field(default=None, description="קטגוריה (slug)")
+    part_alias: Optional[str] = Field(default=None, description="כינוי קריא")
+    excel_description: Optional[str] = Field(default=None, description="תיאור מקורי מהאקסל")
+
+
+class BOMItemEditRequest(BaseModel):
+    """Request body for batch BOM item edits."""
+    vendor: str = Field(..., min_length=1, description="שם ספק (uppercase: DELL/NETAPP/HPE)")
+    items: List[BOMItemEdit] = Field(..., min_length=1, description="פריטים לעריכה")
+
+
 class ProcurementOrderBase(BaseModel):
     """Base procurement order schema"""
     order_date: datetime = Field(..., description="תאריך הזמנה")

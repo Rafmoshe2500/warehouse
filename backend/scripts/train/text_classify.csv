@@ -1,0 +1,371 @@
+label,
+AFF A90 Model,שרת אחסון
+AFF A90 HA System,שרת אחסון
+AFF A90 System Serial Attached,אחר
+"SW,ONTAP One Package,Encryption,-C",רישוי תוכנה
+"AFF A90 HA System,-C",שרת אחסון
+"SW,ONTAP9.17,Data at Rest Encrypt Capable",רישוי תוכנה
+"Drive Pack 2X15.3TB,NVMe4,SED,-C",דיסק
+"SW,ONTAP One Package,Per TB,Flash,A90,-C",רישוי נפח
+"SW,ONTAP,Per TB,Flash,Capacity,Pricing,A90",רישוי נפח
+"SW,OTHER,OO,Per TB,Flash,Cap Pricing,A90",רישוי נפח
+"IO Module,2PT,100GbE,B,-C",כרטיסיה
+"IO Module,4PT,FC,Target,w/SFP,-C",כרטיסיה
+"QSFP28,100GbE,SR,-C",ג'יביק
+"Cable,Cntlr-Switch OM4,MPO/MPO,5m,-C",כבל
+"Cable,100GbE,QSFP28-QSFP28,Cu,0.5m,-C",כבל
+"Cable,LC-LC,OM4,5m,-C",כבל
+"Rail Kit,4-Post,Rnd/Sq-Hole,Adj,24-32,-C",אחר
+"Jumper Crd,In-Cab,C13-C14,-C",כבל
+"Blanking Panel,IO Module",אחר
+"Power Supply,2000W Titanium,-C",ספק כח
+Data at Rest Encryption Capable Operating Sys,רישוי תוכנה
+"Software,ONTAP One",רישוי תוכנה
+S3 SnapMirror SW,רישוי תוכנה
+"Software,SnapMirror Cloud,ONTAP One",רישוי תוכנה
+Snapmirror Cloud SW,רישוי תוכנה
+Support,תמיכה
+FAS90 Model,שרת אחסון
+FAS90 HA System,שרת אחסון
+FAS90 System Serial Attached,אחר
+"FAS90 HA System,-C",שרת אחסון
+"Flash Cache,4.0TB,NVMe SSD Module,Gen4,-C",זכרונות
+"Disk Shelf,4U60,12G,Empty,DS460C,-C",מדף דיסקים
+"Drive Pack,HDD,12G,10x22TB,DS460C,-C",דיסק
+"SW,ONTAP One Package,Per TB,NLSAS,FAS90,-C",רישוי נפח
+"SW,ONTAP,Per TB,NLSAS,Cap Pricing,FAS90",רישוי נפח
+"SW,OTHER,OO,Per TB,NLSAS,Cap Pricing,FAS90",רישוי נפח
+"IO Module,4PT,10/25GbE,-C",כרטיסיה
+"IO Module,4-PT miniSAS,-C",כרטיסיה
+"Cable,12Gb,Mini SAS HD,2m,-C",כבל
+"SFP28,25GbE,SR,-C",ג'יביק
+SW,רישוי תוכנה
+"Storage Shelf,DS460C,Model,AD,-C",מדף דיסקים
+"Disk Shelf,4U60,12G,Empty,AD,-C",מדף דיסקים
+"Drive Pack,HDD,12G,10x22TB,DS460C,AD,-C",דיסק
+"Storage Capacity,Per 0.1TB,Increments",רישוי נפח
+"SW,ONTAP One Pkg,Per-0.1TB,NLSAS,AddOn,F03,-C",רישוי נפח
+"SW,ONTAP,Per-0.1TB,NLSAS,Cap,Add-On,F03",רישוי נפח
+"SW,OTHER,OO,Per-0.1TB,NLSAS,Cap,Add-On,F03",רישוי נפח
+"Switch,NetApp,Cluster,SAN,Storage,24-Node",מתג
+"Cluster Switch,N9336C 36Pt PTSX10/25/40/100G",מתג
+"HW SUPP 9336,X190200/X190210,24X7X4OS",תמיכה
+Cisco Switch Service Contract,תמיכה
+"Entitlement,Cisco Switch NOW Site",תמיכה
+"Jumper Crd,In-Cab,48-IN,C13-C14",כבל
+"IO Module,4PT,FC,Target,w/SFP",כרטיסיה
+"IO Module,4P,64Gb FC,Target-Init,w/32Gb SFP",כרטיסיה
+"AFF A30,Model",שרת אחסון
+AFF A30 HA System,שרת אחסון
+AFF A30 System Serial Attached,אחר
+"SW,ONTAP Base Package,Encryption,-C",רישוי תוכנה
+"AFF A30 HA System,-C",שרת אחסון
+"SW,ONTAP DSR,IPA,Data at Rest Encrypt Capable",רישוי תוכנה
+"NVMe SHLF,2U24,Empty,NSM100B,-C",כרטיסיה
+"SW,ONTAP Base Package,Per TB,Flash,A30,-C",רישוי נפח
+"SW,ONTAP,Per TB,Flash,Cap Pricing,A30",רישוי נפח
+"SW,OTHER,OB,Per TB,Flash,Cap Pricing,A30",רישוי נפח
+"Cable,100GbE,QSFP28-QSFP28,Cu,2m,-C",כבל
+"Rail,4-Post,Thin,Rnd/Sq-Hole,Sm,Adj,24-32,-C",אחר
+"Power Supply,1600W,Titanium,-C",ספק כח
+"IO Module,4-PT miniSAS",כרטיסיה
+"SW,StorageGRID Webscale Software,Upgr",רישוי תוכנה
+"SW,StorageGRID,Webscale,Incremental",רישוי תוכנה
+PowerScale F710,שרת אחסון
+Informational Purposes Only,אחר
+"F710 2.5"" HDD Drive Carrier",אחר
+154TB (15.36TB x 10) QLC ISE NVMe SSD,דיסק
+PowerScale F710 SDPM,זכרונות
+FE 2x100GbE w/o Optics - F710,כרטיסיה
+BE 2x100GbE w/o Optics - F710,כרטיסיה
+F710 SPM1,אחר
+2.6 GHz Processor x2,מעבד
+512GB 5600 MT/s DIMM Memory,זכרונות
+PowerScale F710 Memory Components,זכרונות
+PowerScale F710 Bezel,אחר
+Rack Rails with CMA (A16),אחר
+Dual PSU 1400W RDNT,ספק כח
+C13/C14 US (2M) x2,כבל
+Secure Component Validation License,רישוי תוכנה
+CSV TRIG License,רישוי תוכנה
+Secure Enterprise Key Management License,רישוי תוכנה
+"IDRAC, 16G, Enterprise License",רישוי תוכנה
+F710 Node Hardware,אחר
+F710 Node Hardware Cont,אחר
+Production Factory Install - F710,אחר
+Trusted Module Platform,אחר
+IDRAC Random Password,אחר
+PowerScale F710 Shipping,אחר
+Info F710 ISG Product,אחר
+Parts Only Warranty 36 Months,תמיכה
+"Prosupport Plus and 4Hr Mission Critical Extension, 24 Month(s)",תמיכה
+"Prosupport Plus and 4Hr Mission Critical Initial, 36 Month(s)",תמיכה
+"Keep Your Component For Enterprise, 60 Month(s)",תמיכה
+"Same Business Day Onsite Diagnosis Service, 60 Month(s)",תמיכה
+PowerScale Virtual Base - VP,שרת אחסון
+SmartQuotas Base License Bundle=ID,רישוי תוכנה
+Enterprise Advanced Bundle F710=ID,רישוי תוכנה
+SnapShotIQ Base License Bundle=ID,רישוי תוכנה
+SmartConnect Base License Bundle=ID,רישוי תוכנה
+SyncIQ Base License Bundle=ID,רישוי תוכנה
+SmartPools Base License Bundle=ID,רישוי תוכנה
+SmartPools Capacity License Bundle=CB,רישוי נפח
+SmartConnect Capacity License Bundle=CB,רישוי נפח
+Enterprise Advanced Bundle Capacity F710=CB,רישוי נפח
+SnapShotIQ Capacity License Bundle=CB,רישוי נפח
+SmartQuotas Capacity License Bundle=CB,רישוי נפח
+SyncIQ Capacity License Bundle=CB,רישוי נפח
+SmartDedupe Base License F710=ID,רישוי תוכנה
+SmartDedupe Capacity License F710=CB,רישוי נפח
+HDFS for OneFS ($0.00),רישוי תוכנה
+"ProSupport Plus Additional Software Support-Maintenance, 60 Month(s)",תמיכה
+OneFS Base License F710 154-614TB=ID,רישוי תוכנה
+OneFS Capacity License F710=CB,רישוי נפח
+"ProSupport Plus OneFS All-Flash Software Support-Maintenance, 60 Month(s)",תמיכה
+PowerScale Accessories Base,אחר
+"MPO Type B Crossover Cable, Multi Mode Fiber OM4, 3 Meter",כבל
+"MPO Type B Crossover Cable, Multi Mode Fiber OM4, 5 Meter",כבל
+"MPO Type B Crossover Cable, Multi Mode Fiber OM4, 10 Meter",כבל
+"Node Side, Dell EMC PowerEdge 100GbE QSFP28 SR4  85C Optic",ג'יביק
+"Switch Side, Transceiver, 100GbE QSFP28 SR4, No FEC Capable, MPO, MMF",ג'יביק
+PowerScale A3100,שרת אחסון
+A3100 L3 ISE Node,שרת אחסון
+ISE 400TB (20x20TB),דיסק
+ISE 800GB SSD - A310/0,דיסק
+2x25GbE (SFP28) W/O OPTICS,כרטיסיה
+2x25GbE (SFP28) Back-end W/O OPTICS,כרטיסיה
+Transceivers/Optic/SFP+/SR/10GbE/2 GEN6,ג'יביק
+Transceiver/Optic/SFP28/SR/25Gbe/Qty 2,ג'יביק
+Custom Field Deployment,אחר
+Base Chassis - Deep A31-Series,אחר
+4U Bezel UDS,אחר
+PowerScale Hybrid Software - VP,רישוי תוכנה
+SmartQuotas Base License Bundle A310/A3100 L3 =ID,רישוי תוכנה
+SyncIQ Base License Bundle A310/A3100 L3 =ID,רישוי תוכנה
+SnapShotIQ Base License Bundle A310/A3100 L3 =ID,רישוי תוכנה
+SmartPools Base License Bundle A310/A3100 L3 =ID,רישוי תוכנה
+Enterprise Advanced Bundle A310/A3100 L3=ID,רישוי תוכנה
+SmartQuotas Capacity License Bundle A3 Tier 3 L3=CB,רישוי נפח
+SmartPools Capacity License Bundle A3 L3=CB,רישוי נפח
+Enterprise Advanced Bundle Capacity A310/A3100 L3=CB,רישוי נפח
+SyncIQ Capacity License Bundle A3 L3=CB,רישוי נפח
+SnapShotIQ Capacity License Bundle A3 L3=CB,רישוי נפח
+SmartDedupe Base License A310/A3100 L3=ID,רישוי תוכנה
+SmartDedupe Capacity License A310/A3100 L3=CB,רישוי נפח
+OneFS Base License A310/A3100 12-20TB L3=ID,רישוי תוכנה
+OneFS Capacity A310/A3100 L3=CB,רישוי נפח
+"ProSupport Plus OneFS Hybrid Software Support-Maintenance, 60 Month(s)",תמיכה
+Accessories Virtual Base - VI,אחר
+PWCRD KIT for Deep Chassis,כבל
+100G to 25G Breakout (4)SFP28 to (1)Q28 DAC 3M,כבל
+CABLE 100G Q28 to 4x25G SFP28 DAC 5M,כבל
+ISG Product (info),אחר
+PowerScale H7100,שרת אחסון
+H7100 ISE Node,שרת אחסון
+ISE 7.68TB SSD - A310/0 and H710/0,דיסק
+2x100GbE (QSFP28) W/O OPTICS,כרטיסיה
+2x100GbE (QSFP28) Back-end W/O OPTICS,כרטיסיה
+Transceivers/Optic/QSFP28/SR4/100GbE/Qty2,ג'יביק
+Base Chassis - Deep H71-Series,אחר
+SmartPools Base License Bundle H710/H7100 =ID,רישוי תוכנה
+SyncIQ Base License Bundle H710/H7100 =ID,רישוי תוכנה
+Enterprise Advanced Bundle H710/H7100=ID,רישוי תוכנה
+SmartQuotas Base License Bundle H710/H7100 =ID,רישוי תוכנה
+SnapShotIQ Base License Bundle H710/H7100 =ID,רישוי תוכנה
+SmartQuotas Capacity License Bundle H7=CB,רישוי נפח
+Enterprise Advanced Bundle Capacity H710/H7100=CB,רישוי נפח
+SnapShotIQ Capacity License Bundle H7=CB,רישוי נפח
+SmartPools Capacity License Bundle H7=CB,רישוי נפח
+SyncIQ Capacity License Bundle H7=CB,רישוי נפח
+SmartDedupe Base License H710/H7100=ID,רישוי תוכנה
+SmartDedupe Capacity License H710/H7100=CB,רישוי נפח
+OneFS Base License H710/H7100 12-20TB =ID,רישוי תוכנה
+OneFS Capacity H710/H7100=CB,רישוי נפח
+Z9264F Dell Networking Switch,מתג
+Z9264 Series User Guide,אחר
+Z9264 Install Kit,אחר
+"OS10 Enterprise Software, Z9264F",רישוי תוכנה
+Node Filler with Deep Sleds,אחר
+IB/100GbE/40GbE MPO to MPO - NO TRANSCEIVER 3M,כבל
+IB/100GbE/40GbE MPO to MPO - NO TRANSCEIVER 5M,כבל
+CABLE QSFP28 100Gb Active Optical 3M,כבל
+CABLE QSFP28 100Gb Active Optical 7M,כבל
+CABLE QSFP28 100Gb Active Optical 10M,כבל
+CABLE QSFP28 100Gb Active Optical 30M,כבל
+C2G-10ft Cat6a Snagless Shielded (STP) Network Patch Cable - Gray,כבל
+C2G-15ft Cat6a Snagless Shielded (STP) Network Patch Cable - Gray,כבל
+C2G-30ft Cat6a Snagless Shielded (STP) Network Patch Cable - Black,כבל
+"Nexus 9300 Series, 32p 400G Switch",מתג
+ENH 8X5XSNBDCX LEVEL 1 8X5XNBD Nexus 9300 Series 32,תמיכה
+Mode selection between ACI and NXOS,רישוי תוכנה
+"Nexus 3K/9K Fixed Accessory Kit,  1RU front and rear removal",אחר
+"400G Passive Cable, 1m",כבל
+"Data Center Networking Essentials Term N9300 XF2, 5Y",רישוי תוכנה
+Initial Term - 60.00 Months   |   Auto Renewal Term - 0 Months   | Billing Model - Prepaid Term,תמיכה
+"Cisco Support Enhanced for DCN Essentials Term N9300 XF2, 5Y",תמיכה
+Nexus(DCN) - Virtual adopt session http://cs.co/requestCSS,תמיכה
+Dummy PID for Airflow Selection Port-side Exhaust,אחר
+"Nexus 9300, 9500, 9800 NX-OS SW 10.6.1 (64bit) Cisco Silicon",רישוי תוכנה
+"Nexus Fan, 35CFM, port side exhaust airflow /w EEPROM",מאוורר
+Nexus 1500W PSU port-side Exhaust,ספק כח
+"Cabinet Jumper Power Cord, 250 VAC 13A, C14-C15 Connectors",כבל
+Info PID for Smart Licensing using Policy for N9K,רישוי תוכנה
+Select if this product will be used for AI ML Applications,אחר
+"Nexus 9300 Series, 64p 400G Switch",מתג
+ENH 8X5XSNBDCX LEVEL 1 8X5XNBD Nexus 9300 Series 64,תמיכה
+Dummy PID for Airflow Selection Port-side Intake,אחר
+No Accessory kit Chosen,אחר
+"Nexus Fan, 160CFM2, port side intake airflow /w EEPROM",מאוורר
+OPT OUT PID FOR MEM UPGRADE USE ONLY,אחר
+"Nexus 9000 3200W Power Supply, Port-side Intake",ספק כח
+"Cabinet Jumper Power Cord, 250 VAC 16A, C20-C19 Connectors",כבל
+"Nexus 9K Fixed Accessory Kit, 2RU front and rear removal",אחר
+Nexus Dust Cover for QDD ports,אחר
+Nexus 9300 with 48p 100M/1/10GT & 6p 40/100G QSFP28+,מתג
+ENH 8X5XSNBDCX LEVEL 1 8X5XNBD Nexus 9300 with 48p 1,תמיכה
+"Nexus Fan, 35CFM, port side intake airflow /w EEPROM",מאוורר
+Nexus NEBs AC 500W PSU -  Port Side Intake,ספק כח
+"Power cord, C13 to C14 (recessed receptacle), 10A",כבל
+"100GBASE QSFP Active Optical Cable, 2m",כבל
+"Data Center Networking Essentials Term N9300 XF, 5Y",רישוי תוכנה
+"Cisco Support Enhanced for DCN Essentials Term N9300 XF, 5Y",תמיכה
+"400G QSFP56-DD to 2x200G QSFP56 Copper Breakout Cable, 3m",כבל
+"400G QSFP-DD Transceiver, MPO-16 APC, 100m OM4 MMF",ג'יביק
+"200GBASE SR4 QSFP56 Transceiver, MPO, 100m over OM4 MMF",ג'יביק
+"400G QSFP-DD Transceiver, 400GBASE-DR4,MPO-12,500m parallel",ג'יביק
+"CABLE, MPO12-MPO12, TRUNK CABLE, TYPE B, SMF, 3M",כבל
+PowerFlex R660 appliance and custom node - [AMER_POWERFLEX_R660_18156_VP],שרת אחסון
+PowerFlex R660 appliance Base,שרת אחסון
+Luggage tag - PowerFlex R660 appliance,אחר
+PowerFlex appliance R660 Storage Only IDM,שרת אחסון
+SDPM Setup,אחר
+"Intel Xeon Gold 6426Y 2.5G, 16C/32T, 16GT/s, 37.5M Cache, Turbo, HT (185W) DDR5-4800",מעבד
+Additional Processor Selected,אחר
+Standard Heatsink for 2 CPU configuration (CPU less than or equal to 185W),מאוורר
+4 Very High Performance Fans,מאוורר
+5600MT/s RDIMMs,זכרונות
+"32GB RDIMM, 5600MT/s, Dual Rank - HCI",זכרונות
+"2.5"" Chassis with up to 10 NVMe Drives, SDPM, 2 CPU, No PERC Controller",שרת אחסון
+"C30, No RAID for NVME chassis",אחר
+No Controller,אחר
+Software Defined Persistent Memory (SDPM) with one 7450 m.2 drive (22x80) - HCI,זכרונות
+Medium Granularity (MG),אחר
+No Hard Drive,אחר
+15.36TB Enterprise NVMe Read Intensive AG Drive U.2 Gen4 with Carrier - HCI,דיסק
+"Nvidia ConnectX-6 Lx Dual Port 10/25GbE SFP28, No Crypto, OCP NIC 3.0",כרטיסיה
+LOM Blank,אחר
+"Nvidia ConnectX-6 Lx Dual Port 10/25GbE SFP28, No Crypto, PCIe Low Profile",כרטיסיה
+"Dual, Redundant(1+1),Hot-Plug Power Supply,1400W MM, Titanium",ספק כח
+"C13 to C14, PDU Style, 12 AMP, 6.5 Feet (2m) Power Cord, North America",כבל
+Bezel - PowerFlex 1U,אחר
+Cable Management Arm,אחר
+ReadyRails Sliding Rails (A15),אחר
+"iDRAC9, Enterprise 16G",רישוי תוכנה
+Secured Component Verification,אחר
+Trusted Platform Module 2.0 V6,אחר
+"Dell Networking, Transceiver, 25GbE SFP28 SR, No FEC, MMF, Duplex LC",ג'יביק
+Performance BIOS Settings,אחר
+"No Systems Documentation, No OpenManage DVD Kit",אחר
+"PowerEdge R660 CE Marking, No CCC Marking",אחר
+UEFI BIOS Boot Mode with GPT Partition,אחר
+"iDRAC Group Manager, Disabled",אחר
+Performance Optimized,אחר
+No Operating System,אחר
+No Quick Sync,אחר
+iDRAC Legacy Password for OCP cards,אחר
+"PowerEdge R660 Shipping Material, 10x2.5"", 8x2.5"" Smart Flow or 16xEDSFF",אחר
+Basic Next Business Day 36 Months,תמיכה
+Certified Deployment Partner T2,תמיכה
+None Required,אחר
+PowerFlex - Solution Type,אחר
+PowerFlex Solution ID - appliance,אחר
+"ProSupport Plus PowerFlex Sftwr Spt-Maint, 60 Month(s)",תמיכה
+"PowerFlex, SWaA Base, Standard Subscription",רישוי תוכנה
+"PowerFlex, 1TB, Standard Subscription, 60MO, =CB",רישוי נפח
+"ProSupport Plus PowerFlex Standard Sub Sftwr Spt-Maint, 60 Month(s)",תמיכה
+"Dell Networking Cable, OM4 LC/LC  Fiber Cable, (Optics required), 3 Meter, Customer kit",כבל
+Dell Networking OM4 LC - LC Fiber Optic Cable (Optics Required) - 3meter,כבל
+Multipath configuration,אחר
+Storage Stacks Attached Quantity,אחר
+2-Node Switchless Cluster,אחר
+"Disk Shelf,2U24,12G,Empty,AD,-C",מדף דיסקים
+"Drive Pack,10K,12G,2x1.2TB,AD,-C",דיסק
+"SW,ONTAP Base Pkg,Per-0.1TB,SAS,Add-On,F01,-C",רישוי נפח
+"SW,OTHER,OB,Per-0.1TB,SAS,Cap,Add-On,F01",רישוי נפח
+"SW,ONTAP,Per-0.1TB,SAS,Cap,Add-On,F01",רישוי נפח
+"BLANK,DSK DRV FILLER,DS224C,-C",אחר
+"SW,ONTAP Base,Per-0.1TB,NLSAS,AddOn,F01,-C",רישוי נפח
+"SW,OTHER,OB,Per-0.1TB,NLSAS,Cap,AddOn,F01",רישוי נפח
+"SW,ONTAP,Per-0.1TB,NLSAS,Cap,Add-On,F01",רישוי נפח
+"HW SUPP 9336,X190200/X190210,24X7X4",תמיכה
+"IO Module,2-PT MC IP,40Gb QFSP+",כרטיסיה
+NIC 2-Pt Bare Cage 40/100GbE QSFP PCIe,כרטיסיה
+"Cable,12Gb,Mini SAS HD,1m",כבל
+VAST Software and Hardware MLB,אחר
+SolutionsPlus: VAST DATA Software and Services,רישוי תוכנה
+Other Use Case,אחר
+VAST Data software subscription (100TB),רישוי נפח
+VAST 1xCPU CORE,רישוי תוכנה
+"Co-Pilot: Monitoring,Upgrades,Expansions,System Management",תמיכה
+Installation Services for VAST SW (Supports up to 12 Eboxes),תמיכה
+Cisco Intersight SaaS,רישוי תוכנה
+Infrastructure Services PVA - Advantage,תמיכה
+Cisco Support Standard for DCM,תמיכה
+UCS Central Per Server - 1 Server License,רישוי תוכנה
+Intersight - Virtual adopt session http://cs.co/requestCSS,תמיכה
+UCS C225 M8 1U Rack Server for VAST EBOX,שרת אחסון
+UCS HW 8X5XNBDOS UCS C225 M8 1U Rack Server for VAST with,שרת אחסון
+Deployment mode for C Series Servers in Standalone mode,אחר
+AMD 9454P 2.75GHz 290W 48C/256MB Cache DDR5 4800MT/s,מעבד
+32GB DDR5-5600 RDIMM 1Rx4 (16Gb),זכרונות
+C225 M8 1U Riser 1C PCIe Gen5 x16 FH,כרטיסיה
+C225 M81U Riser 3C PCIe Gen5 x16 FH,כרטיסיה
+Intel X710T2LOCPV3G1L 2x10GbE RJ45 OCP3.0 NIC,כרטיסיה
+"MCX755106AS-HEAT:CX-7 2x200GbE QSFP112 PCIe Gen5x16, VPI NIC",כרטיסיה
+960GB M.2 SATA Micron G2 SSD,דיסק
+Cisco Boot optimized M.2 Raid controller,אחר
+1200w AC Titanium Power Supply for C-series Rack Servers,ספק כח
+IMC SW (Recommended) latest release for C-Series Servers.,רישוי תוכנה
+Ball Bearing Rail Kit for C220 & C240 M7/M8 rack servers,אחר
+TPM 2.0 FIPS 140-2 MSW2022 compliant AMD M8 servers,אחר
+UCS C225 M8 Heatsink,מאוורר
+C2XX OCP 3.0 Interposer W/Mech Assy,אחר
+30.7TB 2.5in U.2 15mm Micron6550 HgPerf EcoEnd G4/5 <1X NVMe,דיסק
+1.92TB 2.5in U.3 15mm Micron XTR Hg Perf Ext End 60X NVMe,דיסק
+PowerMax 8500 - AMER VI,שרת אחסון
+PowerMax 8500 Upgrade,אחר
+Multi mode Optics Kit 64G,ג'יביק
+PowerMax NX 8 Port FCHL Ficon 64G UPG,כרטיסיה
+Budgetary Upgrade Tracking Model,אחר
+OPROVISION FACTOR TRACKING MODEL,אחר
+PowerMax 2/8K DATA REDUCTION RESERVATION,אחר
+Palmetto Tracking Model,אחר
+HEAVY CHASSIS AIR FREIGHT READY,אחר
+"Heavy device requires lift-assist cart for onsite service; otherwise, delays or extra fees may apply",אחר
+PowerMax 8500 Nodepair - AMER VI,שרת אחסון
+PowerMax 8500 1536G ADDU nodepair,שרת אחסון
+PowerMax V4 ROW CM ATP,אחר
+PowerMax NX 64GB MEMORY DIMM,זכרונות
+PowerMax 8500 1800W-HLPS,ספק כח
+PowerMax 8500 ENG3 3PU Install Kit,אחר
+PMAX V4 15.36TB UPG SED NON-FIPS,דיסק
+PowerMax 8500 CAPACITY UPG,רישוי נפח
+FORNAX CHASSIS FRU,אחר
+PowerMax NX SW Upgrade,רישוי תוכנה
+PowerMax NX Inclusive SW Open Upg 1TB=CC,רישוי נפח
+"ProSupport Plus Mission Critical PowerMax NX Sftwr Spt-Maint, 60 Month(s)",תמיכה
+PowerMax NX DAE - AMER VI,מדף דיסקים
+PowerMax 8500 48 SLT DME FIELD UPG,מדף דיסקים
+PowerMax 8500 DME3 3PU Install Kit,אחר
+PowerMax 8500,שרת אחסון
+PowerMax 8500 DME,מדף דיסקים
+FAS90,שרת אחסון
+FAS9000,שרת אחסון
+AFF-A800,שרת אחסון
+AFF-A20,שרת אחסון
+AFF-A400,שרת אחסון
+AFF-A250,שרת אחסון
+NS224,מדף דיסקים
+DS224C,מדף דיסקים
+DS460C,מדף דיסקים
+Breakout,כבל

@@ -489,10 +489,29 @@ const UserGuidePage = () => {
                     המערכת מפעילה מנוע בינה מלאכותית שמנתח את תיאור כל רכיב BOM ומסווג אותו אוטומטית לקטגוריה:
                   </p>
                   <ul className="feature-list">
-                    <li><FiCheckCircle className="list-icon" /> <strong>קטגוריות נתמכות:</strong> כבל, ג׳יביק / משדר (SFP/QSFP), כרטיסיה (IO Module), דיסק, מדף דיסקים, מתג, שרת אחסון, רישוי ותמיכה, ציוד נלווה</li>
-                    <li><FiCheckCircle className="list-icon" /> <strong>חילוץ מאפיינים:</strong> מהירות (100G/25G), אורך כבל (5m, 10m), מספר פורטים (Dual/Quad), קיבולת דיסק (15.3TB, NVMe) — ומציג תיאור מובנה בעברית</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>קטגוריות נתמכות (15):</strong> שרת אחסון, שרת, מתג, כרטיסיה, דיסק, מדף דיסקים, כבל, ג׳יביק (SFP/QSFP), מעבד, זכרונות, מאוורר, ספק כח, רישוי נפח, רישוי תוכנה, תמיכה, אחר</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>חילוץ מאפיינים:</strong> מהירות (400G/100G/25G/10G), אורך כבל, סוג סיב (SMF/MMF), מחבר (MPO/LC), קיבולת דיסק, תדר מעבד, נפח זיכרון, הספק ספק כח ועוד — ומציג תיאור מובנה בעברית</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>זיהוי ג'יביקים (Transceivers):</strong> תמיכה בכל צורות ה-QSFP — OSFP, QSFP-DD, QSFP112, QSFP56, QSFP28, QSFP, SFP28, SFP+ ו-SFP עם מהירות ומחבר בתיאור</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>תג ביטחון (Confidence):</strong> כל רכיב מקבל ציון ביטחון — ירוק (גבוה) / צהוב (בינוני) / אדום (נמוך). פריט עם תג <strong>⚠ ביטחון נמוך</strong> סיווגו טעון אימות ידני</li>
                     <li><FiCheckCircle className="list-icon" /> ניתן לתקן קטגוריה שגויה ידנית בחלון "רכיבים שלא זוהו" לפני אישור סופי</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">5ב</div>
+                <div className="step-content">
+                  <h3>עריכה ישירה של פריטי BOM</h3>
+                  <p>
+                    למשתמשים עם הרשאת כתיבה לספק, ניתן לערוך פריטים ישירות מתוך תוצאות הסריקה:
+                  </p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> לחצו על <strong>אייקון ✏️ (עיפרון)</strong> בפינה הימנית העליונה של כרטיס המערכת כדי להיכנס למצב עריכה</li>
+                    <li><FiCheckCircle className="list-icon" /> לחצו <strong>ישירות על תיאור הרכיב</strong> לעריכה מוטמעת (contentEditable) — ללא שדות נפרדים</li>
+                    <li><FiCheckCircle className="list-icon" /> בחרו <strong>קטגוריה</strong> מהרשימה הנגללת שמופיעה מתחת לתיאור</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>עריכה זמינה גם בחלון הצגת BOM</strong> בדף ההזמנות (Procurement) — לחצו כפתור "הצג BOM" בהזמנה שנשמרה</li>
+                    <li><FiCheckCircle className="list-icon" /> השינויים נשמרים בקטלוג ומשפרים את דיוק המודל בסריקות הבאות</li>
+                    <li><FiAlertCircle className="list-icon" /> כפתור העריכה מופיע רק למי שיש לו הרשאת כתיבה (rw) לספק הרלוונטי</li>
                   </ul>
                 </div>
               </div>
@@ -505,11 +524,23 @@ const UserGuidePage = () => {
                     המודל עובד היטב על פריטים נפוצים, אך <strong>אינו מושלם</strong>. לפני שמירת הסיווג בדקו:
                   </p>
                   <ul className="feature-list" style={{ marginTop: '0.5rem' }}>
-                    <li><FiAlertCircle className="list-icon" /> <strong>הקטגוריה נכונה?</strong> — האם הרכיב אכן כבל / ג׳יביק / רישוי?</li>
+                    <li><FiAlertCircle className="list-icon" /> <strong>הקטגוריה נכונה?</strong> — האם הרכיב אכן כבל / ג׳יביק / רישוי / מעבד?</li>
                     <li><FiAlertCircle className="list-icon" /> <strong>התיאור בעברית נכון?</strong> — האורך / המהירות / הפורטים חולצו נכון?</li>
                     <li><FiAlertCircle className="list-icon" /> <strong>שימו לב לתג ביטחון אדום</strong> — אלו הפריטים הנוטים ביותר לסיווג שגוי</li>
-                    <li><FiCheckCircle className="list-icon" /> ניתן לדרוס את הסיווג ידנית בחלון "רכיבים שלא זוהו" לפני אישור</li>
+                    <li><FiCheckCircle className="list-icon" /> השתמשו בכפתור <strong>"עריכה"</strong> בכרטיס המערכת לתיקון קטגוריות ותיאורים ישירות בממשק</li>
                   </ul>
+                </div>
+              </div>
+
+              <div className="tip-box highlight">
+                <div className="tip-icon"><FiAlertCircle /></div>
+                <div className="tip-content">
+                  <h4>🔧 מנהל מערכת — כלי AI (Superadmin)</h4>
+                  <p>
+                    מנהלי-על (Superadmin) יכולים לגשת ל<strong>לשונית "כלי AI"</strong> בדף ניהול הגישה (<strong>Admin → כלי AI</strong>)
+                    ולהפעיל אימון מחדש של מנוע הסיווג בכל עת — ללא צורך לבצע סריקת BOM חדשה.
+                    מומלץ להריץ אחרי עדכון קטלוג משמעותי.
+                  </p>
                 </div>
               </div>
 

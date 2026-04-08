@@ -11,8 +11,13 @@ VALID_CATEGORIES = [
     "disk-shelf",
     "cable",
     "sfp-qsfp",
-    "license",
-    "accessory",
+    "cpu",
+    "memory",
+    "fan",
+    "psu",
+    "license-capacity",
+    "license-software",
+    "support",
     "other",
 ]
 
@@ -168,3 +173,44 @@ class BomCatalogService:
         async for doc in cursor:
             parts.append(doc)
         return parts
+
+    async def apply_item_edits(self, items: List[Dict]) -> List[Dict]:
+        """Apply user edits to BOM items and persist corrections to the catalog.
+
+        Each item dict must have 'part_number'; optional keys:
+        'description_he', 'category', 'part_alias', 'excel_description'.
+
+        Corrections are upserted into bom_part_catalog so future scans
+        and model retraining benefit from user feedback.
+        """
+        import logging
+        log = logging.getLogger(__name__)
+        results = []
+        for item in items:
+            pn = item.get("part_number", "").strip()
+            if not pn:
+                continue
+
+            category = item.get("category")
+            if category and category not in VALID_CATEGORIES:
+                raise ValueError(f"קטגוריה לא חוקית: {category}")
+
+            update = {"updated_at": datetime.now(timezone.utc).isoformat()}
+            if item.get("description_he") is not None:
+                update["description_he"] = item["description_he"]
+            if category:
+                update["category"] = category
+            if item.get("excel_description") is not None:
+                update["excel_description"] = item["excel_description"]
+
+            await self.collection.update_one(
+                {"part_number": pn},
+                {
+                    "$set": update,
+                    "$setOnInsert": {"created_at": datetime.now(timezone.utc).isoformat()},
+                },
+                upsert=True,
+            )
+            log.info("BOM item edit persisted: part_number=%s category=%s", pn, category)
+            results.append({"part_number": pn, **update})
+        return results

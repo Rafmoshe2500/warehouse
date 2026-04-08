@@ -43,6 +43,16 @@ const ATTR_LABELS = {
   slots:             'מקומות',
   disk_type_support: 'תמיכה',
   interface:         'ממשק',
+  clock_speed:       'תדר',
+  cores:             'ליבות',
+  threads:           'תהליכונים',
+  cache:             'מטמון',
+  tdp:               'TDP',
+  type:              'סוג',
+  cfm:               'CFM',
+  airflow_direction: 'כיוון',
+  wattage:           'הספק',
+  efficiency:        'יעילות',
 };
 
 // ── Attribute value → Hebrew translator ───────────────────────────────────────
@@ -108,6 +118,7 @@ const formatAttrValue = (key, value) => {
   }
   if (key === 'cable_type')       return CABLE_TYPE_HE[v] || v;
   if (key === 'interface')        return INTERFACE_HE[v]  || v;
+  if (key === 'airflow_direction') return v === 'exhaust' ? 'פליטה' : v === 'intake' ? 'שאיבה' : v;
 
   return v;
 };

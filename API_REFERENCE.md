@@ -11,6 +11,7 @@
 | **Excel** | 3 | /import-excel, /import-projects, /export-excel |
 | **Collections** | 13 | GET all, POST, GET one, PUT, DELETE, /items/* (manage items), /permissions/* |
 | **Procurement** | 8 | GET orders, POST, GET one, PUT, DELETE, /files/* (upload/download/delete) |
+| **BOM Scanner** | 5 | POST /scan, POST /parts/{pn}, GET /parts, PATCH /scan/items, POST /ai/retrain |
 | **Analytics** | 3 | /dashboard, /activity, /item/{catalog_number} |
 | **Audit** | 3 | /logs, POST (create log), /users/{username} |
 | **Users Search** | 2 | /search, /groups/search |
@@ -924,7 +925,48 @@ Binary file download
 
 ---
 
-## 📊 Analytics Module (`/api/analytics`)
+## � BOM Scanner Module (`/api/bom`)
+
+### 1. POST /scan
+**Description**: Upload and scan a vendor BOM Excel file
+
+**Query Params**: `format` (e.g. `netapp_pricing_template`, `hpe_quote`, `cisco_quote`, `dell_quote`)
+
+**Requires Auth**: ✅ Yes
+**Requires Permission**: Vendor-specific write (`procurement:{vendor}:rw`) or global `PROCUREMENT_RW`
+
+### 2. POST /parts/{part_number}
+**Description**: Save or update a part in the BOM catalog
+
+### 3. GET /parts
+**Description**: Fetch all parts from the catalog
+
+### 4. PATCH /scan/items
+**Description**: Batch-edit BOM items after AI scan (before order finalization). Edits are persisted to catalog for future model improvement.
+
+**Request**:
+```json
+{
+  "vendor": "NETAPP",
+  "items": [
+    { "part_number": "X446B-R6", "description_he": "כונן SSD 800GB", "category": "disk" },
+    { "part_number": "X6589-R6", "category": "cable" }
+  ]
+}
+```
+
+**Requires Auth**: ✅ Yes
+**Requires Permission**: Vendor-specific write (`procurement:{vendor}:rw`) or SUPERADMIN/ADMIN
+
+### 5. POST /api/ai/retrain
+**Description**: Retrain the AI classification model from MongoDB catalog + CSV data. Admin only.
+
+**Requires Auth**: ✅ Yes
+**Requires Permission**: `ADMIN` or `SUPERADMIN`
+
+---
+
+## �📊 Analytics Module (`/api/analytics`)
 
 ### 1. GET /dashboard
 **Description**: Get dashboard statistics

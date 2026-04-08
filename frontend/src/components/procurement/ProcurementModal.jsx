@@ -73,8 +73,11 @@ const ProcurementModal = ({
   const [expandedItemId, setExpandedItemId] = useState(1);
   const [showEmfInput, setShowEmfInput] = useState(false);
   const { showToast } = useToast();
-  const { hasPricePermission } = useAuth();
+  const { hasPricePermission, hasVendorAccess } = useAuth();
   const showPrices = hasPricePermission();
+  const canEdit = formData.bom_vendor
+    ? hasVendorAccess(formData.bom_vendor.toLowerCase(), 'rw')
+    : false;
   const toastError = (msg) => showToast(msg, 'error');
 
   // BOM inline scanner (for manual re-scan within form)
@@ -231,6 +234,27 @@ const ProcurementModal = ({
     setBomPhase('vendor'); setBomVendor(null); setBomFileName('');
     setFormData(prev => ({ ...prev, bom_vendor: null, bom_data: null, total_amount: 0 }));
   };
+
+  const handleSaveEdits = useCallback(async (changedItems) => {
+    await bomService.updateBomItems(formData.bom_vendor, changedItems);
+    // Patch the local bom_data so cards immediately reflect the saved values
+    const byPn = Object.fromEntries(changedItems.map(i => [i.part_number, i]));
+    setFormData(prev => {
+      if (!prev.bom_data?.groups) return prev;
+      const newGroups = prev.bom_data.groups.map(g => ({
+        ...g,
+        main: byPn[g.main.part_number]
+          ? { ...g.main, catalog: { ...(g.main.catalog || {}), ...byPn[g.main.part_number] } }
+          : g.main,
+        children: g.children.map(ch =>
+          byPn[ch.part_number]
+            ? { ...ch, catalog: { ...(ch.catalog || {}), ...byPn[ch.part_number] } }
+            : ch
+        ),
+      }));
+      return { ...prev, bom_data: { ...prev.bom_data, groups: newGroups } };
+    });
+  }, [formData.bom_vendor]);
 
   // ── Form helpers ──────────────────────────────────────────────────────────
   const addBomItem = () => {
@@ -632,7 +656,7 @@ const ProcurementModal = ({
                 </div>
                 <div className="pm-preview-cards">
                   {(formData.bom_data.groups || []).map((group, idx) => (
-                    <BomGroupCard key={idx} group={group} />
+                    <BomGroupCard key={idx} group={group} canEdit={canEdit} onSaveEdits={handleSaveEdits} />
                   ))}
                 </div>
               </>
@@ -717,6 +741,7 @@ const ProcurementModal = ({
           onClose={() => setShowBomPreview(false)}
           bomData={formData.bom_data}
           vendor={formData.bom_vendor}
+          canEdit={canEdit}
         />
       </div>
     </>

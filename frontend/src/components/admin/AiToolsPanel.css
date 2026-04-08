@@ -1,0 +1,127 @@
+.ai-tools-panel {
+  padding: 1.5rem 0;
+}
+
+.atp-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.3rem;
+}
+
+.atp-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.atp-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 560px;
+}
+
+.atp-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.atp-card-icon {
+  color: var(--accent-primary, #6366f1);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.atp-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.atp-card-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.atp-retrain-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--accent-primary, #6366f1);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  align-self: flex-start;
+}
+
+.atp-retrain-btn:hover { opacity: 0.88; }
+
+.atp-retrain-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.atp-retrain-btn.loading { opacity: 0.75; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.atp-retrain-btn .spin {
+  animation: spin 0.8s linear infinite;
+}
+
+/* Result banner */
+.atp-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.atp-result.success {
+  background: color-mix(in srgb, var(--accent-success, #22c55e) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-success, #22c55e) 35%, transparent);
+  color: var(--accent-success, #22c55e);
+}
+
+.atp-result.error {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  border: 1px solid color-mix(in srgb, #ef4444 35%, transparent);
+  color: #ef4444;
+}
+
+.atp-metrics {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  width: 100%;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.atp-metric-path {
+  font-family: monospace;
+  font-size: 0.68rem;
+  opacity: 0.7;
+}

@@ -88,6 +88,14 @@
   line-height: 1.4;
 }
 
+.bgc-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
 .bgc-qty-badge {
   background: var(--card-bg, var(--bg-tertiary));
   color: var(--card-color);
@@ -96,8 +104,27 @@
   padding: 0.25rem 0.75rem;
   font-size: 0.85rem;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.bgc-edit-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--card-bg, var(--bg-tertiary));
+  border: 1px solid var(--card-color);
+  color: var(--card-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
   flex-shrink: 0;
-  align-self: flex-start;
+}
+
+.bgc-edit-icon-btn:hover {
+  background: var(--card-color);
+  color: #fff;
 }
 
 /* Price bar */
@@ -299,4 +326,138 @@
 .bgc-unimportant-list::-webkit-scrollbar-thumb {
   background: var(--border-color);
   border-radius: 3px;
+}
+
+/* ── Inline Edit UI ────────────────────────────────────────── */
+
+.bgc-edit-actions {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.bgc-save-btn,
+.bgc-cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.73rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 0.22rem 0.55rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: opacity 0.15s;
+}
+
+.bgc-save-btn {
+  background: var(--accent-success);
+  color: #fff;
+  border-color: var(--accent-success);
+}
+
+.bgc-save-btn:hover { opacity: 0.85; }
+
+.bgc-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bgc-cancel-btn {
+  background: none;
+  color: var(--text-muted);
+  border-color: var(--border-subtle);
+}
+
+.bgc-cancel-btn:hover { color: var(--text-secondary); }
+
+.bgc-cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Description cell wrapper (in detail grid) ─────────── */
+.bgc-desc-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+/* contentEditable description — in header and in detail rows */
+.bgc-desc-editable {
+  display: block;
+  min-height: 1.4em;
+  padding: 0.25rem 0.4rem;
+  border: 1px dashed var(--card-color, var(--border-color));
+  border-radius: 5px;
+  outline: none;
+  font-size: inherit;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  cursor: text;
+  transition: border-color 0.15s, background 0.15s;
+  white-space: pre-wrap;
+  word-break: break-word;
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+.bgc-desc-editable:focus {
+  border-style: solid;
+  border-color: var(--card-color);
+  background: var(--bg-secondary);
+}
+
+.bgc-desc-editable:empty::before {
+  content: attr(data-placeholder, 'תיאור בעברית...');
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* Inline category select (appears below editable description) */
+.bgc-cat-select-inline {
+  width: 100%;
+  max-width: 200px;
+  padding: 0.2rem 0.3rem;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.bgc-cat-select-inline:focus {
+  border-color: var(--card-color);
+}
+
+/* Not-main-system warning badge */
+.bgc-not-main-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-warning, #f59e0b);
+  background: color-mix(in srgb, var(--accent-warning, #f59e0b) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-warning, #f59e0b) 40%, transparent);
+  border-radius: 6px;
+  padding: 0.2rem 0.6rem;
+  margin-bottom: 0.5rem;
+  width: fit-content;
+}
+
+/* Muted look for unidentified cards */
+.bom-group-card--unidentified {
+  opacity: 0.85;
+  border-top-color: var(--border-color) !important;
+}
+
+.bom-group-card--unidentified::before {
+  opacity: 0.02 !important;
 }

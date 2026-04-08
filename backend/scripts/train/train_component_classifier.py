@@ -2,11 +2,11 @@
 train_component_classifier.py
 ===============================
 אימון מודל Classification לסיווג רכיבי חומרה מתיאורי מוצרים.
-קטגוריות: כבל, ג'יביק, כרטיסיה, דיסק, מדף דיסקים, מתג, שרת אחסון,
-           רישוי ותמיכה, ציוד נלווה, אחר
+קטגוריות: כבל, מתג, כרטיסיה, ג'יביק, מדף דיסקים, דיסק, שרת אחסון,
+           מעבד, זכרונות, מאוורר, ספק כח, רישוי נפח, רישוי תוכנה, תמיכה, אחר
 """
 
-import re
+import os
 import pandas as pd
 import joblib
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
@@ -15,11 +15,17 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, accuracy_score
 
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_CSV_PATH = os.path.join(_SCRIPT_DIR, "text_classify.csv")
+_MODEL_OUTPUT = os.path.join(_SCRIPT_DIR, "..", "..", "app", "ai", "component_classifier_v2.pkl")
+
 # ─────────────────────────────────────────────
 # 1. טעינת נתונים
 # ─────────────────────────────────────────────
-df = pd.read_csv("scripts/train/labeled_components_v2.csv", encoding="utf-8-sig")
-df = df[df["label"].notna()].copy()
+df = pd.read_csv(_CSV_PATH, names=["text", "label"], header=0, encoding="utf-8-sig")
+df = df[df["label"].notna() & df["text"].notna()].copy()
+df["text"] = df["text"].str.strip()
+df["label"] = df["label"].str.strip()
 
 X = df["text"].values
 y = df["label"].values
@@ -70,5 +76,6 @@ print(f"CV Accuracy: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}")
 # 5. אימון מחדש על כל הנתונים + שמירה
 # ─────────────────────────────────────────────
 pipeline.fit(X, y)
-joblib.dump(pipeline, "component_classifier_v2.pkl")
-print("\nModel saved: component_classifier_v2.pkl")
+_output = os.path.normpath(_MODEL_OUTPUT)
+joblib.dump(pipeline, _output)
+print(f"\nModel saved: {_output}")

@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { FiX, FiSearch, FiGrid, FiList } from 'react-icons/fi';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
+import { FiX, FiSearch, FiGrid, FiList, FiEdit2, FiCheck } from 'react-icons/fi';
 import { CATEGORY_CONFIG, CategoryIcon } from './BomScannerTab/CategoryIcons';
+import bomService from '../../api/services/bomService';
 import './BomPreviewModal.css';
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -11,6 +12,11 @@ const VENDOR_META = {
 };
 const getVendorMeta = (v) =>
   VENDOR_META[v] || VENDOR_META[String(v || '').toUpperCase()] || { logo: '📦', color: '#6366f1', gradient: '', label: v || 'BOM' };
+
+const CATEGORY_OPTIONS = Object.entries(CATEGORY_CONFIG).map(([slug, cfg]) => ({
+  value: slug,
+  label: cfg.label,
+}));
 
 const fmt = (val) =>
   val > 0 ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val) : null;
@@ -27,13 +33,69 @@ const KpiChip = ({ icon, label, value, color }) => (
 );
 
 // ── Inline Group Card (redesigned) ───────────────────────────────────────────
-const GroupCard = ({ group, vendorColor }) => {
+const GroupCard = ({ group, vendorColor, canEdit = false, vendor }) => {
   const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing]   = useState(false);
+  const [editMap, setEditMap]   = useState({});
+  const [saving, setSaving]     = useState(false);
+  // Initial values frozen at edit-start — used as span children so React
+  // never overwrites DOM content mid-typing (fixes reversed bidi text).
+  const initialEditRef = useRef({});
   const { main, children = [], total_net_price } = group;
   const catalog = main.catalog || {};
   const category = catalog.category || 'other';
   const cfg = CATEGORY_CONFIG[category] || CATEGORY_CONFIG['other'];
   const qty = Math.round(main.ext_qty || 1);
+
+  const allItems = useMemo(() => [main, ...children], [main, children]);
+
+  const startEditing = useCallback(() => {
+    const map = {};
+    for (const item of allItems) {
+      map[item.part_number] = {
+        description_he: item.catalog?.description_he || '',
+        category: item.catalog?.category || 'other',
+      };
+    }
+    initialEditRef.current = map;
+    setEditMap(map);
+    setEditing(true);
+    setExpanded(true);
+  }, [allItems]);
+
+  const cancelEditing = useCallback(() => {
+    setEditing(false);
+    setEditMap({});
+    initialEditRef.current = {};
+  }, []);
+
+  const handleField = useCallback((pn, field, value) => {
+    setEditMap(prev => ({ ...prev, [pn]: { ...prev[pn], [field]: value } }));
+  }, []);
+
+  const handleSave = useCallback(async () => {
+    const changed = [];
+    for (const item of allItems) {
+      const orig  = { description_he: item.catalog?.description_he || '', category: item.catalog?.category || 'other' };
+      const edited = editMap[item.part_number];
+      if (!edited) continue;
+      const diff = {};
+      if (edited.description_he !== orig.description_he) diff.description_he = edited.description_he;
+      if (edited.category       !== orig.category)       diff.category       = edited.category;
+      if (Object.keys(diff).length > 0) changed.push({ part_number: item.part_number, ...diff });
+    }
+    if (!changed.length) { setEditing(false); return; }
+    setSaving(true);
+    try {
+      await bomService.updateBomItems(vendor, changed);
+      setEditing(false);
+      setEditMap({});
+    } catch {
+      // stay open on failure
+    } finally {
+      setSaving(false);
+    }
+  }, [allItems, editMap, vendor]);
 
   // Aggregate children by category
   const aggr = useMemo(() => {
@@ -64,10 +126,47 @@ const GroupCard = ({ group, vendorColor }) => {
         </div>
         <div className="bpv-card-meta">
           <div className="bpv-card-pn">{main.part_number}</div>
-          <div className="bpv-card-desc">{catalog.description_he || main.product || ''}</div>
-          <span className="bpv-card-category" style={{ color: cfg.color }}>{cfg.label}</span>
+          <span
+            key={editing ? `me-${main.part_number}` : `mv-${main.part_number}`}
+            contentEditable={editing}
+            suppressContentEditableWarning
+            dir="auto"
+            className={`bpv-card-desc${editing ? ' bpv-desc-editable' : ''}`}
+            onInput={editing ? (e => handleField(main.part_number, 'description_he', e.currentTarget.textContent)) : undefined}
+          >
+            {editing
+              ? (initialEditRef.current[main.part_number]?.description_he ?? catalog.description_he ?? main.product ?? '')
+              : (catalog.description_he || main.product || '')}
+          </span>
+          {editing && (
+            <select
+              className="bpv-cat-select"
+              value={editMap[main.part_number]?.category ?? category}
+              onChange={e => handleField(main.part_number, 'category', e.target.value)}
+            >
+              {CATEGORY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          )}
+          {!editing && <span className="bpv-card-category" style={{ color: cfg.color }}>{cfg.label}</span>}
         </div>
-        <div className="bpv-card-qty">×{qty}</div>
+        <div className="bpv-card-head-right">
+          <div className="bpv-card-qty">×{qty}</div>
+          {canEdit && !editing && (
+            <button className="bpv-edit-btn" onClick={startEditing} title="ערוך">
+              <FiEdit2 size={13} />
+            </button>
+          )}
+          {editing && (
+            <div className="bpv-edit-actions">
+              <button className="bpv-save-btn" onClick={handleSave} disabled={saving}>
+                <FiCheck size={12} /> {saving ? '...' : 'שמור'}
+              </button>
+              <button className="bpv-cancel-btn" onClick={cancelEditing} disabled={saving}>
+                <FiX size={12} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Price */}
@@ -109,7 +208,29 @@ const GroupCard = ({ group, vendorColor }) => {
           {children.map((c, i) => (
             <div key={i} className={`bpv-detail-row ${c.catalog?.important === false ? 'muted' : ''}`}>
               <span className="bpv-detail-pn">{c.part_number}</span>
-              <span>{c.catalog?.description_he || c.product || '—'}</span>
+              <div className="bpv-desc-cell">
+                <span
+                  key={editing ? `ce-${c.part_number}-${i}` : `cv-${c.part_number}-${i}`}
+                  contentEditable={editing}
+                  suppressContentEditableWarning
+                  dir="auto"
+                  className={editing ? 'bpv-desc-editable' : undefined}
+                  onInput={editing ? (e => handleField(c.part_number, 'description_he', e.currentTarget.textContent)) : undefined}
+                >
+                  {editing
+                    ? (initialEditRef.current[c.part_number]?.description_he ?? c.catalog?.description_he ?? c.product ?? '')
+                    : (c.catalog?.description_he || c.product || '—')}
+                </span>
+                {editing && (
+                  <select
+                    className="bpv-cat-select"
+                    value={editMap[c.part_number]?.category ?? c.catalog?.category ?? 'other'}
+                    onChange={e => handleField(c.part_number, 'category', e.target.value)}
+                  >
+                    {CATEGORY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                )}
+              </div>
               <span>{Math.round(c.ext_qty || 0)}</span>
               <span className="bpv-detail-price">{c.ext_net_price > 0 ? fmt(c.ext_net_price) : '—'}</span>
             </div>
@@ -121,7 +242,7 @@ const GroupCard = ({ group, vendorColor }) => {
 };
 
 // ── Main Modal ────────────────────────────────────────────────────────────────
-const BomPreviewModal = ({ isOpen, onClose, bomData, vendor }) => {
+const BomPreviewModal = ({ isOpen, onClose, bomData, vendor, canEdit = false }) => {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [viewMode, setViewMode] = useState('grid'); // grid | list
@@ -231,7 +352,7 @@ const BomPreviewModal = ({ isOpen, onClose, bomData, vendor }) => {
         <div className={`bpv-cards ${viewMode === 'list' ? 'list' : ''}`}>
           {filtered.length > 0 ? (
             filtered.map((group, idx) => (
-              <GroupCard key={idx} group={group} vendorColor={meta.color} />
+              <GroupCard key={idx} group={group} vendorColor={meta.color} canEdit={canEdit} vendor={vendor} />
             ))
           ) : (
             <div className="bpv-empty">

@@ -289,3 +289,105 @@ class TestProcurementService:
 
         # 5. Verify auditor
         procurement_service.auditor.log_delete_file.assert_called_once()
+
+    # ========== Status Machine Edge Cases ==========
+
+    @pytest.mark.asyncio
+    async def test_shipped_status_does_not_auto_revert(self, procurement_service, mock_admin_user):
+        """Once SHIPPED, removing BOM/EMF must NOT auto-revert status."""
+        created = await procurement_service.create_order(
+            _make_order_create(emf_number="EMF-1", received_bom=True),
+            mock_admin_user["username"],
+        )
+        assert created["status"] == "waiting_shipment"
+
+        # Transition to SHIPPED
+        shipped = await procurement_service.update_order(
+            created["id"],
+            ProcurementOrderUpdate(status="shipped"),
+            username=mock_admin_user["username"],
+        )
+        assert shipped["status"] == "shipped"
+        assert shipped.get("shipped_at") is not None
+
+        # Even removing EMF should NOT revert from shipped
+        result = await procurement_service.update_order(
+            created["id"],
+            ProcurementOrderUpdate(emf_number=""),
+            username=mock_admin_user["username"],
+        )
+        assert result["status"] == "shipped"
+
+    @pytest.mark.asyncio
+    async def test_received_status_stays_locked(self, procurement_service, mock_admin_user):
+        """Once RECEIVED, status must stay locked."""
+        created = await procurement_service.create_order(
+            _make_order_create(emf_number="EMF-1", received_bom=True),
+            mock_admin_user["username"],
+        )
+        result = await procurement_service.update_order(
+            created["id"],
+            ProcurementOrderUpdate(status="received"),
+            username=mock_admin_user["username"],
+        )
+        assert result["status"] == "received"
+        assert result.get("received_at") is not None
+
+    @pytest.mark.asyncio
+    async def test_bom_received_sets_timestamp(self, procurement_service, mock_admin_user):
+        """Setting received_bom=True should record bom_received_at."""
+        created = await procurement_service.create_order(
+            _make_order_create(received_bom=False),
+            mock_admin_user["username"],
+        )
+        result = await procurement_service.update_order(
+            created["id"],
+            ProcurementOrderUpdate(received_bom=True),
+            username=mock_admin_user["username"],
+        )
+        assert result.get("bom_received_at") is not None
+
+    @pytest.mark.asyncio
+    async def test_emf_set_records_timestamp(self, procurement_service, mock_admin_user):
+        """Setting emf_number should record emf_received_at."""
+        created = await procurement_service.create_order(
+            _make_order_create(emf_number=None),
+            mock_admin_user["username"],
+        )
+        result = await procurement_service.update_order(
+            created["id"],
+            ProcurementOrderUpdate(emf_number="EMF-NEW"),
+            username=mock_admin_user["username"],
+        )
+        assert result.get("emf_received_at") is not None
+
+    @pytest.mark.asyncio
+    async def test_clearing_bom_clears_timestamp(self, procurement_service, mock_admin_user):
+        """Clearing received_bom should set bom_received_at to None."""
+        created = await procurement_service.create_order(
+            _make_order_create(received_bom=True),
+            mock_admin_user["username"],
+        )
+        result = await procurement_service.update_order(
+            created["id"],
+            ProcurementOrderUpdate(received_bom=False),
+            username=mock_admin_user["username"],
+        )
+        assert result.get("bom_received_at") is None
+
+    @pytest.mark.asyncio
+    async def test_waiting_shipment_timestamp_recorded(self, procurement_service, mock_admin_user):
+        """When auto-transitioning to waiting_shipment, timestamp is set."""
+        created = await procurement_service.create_order(
+            _make_order_create(received_bom=True, emf_number=None),
+            mock_admin_user["username"],
+        )
+        assert created["status"] == "waiting_bom_emf"
+
+        result = await procurement_service.update_order(
+            created["id"],
+            ProcurementOrderUpdate(emf_number="EMF-FINAL"),
+            username=mock_admin_user["username"],
+        )
+        assert result["status"] == "waiting_shipment"
+        assert result.get("waiting_shipment_at") is not None
