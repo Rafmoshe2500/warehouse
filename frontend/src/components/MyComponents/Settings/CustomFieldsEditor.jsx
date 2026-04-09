@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { FaPlus, FaTrash, FaCheck } from 'react-icons/fa';
 import { Button, Input, Select } from '../../common'; // Assuming Checkbox exists or use input
 import { useToast } from '../../../context/ToastContext';
+import DeleteModal from '../../common/DeleteModal/DeleteModal';
 import collectionsService from '../../../api/services/collectionsService';
 import { useQueryClient } from '@tanstack/react-query';
 import './CustomFieldsEditor.css';
@@ -23,6 +24,7 @@ const CustomFieldsEditor = ({ collection, canEdit }) => {
     required: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [removeConfirm, setRemoveConfirm] = useState({ isOpen: false, fieldKey: null });
   
   const { showToast } = useToast();
   const queryClient = useQueryClient();
@@ -71,8 +73,9 @@ const CustomFieldsEditor = ({ collection, canEdit }) => {
     }
   };
 
-  const handleRemoveField = async (fieldKey) => {
-    if (!window.confirm('האם אתה בטוח? מחיקת שדה לא תמחק את המידע הקיים אך הוא לא יוצג יותר.')) return;
+  const handleRemoveField = async () => {
+    const fieldKey = removeConfirm.fieldKey;
+    setRemoveConfirm({ isOpen: false, fieldKey: null });
 
     try {
         const updatedFields = collection.custom_fields.filter(f => f.key !== fieldKey);
@@ -181,7 +184,7 @@ const CustomFieldsEditor = ({ collection, canEdit }) => {
                      <Button 
                          variant="ghost" 
                          className="text-red-500 hover:text-red-700"
-                         onClick={() => handleRemoveField(field.key)}
+                         onClick={() => setRemoveConfirm({ isOpen: true, fieldKey: field.key })}
                          icon={<FaTrash />}
                      />
                  </div>
@@ -195,6 +198,16 @@ const CustomFieldsEditor = ({ collection, canEdit }) => {
          )}
       </div>
       </div>
+
+      <DeleteModal
+        isOpen={removeConfirm.isOpen}
+        onClose={() => setRemoveConfirm({ isOpen: false, fieldKey: null })}
+        onConfirm={handleRemoveField}
+        title="הסרת שדה"
+        message="האם אתה בטוח? מחיקת שדה לא תמחק את המידע הקיים אך הוא לא יוצג יותר."
+        type="confirmation"
+        confirmText="הסר"
+      />
     </div>
   );
 };

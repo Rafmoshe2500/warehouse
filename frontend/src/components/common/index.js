@@ -16,5 +16,6 @@ export { default as NavigationWarningModal } from './NavigationWarningModal/Navi
 export { default as Skeleton } from './Skeleton/Skeleton';
 export { default as SkeletonTable } from './SkeletonTable/SkeletonTable';
 export { default as SkeletonCards } from './SkeletonCards/SkeletonCards';
+export { default as SkeletonOrderCards } from './SkeletonOrderCards/SkeletonOrderCards';
 export { default as UploadAnimation } from './UploadAnimation/UploadAnimation';
 export { default as Tabs } from './Tabs';

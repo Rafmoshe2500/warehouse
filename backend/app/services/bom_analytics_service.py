@@ -23,7 +23,7 @@ def _resolve_datetime(value) -> datetime:
         try:
             return datetime.strptime(value, "%Y-%m-%d").replace(tzinfo=timezone.utc)
         except ValueError:
-            pass
+            logger.debug("Could not parse date string: %s", value)
     return datetime.now(timezone.utc)
 
 # ── Service ───────────────────────────────────────────────────────────────────

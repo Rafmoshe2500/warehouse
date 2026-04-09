@@ -1,8 +1,10 @@
 from typing import Optional, List, Dict, Any, TYPE_CHECKING
 from datetime import datetime, timezone
+import logging
 
 from app.db.repositories.items import ItemsRepository
 from app.services.audit.item_auditor import ItemAuditor
+from app.services.catalog_service import CatalogService
 from app.schemas.audit import AuditAction
 from app.schemas.item import ItemCreate, ItemUpdate, BulkUpdate
 
@@ -12,11 +14,14 @@ if TYPE_CHECKING:
 
 from app.db.repositories.collection_repository import CollectionRepository
 
+logger = logging.getLogger(__name__)
+
 class ItemService:
-    def __init__(self, items_repo: ItemsRepository, item_auditor: ItemAuditor, collection_repo: Optional[CollectionRepository] = None):
+    def __init__(self, items_repo: ItemsRepository, item_auditor: ItemAuditor, collection_repo: Optional[CollectionRepository] = None, catalog_service: Optional[CatalogService] = None):
         self.items_repo = items_repo
         self.item_auditor = item_auditor
         self.collection_repo = collection_repo
+        self.catalog_service = catalog_service or CatalogService()
 
     async def get_items(
             self,
@@ -72,6 +77,7 @@ class ItemService:
         }
 
     async def create_item(self, item_data: ItemCreate, user: Dict[str, Any], undo_log_id: Optional[str] = None, is_undo: bool = False):
+        logger.info("Creating item, catalog_number=%s, user=%s", item_data.catalog_number if hasattr(item_data, 'catalog_number') else 'N/A', user.get('username', 'unknown'))
         item_dict = item_data.model_dump(by_alias=False)
         item_dict["created_at"] = datetime.now(timezone.utc)
         item_dict["updated_at"] = datetime.now(timezone.utc)
@@ -86,10 +92,7 @@ class ItemService:
             
         # Update catalog
         if created_item.get("catalog_number"):
-            from app.services.catalog_service import CatalogService
-            catalog_service = CatalogService()
-            # Running asynchronously without blocking might be better, but awaiting is safer for now
-            await catalog_service.upsert_catalog_item(
+            await self.catalog_service.upsert_catalog_item(
                 catalog_number=created_item.get("catalog_number"),
                 description=created_item.get("description"),
                 manufacturer=created_item.get("manufacturer")
@@ -98,6 +101,7 @@ class ItemService:
         return created_item
 
     async def update_item_field(self, item_id: str, update: ItemUpdate, user: Dict[str, Any], undo_log_id: Optional[str] = None, is_undo: bool = False):
+        logger.info("Updating item field, item_id=%s, field=%s, user=%s", item_id, update.field, user.get('username', 'unknown'))
         old_item = await self.items_repo.get_by_id_or_raise(item_id)
         old_value = old_item.get(update.field, "")
 
@@ -120,9 +124,7 @@ class ItemService:
         # Update catalog
         if updated_item and updated_item.get("catalog_number"):
             if update.field in ["catalog_number", "description", "manufacturer"]:
-                from app.services.catalog_service import CatalogService
-                catalog_service = CatalogService()
-                await catalog_service.upsert_catalog_item(
+                await self.catalog_service.upsert_catalog_item(
                     catalog_number=updated_item.get("catalog_number"),
                     description=updated_item.get("description"),
                     manufacturer=updated_item.get("manufacturer")
@@ -131,6 +133,7 @@ class ItemService:
         return updated_item
 
     async def bulk_update_items(self, update: BulkUpdate, user: Dict[str, Any]):
+        logger.info("Bulk updating %d items, user=%s", len(update.ids), user.get('username', 'unknown'))
         # Build update dictionary dynamically from all non-None fields in BulkUpdate
         # excluding 'ids' and 'field'/'value' legacy fields if they are not used
         update_data = update.model_dump(exclude={"ids", "field", "value"}, exclude_unset=True)
@@ -160,12 +163,10 @@ class ItemService:
             
         # Update catalog for all updated items if relevant fields changed
         if any(f in update_data for f in ["catalog_number", "description", "manufacturer"]):
-            from app.services.catalog_service import CatalogService
-            catalog_service = CatalogService()
             items_after = await self.items_repo.get_many_by_ids(update.ids)
             for item in items_after:
                 if item.get("catalog_number"):
-                    await catalog_service.upsert_catalog_item(
+                    await self.catalog_service.upsert_catalog_item(
                         catalog_number=item.get("catalog_number"),
                         description=item.get("description"),
                         manufacturer=item.get("manufacturer")
@@ -177,6 +178,7 @@ class ItemService:
         }
 
     async def delete_item(self, item_id: str, user: Dict[str, Any], reason: str):
+        logger.info("Deleting item, item_id=%s, user=%s, reason=%s", item_id, user.get('username', 'unknown'), reason)
         item = await self.items_repo.get_by_id_or_raise(item_id)
         await self.items_repo.delete(item_id)
 
@@ -185,6 +187,7 @@ class ItemService:
         return {"message": "פריט נמחק בהצלחה"}
 
     async def bulk_delete_items(self, item_ids: List[str], user: Dict[str, Any], reason: str):
+        logger.info("Bulk deleting %d items, user=%s, reason=%s", len(item_ids), user.get('username', 'unknown'), reason)
         items_before, deleted_count = await self.items_repo.bulk_delete_by_ids(item_ids)
 
         for item in items_before:
@@ -196,6 +199,7 @@ class ItemService:
         }
 
     async def delete_all_items(self, user: Dict[str, Any], reason: str):
+        logger.warning("DELETE ALL items requested by user=%s, reason=%s", user.get('username', 'unknown'), reason)
         deleted_count = await self.items_repo.delete_many({})
 
         # Log via audit service (using BULK_DELETE as approximation for DELETE_ALL)

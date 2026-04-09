@@ -1,869 +1,635 @@
-# 🏗️ ארכיטקטורה מערכת ניהול מלאי
+# 🏗️ Architecture — Warehouse Management System v2.0
 
-## 📋 תוכן עניינים
-1. [דיאגרמת ארכיטקטורה](#דיאגרמת-ארכיטקטורה)
-2. [API Endpoints](#api-endpoints)
-3. [Frontend Components](#frontend-components)
-4. [זרימת Authentication](#זרימת-authentication)
-5. [תכונות מיוחדות](#תכונות-מיוחדות)
+## 📋 Table of Contents
+1. [System Overview](#system-overview)
+2. [Architecture Diagram](#architecture-diagram)
+3. [Backend Architecture](#backend-architecture)
+4. [Frontend Architecture](#frontend-architecture)
+5. [Database Design](#database-design)
+6. [Authentication & Authorization](#authentication--authorization)
+7. [AI/ML Subsystem](#aiml-subsystem)
+8. [File Storage](#file-storage)
+9. [Infrastructure & Deployment](#infrastructure--deployment)
 
 ---
 
-## 📐 דיאגרמת ארכיטקטורה
+## 📐 System Overview
+
+The Warehouse Management System (מערכת ניהול מלאי) is a full-stack web application for managing inventory, procurement, and supply chain operations. It comprises:
+
+- **Backend**: Python FastAPI REST API with MongoDB
+- **Frontend**: React (Vite) Single Page Application
+- **Database**: MongoDB (9 collections)
+- **AI/ML**: scikit-learn classifier for BOM component categorization
+- **Storage**: S3-compatible or local filesystem for file attachments
+- **Infrastructure**: Docker containers with Kubernetes (Helm) orchestration
+
+---
+
+## 📐 Architecture Diagram
 
 ```mermaid
 graph TB
-    subgraph CLIENT["🖥️ Client Layer (React)"]
-        USER["👤 משתמש"]
-        BROWSER["ブラウזר"]
+    subgraph CLIENT["🖥️ Client Layer"]
+        BROWSER["Browser (Chrome/Edge/Firefox)"]
     end
-    
-    subgraph FRONTEND["⚛️ Frontend (React + Vite)"]
-        ROUTER["🛣️ React Router<br/>- Login<br/>- Dashboard<br/>- Inventory<br/>- Admin<br/>- Procurement"]
-        CONTEXT["📦 Context API<br/>- AuthContext<br/>- ThemeContext<br/>- ToastContext"]
-        COMPONENTS["🧩 Components<br/>- Dashboard<br/>- InventoryTable<br/>- ItemForm<br/>- UserPanel"]
-        STATE["🔄 React Query<br/>State Management"]
+
+    subgraph FRONTEND["⚛️ Frontend — React + Vite (Port 5173)"]
+        ROUTER["React Router v6<br/>10 Routes + Guards"]
+        CONTEXT["Context Providers<br/>Auth / Theme / Toast"]
+        RQ["React Query<br/>Server State Cache"]
+        PAGES["Pages<br/>Login | Dashboard | Inventory<br/>Procurement | MyComponents<br/>Admin | Guide"]
+        HOOKS["35+ Custom Hooks<br/>useItems | useProcurement<br/>useUndoRedo | useAnalytics"]
+        APISVC["API Services Layer<br/>auth | items | procurement<br/>collections | catalog | bom<br/>analytics | admin | audit"]
+        AXIOS["Axios Client<br/>withCredentials | interceptors"]
     end
-    
-    subgraph API["🌐 REST API (FastAPI)"]
-        AUTHAPI["🔐 Auth Routes<br/>POST /login<br/>POST /domain-login<br/>POST /logout<br/>GET /me"]
-        ITEMAPI["📦 Items Routes<br/>CRUD Operations<br/>Bulk Operations<br/>Filtering"]
-        ADMINAPI["👨‍💼 Admin Routes<br/>User Management<br/>Permissions<br/>Statistics"]
-        PROCUREMENTAPI["🛒 Procurement<br/>Order Management<br/>File Upload"]
-        ANALYTICSAPI["📊 Analytics<br/>Dashboard Data<br/>Activity Logs"]
+
+    subgraph BACKEND["🐍 Backend — FastAPI (Port 8000)"]
+        MW["Middleware Stack<br/>CORS | GZip | RateLimit<br/>Process-Time | Logging"]
+        ROUTES["Route Layer (10 routers)<br/>auth | items | excel | catalog<br/>collections | procurement | bom<br/>bom-analytics | ai | analytics<br/>audit | admin-users | admin-groups"]
+        SERVICES["Service Layer (15 services)<br/>Auth | User | Group | Item<br/>Excel | Collection | Catalog<br/>Procurement | Analytics | Audit<br/>Bom | BomAnalytics | S3<br/>AI Training"]
+        REPOS["Repository Layer (6 repos)<br/>Items | Users | Groups<br/>Collections | Procurement<br/>Catalog | Audit"]
+        SCHEMAS["Pydantic Schemas<br/>Validation & Serialization"]
+        SECURITY["Security Core<br/>JWT | bcrypt | RBAC<br/>Permissions | Guards"]
+        AI["AI Classifier<br/>TF-IDF + LogisticRegression<br/>16 categories"]
+        AUDITORS["Audit Subdomain<br/>Item | User | Group<br/>Collection | Procurement<br/>Auth Auditors"]
     end
-    
-    subgraph DB["💾 Database Layer"]
-        MONGODB["🗄️ MongoDB<br/>Collections:<br/>- inventory<br/>- users<br/>- audit_logs<br/>- procurement<br/>- collections"]
+
+    subgraph DATA["💾 Data Layer"]
+        MONGO["MongoDB<br/>9 Collections"]
+        S3["S3 / Local Storage<br/>File Attachments"]
     end
-    
-    subgraph SECURITY["🔒 Security Layer"]
-        BCRYPT["🔑 bcrypt<br/>Password Hashing"]
-        JWT["📝 JWT<br/>Token Generation"]
-        PERMISSIONS["✅ Permission<br/>System"]
-    end
-    
+
     subgraph INFRA["☁️ Infrastructure"]
-        DOCKER["🐳 Docker<br/>Containers"]
-        KUBE["⚙️ Kubernetes<br/>Orchestration"]
+        DOCKER["Docker Containers"]
+        K8S["Kubernetes (Helm)"]
     end
-    
-    USER -->|User Interaction| BROWSER
-    BROWSER -->|HTTP/REST| ROUTER
-    ROUTER -->|Component State| CONTEXT
-    CONTEXT -->|Fetch Data| STATE
-    STATE -->|API Calls| API
-    
-    API -->|Validate Token| JWT
-    API -->|Check Permissions| PERMISSIONS
-    API -->|Query/Update| DB
-    
-    AUTHAPI -->|Hash & Verify| BCRYPT
-    
-    API -->|Logs| DB
-    
-    DOCKER -->|Deploy| KUBE
-    
+
+    BROWSER -->|HTTPS / REST| MW
+    MW --> ROUTES
+    ROUTES -->|Depends()| SECURITY
+    ROUTES --> SERVICES
+    SERVICES --> REPOS
+    SERVICES --> AUDITORS
+    SERVICES --> AI
+    REPOS --> MONGO
+    SERVICES --> S3
+    AUDITORS --> REPOS
+
+    BROWSER --> ROUTER
+    ROUTER --> PAGES
+    PAGES --> HOOKS
+    HOOKS --> APISVC
+    APISVC --> AXIOS
+    AXIOS -->|HTTP + Cookie| MW
+    PAGES --> CONTEXT
+    PAGES --> RQ
+
+    DOCKER --> K8S
+
     style CLIENT fill:#e1f5ff
     style FRONTEND fill:#fff3e0
-    style API fill:#f3e5f5
-    style DB fill:#e8f5e9
-    style SECURITY fill:#fce4ec
+    style BACKEND fill:#f3e5f5
+    style DATA fill:#e8f5e9
     style INFRA fill:#f5f5f5
 ```
 
 ---
 
-## 🔐 זרימת Authentication
+## 🐍 Backend Architecture
+
+### Layered Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    🔐 Authentication Flow                    │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  1. LOGIN REQUEST                                            │
-│     User submits: { username, password }                     │
-│                   ↓                                          │
-│  2. BACKEND VALIDATION                                       │
-│     - Check user exists in MongoDB                           │
-│     - Verify password with bcrypt                            │
-│     - Check user is active                                   │
-│                   ↓                                          │
-│  3. TOKEN GENERATION                                         │
-│     - Create JWT token with:                                 │
-│       • user_id, username, role, permissions                │
-│       • Expiration: 240 minutes                              │
-│                   ↓                                          │
-│  4. RESPONSE                                                 │
-│     Return: { access_token, token_type: "bearer" }           │
-│                   ↓                                          │
-│  5. CLIENT STORAGE                                           │
-│     Store token in localStorage/sessionStorage               │
-│                   ↓                                          │
-│  6. SUBSEQUENT REQUESTS                                      │
-│     Send: Authorization: Bearer <token>                       │
-│                   ↓                                          │
-│  7. TOKEN VERIFICATION                                       │
-│     - Verify JWT signature                                   │
-│     - Check expiration                                       │
-│     - Extract claims (user_id, role, permissions)            │
-│                   ↓                                          │
-│  8. PERMISSION CHECK                                         │
-│     - Extract required permission from route                 │
-│     - Check user's permission list                           │
-│     - Allow/Deny access                                      │
-│                                                              │
-│  🔑 DOMAIN LOGIN (ADFS) OPTION:                              │
-│     POST /auth/domain-login → Validate with ADFS server     │
-│                                                              │
-│  📤 LOGOUT:                                                  │
-│     POST /auth/logout → Clear client token                   │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│  Routes (HTTP Interface)                         │
+│  app/routes/*.py                                 │
+│  Handle: request parsing, response formatting,   │
+│  dependency injection, permission guards          │
+├──────────────────────────────────────────────────┤
+│  Services (Business Logic)                       │
+│  app/services/*.py                               │
+│  Handle: business rules, validation, audit       │
+│  logging, cross-service orchestration            │
+├──────────────────────────────────────────────────┤
+│  Repositories (Data Access)                      │
+│  app/db/repositories/*.py                        │
+│  Handle: MongoDB queries, aggregations, CRUD     │
+├──────────────────────────────────────────────────┤
+│  Schemas (Validation)                            │
+│  app/schemas/*.py                                │
+│  Handle: Pydantic models for request/response    │
+│  validation and serialization                    │
+├──────────────────────────────────────────────────┤
+│  Core (Security & Utils)                         │
+│  app/core/*.py                                   │
+│  Handle: JWT, bcrypt, RBAC, exceptions,          │
+│  constants, permission guards                    │
+└──────────────────────────────────────────────────┘
 ```
 
----
+### Route Modules
 
-## 🔗 API Endpoints
+| Router | Prefix | Description |
+|--------|--------|-------------|
+| `auth` | `/api/auth` | Login (local + ADFS), logout, user info, password change |
+| `items` | `/api/items` | Inventory CRUD, bulk operations |
+| `excel` | `/api/items` | Excel import/export (inventory + projects) |
+| `catalog` | `/api/catalog` | Aggregated SKU catalog |
+| `collections` | `/api/collections` | Personal collections with item management and permissions |
+| `procurement` | `/api/procurement` | Procurement orders, file attachments |
+| `bom` | `/api/bom` | BOM scanning with AI classification |
+| `bom_analytics` | `/api/bom-analytics` | Price trends, vendor analytics |
+| `ai` | `/api/ai` | Model retraining |
+| `analytics` | `/api/analytics` | Dashboard stats, activity, item analytics |
+| `audit` | `/api/audit` | Audit log queries |
+| `admin_users` | `/api/admin/users` | User management (admin) |
+| `admin_groups` | `/api/admin/groups` | Group management (admin) |
+| `users_search` | `/api/users` | User/group search (autocomplete) |
 
-### 🔐 Authentication (`/api/auth`)
+### Service Layer
 
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **POST** | `/login` | התחברות עם שם משתמש וסיסמה | `{ username, password }` | `{ access_token, token_type, user_id, username, role, permissions }` | ❌ ללא הרשאה |
-| **POST** | `/domain-login` | התחברות באמצעות ADFS/דומיין | `{ domain, username, password }` | `{ access_token, token_type, ... }` | ❌ ללא הרשאה |
-| **POST** | `/logout` | התנתקות מהמערכת | - | `{ message: "logged out" }` | ✅ משתמש רשום |
-| **GET** | `/me` | קבלת פרטי המשתמש המחובר | - | `{ username, role, permissions, user_id }` | ✅ משתמש רשום |
-| **PUT** | `/password` | שינוי סיסמה עצמית | `{ current_password, new_password }` | `{ message: "password changed" }` | ✅ משתמש רשום |
+| Service | Responsibility |
+|---------|---------------|
+| `AuthService` | Login (local + ADFS), JWT token creation, password verification, AD user auto-creation |
+| `UserService` | User CRUD, role hierarchy enforcement, password management, stats |
+| `GroupService` | Group CRUD, permission aggregation |
+| `ItemService` | Inventory CRUD, bulk operations, undo support, reserved stock sync, catalog auto-update |
+| `ExcelService` | Smart import (serial vs catalog+location matching), project allocations import, filtered export |
+| `CollectionService` | Collection CRUD, item assignment with snapshots, permission model (Owner/RW/RO), Excel export |
+| `CatalogService` | Unique SKU catalog with aggregated stock across locations |
+| `ProcurementService` | Order lifecycle management, auto status transitions, file storage, BOM Analytics integration |
+| `AnalyticsService` | Dashboard KPIs, project distribution, activity stats, procurement aggregations |
+| `AuditService` | Centralized audit logging, query by user/action/resource, action counting |
+| `BomService` | Multi-vendor Excel parsing (NetApp/Dell/HPE/Cisco/Generic), AI enrichment |
+| `BomAnalyticsService` | Historical price tracking, vendor spending, discount analysis, product chain comparison |
+| `S3Service` | File upload/download/delete (S3 or local fallback) |
+| `AITrainingService` | Classifier retraining from MongoDB + CSV data |
 
----
+### Audit Subdomain
 
-### 📦 Items - ניהול פריטים (`/api/items`)
+Specialized auditors for each domain, located in `app/services/audit/`:
 
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **GET** | `/` | קבלת כל הפריטים עם סינון וחיפוש | Query: `filter, search, sort, page, limit` | `{ items: [...], total, page, limit }` | `INVENTORY_RO` / `INVENTORY_RW` |
-| **GET** | `/stale` | קבלת פריטים שלא עודכנו זמן רב | Query: `days, page, limit` | `{ items: [...], total, page }` | `INVENTORY_RO` / `INVENTORY_RW` |
-| **GET** | `/{item_id}/collections` | קבלת אוספים המשוייכים לפריט | - | `{ collections: [...] }` | `INVENTORY_RO` / `INVENTORY_RW` |
-| **POST** | `/` | הוספת פריט חדש | `ItemCreate { catalog_number, name, quantity, ... }` | `{ item_id, catalog_number, name, ... }` | `INVENTORY_RW` |
-| **PATCH** | `/{item_id}` | עדכון שדה בודד בפריט | `ItemUpdate { field, value }` | `{ updated_item }` | `INVENTORY_RW` |
-| **POST** | `/bulk-update` | עדכון מרובה של פריטים | `BulkUpdate { filters, updates }` | `{ updated_count, items }` | `INVENTORY_RW` |
-| **DELETE** | `/{item_id}` | מחיקת פריט יחיד | `DeleteRequest { reason }` | `{ deleted_item }` | `INVENTORY_RW` |
-| **POST** | `/bulk-delete` | מחיקת מספר פריטים | `{ item_ids, reason }` | `{ deleted_count }` | `INVENTORY_RW` |
-| **POST** | `/delete-all` | מחיקת כל הפריטים (בזהירות!) | `DeleteRequest { reason }` | `{ deleted_count }` | Admin בלבד |
+| Auditor | Tracks |
+|---------|--------|
+| `ItemAuditor` | Item create, update, delete, bulk operations, import |
+| `UserAuditor` | User create, update, delete, password changes |
+| `GroupAuditor` | Group create, update, delete |
+| `CollectionAuditor` | Collection CRUD, item add/remove |
+| `ProcurementAuditor` | Order CRUD, file upload/download |
+| `AuthAuditor` | Login, logout, domain login |
 
----
-
-### 👥 Users - ניהול משתמשים (`/api/admin/users`)
-
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **GET** | `/` | קבלת כל המשתמשים | Query: `page, limit, filter` | `{ users: [...], total, page }` | Admin בלבד |
-| **POST** | `/` | יצירת משתמש חדש | `UserCreate { username, email, password, role }` | `{ user_id, username, email, role, ... }` | Admin בלבד |
-| **GET** | `/{user_id}` | קבלת פרטי משתמש ספציפי | - | `{ user_id, username, email, role, permissions, ... }` | Admin בלבד |
-| **PUT** | `/{user_id}` | עדכון פרטי משתמש | `UserUpdate { username, email, role, permissions }` | `{ updated_user }` | Admin בלבד |
-| **DELETE** | `/{user_id}` | מחיקת משתמש | `DeleteRequest { reason }` | `{ deleted_user }` | Admin בלבד |
-| **GET** | `/stats` | סטטיסטיקות משתמשים | - | `{ total_users, active, inactive, by_role }` | Admin בלבד |
-
----
-
-### 🛒 Groups - ניהול קבוצות (`/api/groups`)
-
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **GET** | `/` | קבלת כל הקבוצות | Query: `page, limit, filter` | `{ groups: [...], total, page }` | Admin / שיוך קבוצה |
-| **POST** | `/` | יצירת קבוצה חדשה | `{ name, description, members }` | `{ group_id, name, ... }` | Admin בלבד |
-| **GET** | `/{group_id}` | קבלת פרטי קבוצה | - | `{ group_id, name, members, ... }` | Admin / שיוך קבוצה |
-| **PUT** | `/{group_id}` | עדכון קבוצה | `{ name, description, members }` | `{ updated_group }` | Admin בלבד |
-| **DELETE** | `/{group_id}` | מחיקת קבוצה | - | `{ message: "deleted" }` | Admin בלבד |
-
----
-
-### 📊 Excel - ייבוא/ייצוא (`/api/excel`)
-
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **POST** | `/import-excel` | ייבוא פריטים מ-Excel | FormData: `file (xlsx/csv)` | `{ imported_count, skipped, errors: [...] }` | `INVENTORY_RW` |
-| **POST** | `/import-projects` | ייבוא פרויקטים מ-Excel | FormData: `file (xlsx)` | `{ imported_count, created_collections }` | Admin בלבד |
-| **GET** | `/export-excel` | ייצוא כל הפריטים ל-Excel | Query: `format (xlsx/csv)` | `Binary (Excel File)` | `INVENTORY_RO` / `INVENTORY_RW` |
-
----
-
-### 📋 Collections - אוספים (`/api/collections`)
-
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **GET** | `/` | קבלת כל האוספים | - | `{ collections: [...] }` | `INVENTORY_RO` / `INVENTORY_RW` |
-| **POST** | `/` | יצירת אוסף חדש | `{ name, description, items }` | `{ collection_id, name, ... }` | `INVENTORY_RW` |
-| **GET** | `/{collection_id}` | קבלת פרטי אוסף | - | `{ collection_id, name, items_count, ... }` | `INVENTORY_RO` / `INVENTORY_RW` |
-| **PUT** | `/{collection_id}` | עדכון אוסף | `{ name, description }` | `{ updated_collection }` | `INVENTORY_RW` |
-| **DELETE** | `/{collection_id}` | מחיקת אוסף | - | `{ message: "deleted" }` | `INVENTORY_RW` |
-| **GET** | `/{collection_id}/items` | קבלת פריטים באוסף | - | `{ items: [...] }` | `INVENTORY_RO` / `INVENTORY_RW` |
-| **POST** | `/{collection_id}/items` | הוספת פריט לאוסף | `{ item_id }` | `{ message: "added" }` | `INVENTORY_RW` |
-| **POST** | `/{collection_id}/items/bulk` | הוספה מרובה לאוסף | `{ item_ids: [...] }` | `{ added_count }` | `INVENTORY_RW` |
-| **PUT** | `/{collection_id}/items/{item_id}` | עדכון פריט באוסף | `{ field, value }` | `{ updated_item }` | `INVENTORY_RW` |
-| **DELETE** | `/{collection_id}/items/{item_id}` | הסרת פריט מאוסף | - | `{ message: "removed" }` | `INVENTORY_RW` |
-| **POST** | `/{collection_id}/items/bulk-delete` | הסרה מרובה מאוסף | `{ item_ids }` | `{ deleted_count }` | `INVENTORY_RW` |
-| **POST** | `/{collection_id}/permissions` | הוספת הרשאה לאוסף | `{ user_id, permission }` | `{ message: "added" }` | Admin בלבד |
-| **DELETE** | `/{collection_id}/permissions/{target_id}` | הסרת הרשאה מאוסף | - | `{ message: "removed" }` | Admin בלבד |
-
----
-
-### 🛒 Procurement - הזמנות (`/api/procurement/orders`)
-
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **GET** | `/` | קבלת כל ההזמנות | Query: `status, page, limit, filter` | `{ orders: [...], total, page }` | `PROCUREMENT_RO` / `PROCUREMENT_RW` |
-| **POST** | `/` | יצירת הזמנה חדשה | `ProcurementOrderCreate { supplier, items, amount }` | `{ order_id, status, ... }` | `PROCUREMENT_RW` |
-| **GET** | `/{order_id}` | קבלת פרטי הזמנה | - | `{ order_id, supplier, items, status, ... }` | `PROCUREMENT_RO` / `PROCUREMENT_RW` |
-| **PUT** | `/{order_id}` | עדכון הזמנה | `{ status, supplier, amount }` | `{ updated_order }` | `PROCUREMENT_RW` |
-| **DELETE** | `/{order_id}` | ביטול הזמנה | `DeleteRequest { reason }` | `{ deleted_order }` | `PROCUREMENT_RW` |
-| **POST** | `/{order_id}/files` | העלאת קובץ להזמנה | FormData: `file` | `{ file_id, filename, size, url }` | `PROCUREMENT_RW` |
-| **GET** | `/{order_id}/files/{file_id}` | הורדת קובץ | - | `Binary (File)` | `PROCUREMENT_RO` / `PROCUREMENT_RW` |
-| **DELETE** | `/{order_id}/files/{file_id}` | מחיקת קובץ | - | `{ message: "deleted" }` | `PROCUREMENT_RW` |
-
----
-
-### 📊 Analytics - דיווחים (`/api/analytics`)
-
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **GET** | `/dashboard` | נתונים לדשבורד | - | `{ total_items, total_users, active_orders, statistics }` | משתמש רשום |
-| **GET** | `/activity` | יומן פעילות אחרון | - | `{ activities: [...], total }` | משתמש רשום |
-| **GET** | `/item/{catalog_number}` | דיווח פריט מסוים | - | `{ item_id, history, usage_stats, ... }` | `INVENTORY_RO` / `INVENTORY_RW` |
-
----
-
-### 📝 Audit - רישום ביקורת (`/api/audit/logs`)
-
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **GET** | `/logs` | קבלת כל הרישומים | Query: `user, action, page, limit` | `{ logs: [...], total, page }` | Admin בלבד |
-| **POST** | `/logs` | הוספת רישום (אוטומטי בד"כ) | `{ action, resource, details }` | `{ log_id, timestamp, ... }` | System בלבד |
-| **GET** | `/users/{username}` | קבלת רישומים של משתמש | Query: `page, limit` | `{ logs: [...], total, page }` | Admin בלבד |
-
----
-
-### 🔍 Users Search (`/api/users`)
-
-| Method | Endpoint | תיאור | Input | Output | הרשאות |
-|--------|----------|--------|-------|---------|---------|
-| **GET** | `/search` | חיפוש משתמשים | Query: `q (query)` | `{ users: [{ id, username, email }] }` | `ADMIN` / `PROCUREMENT_RW` |
-| **GET** | `/groups/search` | חיפוש קבוצות | Query: `q (query)` | `{ groups: [{ id, name }] }` | `ADMIN` |
-
----
-
-## ⚛️ Frontend Components
-
-### 🏗️ ניווט וLayout
-
-#### 📄 Pages (דפים ראשיים)
-
-| דף | Path | תיאור | קומפוננטות משנה | הרשאות |
-|--------|--------|--------|------------------|---------|
-| **LoginPage** | `/login` | דף התחברות | LoginForm, DomainLoginOption | ללא הרשאה |
-| **DashboardPage** | `/dashboard` | דשבורד ראשי | WidgetCards, StatsCharts, RecentActivity | משתמש רשום |
-| **InventoryTabbedPage** | `/inventory` | ניהול מלאי עם tabs | InventoryTable, ItemForm, BulkEditModal | `INVENTORY_RO/RW` |
-| **AdminPage** | `/admin` | פנל ניהול | UserManagement, AuditLogs, Analytics | Admin בלבד |
-| **AccessControlPage** | `/admin/access-control` | ניהול הרשאות | PermissionManager, GroupAssigner | Admin בלבד |
-| **UserManagement** | `/admin/users` | ניהול משתמשים | UserTable, UserForm, BulkUserActions | Admin בלבד |
-| **AuditLogs** | `/admin/logs` | רישום ביקורת | LogsTable, FilterPanel, ExportLogs | Admin בלבד |
-| **ProcurementPage** | `/procurement` | ניהול הזמנות | OrdersList, OrderForm, OrderDetails | `PROCUREMENT_RO/RW` |
-| **MyComponentsDashboard** | `/my-components` | ריכוז אוספים שלי | CollectionCards, FilterByCollection | משתמש רשום |
-| **CollectionDetails** | `/my-components/{id}` | פרטי אוסף | CollectionTable, ManagePermissions | משתמש רשום |
-| **UserGuidePage** | `/guide` | מדריך משתמש | DocumentationViewer | כל המשתמשים |
-
----
-
-### 🧩 Inventory Components
-
-| קומפוננטה | קובץ | תיאור | תכונות |
-|-----------|--------|--------|---------|
-| **InventoryTable** | `inventory/InventoryContent/` | טבלה ראשית של פריטים | סינון, חיפוש, pagination, sort, multiselect |
-| **ItemForm** | `inventory/ItemForm/` | טופס הוספה/עריכה פריט | validation, auto-save, undo/redo |
-| **ExcelManager** | `inventory/ExcelManager/` | ייבוא/ייצוא Excel | drag-drop, preview, mapping |
-| **BulkEditModal** | `inventory/BulkEditModal/` | עריכה מרובה | select fields, apply to multiple |
-| **DeleteConfirmation** | `inventory/DeleteConfirmation/` | אישור מחיקה | reason required, audit trail |
-| **ColumnToggle** | `inventory/ColumnToggle/` | בחירת עמודות להציג | save preferences, reset |
-| **AssociatedCollectionsModal** | `inventory/AssociatedCollectionsModal/` | הצגת אוספים | add/remove collections |
-
----
-
-### 👥 Admin Components
-
-| קומפוננטה | קובץ | תיאור | תכונות |
-|-----------|--------|--------|---------|
-| **UserTable** | `admin/` | טבלה של משתמשים | edit, delete, filter, search |
-| **UserForm** | `admin/` | טופס יצירה/עריכה משתמש | role assignment, permissions picker |
-| **AuditLogsTable** | `admin/` | רישום פעולות | search, filter by user, date range |
-| **PermissionManager** | `admin/` | ניהול הרשאות | assign to user/group, bulk operations |
-| **GroupManager** | `admin/` | ניהול קבוצות | create/edit/delete, add members |
-
----
-
-### 🛒 Procurement Components
-
-| קומפוננטה | קובץ | תיאור | תכונות |
-|-----------|--------|--------|---------|
-| **OrdersList** | `procurement/` | רשימת הזמנות | status filter, search, pagination |
-| **OrderForm** | `procurement/` | טופס הזמנה | supplier select, item picker, amount |
-| **OrderDetails** | `procurement/` | פרטי הזמנה מלאים | status timeline, files upload/download |
-| **FileUpload** | `procurement/` | העלאת קבצים | drag-drop, progress, preview |
-
----
-
-### 🎨 Common/Layout Components
-
-| קומפוננטה | תיאור | תכונות |
-|-----------|--------|---------|
-| **Header** | כותרת עליונה | user menu, notifications, theme toggle |
-| **Navigation** | תפריט ניווט | sidebar/mobile responsive, role-based visibility |
-| **Spinner** | מוצג טעינה | size options, custom text |
-| **Toast** | הודעות משוב | success/error/warning/info types |
-| **Modal** | דיאלוג | close button, backdrop, scroll handling |
-| **Table** | טבלה כללית | sorting, pagination, column control |
-| **Form** | טופס כללי | validation, error handling, submit states |
-| **ErrorBoundary** | תופס שגיאות | fallback UI, logging |
-
----
-
-## 🔐 מערכת הרשאות (Permissions)
-
-### 📋 סוגי הרשאות
+### Middleware Stack
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    📋 הרשאות במערכת                         │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  🎯 INVENTORY                                                │
-│     ├─ INVENTORY_RO    (קריאה בלבד)                        │
-│     └─ INVENTORY_RW    (קריאה וכתיבה)                      │
-│                                                              │
-│  🛒 PROCUREMENT                                              │
-│     ├─ PROCUREMENT_RO  (קריאה בלבד)                        │
-│     └─ PROCUREMENT_RW  (קריאה וכתיבה)                      │
-│                                                              │
-│  👥 ADMIN                                                    │
-│     ├─ ADMIN          (כל ההרשאות)                         │
-│     ├─ USER_MANAGE    (ניהול משתמשים)                     │
-│     ├─ AUDIT_VIEW     (ביקורת עמודים)                      │
-│     └─ PERMISSION_MANAGE (הרשאות)                          │
-│                                                              │
-│  🎨 OTHER                                                    │
-│     └─ REPORTS        (ביקורת דיווחים)                      │
-│                                                              │
-│  👤 ROLES (תפקידים)                                          │
-│     ├─ admin          (כל ההרשאות)                         │
-│     ├─ manager        (רוב ההרשאות)                        │
-│     ├─ user           (INVENTORY_RO בלבד)                  │
-│     └─ procurement    (PROCUREMENT_RW)                      │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
+Request → CORS → GZip (>1KB) → Private-Network-Header → Process-Time Logger → Rate Limiter → Route Handler
 ```
 
-### 🛡️ Token Structure
+1. **CORS**: Allows configured origins (localhost:3000, localhost:5173)
+2. **GZip Compression**: Compresses responses > 1KB
+3. **Private Network Header**: Sets Access-Control-Allow-Private-Network
+4. **Process Time**: Logs `X-Process-Time` header + detailed request logging
+5. **Global Exception Handler**: Catches unhandled errors → standardized HTTP errors
+6. **Rate Limiting**: slowapi-based (5/min on login)
 
-```json
-{
-  "sub": "username",
-  "user_id": "507f1f77bcf86cd799439011",
-  "username": "john.doe",
-  "role": "admin",
-  "permissions": ["INVENTORY_RW", "PROCUREMENT_RW", "ADMIN"],
-  "exp": 1708123456,
-  "iat": 1708040056,
-  "iss": "warehouse-app"
-}
+### Dependency Injection
+
+All services and repositories are injected via FastAPI's `Depends()` system:
+
+```python
+# Example route with dependency injection
+@router.get("/items")
+async def get_items(
+    filters: ItemFilter = Depends(),
+    current_user = Depends(require_permission(Permission.INVENTORY_RO)),
+    item_service: ItemService = Depends(get_item_service)
+):
+    return await item_service.get_items(filters)
 ```
 
----
-
-## 💾 MongoDB Collections
-
-### 📦 inventory
-```javascript
-{
-  _id: ObjectId,
-  catalog_number: String (unique, indexed),
-  name: String,
-  description: String,
-  quantity: Number,
-  reserved_stock: Number,
-  available: Number,
-  unit: String,
-  category: String,
-  location: String,
-  supplier: String,
-  cost: Number,
-  price: Number,
-  image_url: String,
-  created_at: ISODate,
-  updated_at: ISODate,
-  updated_by: String,
-  active: Boolean
-}
-```
-
-### 👤 users
-```javascript
-{
-  _id: ObjectId,
-  username: String (unique, indexed),
-  email: String (unique, indexed),
-  password_hash: String (bcrypt),
-  role: String,
-  permissions: [String],
-  is_active: Boolean,
-  created_at: ISODate,
-  updated_at: ISODate,
-  last_login: ISODate,
-  created_by: String,
-  domain_user: Boolean
-}
-```
-
-### 📋 collections
-```javascript
-{
-  _id: ObjectId,
-  name: String,
-  description: String,
-  items: [ObjectId],
-  owner: ObjectId,
-  permissions: [{
-    user_id: ObjectId,
-    permission: String  // 'view', 'edit', 'manage'
-  }],
-  created_at: ISODate,
-  updated_at: ISODate
-}
-```
-
-### 🛒 procurement_orders
-```javascript
-{
-  _id: ObjectId,
-  order_number: String (unique),
-  supplier: String,
-  items: [{
-    item_id: ObjectId,
-    quantity: Number,
-    unit_price: Number
-  }],
-  total_amount: Number,
-  status: String,  // 'pending', 'ordered', 'received', 'cancelled'
-  expected_delivery: Date,
-  actual_delivery: Date,
-  created_by: ObjectId,
-  created_at: ISODate,
-  updated_at: ISODate
-}
-```
-
-### 📝 audit_logs
-```javascript
-{
-  _id: ObjectId,
-  action: String,
-  resource_type: String,  // 'item', 'user', 'order'
-  resource_id: ObjectId,
-  changes: Object,
-  performed_by: String,
-  timestamp: ISODate,
-  ip_address: String,
-  user_agent: String
-}
-```
-
----
-
-## 🚀 Features מיוחדות
-
-### ♻️ Undo/Redo System
-- כל שינוי בפריט נשמר עם `undo_log_id`
-- אפשרות לחזור/לחזור על פעולה
-- מוגבל ל-50 פעולות אחרונות (ניתן להגדיר)
-
-### 🔄 Real-time Sync
-- React Query עם polling
-- WebSocket support (עתידי)
-- Optimistic updates
-
-### 📊 Advanced Filtering
-- סינון לפי כמה שדות
-- חיפוש full-text
-- save saved filters
-- export results
-
-### 🌙 Dark Mode
-- Theme persistence
-- System preference detection
-- Smooth transitions
-
-### 📱 Responsive Design
-- Mobile-first approach
-- Tablet optimization
-- Desktop experience
-
-### 🔒 Security Features
-- BCRYPT password hashing
-- JWT token-based auth
-- ADFS/Domain login support
-- Rate limiting (5 login attempts/minute)
-- CORS protection
-- Request logging
-
-### 📈 Rate Limiting
-- 5 login attempts per minute
-- Global API rate limit (configurable)
-- Per-user limits (future)
-
----
-
-## 🏗️ Backend Architecture
-
-### 📁 Folder Structure
-
-```
-backend/
-├── app/
-│   ├── __init__.py
-│   ├── main.py                 # FastAPI app setup
-│   ├── config.py               # Configuration
-│   ├── dependencies.py         # Dependency injection
-│   ├── core/
-│   │   ├── constants.py        # App constants
-│   │   ├── exceptions.py       # Custom exceptions
-│   │   ├── limiter.py          # Rate limiter
-│   │   ├── password.py         # Password hashing
-│   │   ├── security.py         # JWT & auth utils
-│   │   └── excel_parser.py     # Excel parsing
-│   ├── db/
-│   │   └── mongodb.py          # MongoDB connection
-│   ├── routes/
-│   │   └── api/
-│   │       ├── __init__.py
-│   │       ├── auth.py         # Authentication
-│   │       ├── items.py        # Items CRUD
-│   │       ├── admin.py        # Admin ops
-│   │       ├── excel.py        # Import/Export
-│   │       ├── procurement.py  # Orders
-│   │       ├── analytics.py    # Reports
-│   │       ├── audit.py        # Audit logs
-│   │       ├── collections.py  # Collections
-│   │       └── users.py        # User search
-│   ├── schemas/
-│   │   ├── auth.py
-│   │   ├── item.py
-│   │   ├── user.py
-│   │   └── ...
-│   └── services/
-│       ├── auth_service.py
-│       ├── item_service.py
-│       ├── user_service.py
-│       ├── excel_service.py
-│       └── ...
-├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── conftest.py
-├── migrations/
-├── scripts/
-└── Dockerfile
-```
+**Factory functions** in `app/dependencies.py` create per-request service instances, each receiving their required repositories.
 
 ---
 
 ## ⚛️ Frontend Architecture
 
-### 📁 Folder Structure
+### Application Shell
 
 ```
-frontend/src/
-├── App.jsx                    # Root component
-├── main.jsx                   # Entry point
-├── router.jsx                 # Route definitions
-├── components/
-│   ├── admin/                 # Admin panel components
-│   ├── auth/                  # Auth components
-│   ├── common/                # Reusable components
-│   ├── dashboard/             # Dashboard components
-│   ├── inventory/             # Inventory components
-│   ├── layout/                # Header, Nav, Footer
-│   ├── logs/                  # Logs viewer
-│   ├── procurement/           # Procurement components
-│   └── MyComponents/          # Collections manager
-├── pages/
-│   ├── LoginPage/
-│   ├── DashboardPage/
-│   ├── InventoryPage/
-│   ├── AdminPage/
-│   ├── ProcurementPage/
-│   └── ...
-├── context/
-│   ├── AuthContext.jsx        # Auth state
-│   ├── ThemeContext.jsx       # Theme state
-│   └── ToastContext.jsx       # Notifications
-├── hooks/
-│   ├── useAuth.js
-│   ├── useAPI.js
-│   └── ...
-├── lib/
-│   ├── api.js                 # API client
-│   └── ...
-├── utils/
-│   ├── formatters.js
-│   ├── validators.js
-│   └── ...
-├── styles/
-│   └── index.css              # Global styles
-└── config/
-    └── queryClient.js         # React Query config
+App.jsx
+├── ErrorBoundary
+├── QueryClientProvider (React Query)
+├── ToastProvider
+├── AuthProvider
+├── ThemeProvider (dark/light + variant: normal/wood/space)
+└── AppRouter (React Router v6)
 ```
 
----
+### Route Structure
 
-## 🐳 Docker & Deployment
+| Path | Component | Guard | Permission |
+|------|-----------|-------|------------|
+| `/login` | LoginPage | Public | — |
+| `/dashboard` | DashboardPage | PrivateRoute | Authenticated |
+| `/inventory` | InventoryTabbedPage | PermissionRoute | `inventory:ro` |
+| `/admin` | AccessControlPage | AdminRoute | Admin/SuperAdmin |
+| `/admin/users` | UserManagement | AdminRoute | Admin/SuperAdmin |
+| `/admin/audit` | AuditLogs | AdminRoute | Admin/SuperAdmin |
+| `/procurement` | ProcurementPage | ProcurementRoute | Any procurement permission |
+| `/my-components` | MyComponentsDashboard | PrivateRoute | Authenticated |
+| `/my-components/:id` | CollectionDetails | PrivateRoute | Authenticated |
+| `/guide` | UserGuidePage | PrivateRoute | Authenticated |
 
-### Backend Dockerfile
-```dockerfile
-FROM python:3.11-slim
+### Route Guards
 
-WORKDIR /app
+| Guard | Logic |
+|-------|-------|
+| `PrivateRoute` | Checks `isAuthenticated` |
+| `AdminRoute` | `isAuthenticated` + `isAdmin` |
+| `PermissionRoute` | `isAuthenticated` + specific permission (RW→RO fallback) |
+| `ProcurementRoute` | `isAuthenticated` + `hasProcurementAccess()` |
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+### Context Providers
 
-COPY . .
+| Context | Purpose | Key Values |
+|---------|---------|------------|
+| **AuthContext** | Authentication state + permission checks | `user`, `isAuthenticated`, `isAdmin`, `isSuperAdmin`, `permissions`, `hasPermission()`, `hasVendorAccess()`, `hasPricePermission()`, `hasProcurementAccess()` |
+| **ThemeContext** | Dark/Light mode + visual variants | `mode` (dark/light), `variant` (normal/wood/space), persisted in localStorage |
+| **ToastContext** | Notification system | `addToast()`, `success()`, `error()`, `info()`, `warning()` — auto-dismiss after 5s |
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-### Frontend Dockerfile
-```dockerfile
-FROM node:18-alpine as builder
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-FROM node:18-alpine
-
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-RUN npm install -g serve
-
-CMD ["serve", "-s", "dist", "-l", "3000"]
-```
-
----
-
-## 📊 Data Flow Examples
-
-### 🔐 Login Flow
-```
-User Input → LoginForm → POST /auth/login
-    ↓
-Backend validates credentials
-    ↓
-Generate JWT token
-    ↓
-Client stores token
-    ↓
-Redirect to /dashboard
-    ↓
-GET /auth/me with token
-    ↓
-Update AuthContext with user data
-    ↓
-Private routes accessible
-```
-
-### 📦 Add Item Flow
-```
-User clicks "Add Item"
-    ↓
-ItemForm Modal opens
-    ↓
-User fills form → POST /api/items with ItemCreate
-    ↓
-Backend validates and inserts
-    ↓
-Create audit log entry
-    ↓
-Response with new item_id
-    ↓
-React Query invalidates cache
-    ↓
-InventoryTable refetches data
-    ↓
-Toast notification shown
-```
-
-### 📥 Import Excel Flow
-```
-User selects file
-    ↓
-ExcelManager parses file
-    ↓
-Show preview with mapping
-    ↓
-User confirms import
-    ↓
-POST /api/excel/import-excel with file
-    ↓
-Backend parses and validates
-    ↓
-Bulk insert to MongoDB
-    ↓
-Return summary (imported, skipped, errors)
-    ↓
-Toast shows results
-    ↓
-InventoryTable refreshes
-```
-
----
-
-## 🔒 Security Layers
+### State Management
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                  🔒 Security Architecture                │
-├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  1️⃣  TRANSPORT                                           │
-│      ├─ HTTPS/TLS (in production)                        │
-│      └─ Secure cookies (HttpOnly)                        │
-│                                                          │
-│  2️⃣  AUTHENTICATION                                      │
-│      ├─ bcrypt password hashing (rounds: 10)            │
-│      ├─ JWT tokens (240 min expiration)                 │
-│      └─ ADFS domain auth support                        │
-│                                                          │
-│  3️⃣  AUTHORIZATION                                       │
-│      ├─ Role-based access control (RBAC)                │
-│      ├─ Permission-based access (PBAC)                  │
-│      └─ Collection-level permissions                    │
-│                                                          │
-│  4️⃣  API PROTECTION                                      │
-│      ├─ CORS (whitelist origins)                        │
-│      ├─ Rate limiting (5/min login)                     │
-│      ├─ Input validation (Pydantic)                     │
-│      └─ SQL injection prevention (MongoDB)              │
-│                                                          │
-│  5️⃣  LOGGING & AUDIT                                     │
-│      ├─ All changes logged to audit_logs                │
-│      ├─ User actions tracked (who, what, when)          │
-│      ├─ IP address and User-Agent recorded              │
-│      └─ Admin audit log review                          │
-│                                                          │
-│  6️⃣  DATA PROTECTION                                     │
-│      ├─ Sensitive fields in env vars                    │
-│      ├─ No hardcoded credentials                        │
-│      ├─ MongoDB connection pooling                      │
-│      └─ Encryption support (future)                     │
-│                                                          │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│  localStorage                                        │
+│  ├── auth token (JWT)                               │
+│  ├── theme_mode / theme_variant                     │
+│  └── column visibility preferences                  │
+├─────────────────────────────────────────────────────┤
+│  Context API (Global UI State)                      │
+│  ├── AuthContext (user, permissions, methods)        │
+│  ├── ThemeContext (mode, variant)                    │
+│  └── ToastContext (notifications)                    │
+├─────────────────────────────────────────────────────┤
+│  React Query (Server State)                         │
+│  ├── GET /items → queryKey: ['items', filters...]   │
+│  ├── GET /procurement/orders → queryKey: ['orders'] │
+│  ├── GET /analytics/dashboard → 5-min cache         │
+│  └── Automatic cache invalidation on mutations      │
+├─────────────────────────────────────────────────────┤
+│  Component State (useState)                         │
+│  ├── Form inputs                                    │
+│  ├── Modal open/close states                        │
+│  ├── Selected table rows                            │
+│  ├── Current page / filters                         │
+│  └── Undo/redo stacks                               │
+└─────────────────────────────────────────────────────┘
+```
+
+### API Services Layer
+
+All API calls are routed through service modules in `src/api/services/`. Components never make direct HTTP calls.
+
+| Service | Methods |
+|---------|---------|
+| `authService` | `login()`, `domainLogin()`, `logout()`, `getMe()`, `checkAuth()` |
+| `itemService` | `getItems()`, `getItemById()`, `createItem()`, `updateItem()`, `bulkUpdate()`, `deleteItem()`, `bulkDelete()`, `deleteAll()`, `getStaleItems()`, `getItemCollections()` |
+| `procurementService` | `getOrders()`, `createOrder()`, `updateOrder()`, `deleteOrder()`, `uploadFile()`, `downloadFile()`, `deleteFile()` |
+| `collectionsService` | `getCollections()`, `getCollection()`, `createCollection()`, `updateCollection()`, `deleteCollection()`, `getCollectionItems()`, `addItem()`, `bulkAddItem()`, `removeItem()`, `bulkRemoveItems()`, `updateItem()`, `updatePermissions()`, `removePermission()`, `exportCollection()` |
+| `catalogService` | Catalog search/filter queries |
+| `excelService` | `importExcel()`, `importProjects()`, `exportExcel()` |
+| `adminService` | `getUsers()`, `createUser()`, `updateUser()`, `deleteUser()`, `getStats()`, `changePassword()` |
+| `groupService` | Group CRUD |
+| `analyticsService` | `getDashboardStats()`, `getItemProjectStats()`, `getActivityStats()` |
+| `auditService` | Audit log queries |
+| `bomService` | BOM scan, parts management |
+| `bomAnalyticsService` | Price trends, vendor analytics |
+
+**Axios Client Configuration:**
+- Base URL from `VITE_API_URL` env variable
+- `withCredentials: true` (sends cookies)
+- 401 response interceptor → redirect to `/login`
+
+### Key Custom Hooks
+
+| Hook | Purpose |
+|------|---------|
+| `useAuthQuery` | Auth state with React Query, domain login handshake |
+| `useItems` | Inventory CRUD with optimistic updates and undo/redo |
+| `useCatalog` | Catalog queries with 30s cache |
+| `useMyComponents` | Collection list with search/filter |
+| `useAnalytics` | Dashboard stats with 5-min cache and date range |
+| `useInventoryModals` | Centralized modal state for inventory page |
+| `useProcurementModals` | Centralized modal state for procurement page |
+| `useUndoRedo` | Separate edit/delete stacks, max 50 history |
+| `usePagination` | Pagination state management |
+| `useAddToCollection` | Item-to-collection assignment workflow |
+| `useColumnVisibility` | Column show/hide with localStorage persistence |
+| `useInventorySelection` | Bulk row selection + select-all |
+| `useDebounce` | Input debouncing for search/filters |
+| `useExcelManager` | Excel import/export operations |
+| `useCollectionDetails` | Collection items + permissions |
+| `useCollectionPermissions` | Permission CRUD for collections |
+| `useKeyboardNavigation` | Keyboard shortcuts (Ctrl+Z, Ctrl+Y, etc.) |
+| `useContextMenu` | Right-click context menu |
+| `useColumnResize` | Draggable column resizing |
+| `useCellEditing` | Inline cell editing |
+
+### Component Structure
+
+```
+src/components/
+├── common/              # Reusable UI primitives
+│   ├── Button/
+│   ├── Input/
+│   ├── Modal/
+│   ├── DeleteModal/
+│   ├── NavigationWarningModal/
+│   ├── Pagination/
+│   ├── PermissionGate/
+│   ├── Select/
+│   ├── SelectionIndicator/
+│   ├── Spinner/
+│   ├── Tabs/
+│   ├── Toast/ToastContainer/
+│   ├── TableCell/
+│   ├── ContextMenu/
+│   ├── ErrorBoundary/
+│   ├── FloatingToolbar/
+│   ├── ScrollableTableLayout/
+│   ├── UploadAnimation/
+│   └── Skeleton*/        # SkeletonTable, SkeletonCards, SkeletonOrderCards
+├── auth/                # LoginForm
+├── admin/               # UserForm, GroupForm, PermissionSelector, AiToolsPanel
+├── catalog/             # CatalogTable
+├── dashboard/           # StatCard, ChartCard, charts/*
+│   └── charts/          # ProjectDistribution, TargetSite, ItemSearch,
+│                        #   ActivityStats, Manufacturer, Location
+├── inventory/           # InventoryHeader, InventoryContent, InventoryModals,
+│                        #   ItemForm, ItemTable, ExcelManager, ColumnToggle,
+│                        #   BulkEditModal, AssociatedCollectionsModal, InventoryFilters
+├── logs/                # LogFilters, LogTimeline
+├── MyComponents/        # CollectionCard, CollectionItemsTable,
+│                        #   CreateCollectionDialog, AssignItemDialog, Settings/
+└── procurement/         # ProcurementTable, ProcurementModal, ProcurementItems,
+                         #   BomPrescanModal, BomPreviewModal, BomScannerTab,
+                         #   OrderTypeModal, FileUploadZone, ProcurementFilesModal,
+                         #   OrderHistoryModal, AnalyticsTab, ProcurementAnalyticsTab
 ```
 
 ---
 
-## 📈 Performance Optimizations
+## 💾 Database Design
 
-### Backend
-- ✅ **Async/await** with FastAPI
-- ✅ **MongoDB indexing** on frequently queried fields
-- ✅ **Connection pooling** with MongoDB
-- ✅ **GZIP compression** for responses > 1KB
-- ✅ **Rate limiting** to prevent abuse
-- ✅ **Response caching** (future)
+### MongoDB Collections
 
-### Frontend
-- ✅ **Code splitting** with lazy loading
-- ✅ **React Query** for server state caching
-- ✅ **Context API** for local state
-- ✅ **Memoization** for expensive components
-- ✅ **Image optimization** (future)
-- ✅ **Virtual scrolling** for large tables (future)
+| Collection | Purpose | Key Indexes |
+|-----------|---------|-------------|
+| `inventory` | Inventory items | `catalog_number`, `serial`, `location`, `created_at`, `updated_at` |
+| `users` | User accounts | `username` (unique) |
+| `groups` | User groups | `name` (unique) |
+| `collections` | Personal collections | `owner_id` |
+| `collection_items` | Item-to-collection assignments | `collection_id`, `item_id` |
+| `procurement_orders` | Procurement orders with BOM data | `status`, `order_date`, `bom_vendor` |
+| `warehouse-audit-logs` | Unified audit trail | `action`, `actor`, `timestamp`, `target_resource` |
+| `bom_part_catalog` | Saved BOM parts for AI training | `part_number` |
+| `bom_analytics` | Historical pricing data | `part_number`, `order_id` |
 
----
+### Key Data Relationships
 
-## 🧪 Testing
-
-### Backend Testing
-- **Unit tests**: Service layer logic
-- **Integration tests**: API endpoints
-- **Test database**: Separate MongoDB for tests
-- **Fixtures**: conftest.py with common setups
-
-### Frontend Testing
-- **Component tests**: React components
-- **E2E tests**: Playwright
-- **API mocking**: MSW (Mock Service Worker)
-- **Test files**: tests/e2e, tests/fixtures
-
----
-
-## 📚 API Documentation
-
-SwaggerUI is available at:
 ```
-http://localhost:8000/docs
+inventory (1) ←→ (N) collection_items (N) ←→ (1) collections
+    │
+    └── catalog_number → auto-updates → bom_part_catalog
+    
+users (1) ←→ (N) groups (via membership)
+    │
+    └── permissions → collections (Owner/RW/RO)
+
+procurement_orders (1) ←→ (N) files (embedded array)
+    │
+    ├── bom_data → parsed BOM groups with AI classification
+    └── prices → tracked in bom_analytics
 ```
 
-ReDoc at:
-```
-http://localhost:8000/redoc
-```
+### Item Schema (Inventory)
 
----
-
-## 🚀 Getting Started
-
-### Backend Setup
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python run.py
-```
-
-### Frontend Setup
-```bash
-cd frontend
-npm install
-npm run dev  # Development
-npm run build  # Production
-```
-
-### Environment Variables
-Create `.env` file in backend root:
-```
-MONGODB_URL=mongodb://localhost:27017
-DB_NAME=warehouse
-SECRET_KEY=your_secret_key_here
-ENVIRONMENT=development
-CORS_ORIGINS=["http://localhost:3000"]
+```python
+{
+  "_id": ObjectId,
+  "catalog_number": str,       # SKU/Part number
+  "description": str,          # Item description
+  "manufacturer": str,         # Vendor/brand
+  "location": str,             # Warehouse location
+  "serial": str | None,        # Serial number (optional)
+  "current_stock": str,        # Current quantity
+  "warranty_expiry": str,      # Warranty date
+  "reserved_stock": str,       # Human-readable allocation summary
+  "project_allocations": dict, # { "Project A": 5, "Project B": 3 }
+  "purpose": str,              # Item purpose
+  "target_site": str,          # Destination site
+  "notes": str,                # Free-form notes
+  "created_at": datetime,
+  "updated_at": datetime,
+  "created_by": str
+}
 ```
 
 ---
 
-## 📞 Support & Documentation
+## 🔐 Authentication & Authorization
 
-- **API Documentation**: `/docs` (Swagger)
-- **Guides**: See `UserGuidePage` in frontend
-- **Logs**: Audit logs in admin panel
-- **Issues**: Check backend logs in `/uploads` or stdout
+### Authentication Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant MongoDB
+
+    alt Local Login
+        User->>Frontend: Enter username + password
+        Frontend->>Backend: POST /api/auth/login
+        Backend->>MongoDB: Find user by username
+        MongoDB-->>Backend: User document
+        Backend->>Backend: Verify bcrypt hash
+        Backend->>Backend: Create JWT (240min expiry)
+        Backend-->>Frontend: Set HTTP-only cookie + return token
+    else Domain Login (ADFS)
+        User->>Frontend: Click "Domain Login"
+        Frontend->>Backend: POST /api/auth/domain-login {hashed_token}
+        Backend->>Backend: Validate ADFS token
+        Backend->>MongoDB: Find or create AD user
+        Backend->>Backend: Create JWT
+        Backend-->>Frontend: Set HTTP-only cookie + return token
+    end
+
+    Frontend->>Frontend: Update AuthContext
+    Frontend->>Backend: GET /api/auth/me (cookie)
+    Backend->>Backend: Verify JWT from cookie
+    Backend-->>Frontend: User info + permissions + groups
+    Frontend->>Frontend: Route based on permissions
+```
+
+### Permission Hierarchy
+
+```
+SuperAdmin
+  └── Can manage Admins + all users
+  └── ALL permissions implicitly granted
+  
+Admin
+  └── Can manage Users (not other Admins/SuperAdmins)
+  └── ALL permissions implicitly granted except SuperAdmin actions
+  
+User
+  └── Only explicitly assigned permissions
+  └── Inherits permissions from group membership
+```
+
+### Vendor-Specific Access
+
+Procurement permissions are granular per vendor:
+```
+procurement:dell:ro    → Can view Dell orders
+procurement:dell:rw    → Can create/edit Dell orders
+procurement:hpe:ro     → Can view HPE orders
+procurement:netapp:rw  → Can create/edit NetApp orders
+...etc
+```
+
+Orders are filtered server-side based on the user's allowed vendor list.
 
 ---
 
-**Last Updated**: 17-02-2026
-**Version**: 2.0.0
-**Language**: עברית + English
+## 🤖 AI/ML Subsystem
+
+### BOM Component Classifier
+
+```
+┌─────────────────────────────────────────────┐
+│  Input: Excel product description           │
+│  "X6598-R6 100GbE QSFP28 LR4 Transceiver" │
+├─────────────────────────────────────────────┤
+│  Pipeline:                                  │
+│  1. TF-IDF Vectorizer (text → features)     │
+│  2. Logistic Regression Classifier          │
+├─────────────────────────────────────────────┤
+│  Output: Category + Confidence Score        │
+│  → "sfp-qsfp" (confidence: 0.92)           │
+│  → description_he: "ג'יביק QSFP28 100G LR4"│
+└─────────────────────────────────────────────┘
+```
+
+### 16 Component Categories
+
+| Category | Examples |
+|----------|---------|
+| `server-storage` | Storage systems (AFF-A90, FAS) |
+| `server` | Compute servers |
+| `disk-shelf` | Disk shelves, JBODs |
+| `switch` | Network switches |
+| `io-card` | I/O cards, HBAs, NICs |
+| `disk` | HDDs, SSDs, NVMe drives |
+| `cable` | Network cables, power cables |
+| `sfp-qsfp` | Transceivers (OSFP, QSFP-DD, QSFP28, SFP+, etc.) |
+| `cpu` | Processors |
+| `memory` | RAM modules |
+| `fan` | Cooling fans |
+| `psu` | Power supply units |
+| `license-capacity` | Capacity-based licenses |
+| `license-software` | Software licenses |
+| `support` | Support contracts |
+| `other` | Uncategorized |
+
+### Feature Extraction
+
+Beyond classification, the AI extracts structured attributes:
+- **Speed**: 400G, 100G, 25G, 10G
+- **Cable length**: meters
+- **Fiber type**: SMF, MMF
+- **Connector**: MPO, LC
+- **Disk capacity**: TB/GB
+- **CPU frequency**: GHz
+- **Memory size**: GB
+- **PSU wattage**: Watts
+
+### Training Pipeline
+
+1. Merge verified parts from `bom_part_catalog` (MongoDB) with static CSV training set
+2. Train/test split (80/20)
+3. Stratified k-fold cross-validation
+4. Save model to `app/ai/component_classifier_v2.pkl`
+5. Minimum 20 samples required
+6. Triggered manually by SuperAdmin via POST `/api/ai/retrain`
+
+---
+
+## 📁 File Storage
+
+### Dual Storage Strategy
+
+```
+┌──────────────────────────────────────┐
+│  S3Service                           │
+│                                      │
+│  if USE_S3 is configured:            │
+│    → Upload to S3 bucket             │
+│    → Store s3_key in order metadata  │
+│  else:                               │
+│    → Save to uploads/procurement/    │
+│    → Store local_path in metadata    │
+│                                      │
+│  Max file size: 10MB                 │
+│  Allowed: PDF, JPG, PNG, GIF,       │
+│    XLSX, XLS, DOC, DOCX, TXT        │
+└──────────────────────────────────────┘
+```
+
+Files are associated with procurement orders via embedded `files[]` array in the order document.
+
+---
+
+## ☁️ Infrastructure & Deployment
+
+### Docker
+
+| Container | Base Image | Port |
+|-----------|-----------|------|
+| Backend | Python 3.11 | 8000 |
+| Frontend | Node.js (build) → Nginx | 80/443 |
+
+### Kubernetes (Helm)
+
+```
+helm/
+├── Chart.yaml
+├── values.yaml
+└── templates/
+    ├── backend-deployment.yaml
+    ├── backend-service.yaml
+    ├── frontend-deployment.yaml
+    └── frontend-service.yaml
+```
+
+### Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MONGODB_URL` | MongoDB connection string | — |
+| `DB_NAME` | Database name | `warehouse` |
+| `SECRET_KEY` | JWT signing key | — |
+| `ALGORITHM` | JWT algorithm | `HS256` |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | Token TTL | `240` |
+| `CORS_ORIGINS` | Allowed origins | `localhost:3000,5173` |
+| `ENVIRONMENT` | Runtime environment | `production` |
+| `USE_S3` | Enable S3 storage | `false` |
+| `S3_BUCKET_NAME` | S3 bucket | — |
+| `S3_REGION` | S3 region | — |
+| `S3_ACCESS_KEY` / `S3_SECRET_KEY` | S3 credentials | — |
+| `S3_ENDPOINT_URL` | Custom S3 endpoint (MinIO) | — |
+| `ADFS_LOGIN_URL` | ADFS login page | — |
+| `ADFS_TOKEN_INFO_URL` | ADFS token info | — |
+| `ADFS_VALIDATE_URL` | ADFS validation | — |
+| `VITE_API_URL` | Backend API URL (frontend) | — |

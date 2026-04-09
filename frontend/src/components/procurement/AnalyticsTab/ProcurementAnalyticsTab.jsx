@@ -7,6 +7,7 @@ import { FiServer, FiCpu, FiDatabase, FiPlus, FiX, FiTrendingUp, FiCalendar, FiS
 import bomAnalyticsService from '../../../api/services/bomAnalyticsService';
 import { Spinner } from '../../common';
 import { useToast } from '../../../hooks/useToast';
+import DeleteModal from '../../common/DeleteModal/DeleteModal';
 import { usePartComparison } from './usePartComparison';
 import { useAggregation } from './useAggregation';
 import { useModelChain } from './useModelChain';
@@ -332,6 +333,7 @@ const ComparisonPanel = ({ title, Icon, itemType, accentColor, onSeed, seeding, 
 const ProcurementAnalyticsTab = () => {
   const { showToast } = useToast();
   const [seeding, setSeeding]     = useState(false);
+  const [seedConfirmOpen, setSeedConfirmOpen] = useState(false);
   const [resolution, setResolution] = useState('monthly');
   const [dateRange, setDateRange] = useState(() => {
     const end = new Date();
@@ -344,7 +346,7 @@ const ProcurementAnalyticsTab = () => {
   });
 
   const handleSeedData = async () => {
-    if (!window.confirm('הפעולה תסרוק את כל היסטוריית ההזמנות. להמשיך?')) return;
+    setSeedConfirmOpen(false);
     try {
       setSeeding(true);
       const { orders_processed: ords, price_points_extracted: pts } =
@@ -428,7 +430,7 @@ const ProcurementAnalyticsTab = () => {
           Icon={FiServer}
           itemType="main"
           accentColor="#3b82f6"
-          onSeed={handleSeedData}
+          onSeed={() => setSeedConfirmOpen(true)}
           seeding={seeding}
           dateRange={dateRange}
           resolution={resolution}
@@ -438,7 +440,7 @@ const ProcurementAnalyticsTab = () => {
           Icon={FiCpu}
           itemType="component"
           accentColor="#f59e0b"
-          onSeed={handleSeedData}
+          onSeed={() => setSeedConfirmOpen(true)}
           seeding={seeding}
           dateRange={dateRange}
           resolution={resolution}
@@ -446,6 +448,16 @@ const ProcurementAnalyticsTab = () => {
       </div>
 
       <VendorSpendingChart dateRange={dateRange} resolution={resolution} />
+
+      <DeleteModal
+        isOpen={seedConfirmOpen}
+        onClose={() => setSeedConfirmOpen(false)}
+        onConfirm={handleSeedData}
+        title="בניית היסטוריה"
+        message="הפעולה תסרוק את כל היסטוריית ההזמנות. להמשיך?"
+        type="confirmation"
+        confirmText="המשך"
+      />
     </div>
   );
 };

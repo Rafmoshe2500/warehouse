@@ -22,12 +22,17 @@ const InventoryHeader = ({
   // Column Toggle Props
   allColumns,
   visibleColumns,
-  onColumnToggle
+  onColumnToggle,
+  // Feature visibility
+  hideImport = false,
+  hideAdd = false,
+  // Extra content slot (e.g. days filter)
+  extraContent
 }) => {
   return (
     <div className="inventory-header">
       <div className="action-buttons">
-        {canEdit && (
+        {canEdit && !hideImport && (
           <>
             <Button variant="secondary" onClick={onUploadClick} disabled={uploadingExcel} className="btn-icon" data-testid="import-button">
               <FiUpload /> {uploadingExcel ? <Spinner inline size="small" /> : 'יבוא מלאי'}
@@ -60,7 +65,7 @@ const InventoryHeader = ({
           />
         )}
 
-        {canEdit && (
+        {canEdit && !hideAdd && (
           <>
             <Button onClick={onAddClick} className="btn-icon" data-testid="add-item-button">
               <FiPlus /> הוסף
@@ -89,7 +94,7 @@ const InventoryHeader = ({
           </>
         )}
         <div className="divider-vertical"></div>
-      
+        {extraContent}
       </div>
 
       <div className="header-search">

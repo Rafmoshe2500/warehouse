@@ -1,10 +1,16 @@
 from typing import Dict, Any, Optional
+from datetime import datetime, timezone, timedelta
 from app.schemas.item import ItemFilter
 
 class MongoQueryBuilder:
     @staticmethod
     def build_search_query(filter_params: ItemFilter) -> Dict[str, Any]:
         query = {}
+
+        # Stale items filter: items not updated for X days
+        if filter_params.stale_days is not None:
+            cutoff_date = datetime.now(timezone.utc) - timedelta(days=filter_params.stale_days)
+            query["updated_at"] = {"$lt": cutoff_date}
 
         # Global Search across multiple fields
         if filter_params.search:

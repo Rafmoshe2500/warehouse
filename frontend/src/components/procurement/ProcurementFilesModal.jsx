@@ -3,6 +3,7 @@ import FileUploadZone from './FileUploadZone';
 import procurementService from '../../api/services/procurementService';
 import './ProcurementFilesModal.css';
 import { useToast } from '../../context/ToastContext';
+import DeleteModal from '../common/DeleteModal/DeleteModal';
 
 const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit = false }) => {
   const { showToast } = useToast();
@@ -11,6 +12,7 @@ const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit =
 
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, fileId: null });
 
   const handleUpload = async (file) => {
     setUploading(true);
@@ -44,9 +46,13 @@ const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit =
     }
   };
 
-  const handleDelete = async (fileId) => {
-    if (!window.confirm('האם אתה בטוח שברצונך למחוק קובץ זה?')) return;
-    
+  const handleDeleteClick = (fileId) => {
+    setDeleteConfirm({ isOpen: true, fileId });
+  };
+
+  const handleDeleteConfirm = async () => {
+    const fileId = deleteConfirm.fileId;
+    setDeleteConfirm({ isOpen: false, fileId: null });
     setDeletingId(fileId);
     try {
       await procurementService.deleteFile(order.id, fileId);
@@ -101,7 +107,7 @@ const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit =
                   {canEdit && (
                     <button 
                       className="action-btn delete-btn"
-                      onClick={() => handleDelete(file.file_id)}
+                      onClick={() => handleDeleteClick(file.file_id)}
                       disabled={deletingId === file.file_id}
                       title="מחק"
                     >
@@ -122,6 +128,16 @@ const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit =
             <FileUploadZone onUpload={handleUpload} uploading={uploading} />
           </div>
         )}
+
+        <DeleteModal
+          isOpen={deleteConfirm.isOpen}
+          onClose={() => setDeleteConfirm({ isOpen: false, fileId: null })}
+          onConfirm={handleDeleteConfirm}
+          title="מחיקת קובץ"
+          message="האם אתה בטוח שברצונך למחוק קובץ זה?"
+          type="confirmation"
+          confirmText="מחק"
+        />
       </div>
     </div>
   );

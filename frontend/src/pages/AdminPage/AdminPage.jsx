@@ -6,7 +6,7 @@ import ToastContainer from '../../components/common/Toast/ToastContainer';
 import { useToast } from '../../hooks/useToast';
 import UserForm from '../../components/admin/UserForm';
 import GroupForm from '../../components/admin/GroupForm';
-import DeleteConfirmModal from '../../components/admin/DeleteConfirmModal';
+import DeleteModal from '../../components/common/DeleteModal/DeleteModal';
 import './AdminPage.css';
 
 const AdminPage = () => {
@@ -358,12 +358,14 @@ const AdminPage = () => {
             </div>
 
             {/* Delete Confirmation Modal */}
-            <DeleteConfirmModal
+            <DeleteModal
                 isOpen={deleteModal.isOpen}
                 onClose={handleDeleteModalClose}
-                onConfirm={handleDeleteModalConfirm}
-                entityName={deleteModal.entityName}
-                entityType={deleteModal.entityType}
+                onConfirm={(reason) => { handleDeleteModalConfirm(reason); handleDeleteModalClose(); }}
+                type="reason"
+                title={`מחיקת ${deleteModal.entityType}`}
+                message={`האם אתה בטוח שברצונך למחוק את ה${deleteModal.entityType}${deleteModal.entityName ? `: "${deleteModal.entityName}"` : ''}?`}
+                warningText="פעולה זו בלתי הפיכה!"
             />
 
             <ToastContainer toasts={toasts} removeToast={removeToast} />

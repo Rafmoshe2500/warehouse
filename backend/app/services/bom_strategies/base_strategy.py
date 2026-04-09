@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Optional, Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 class BaseBomStrategy(ABC):
     """Base strategy for parsing vendor-specific BOM files."""
@@ -38,5 +41,5 @@ class BaseBomStrategy(ABC):
                 if rgb in yellow_shades or "FF00" in rgb:
                     return True
         except Exception:
-            pass
+            logger.debug("Could not inspect cell fill", exc_info=True)
         return False

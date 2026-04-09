@@ -1,6 +1,6 @@
 import React from 'react';
 import ItemForm from '../ItemForm/ItemForm';
-import DeleteConfirmation from '../DeleteConfirmation/DeleteConfirmation';
+import DeleteModal from '../../common/DeleteModal/DeleteModal';
 import BulkEditModal from '../BulkEditModal/BulkEditModal';
 import AssociatedCollectionsModal from '../AssociatedCollectionsModal/AssociatedCollectionsModal';
 import Modal from '../../common/Modal/Modal';
@@ -18,8 +18,6 @@ const InventoryModals = ({
   onCloseDelete,
   onConfirmDelete,
   deletingItemName,
-  deletingItemCount,
-  isDeletingMultiple,
 
   // Bulk Edit Modal
   isBulkEditOpen,
@@ -54,13 +52,15 @@ const InventoryModals = ({
       </Modal>
 
       {/* Delete Confirmation Modal */}
-      <DeleteConfirmation
+      <DeleteModal
         isOpen={isDeleteOpen}
         onClose={onCloseDelete}
         onConfirm={onConfirmDelete}
-        itemName={deletingItemName}
-        itemCount={deletingItemCount}
-        type={isDeletingMultiple ? 'multiple' : 'single'}
+        type="reason"
+        title="מחיקת פריט"
+        message={`האם אתה בטוח שברצונך למחוק את הפריט${deletingItemName ? `: ${deletingItemName}` : ''}?`}
+        warningText="פעולה זו בלתי הפיכה!"
+        placeholder="למשל: פריט פגום, סיום פרויקט, טעות בהזנה..."
       />
 
       {/* Bulk Edit Modal */}

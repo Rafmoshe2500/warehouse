@@ -333,8 +333,6 @@ const InventoryPage = ({ isEmbedded = false }) => {
         onCloseDelete={modals.closeDelete}
         onConfirmDelete={handleConfirmDelete}
         deletingItemName={modals.deletingItemName}
-        deletingItemCount={modals.isDeletingMultiple ? selectedItems.length : 1}
-        isDeletingMultiple={modals.isDeletingMultiple}
         // Bulk Edit Modal
         isBulkEditOpen={modals.isBulkEditOpen}
         onCloseBulkEdit={modals.closeBulkEdit}

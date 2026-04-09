@@ -108,3 +108,56 @@ class TestItemsRoutes:
         data = response.json()
         assert data["total"] == 1
         assert data["items"][0]["catalog_number"] == "FILTER-ROUTE-MATCH"
+
+    async def test_get_items_with_stale_days_filter(self, async_client, test_db):
+        """GET /items?stale_days=1 - Filter items by staleness via main endpoint."""
+        from datetime import datetime, timezone, timedelta
+
+        collection = test_db["test_inventory"]
+
+        # Insert an old item directly to control updated_at
+        old_date = datetime.now(timezone.utc) - timedelta(days=60)
+        await collection.insert_one({
+            "catalog_number": "STALE-FILTER-001",
+            "description": "Old item",
+            "updated_at": old_date,
+            "created_at": old_date
+        })
+
+        # Create a fresh item via API (will have current updated_at)
+        await async_client.post("/api/items", json={"catalog_number": "FRESH-FILTER-001"})
+
+        response = await async_client.get("/api/items?stale_days=30")
+
+        assert response.status_code == 200
+        data = response.json()
+        catalog_numbers = [item["catalog_number"] for item in data["items"]]
+        assert "STALE-FILTER-001" in catalog_numbers
+        assert "FRESH-FILTER-001" not in catalog_numbers
+
+    async def test_get_items_stale_days_with_search(self, async_client, test_db):
+        """GET /items?stale_days=1&search=... - Stale + search filter combine."""
+        from datetime import datetime, timezone, timedelta
+
+        collection = test_db["test_inventory"]
+
+        old_date = datetime.now(timezone.utc) - timedelta(days=60)
+        await collection.insert_one({
+            "catalog_number": "STALE-SEARCH-MATCH",
+            "description": "Findable",
+            "updated_at": old_date,
+            "created_at": old_date
+        })
+        await collection.insert_one({
+            "catalog_number": "STALE-SEARCH-OTHER",
+            "description": "Something else",
+            "updated_at": old_date,
+            "created_at": old_date
+        })
+
+        response = await async_client.get("/api/items?stale_days=30&search=Findable")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["total"] == 1
+        assert data["items"][0]["catalog_number"] == "STALE-SEARCH-MATCH"

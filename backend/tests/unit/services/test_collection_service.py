@@ -454,3 +454,305 @@ async def test_export_collection_empty_raises(service, mock_repo, mock_items_rep
     from app.core.exceptions import ExcelFileException
     with pytest.raises(ExcelFileException):
         await service.export_collection("col1", "user1")
+
+
+# ── Missing coverage tests ─────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_delete_collection_non_owner_denied(service, mock_repo):
+    """Non-owner non-admin cannot delete."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "owner1"}
+
+    with pytest.raises(HTTPException) as exc:
+        await service.delete_collection("col1", "other_user", user_role="user")
+    assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_delete_collection_returns_false(service, mock_repo, mock_auditor):
+    """When repository delete returns False, auditor is NOT called."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1"}
+    mock_repo.delete_collection.return_value = False
+
+    result = await service.delete_collection("col1", "user1")
+    assert result is False
+    mock_auditor.log_delete_collection.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_add_item_write_denied(service, mock_repo):
+    """RO user cannot add items."""
+    mock_repo.get_collection.return_value = {
+        "id": "col1", "owner_id": "owner",
+        "permissions": [{"type": PermissionType.USER, "id": "reader", "level": CollectionRole.RO}],
+    }
+    item_data = CollectionItemCreate(item_id="item1")
+    with pytest.raises(HTTPException) as exc:
+        await service.add_item("col1", item_data, "reader")
+    assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_add_item_snapshot_fallback_to_catalog_number(service, mock_repo, mock_items_repo, mock_auditor):
+    """When get_by_id returns None, falls back to find_by_catalog_number."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "name": "Col", "permissions": []}
+    mock_repo.get_item_in_collection.return_value = None
+    mock_repo.add_item.return_value = {"id": "ci1", "item_id": "item1"}
+
+    # get_by_id returns None, find_by_catalog_number returns the item
+    mock_items_repo.get_by_id.return_value = None
+    mock_items_repo.find_by_catalog_number.return_value = {"catalog_number": "FOUND-CAT", "description": "Found", "serial": "SN1"}
+
+    item_data = CollectionItemCreate(item_id="item1")
+    result = await service.add_item("col1", item_data, "user1")
+    assert result["item_id"] == "item1"
+    mock_items_repo.find_by_catalog_number.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_add_item_snapshot_exception(service, mock_repo, mock_items_repo, mock_auditor):
+    """Exception during snapshot fetch is caught and logged."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "name": "Col", "permissions": []}
+    mock_repo.get_item_in_collection.return_value = None
+    mock_repo.add_item.return_value = {"id": "ci1", "item_id": "item1"}
+    mock_items_repo.get_by_id.side_effect = Exception("DB error")
+
+    item_data = CollectionItemCreate(item_id="item1")
+    # Should NOT raise; the exception is caught
+    result = await service.add_item("col1", item_data, "user1")
+    assert result["item_id"] == "item1"
+
+
+@pytest.mark.asyncio
+async def test_add_item_audit_exception(service, mock_repo, mock_items_repo, mock_auditor):
+    """Exception during audit logging is caught (doesn't fail the add)."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "name": "Col", "permissions": []}
+    mock_repo.get_item_in_collection.return_value = None
+    mock_repo.add_item.return_value = {"id": "ci1", "item_id": "item1"}
+    mock_items_repo.get_by_id.return_value = {"catalog_number": "CAT1", "description": "Desc"}
+    mock_auditor.log_add_item.side_effect = Exception("Audit fail")
+
+    item_data = CollectionItemCreate(item_id="item1")
+    result = await service.add_item("col1", item_data, "user1")
+    assert result["item_id"] == "item1"
+
+
+@pytest.mark.asyncio
+async def test_bulk_add_items_write_denied(service, mock_repo):
+    """RO user cannot bulk add items."""
+    mock_repo.get_collection.return_value = {
+        "id": "col1", "owner_id": "owner",
+        "permissions": [{"type": PermissionType.USER, "id": "reader", "level": CollectionRole.RO}],
+    }
+    bulk_data = CollectionBulkItemCreate(item_ids=["item1"])
+    with pytest.raises(HTTPException) as exc:
+        await service.bulk_add_items("col1", bulk_data, "reader")
+    assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_bulk_add_items_snapshot_exception(service, mock_repo, mock_items_repo, mock_auditor):
+    """Exception during bulk item snapshot fetch is caught."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "name": "Col", "permissions": []}
+    mock_repo.get_collection_items.return_value = []
+    mock_items_repo.get_many_by_ids.side_effect = Exception("DB error")
+    mock_repo.add_items_bulk.return_value = 1
+    mock_items_repo.get_by_id.return_value = {"catalog_number": "CAT-X", "description": "Desc"}
+
+    bulk_data = CollectionBulkItemCreate(item_ids=["item1"])
+    result = await service.bulk_add_items("col1", bulk_data, "user1")
+    assert result["added"] == 1
+
+
+@pytest.mark.asyncio
+async def test_bulk_add_items_audit_exception(service, mock_repo, mock_items_repo, mock_auditor):
+    """Exception during audit logging in bulk_add is caught."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "name": "Col", "permissions": []}
+    mock_repo.get_collection_items.return_value = []
+    mock_items_repo.get_many_by_ids.return_value = [{"_id": "item1", "catalog_number": "C1"}]
+    mock_repo.add_items_bulk.return_value = 1
+    mock_auditor.log_add_item.side_effect = Exception("Audit fail")
+    mock_items_repo.get_by_id.return_value = {"catalog_number": "C1", "description": "Desc"}
+
+    bulk_data = CollectionBulkItemCreate(item_ids=["item1"])
+    result = await service.bulk_add_items("col1", bulk_data, "user1")
+    assert result["added"] == 1
+
+
+@pytest.mark.asyncio
+async def test_remove_items_bulk_denied(service, mock_repo):
+    """RO user cannot bulk remove items."""
+    mock_repo.get_collection.return_value = {
+        "id": "col1", "owner_id": "owner",
+        "permissions": [{"type": PermissionType.USER, "id": "reader", "level": CollectionRole.RO}],
+    }
+    with pytest.raises(HTTPException) as exc:
+        await service.remove_items_bulk("col1", ["a"], "reader")
+    assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_remove_item_fallback_to_catalog_number(service, mock_repo, mock_items_repo, mock_auditor):
+    """When get_by_id returns None in remove_item, falls back to find_by_catalog_number."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "name": "Col", "permissions": []}
+    mock_repo.remove_item.return_value = True
+    mock_items_repo.get_by_id.return_value = None
+    mock_items_repo.find_by_catalog_number.return_value = {"catalog_number": "FOUND", "description": "D"}
+
+    result = await service.remove_item("col1", "item1", "user1")
+    assert result is True
+    mock_items_repo.find_by_catalog_number.assert_called_once()
+    mock_auditor.log_remove_item.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_remove_item_audit_exception(service, mock_repo, mock_items_repo, mock_auditor):
+    """Exception during audit logging in remove_item is caught."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "name": "Col", "permissions": []}
+    mock_repo.remove_item.return_value = True
+    mock_items_repo.get_by_id.return_value = {"catalog_number": "CAT-X", "description": "D"}
+    mock_auditor.log_remove_item.side_effect = Exception("Audit fail")
+
+    # Should not raise
+    result = await service.remove_item("col1", "item1", "user1")
+    assert result is True
+
+
+@pytest.mark.asyncio
+async def test_export_collection_with_items(service, mock_repo, mock_items_repo):
+    """Export with items generates Excel bytes."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "permissions": []}
+    mock_repo.get_collection_items.return_value = [
+        {"id": "ci1", "item_id": "item1", "custom_values": {}, "assigned_at": None, "assigned_by": "user1"},
+    ]
+    mock_items_repo.get_by_id.return_value = {
+        "catalog_number": "CAT-001", "serial": "SN1", "description": "Server",
+        "manufacturer": "Dell", "location": "DC1", "current_stock": "5",
+        "warranty_expiry": None, "project_allocations": {}, "target_site": "Lab",
+        "purpose": "Prod", "notes": "",
+    }
+
+    result = await service.export_collection("col1", "user1")
+    # ExcelParser.generate_inventory_excel returns a BytesIO stream
+    from io import BytesIO
+    assert isinstance(result, BytesIO)
+    assert result.getvalue()
+
+
+@pytest.mark.asyncio
+async def test_update_item_custom_values_denied(service, mock_repo):
+    """RO user cannot update custom values."""
+    mock_repo.get_collection.return_value = {
+        "id": "col1", "owner_id": "owner",
+        "permissions": [{"type": PermissionType.USER, "id": "reader", "level": CollectionRole.RO}],
+    }
+    from app.schemas.collection import CollectionItemUpdate
+    data = CollectionItemUpdate(custom_values={"key": "val"})
+    with pytest.raises(HTTPException) as exc:
+        await service.update_item_custom_values("col1", "item1", data, "reader")
+    assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_update_permissions_denied(service, mock_repo):
+    """Non-owner non-admin cannot manage permissions."""
+    mock_repo.get_collection.return_value = {
+        "id": "col1", "owner_id": "owner1",
+        "permissions": [{"type": PermissionType.USER, "id": "other", "level": CollectionRole.RW}],
+    }
+    perm = CollectionPermission(type=PermissionType.USER, id="user2", level=CollectionRole.RW)
+    with pytest.raises(HTTPException) as exc:
+        await service.update_permissions("col1", perm, "other", user_role="user")
+    assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_update_permissions_not_found(service, mock_repo):
+    """update_permissions raises 404 for missing collection."""
+    mock_repo.get_collection.return_value = None
+    perm = CollectionPermission(type=PermissionType.USER, id="user2", level=CollectionRole.RW)
+    with pytest.raises(HTTPException) as exc:
+        await service.update_permissions("col1", perm, "user1")
+    assert exc.value.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_remove_permission_denied(service, mock_repo):
+    """Non-owner non-admin cannot remove permissions."""
+    mock_repo.get_collection.return_value = {
+        "id": "col1", "owner_id": "owner1",
+        "permissions": [{"type": PermissionType.USER, "id": "other", "level": CollectionRole.RW}],
+    }
+    with pytest.raises(HTTPException) as exc:
+        await service.remove_permission("col1", "user2", "other", user_role="user")
+    assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_remove_permission_not_found(service, mock_repo):
+    """remove_permission raises 404 for missing collection."""
+    mock_repo.get_collection.return_value = None
+    with pytest.raises(HTTPException) as exc:
+        await service.remove_permission("col1", "user2", "user1")
+    assert exc.value.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_delete_collection_admin_can_delete_others(service, mock_repo, mock_auditor):
+    """Admin can delete any collection even if not owner."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "someone_else"}
+    mock_repo.delete_collection.return_value = True
+
+    result = await service.delete_collection("col1", "admin_user", user_role=UserRole.ADMIN)
+    assert result is True
+    mock_auditor.log_delete_collection.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_delete_collection_not_found(service, mock_repo):
+    """delete_collection raises 404 for missing collection."""
+    mock_repo.get_collection.return_value = None
+    with pytest.raises(HTTPException) as exc:
+        await service.delete_collection("col1", "user1")
+    assert exc.value.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_get_collection_not_found(service, mock_repo):
+    """get_collection raises 404 when collection doesn't exist."""
+    mock_repo.get_collection.return_value = None
+    with pytest.raises(HTTPException) as exc:
+        await service.get_collection("nonexistent", "user1")
+    assert exc.value.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_bulk_add_items_audit_fallback_catalog_number(service, mock_repo, mock_items_repo, mock_auditor):
+    """Audit in bulk_add falls back to find_by_catalog_number when get_by_id returns None."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "name": "Col", "permissions": []}
+    mock_repo.get_collection_items.return_value = []
+    mock_items_repo.get_many_by_ids.return_value = [{"_id": "item1", "catalog_number": "C1"}]
+    mock_repo.add_items_bulk.return_value = 1
+    # get_by_id returns None for audit lookup, find_by_catalog_number succeeds
+    mock_items_repo.get_by_id.return_value = None
+    mock_items_repo.find_by_catalog_number.return_value = {"catalog_number": "C1", "description": "Desc"}
+
+    bulk_data = CollectionBulkItemCreate(item_ids=["item1"])
+    result = await service.bulk_add_items("col1", bulk_data, "user1")
+    assert result["added"] == 1
+    mock_items_repo.find_by_catalog_number.assert_called()
+    mock_auditor.log_add_item.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_update_item_custom_values_success(service, mock_repo, mock_items_repo):
+    """Successful custom values update calls repository update_item."""
+    mock_repo.get_collection.return_value = {"id": "col1", "owner_id": "user1", "permissions": []}
+    mock_repo.update_item.return_value = {"id": "ci1", "custom_values": {"key": "val"}}
+
+    from app.schemas.collection import CollectionItemUpdate
+    data = CollectionItemUpdate(custom_values={"key": "val"})
+    result = await service.update_item_custom_values("col1", "item1", data, "user1")
+    assert result["custom_values"]["key"] == "val"
+    mock_repo.update_item.assert_called_once()

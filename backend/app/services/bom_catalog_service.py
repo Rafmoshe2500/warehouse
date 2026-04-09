@@ -1,6 +1,9 @@
 from typing import List, Dict
 from datetime import datetime, timezone
+import logging
 from app.db.mongodb import MongoDB
+
+logger = logging.getLogger(__name__)
 
 VALID_CATEGORIES = [
     "server-storage",
@@ -62,8 +65,7 @@ class BomCatalogService:
                 item["ai_confidence"] = ai["confidence"]
                 item["ai_low_confidence"] = ai["low_confidence"]
         except Exception as exc:
-            import logging
-            logging.getLogger(__name__).warning("AI classify_parts failed: %s", exc)
+            logger.warning("AI classify_parts failed: %s", exc)
             # Fill neutral fallback so the UI still works
             for item in unknown_list:
                 item.setdefault("ai_label", "אחר")
@@ -118,8 +120,7 @@ class BomCatalogService:
                         "_ai": True,  # flag: this came from AI, not catalog
                     }
             except Exception as exc:
-                import logging
-                logging.getLogger(__name__).warning("enrich_groups AI fallback failed: %s", exc)
+                logger.warning("enrich_groups AI fallback failed: %s", exc)
                 # Final fallback: use 'other' (not server-storage)
                 for pn in unknown_pns:
                     catalog_map[pn] = {"description_he": "", "category": "other", "important": True}
@@ -183,8 +184,6 @@ class BomCatalogService:
         Corrections are upserted into bom_part_catalog so future scans
         and model retraining benefit from user feedback.
         """
-        import logging
-        log = logging.getLogger(__name__)
         results = []
         for item in items:
             pn = item.get("part_number", "").strip()
@@ -211,6 +210,6 @@ class BomCatalogService:
                 },
                 upsert=True,
             )
-            log.info("BOM item edit persisted: part_number=%s category=%s", pn, category)
+            logger.info("BOM item edit persisted: part_number=%s category=%s", pn, category)
             results.append({"part_number": pn, **update})
         return results

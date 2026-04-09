@@ -1,7 +1,10 @@
 from typing import Dict, Any, List, Optional
+import logging
 from app.db.mongodb import MongoDB
 from app.db.repositories.catalog_repository import CatalogRepository
 from app.schemas.catalog import CatalogFilter, CatalogListResponse
+
+logger = logging.getLogger(__name__)
 
 class CatalogService:
     def __init__(self):

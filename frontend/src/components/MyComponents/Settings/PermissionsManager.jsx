@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { FaUser, FaUsers, FaTrash, FaPlus, FaShieldAlt } from 'react-icons/fa';
 import { Button, Input, Select, Spinner } from '../../common';
 import { useToast } from '../../../context/ToastContext';
+import DeleteModal from '../../common/DeleteModal/DeleteModal';
 import collectionsService from '../../../api/services/collectionsService';
 import userService from '../../../api/services/userService';
 import groupService from '../../../api/services/groupService';
@@ -18,6 +19,7 @@ const PermissionsManager = ({ collection, isOwner }) => {
   const [selectedRole, setSelectedRole] = useState('RO');
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [removeConfirm, setRemoveConfirm] = useState({ isOpen: false, userId: null });
   
   const { showToast } = useToast();
   const queryClient = useQueryClient();
@@ -132,8 +134,9 @@ const PermissionsManager = ({ collection, isOwner }) => {
     }
   };
 
-  const handleRemovePermission = async (userId) => {
-    if (!window.confirm('האם אתה בטוח שברצונך להסיר הרשאה זו?')) return;
+  const handleRemovePermission = async () => {
+    const userId = removeConfirm.userId;
+    setRemoveConfirm({ isOpen: false, userId: null });
 
     try {
        // Using removePermission method (will be added to service)
@@ -289,7 +292,7 @@ const PermissionsManager = ({ collection, isOwner }) => {
                          <Button 
                              variant="ghost" 
                              size="sm"
-                             onClick={() => handleRemovePermission(perm.id)}
+                             onClick={() => setRemoveConfirm({ isOpen: true, userId: perm.id })}
                              icon={<FaTrash />}
                              className="delete-permission-btn"
                              title="הסר הרשאה"
@@ -308,6 +311,16 @@ const PermissionsManager = ({ collection, isOwner }) => {
          )}
       </div>
       </div>
+
+      <DeleteModal
+        isOpen={removeConfirm.isOpen}
+        onClose={() => setRemoveConfirm({ isOpen: false, userId: null })}
+        onConfirm={handleRemovePermission}
+        title="הסרת הרשאה"
+        message="האם אתה בטוח שברצונך להסיר הרשאה זו?"
+        type="confirmation"
+        confirmText="הסר"
+      />
     </div>
   );
 };

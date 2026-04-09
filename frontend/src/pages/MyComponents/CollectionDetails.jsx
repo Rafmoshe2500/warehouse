@@ -2,6 +2,7 @@
 import { useParams } from 'react-router-dom';
 import { FaArrowRight, FaCog, FaPlus, FaBoxOpen } from 'react-icons/fa';
 import { Button, Spinner, Tabs } from '../../components/common';
+import DeleteModal from '../../components/common/DeleteModal/DeleteModal';
 import CollectionSettings from '../../components/MyComponents/Settings/CollectionSettings';
 import CollectionItemsTable from '../../components/MyComponents/CollectionItemsTable';
 import AssignItemDialog from '../../components/MyComponents/AssignItemDialog';
@@ -27,6 +28,9 @@ const CollectionDetails = () => {
     handleBulkRemoveItems,
     handleUpdateItem,
     handleBulkEditItems,
+    deleteModal,
+    handleDeleteConfirm,
+    handleDeleteClose,
     navigate
   } = useCollectionDetails(id);
 
@@ -130,6 +134,17 @@ const CollectionDetails = () => {
             onClose={() => setIsAssignDialogOpen(false)}
             onAssign={handleAssignItems}
             isAssigning={isAssigning}
+        />
+
+        <DeleteModal
+            isOpen={deleteModal.isOpen}
+            onClose={handleDeleteClose}
+            onConfirm={handleDeleteConfirm}
+            title="הסרת פריט מהאוסף"
+            message={deleteModal.message}
+            warningText=""
+            type="confirmation"
+            confirmText="הסר מהאוסף"
         />
     </div>
   );

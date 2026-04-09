@@ -64,8 +64,8 @@ const DashboardPage = () => {
             <main className="dashboard-container">
                 
                 {/* Global Date Filter & Header */}
-                <div className="dashboard-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <div className="dashboard-section-title" style={{ margin: 0 }}>
+                <div className="dashboard-header-row">
+                    <div className="dashboard-section-title">
                         <FiActivity style={{ marginRight: '0.5rem' }} /> תמונת מצב כללית
                     </div>
                     

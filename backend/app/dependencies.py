@@ -8,6 +8,7 @@ from app.services.excel_service import ExcelService
 from app.services.auth_service import AuthService
 from app.services.analytics_service import AnalyticsService
 from app.services.audit_service import AuditService
+from app.services.catalog_service import CatalogService
 # Collections
 from app.db.repositories.collection_repository import CollectionRepository
 from app.services.collection_service import CollectionService
@@ -42,12 +43,16 @@ def get_collection_service(
 ) -> CollectionService:
     return CollectionService(repo, auditor, items_repo)
 
+def get_catalog_service() -> CatalogService:
+    return CatalogService()
+
 def get_item_service(
     items_repo: ItemsRepository = Depends(get_items_repository),
     item_auditor: ItemAuditor = Depends(get_item_auditor),
-    collection_repo: CollectionRepository = Depends(get_collection_repository)
+    collection_repo: CollectionRepository = Depends(get_collection_repository),
+    catalog_service: CatalogService = Depends(get_catalog_service)
 ) -> ItemService:
-    return ItemService(items_repo, item_auditor, collection_repo)
+    return ItemService(items_repo, item_auditor, collection_repo, catalog_service)
 
 def get_excel_service(
     items_repo: ItemsRepository = Depends(get_items_repository),

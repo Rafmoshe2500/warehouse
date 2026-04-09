@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   FiBox, 
   FiLayers, 
@@ -13,7 +14,9 @@ import {
   FiAlertCircle,
   FiHelpCircle,
   FiArchive,
-  FiClipboard
+  FiClipboard,
+  FiSettings,
+  FiUsers
 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import './UserGuidePage.css';
@@ -21,7 +24,7 @@ import './UserGuidePage.css';
 const UserGuidePage = () => {
   const [activeSection, setActiveSection] = useState('intro');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { hasPermission, hasProcurementAccess } = useAuth();
+  const { hasPermission, hasProcurementAccess, isAdmin } = useAuth();
 
   // Check permissions
   const hasInventoryAccess = hasPermission('inventory:ro') || hasPermission('inventory:rw');
@@ -36,12 +39,13 @@ const UserGuidePage = () => {
       { id: 'dashboard', label: 'דשבורד', icon: <FiLayout />, visible: true },
       { id: 'stale-items', label: 'פריטים ישנים', icon: <FiArchive />, visible: hasInventoryAccess },
       { id: 'audit-logs', label: 'יומן פעילות', icon: <FiClipboard />, visible: true },
+      { id: 'admin', label: 'ניהול מערכת', icon: <FiSettings />, visible: isAdmin },
       { id: 'procurement', label: 'רכש והצטיידות', icon: <FiShoppingCart />, visible: procurementAccess },
       { id: 'pro-tips', label: 'טיפים למתקדמים', icon: <FiZap />, visible: true },
       { id: 'faq', label: 'שאלות נפוצות', icon: <FiHelpCircle />, visible: true },
     ];
     return baseSections.filter(s => s.visible);
-  }, [hasInventoryAccess, procurementAccess]);
+  }, [hasInventoryAccess, procurementAccess, isAdmin]);
 
   // Scroll Spy Effect using IntersectionObserver
   useEffect(() => {
@@ -164,8 +168,21 @@ const UserGuidePage = () => {
               <div className="section-header">
                 <h2 className="section-title">ממשק וטבלאות חכמות</h2>
                 <p className="section-description">
-                  טבלאות המערכת הן כלי העבודה המרכזי שלכם. הן מאפשרות סינון, מיון, עריכה ופעולות מהירות.
+                  עמוד המלאי מחולק ל-4 טאבים: <strong>מלאי נוכחי</strong>, <strong>מלאי ישן</strong>, <strong>קטלוג פריטים</strong> ו<strong>תנועות</strong>. הטבלאות בכל טאב מאפשרות סינון, מיון, עריכה ופעולות מהירות.
                 </p>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">00</div>
+                <div className="step-content">
+                  <h3>טאבים בעמוד המלאי</h3>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>מלאי נוכחי:</strong> כל הפריטים הפעילים במחסן — הטאב הראשי לניהול יומיומי</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>מלאי ישן:</strong> פריטים שלא עודכנו זמן רב — לזיהוי מלאי מתיישן</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>קטלוג פריטים:</strong> מאגר המק"טים — צפייה וחיפוש מהיר בקטלוג</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>תנועות:</strong> יומן שינויים ועדכונים של פריטי המלאי</li>
+                  </ul>
+                </div>
               </div>
 
               <div className="guide-step">
@@ -196,6 +213,14 @@ const UserGuidePage = () => {
                     <li><FiCheckCircle className="list-icon" /> <strong>העתקה:</strong> העתקת תאים או שורות לאקסל.</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>שיוך למלאי שלי:</strong> הוספה מהירה לאוספים שלכם.</li>
                   </ul>
+                </div>
+              </div>
+
+              <div className="tip-box">
+                <div className="tip-icon"><FiAlertCircle /></div>
+                <div className="tip-content">
+                  <h4>📖 מדריך מפורט לטבלת המלאי</h4>
+                  <p>רוצים ללמוד לעומק כל אינטראקציה בטבלה — עריכה, מיון, קיצורי מקלדת ועוד? <Link to="/guide/inventory-table" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>למדריך האינטראקטיבי המלא →</Link></p>
                 </div>
               </div>
             </section>
@@ -260,6 +285,14 @@ const UserGuidePage = () => {
                     <li><FiCheckCircle className="list-icon" /> הוספת שדות מותאמים אישית (Custom Fields) לכל הפריטים באוסף</li>
                     <li><FiCheckCircle className="list-icon" /> ניהול הרשאות — מי יכול לצפות ומי יכול לערוך</li>
                   </ul>
+                </div>
+              </div>
+
+              <div className="tip-box">
+                <div className="tip-icon"><FiAlertCircle /></div>
+                <div className="tip-content">
+                  <h4>📖 מדריך מפורט למלאי שלי</h4>
+                  <p>רוצים ללמוד לעומק כל אינטראקציה — שדות מותאמים, הרשאות, ייצוא ועוד? <Link to="/guide/collections" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>למדריך האינטראקטיבי המלא →</Link></p>
                 </div>
               </div>
             </section>
@@ -333,7 +366,7 @@ const UserGuidePage = () => {
               <div className="section-header">
                 <h2 className="section-title">פריטים ישנים</h2>
                 <p className="section-description">
-                  דף שמציג פריטים שלא עודכנו במשך זמן, כדי לזהות מלאי מתיישן או שגוי.
+                  דף שמציג פריטים שלא עודכנו במשך זמן, כדי לזהות מלאי מתיישן או שגוי. העמוד כולל את כל יכולות ניהול המלאי (למעט יבוא) — חיפוש, סינון, ייצוא, עריכה ומחיקה.
                 </p>
               </div>
 
@@ -341,20 +374,42 @@ const UserGuidePage = () => {
                 <div className="step-number">1</div>
                 <div className="step-content">
                   <h3>בחירת טווח זמן</h3>
-                  <p>בראש העמוד בחרו כמה ימים - "הצג פריטים שלא עודכנו למעלה מ-X ימים". ברירת המחדל היא 30 ימים.</p>
+                  <p>בסרגל הכלים בחרו כמה ימים - "לא עודכנו למעלה מ-X ימים". ברירת המחדל היא 30 ימים.</p>
                 </div>
               </div>
 
               <div className="guide-step">
                 <div className="step-number">2</div>
                 <div className="step-content">
-                  <h3>מעקב אחר פריטים</h3>
-                  <p>הטבלה מציגה רשימה של פריטים שלא עודכנו. תוכלו:</p>
+                  <h3>חיפוש וסינון</h3>
+                  <p>ניתן לשלב חיפוש חופשי ופילטרים לפי עמודות, בדיוק כמו בעמוד המלאי הראשי:</p>
                     <ul className="feature-list">
-                      <li><FiCheckCircle className="list-icon" /> לחזור לעריכת פריט כדי לעדכן אותו</li>
-                      <li><FiCheckCircle className="list-icon" /> להסתיר פריטים שאינם רלוונטיים</li>
-                      <li><FiCheckCircle className="list-icon" /> לייצא לאקסל לעדכון בעיבוד שורי</li>
+                      <li><FiCheckCircle className="list-icon" /> <strong>חיפוש חופשי:</strong> מחפש בכל השדות בו-זמנית</li>
+                      <li><FiCheckCircle className="list-icon" /> <strong>פילטרים:</strong> סינון לפי עמודה ספציפית (מק"ט, מיקום, יצרן ועוד)</li>
+                      <li><FiCheckCircle className="list-icon" /> <strong>הצגת/הסתרת עמודות:</strong> התאמה אישית של העמודות המוצגות</li>
                     </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">3</div>
+                <div className="step-content">
+                  <h3>עריכה ומחיקה</h3>
+                  <p>ניתן לבצע את כל פעולות העריכה והמחיקה ישירות מהטבלה:</p>
+                    <ul className="feature-list">
+                      <li><FiCheckCircle className="list-icon" /> <strong>עריכה בתוך התא:</strong> לחצו על תא כדי לערוך ישירות</li>
+                      <li><FiCheckCircle className="list-icon" /> <strong>עריכה מרובה:</strong> סמנו מספר פריטים ועדכנו בבת אחת</li>
+                      <li><FiCheckCircle className="list-icon" /> <strong>מחיקה:</strong> מחיקת פריט בודד או מספר פריטים מסומנים</li>
+                      <li><FiCheckCircle className="list-icon" /> <strong>ביטול (Ctrl+Z):</strong> ביטול עריכה או מחיקה אחרונה</li>
+                    </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">4</div>
+                <div className="step-content">
+                  <h3>ייצוא לאקסל</h3>
+                  <p>לחצו על כפתור "ייצוא" כדי להוריד את הפריטים הישנים לקובץ Excel. הייצוא מכבד את החיפוש והפילטרים הפעילים.</p>
                 </div>
               </div>
 
@@ -407,6 +462,74 @@ const UserGuidePage = () => {
               </div>
             </div>
           </section>
+
+          {/* Admin Section - Only for admin users */}
+          {isAdmin && (
+            <section id="admin" className="content-section">
+              <div className="section-header">
+                <h2 className="section-title">ניהול מערכת (Admin)</h2>
+                <p className="section-description">
+                  ממשק הניהול מאפשר לנהל משתמשים, קבוצות הרשאות וכלי AI. נגיש רק למנהלים.
+                </p>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">1</div>
+                <div className="step-content">
+                  <h3>ניהול משתמשים</h3>
+                  <p>טאב <strong>"ניהול משתמשים וקבוצות"</strong> מציג את כל המשתמשים הרשומים:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>יצירת משתמש:</strong> הגדרת שם, סיסמה, תפקיד (User/Admin) והרשאות מפורטות</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>עריכת משתמש:</strong> שינוי תפקיד, איפוס סיסמה, עדכון הרשאות</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>מחיקת משתמש:</strong> הסרת משתמש (לא ניתן למחוק Admin אחרון או SuperAdmin)</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>חיפוש וסינון:</strong> חיפוש מהיר לפי שם משתמש</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">2</div>
+                <div className="step-content">
+                  <h3>ניהול קבוצות הרשאה</h3>
+                  <p>קבוצות מאפשרות להגדיר חבילות הרשאות ולשייך אותן למשתמשים:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>יצירת קבוצה:</strong> הגדרת שם ובחירת הרשאות (מלאי, רכש, ספקים ספציפיים)</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>שיוך משתמשים:</strong> הוספת משתמשים לקבוצה — ההרשאות ממוזגות אוטומטית</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>הרשאות ספקים:</strong> ניתן להגדיר גישה לספקים ספציפיים (Dell, HPE, NetApp, Cisco, Commvault)</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>הרשאות מחירים:</strong> <em>procurement:view_prices</em> ו-<em>procurement:compare_prices</em> לשליטה בנראות מחירים</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">3</div>
+                <div className="step-content">
+                  <h3>לוגים (יומן פעילות מנהלים)</h3>
+                  <p>טאב <strong>"לוגים"</strong> מציג את כל הפעולות הניהוליות — יצירה, עדכון ומחיקה של משתמשים וקבוצות. ניתן לסנן לפי סוג פעולה, משתמש ותאריך.</p>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">4</div>
+                <div className="step-content">
+                  <h3>כלי AI (SuperAdmin בלבד)</h3>
+                  <p>טאב <strong>"כלי AI"</strong> זמין רק למנהלי-על ומאפשר:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>אימון מחדש:</strong> הפעלת אימון מחדש של מודל סיווג הרכיבים (AI Classifier) על בסיס הקטלוג העדכני</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>מדדי ביצועים:</strong> צפייה באחוז דיוק המודל, מספר דוגמאות האימון ונתיב המודל</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="tip-box highlight">
+                <div className="tip-icon"><FiAlertCircle /></div>
+                <div className="tip-content">
+                  <h4>💡 הרשאות מצטברות</h4>
+                  <p>משתמש מקבל את כל ההרשאות שלו + כל ההרשאות מהקבוצות שהוא חבר בהן. לא צריך להגדיר הרשאות ידנית אם הקבוצה כבר מכילה אותן.</p>
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* Procurement Section - Only for procurement access */}
           {procurementAccess && (
@@ -474,7 +597,7 @@ const UserGuidePage = () => {
                   <h3>סורק הצעות מחיר (BOM Scanner)</h3>
                   <p>ייבוא מהיר של קבצי Excel/CSV מהספקים השונים:</p>
                   <ul className="feature-list">
-                    <li><FiCheckCircle className="list-icon" /> זיהוי אוטומטי של עמודות (מק"ט, כמות, תיאור ומחיר) לפורמטים של יצרנים כמו Dell, HPE, NetApp</li>
+                    <li><FiCheckCircle className="list-icon" /> זיהוי אוטומטי של עמודות (מק"ט, כמות, תיאור ומחיר) לפורמטים של יצרנים כמו Dell, HPE, NetApp ו-Cisco</li>
                     <li><FiCheckCircle className="list-icon" /> גרירה ושחרור קבצים (Drag & Drop) ויצירת קבוצות רכש לפי היצרן באופן אוטומטי</li>
                     <li><FiAlertCircle className="list-icon" /> התרעה והצגת פריטים שאינם קיימים במאגר (Unknown Parts) למניעת שגיאות בהזמנה</li>
                   </ul>
@@ -489,7 +612,7 @@ const UserGuidePage = () => {
                     המערכת מפעילה מנוע בינה מלאכותית שמנתח את תיאור כל רכיב BOM ומסווג אותו אוטומטית לקטגוריה:
                   </p>
                   <ul className="feature-list">
-                    <li><FiCheckCircle className="list-icon" /> <strong>קטגוריות נתמכות (15):</strong> שרת אחסון, שרת, מתג, כרטיסיה, דיסק, מדף דיסקים, כבל, ג׳יביק (SFP/QSFP), מעבד, זכרונות, מאוורר, ספק כח, רישוי נפח, רישוי תוכנה, תמיכה, אחר</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>קטגוריות נתמכות (16):</strong> שרת אחסון, שרת, מתג, כרטיסיה, דיסק, מדף דיסקים, כבל, ג׳יביק (SFP/QSFP), מעבד, זכרונות, מאוורר, ספק כח, רישוי נפח, רישוי תוכנה, תמיכה, אחר</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>חילוץ מאפיינים:</strong> מהירות (400G/100G/25G/10G), אורך כבל, סוג סיב (SMF/MMF), מחבר (MPO/LC), קיבולת דיסק, תדר מעבד, נפח זיכרון, הספק ספק כח ועוד — ומציג תיאור מובנה בעברית</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>זיהוי ג'יביקים (Transceivers):</strong> תמיכה בכל צורות ה-QSFP — OSFP, QSFP-DD, QSFP112, QSFP56, QSFP28, QSFP, SFP28, SFP+ ו-SFP עם מהירות ומחבר בתיאור</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>תג ביטחון (Confidence):</strong> כל רכיב מקבל ציון ביטחון — ירוק (גבוה) / צהוב (בינוני) / אדום (נמוך). פריט עם תג <strong>⚠ ביטחון נמוך</strong> סיווגו טעון אימות ידני</li>
@@ -567,6 +690,14 @@ const UserGuidePage = () => {
                   <p>כשמסמן BOM ו-EMF כהתקבלו, הסטטוס עולה אוטומטית ל"מחכה שרכש ייצא", ורק אז כפתור המשאית הופך פעיל.</p>
                 </div>
               </div>
+
+              <div className="tip-box">
+                <div className="tip-icon"><FiAlertCircle /></div>
+                <div className="tip-content">
+                  <h4>📖 מדריך מפורט לרכש והצטיידות</h4>
+                  <p>רוצים ללמוד לעומק — סורק BOM, סיווג AI, מסלול סטטוסים, השוואת מחירים ועוד? <Link to="/guide/procurement" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>למדריך האינטראקטיבי המלא →</Link></p>
+                </div>
+              </div>
             </section>
           )}
 
@@ -625,6 +756,22 @@ const UserGuidePage = () => {
                 </div>
               </>
             )}
+
+            <h3>🎨 התאמה אישית</h3>
+            <div className="guide-step">
+              <div className="step-number">1</div>
+              <div className="step-content">
+                <h4>מצב תצוגה (Dark/Light)</h4>
+                <p>לחצו על אייקון הירח/שמש בסרגל העליון למעבר בין מצב כהה ובהיר.</p>
+              </div>
+            </div>
+            <div className="guide-step">
+              <div className="step-number">2</div>
+              <div className="step-content">
+                <h4>ערכות נושא (Theme Variants)</h4>
+                <p>בחרו ערכת נושא מהתפריט בסרגל העליון: <strong>רגיל</strong>, <strong>עץ</strong>, <strong>חלל</strong> או <strong>קלאסי</strong>. הבחירה נשמרת אוטומטית.</p>
+              </div>
+            </div>
             
             <div className="shortcuts-grid">
               <div className="shortcut-item">
@@ -685,6 +832,30 @@ const UserGuidePage = () => {
                 <summary>איך מייצאים נתונים לאקסל?</summary>
                 <div className="faq-answer">
                   בכל מסך ראשי יש כפתור "ייצוא" (Export). ניתן לייצא את כל הטבלה או רק את הסינון הנוכחי.
+                </div>
+              </details>
+              <details className="faq-item">
+                <summary>למה אני לא רואה את כל הספקים בדף הרכש?</summary>
+                <div className="faq-answer">
+                  ההרשאות במערכת הן לפי ספק. אם חסרה לך גישה לספק כמו Dell או NetApp, פנה למנהל המערכת כדי לקבל הרשאות ספציפיות.
+                </div>
+              </details>
+              <details className="faq-item">
+                <summary>איך משנים ערכת נושא?</summary>
+                <div className="faq-answer">
+                  בסרגל העליון מימין יש אייקון ירח/שמש למעבר בין מצב כהה/בהיר, ותפריט לבחירת ערכת נושא (רגיל, עץ, חלל, קלאסי). הבחירה נשמרת אוטומטית.
+                </div>
+              </details>
+              <details className="faq-item">
+                <summary>מה ההבדל בין הרשאות Owner, RW ו-RO באוספים?</summary>
+                <div className="faq-answer">
+                  <strong>Owner</strong> — שליטה מלאה כולל מחיקת האוסף וניהול הרשאות. <strong>RW</strong> — עריכת פריטים והגדרות. <strong>RO</strong> — צפייה בלבד.
+                </div>
+              </details>
+              <details className="faq-item">
+                <summary>מה זה "קטלוג פריטים"?</summary>
+                <div className="faq-answer">
+                  הקטלוג הוא מאגר של כל המק"טים (Part Numbers) שהוזנו למערכת. הוא מתעדכן אוטומטית בכל פעם שפריט נוצר או מעודכן, ומשמש גם את מנוע ה-AI לסיווג רכיבים.
                 </div>
               </details>
             </div>

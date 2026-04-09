@@ -20,7 +20,7 @@ export const createItemService = (apiClient) => {
         'catalog_number', 'manufacturer', 'location', 'serial',
         'description', 'current_stock', 'purpose', 'notes',
         'target_site', 'project_allocations', 'warranty_expiry',
-        'sort_by', 'sort_order'
+        'sort_by', 'sort_order', 'stale_days'
       ];
 
       allowedFields.forEach(field => {

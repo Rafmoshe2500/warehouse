@@ -44,6 +44,17 @@
   padding-right: 0.5rem;
 }
 
+.dashboard-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-header-row .dashboard-section-title {
+  margin: 0;
+}
+
 /* === Stats Grid (Top Row) === */
 .bento-grid-stats {
   display: grid;

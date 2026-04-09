@@ -19,7 +19,7 @@ const DeleteModal = ({
     title = 'מחיקת פריט',
     message = 'האם אתה בטוח שברצונך למחוק פריט זה?',
     warningText = 'פעולה זו בלתי הפיכה!',
-    type = 'reason', // 'reason' | 'verification'
+    type = 'reason', // 'reason' | 'verification' | 'confirmation'
     verificationText = '', // Required if type === 'verification'
     placeholder = '',
     confirmText = 'מחק לצמיתות',
@@ -40,6 +40,11 @@ const DeleteModal = ({
     const handleConfirm = () => {
         setError('');
 
+        if (type === 'confirmation') {
+            onConfirm();
+            return;
+        }
+
         if (type === 'reason') {
             if (!inputValue || inputValue.trim().length < 3) {
                 setError('חובה לציין סיבת מחיקה (לפחות 3 תווים)');
@@ -57,6 +62,7 @@ const DeleteModal = ({
 
     const isConfirmDisabled = () => {
         if (isProcessing) return true;
+        if (type === 'confirmation') return false;
         if (type === 'verification') {
             return inputValue !== verificationText;
         }
@@ -100,7 +106,7 @@ const DeleteModal = ({
                 </div>
 
                 <div className="delete-modal__form">
-                    {type === 'reason' ? (
+                    {type === 'confirmation' ? null : type === 'reason' ? (
                         <>
                             <label className="delete-modal__label">סיבת מחיקה</label>
                             <textarea
@@ -153,7 +159,7 @@ DeleteModal.propTypes = {
     title: PropTypes.string,
     message: PropTypes.node,
     warningText: PropTypes.string,
-    type: PropTypes.oneOf(['reason', 'verification']),
+    type: PropTypes.oneOf(['reason', 'verification', 'confirmation']),
     verificationText: PropTypes.string,
     placeholder: PropTypes.string,
     confirmText: PropTypes.string,

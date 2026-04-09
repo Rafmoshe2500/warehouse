@@ -1,30 +1,77 @@
-# 📡 API Endpoints - Extended Reference
+# 📡 API Reference — Warehouse Management System v2.0
 
 ## 📋 Quick Reference Table
 
-| Module | Count | Endpoints |
-|--------|-------|-----------|
-| **Authentication** | 5 | /login, /domain-login, /logout, /me, /password |
-| **Items** | 8 | GET, POST, PATCH, bulk-update, bulk-delete, delete-all, stale, collections |
-| **Users** | 6 | GET all, GET one, POST, PUT, DELETE, /stats |
-| **Groups** | 5 | GET all, GET one, POST, PUT, DELETE |
-| **Excel** | 3 | /import-excel, /import-projects, /export-excel |
-| **Collections** | 13 | GET all, POST, GET one, PUT, DELETE, /items/* (manage items), /permissions/* |
-| **Procurement** | 8 | GET orders, POST, GET one, PUT, DELETE, /files/* (upload/download/delete) |
-| **BOM Scanner** | 5 | POST /scan, POST /parts/{pn}, GET /parts, PATCH /scan/items, POST /ai/retrain |
-| **Analytics** | 3 | /dashboard, /activity, /item/{catalog_number} |
-| **Audit** | 3 | /logs, POST (create log), /users/{username} |
-| **Users Search** | 2 | /search, /groups/search |
-| **Total** | **55+** | Endpoints |
+| Module | Prefix | Count | Key Endpoints |
+|--------|--------|-------|---------------|
+| **Authentication** | `/api/auth` | 5 | login, domain-login, logout, me, password |
+| **Inventory (Items)** | `/api/items` | 10 | CRUD, bulk-update, bulk-delete, delete-all, stale, fix-reserved-stock |
+| **Excel Import/Export** | `/api/items` | 3 | import-excel, import-projects, export-excel |
+| **Catalog** | `/api/catalog` | 1 | search catalog SKUs |
+| **Collections** | `/api/collections` | 13 | CRUD, items management, permissions, export |
+| **Procurement Orders** | `/api/procurement` | 8 | orders CRUD, file upload/download/delete |
+| **BOM Scanner** | `/api/bom` | 4 | scan, parts CRUD, edit items |
+| **BOM Analytics** | `/api/bom-analytics` | 6 | trends, vendor stats, seed, search |
+| **AI** | `/api/ai` | 1 | retrain classifier |
+| **Analytics** | `/api/analytics` | 3 | dashboard, activity, item stats |
+| **Audit** | `/api/audit` | 3 | logs list, create, user activity |
+| **Admin: Users** | `/api/admin/users` | 6 | CRUD, stats |
+| **Admin: Groups** | `/api/admin/groups` | 5 | CRUD |
+| **User Search** | `/api/users` | 2 | search users, search groups |
+| **System** | `/` | 2 | root info, health |
+| **Total** | | **72** | |
 
 ---
 
-## 🔐 Authentication Module (`/api/auth`)
+## 🔐 Authentication & Authorization
 
-### 1. POST /login
-**Description**: Local authentication with username and password
+### Permission Model
 
-**Request**:
+| Role | Description | Can Manage |
+|------|-------------|------------|
+| `superadmin` | Full control | Admins + all users |
+| `admin` | Administrative access | Users (not other admins) |
+| `user` | Standard user | Self only |
+
+### Granular Permissions
+
+| Permission | Description |
+|-----------|-------------|
+| `inventory:ro` | Read-only inventory access |
+| `inventory:rw` | Read-write inventory access |
+| `procurement:ro` | Read-only procurement access |
+| `procurement:rw` | Read-write procurement access |
+| `procurement:view_prices` | Can view prices in procurement orders |
+| `procurement:compare_prices` | Can access price comparison analytics |
+| `procurement:dell:ro` / `procurement:dell:rw` | Dell vendor-specific access |
+| `procurement:hpe:ro` / `procurement:hpe:rw` | HPE vendor-specific access |
+| `procurement:netapp:ro` / `procurement:netapp:rw` | NetApp vendor-specific access |
+| `procurement:cisco:ro` / `procurement:cisco:rw` | Cisco vendor-specific access |
+| `procurement:commvault:ro` / `procurement:commvault:rw` | Commvault vendor-specific access |
+| `admin` | Full admin permission |
+
+### Security Features
+- **JWT Tokens**: 240-minute expiry (configurable via `ACCESS_TOKEN_EXPIRE_MINUTES`)
+- **Password Hashing**: bcrypt
+- **HTTP-Only Cookies**: Token stored in secure cookies
+- **Rate Limiting**: 5 login attempts per minute
+- **IP Tracking**: All audit logs record IP address and user-agent
+- **GZip Compression**: Responses > 1KB compressed automatically
+
+---
+
+## 🔐 Auth Module (`/api/auth`)
+
+### POST `/api/auth/login`
+
+Local authentication with username and password.
+
+| Property | Value |
+|----------|-------|
+| **Rate Limit** | 5/min |
+| **Auth Required** | ❌ |
+
+**Request:**
 ```json
 {
   "username": "john.doe",
@@ -32,97 +79,90 @@
 }
 ```
 
-**Response** (201 Created):
+**Response (200):**
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "bearer",
-  "expires_in": 14400,
-  "user_id": "507f1f77bcf86cd799439011",
-  "username": "john.doe",
-  "role": "admin",
-  "permissions": ["INVENTORY_RW", "PROCUREMENT_RW", "ADMIN"]
+  "token_type": "bearer"
 }
 ```
 
-**Rate Limit**: 5 requests per minute
-**Requires Auth**: ❌ No
-**Requires Permission**: ❌ No
+**Errors:** `401` Invalid credentials | `429` Rate limit exceeded
 
 ---
 
-### 2. POST /domain-login
-**Description**: Authentication via ADFS/Domain credentials
+### POST `/api/auth/domain-login`
 
-**Request**:
+ADFS/Active Directory authentication. Auto-creates user on first domain login.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ❌ |
+
+**Request:**
 ```json
 {
-  "domain": "company.com",
-  "username": "john.doe",
-  "password": "DomainPassword123!"
+  "hashed_token": "base64-encoded-adfs-token"
 }
 ```
 
-**Response** (201 Created):
+**Response (200):**
 ```json
 {
   "access_token": "eyJhbGc...",
-  "token_type": "bearer",
-  "user_id": "507f...",
-  "username": "john.doe",
-  "role": "user",
-  "permissions": ["INVENTORY_RO"],
-  "domain_user": true
+  "token_type": "bearer"
 }
 ```
 
-**Rate Limit**: 5 requests per minute
-**Requires Auth**: ❌ No
-
 ---
 
-### 3. POST /logout
-**Description**: Logout current user and invalidate token
+### POST `/api/auth/logout`
 
-**Request**:
-```
-No body (uses Authorization header)
-```
+End session and clear HTTP-only cookies. Audit logged.
 
-**Response** (200 OK):
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+**Response (200):**
 ```json
 {
   "message": "Logged out successfully"
 }
 ```
 
-**Requires Auth**: ✅ Yes (Bearer token)
-
 ---
 
-### 4. GET /me
-**Description**: Get current authenticated user info
+### GET `/api/auth/me`
 
-**Response** (200 OK):
+Get current authenticated user info.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+**Response (200):**
 ```json
 {
   "username": "john.doe",
   "user_id": "507f1f77bcf86cd799439011",
   "role": "admin",
-  "permissions": ["INVENTORY_RW", "PROCUREMENT_RW", "ADMIN"],
-  "email": "john@company.com"
+  "permissions": ["inventory:rw", "procurement:rw"],
+  "groups": [{ "id": "...", "name": "Engineers", "permissions": [...] }]
 }
 ```
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: ❌ No
-
 ---
 
-### 5. PUT /password
-**Description**: Change password of current user
+### PUT `/api/auth/password`
 
-**Request**:
+Change password of current authenticated user.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+**Request:**
 ```json
 {
   "current_password": "OldPassword123!",
@@ -130,1179 +170,1419 @@ No body (uses Authorization header)
 }
 ```
 
-**Response** (200 OK):
+**Response (200):**
 ```json
 {
   "message": "Password changed successfully"
 }
 ```
 
-**Validation**:
-- Current password must be correct
-- New password must be different
-- Password must be 8+ characters
-- Password must contain upper, lower, number, special char
-
-**Requires Auth**: ✅ Yes
+**Errors:** `400` Current password incorrect | `400` New password same as current
 
 ---
 
 ## 📦 Items Module (`/api/items`)
 
-### 1. GET / (List Items)
-**Description**: Get all inventory items with filtering, searching, and pagination
+### GET `/api/items`
 
-**Query Parameters**:
-```
-?filter={"category":"Electronics"}&search=LED&sort=-price&page=1&limit=50
-```
+List all inventory items with filtering, searching, sorting, and pagination.
 
-**Detailed Query Params**:
-| Param | Type | Example | Default | Required |
-|-------|------|---------|---------|----------|
-| `filter` | JSON | {"status":"active"} | {} | ❌ |
-| `search` | String | "LED 5mm" | "" | ❌ |
-| `sort` | String | "-price" (descending) | "" | ❌ |
-| `page` | Integer | 1 | 1 | ❌ |
-| `limit` | Integer | 50 | 30 | ❌ |
-| `fields` | String | "name,quantity,price" | All | ❌ |
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:ro` |
 
-**Response** (200 OK):
+**Query Parameters:**
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `search` | string | — | Free text search across all fields |
+| `catalog_number` | string | — | Filter by catalog number |
+| `serial` | string | — | Filter by serial number |
+| `manufacturer` | string | — | Filter by manufacturer |
+| `description` | string | — | Filter by description |
+| `location` | string | — | Filter by warehouse location |
+| `current_stock` | string | — | Filter by stock level |
+| `purpose` | string | — | Filter by purpose |
+| `notes` | string | — | Filter by notes |
+| `sort_by` | string | — | Column to sort by |
+| `sort_order` | `asc` / `desc` | `asc` | Sort direction |
+| `page` | int | 1 | Page number |
+| `limit` | int | 30 | Items per page |
+
+**Response (200):**
 ```json
 {
   "items": [
     {
       "id": "507f1f77bcf86cd799439011",
-      "catalog_number": "LED-001",
-      "name": "LED Red 5mm",
-      "category": "Electronics",
-      "quantity": 500,
-      "reserved_stock": 100,
-      "available": 400,
-      "unit": "PCS",
-      "location": "A1-B2-C3",
-      "supplier": "Supplier A",
-      "cost": 0.50,
-      "price": 1.50,
-      "status": "active",
-      "updated_at": "2026-02-17T14:30:00Z",
-      "updated_by": "john.doe"
+      "catalog_number": "X-SFP-100G-LR4",
+      "description": "100G QSFP28 LR4 Transceiver",
+      "manufacturer": "NetApp",
+      "location": "מחסן מרכזי",
+      "serial": "SN-12345",
+      "current_stock": "5",
+      "warranty_expiry": "2027-06-15",
+      "reserved_stock": "פרויקט אלפא: 2",
+      "project_allocations": { "פרויקט אלפא": 2 },
+      "purpose": "שדרוג רשת",
+      "target_site": "חדר שרתים",
+      "notes": "בדיקה רבעונית",
+      "created_at": "2026-01-15T10:30:00Z",
+      "updated_at": "2026-03-22T14:20:00Z",
+      "created_by": "admin"
     }
   ],
-  "total": 2450,
+  "total": 1250,
   "page": 1,
-  "limit": 50,
-  "total_pages": 49
+  "limit": 30,
+  "pages": 42
 }
 ```
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RO` or `INVENTORY_RW`
+---
+
+### GET `/api/items/stale`
+
+Get items not updated within specified number of days.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:ro` |
+
+**Query Parameters:**
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `days` | int | 30 | Minimum days since last update |
+| `page` | int | 1 | Page number |
+| `limit` | int | 30 | Items per page |
+
+**Response:** Same structure as GET `/api/items`
 
 ---
 
-### 2. GET /stale
-**Description**: Get items not updated within specified days
+### GET `/api/items/{item_id}/collections`
 
-**Query Parameters**:
+Get all collections containing a specific item.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:ro` |
+
+**Response (200):**
+```json
+[
+  {
+    "collection_id": "507f...",
+    "collection_name": "פרויקט אלפא",
+    "assigned_at": "2026-03-01T10:00:00Z"
+  }
+]
 ```
-?days=30&page=1&limit=30
+
+---
+
+### POST `/api/items`
+
+Create a new inventory item. Auto-updates the catalog.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:rw` |
+| **Audit** | ✅ `item_create` |
+
+**Request:**
+```json
+{
+  "catalog_number": "X-SFP-100G-LR4",
+  "description": "100G QSFP28 LR4 Transceiver",
+  "manufacturer": "NetApp",
+  "location": "מחסן מרכזי",
+  "serial": "SN-12345",
+  "current_stock": "5",
+  "warranty_expiry": "2027-06-15",
+  "purpose": "שדרוג רשת",
+  "target_site": "חדר שרתים",
+  "notes": ""
+}
 ```
 
-| Param | Type | Range | Default |
-|-------|------|-------|---------|
-| `days` | Integer | ≥ 1 | 30 |
-| `page` | Integer | ≥ 1 | 1 |
-| `limit` | Integer | 1-1000 | 30 |
+**Query Parameters:**
 
-**Response** (200 OK):
+| Param | Type | Description |
+|-------|------|-------------|
+| `undo_log_id` | string | Audit log ID for undo operations |
+
+**Response (201):** Created item object
+
+---
+
+### PATCH `/api/items/{item_id}`
+
+Update a single field in an item. Supports undo workflow.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:rw` |
+| **Audit** | ✅ `item_update` |
+
+**Request:**
+```json
+{
+  "field": "current_stock",
+  "value": "10"
+}
+```
+
+**Response (200):** Updated item object
+
+**Immutable Fields:** `serial`, `catalog_number`, `location`, `manufacturer`, `project_allocations` — cannot be edited through this endpoint.
+
+---
+
+### POST `/api/items/bulk-update`
+
+Update multiple items at once.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:rw` |
+| **Audit** | ✅ `item_bulk_update` |
+
+**Request:**
+```json
+{
+  "ids": ["507f...", "508a...", "509b..."],
+  "notes": "בדיקה תקופתית",
+  "purpose": "שמורה",
+  "target_site": "אתר דרום"
+}
+```
+
+**Response (200):**
+```json
+{
+  "message": "3 items updated",
+  "modified_count": 3
+}
+```
+
+---
+
+### POST `/api/items/fix-reserved-stock`
+
+Admin migration tool: sync `reserved_stock` string from `project_allocations` dict for all items.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin only |
+
+---
+
+### DELETE `/api/items/{item_id}`
+
+Delete a single inventory item. Requires reason for audit trail.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:rw` |
+| **Audit** | ✅ `item_delete` |
+
+**Request Body:**
+```json
+{
+  "reason": "ציוד פגום"
+}
+```
+
+---
+
+### POST `/api/items/bulk-delete`
+
+Delete multiple items at once.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:rw` |
+| **Audit** | ✅ `item_bulk_delete` |
+
+**Request:**
+```json
+{
+  "ids": ["507f...", "508a..."],
+  "reason": "ציוד מיושן"
+}
+```
+
+**Response (200):**
+```json
+{
+  "message": "2 items deleted",
+  "deleted_count": 2
+}
+```
+
+---
+
+### POST `/api/items/delete-all`
+
+**⚠ DANGER** — Delete entire inventory database. Admin only.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin only |
+| **Audit** | ✅ `item_delete` |
+
+**Request:**
+```json
+{
+  "reason": "איפוס מלא — מעבר למערכת חדשה"
+}
+```
+
+---
+
+## 📊 Excel Import/Export (`/api/items`)
+
+### POST `/api/items/import-excel`
+
+Import inventory items from Excel file.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:rw` |
+| **Content-Type** | `multipart/form-data` |
+| **File Types** | `.xlsx`, `.xls` |
+
+**Smart Import Logic:**
+- If item has **serial number** → match by serial for update, else create
+- If item has **no serial** → match by `catalog_number` + `location`, else create
+- `notes` and `purpose` fields are **never overwritten** during import (preserves manual edits)
+
+**Response (200):**
+```json
+{
+  "added": 15,
+  "updated": 8,
+  "skipped": 2,
+  "errors": ["Row 45: Missing catalog_number"]
+}
+```
+
+---
+
+### POST `/api/items/import-projects`
+
+Import project allocations from Excel. Updates `project_allocations` and `reserved_stock` on matching items.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:rw` |
+| **Content-Type** | `multipart/form-data` |
+
+**Response (200):**
+```json
+{
+  "updated": 42,
+  "total_groups": 6
+}
+```
+
+---
+
+### GET `/api/items/export-excel`
+
+Export inventory to Excel file with applied filters.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:ro` |
+| **Response Type** | `StreamingResponse` (`.xlsx`) |
+
+**Query Parameters:** Same filters as GET `/api/items` plus:
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `export_mode` | `all` / `current` | Export all items or only filtered results |
+
+---
+
+## 📋 Catalog Module (`/api/catalog`)
+
+### GET `/api/catalog`
+
+List unique catalog items (aggregated SKUs with calculated stock quantities across locations).
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:ro` |
+
+**Query Parameters:**
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `search` | string | — | Free text search |
+| `catalog_number` | string | — | Filter by catalog number |
+| `description` | string | — | Filter by description |
+| `manufacturer` | string | — | Filter by manufacturer |
+| `sort_by` | string | — | Sort column |
+| `sort_order` | `asc`/`desc` | `asc` | Sort direction |
+| `page` | int | 1 | Page |
+| `limit` | int | 30 | Per page |
+
+**Response (200):**
 ```json
 {
   "items": [
     {
-      "catalog_number": "OLD-ITEM-001",
-      "last_updated": "2025-12-15T10:00:00Z",
-      "days_since_update": 64,
-      "quantity": 12
+      "catalog_number": "X-SFP-100G-LR4",
+      "description": "100G QSFP28 LR4 Transceiver",
+      "manufacturer": "NetApp",
+      "total_stock": 12,
+      "locations": 3
     }
   ],
-  "total": 23,
-  "stale_percentage": 0.94
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RO` or `INVENTORY_RW`
-
----
-
-### 3. GET /{item_id}/collections
-**Description**: Get all collections containing this item
-
-**Response** (200 OK):
-```json
-{
-  "collections": [
-    {
-      "collection_id": "507f...",
-      "name": "Active Stock",
-      "description": "Items in current use",
-      "created_at": "2026-01-01T00:00:00Z"
-    }
-  ],
-  "total": 3
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RO` or `INVENTORY_RW`
-
----
-
-### 4. POST / (Create Item)
-**Description**: Create a new inventory item
-
-**Request**:
-```json
-{
-  "catalog_number": "LED-002",
-  "name": "LED Green 5mm",
-  "description": "Green light emitting diode",
-  "category": "Electronics",
-  "quantity": 1000,
-  "unit": "PCS",
-  "supplier": "Supplier A",
-  "cost": 0.45,
-  "price": 1.20,
-  "location": "A1-B2-C3",
-  "minimum_stock": 100,
-  "reorder_point": 200
-}
-```
-
-**Response** (201 Created):
-```json
-{
-  "id": "507f1f77bcf86cd799439011",
-  "catalog_number": "LED-002",
-  "name": "LED Green 5mm",
-  "quantity": 1000,
-  "created_at": "2026-02-17T14:30:00Z",
-  "created_by": "john.doe"
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RW`
-
----
-
-### 5. PATCH /{item_id} (Update Single Field)
-**Description**: Update a single field in an item
-
-**Request**:
-```json
-{
-  "field": "quantity",
-  "value": 750
-}
-```
-
-**Response** (200 OK):
-```json
-{
-  "id": "507f...",
-  "catalog_number": "LED-002",
-  "quantity": 750,
-  "updated_at": "2026-02-17T15:00:00Z"
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RW`
-
----
-
-### 6. POST /bulk-update (Bulk Update)
-**Description**: Update multiple items at once
-
-**Request**:
-```json
-{
-  "filters": {
-    "_id": { "$in": ["507f...", "507g...", "507h..."] }
-  },
-  "updates": {
-    "status": "inactive",
-    "location": "Archive"
-  }
-}
-```
-
-**Response** (200 OK):
-```json
-{
-  "matched_count": 3,
-  "modified_count": 3,
-  "items": [
-    { "id": "507f...", "status": "inactive", "location": "Archive" }
-  ]
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RW`
-
----
-
-### 7. DELETE /{item_id} (Delete Single Item)
-**Description**: Delete a single item
-
-**Request**:
-```json
-{
-  "reason": "Damaged beyond repair"
-}
-```
-
-**Response** (200 OK):
-```json
-{
-  "message": "Item deleted",
-  "deleted_item": {
-    "id": "507f...",
-    "catalog_number": "LED-001",
-    "deleted_at": "2026-02-17T15:00:00Z",
-    "deleted_by": "john.doe"
-  }
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RW`
-
----
-
-### 8. POST /bulk-delete (Delete Multiple)
-**Description**: Delete multiple items at once
-
-**Request**:
-```json
-{
-  "item_ids": ["507f...", "507g...", "507h..."],
-  "reason": "Obsolete products"
-}
-```
-
-**Response** (200 OK):
-```json
-{
-  "deleted_count": 3,
-  "message": "3 items deleted"
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RW`
-
----
-
-### 9. POST /delete-all (Clear All Inventory)
-**Description**: **DANGER** - Delete all items (admin only)
-
-**Request**:
-```json
-{
-  "reason": "Complete inventory reset - migration to new system"
-}
-```
-
-**Response** (200 OK):
-```json
-{
-  "deleted_count": 12450,
-  "message": "All inventory cleared"
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN` (Admin only)
-
----
-
-## 👥 Users Module (`/api/admin/users`)
-
-### 1. GET / (List Users)
-**Description**: Get all users (admin only)
-
-**Query Parameters**:
-```
-?page=1&limit=25&filter=active
-```
-
-**Response** (200 OK):
-```json
-{
-  "users": [
-    {
-      "id": "507f...",
-      "username": "john.doe",
-      "email": "john@company.com",
-      "role": "admin",
-      "permissions": ["INVENTORY_RW", "ADMIN"],
-      "is_active": true,
-      "last_login": "2026-02-17T10:00:00Z",
-      "created_at": "2025-01-01T00:00:00Z"
-    }
-  ],
-  "total": 45,
+  "total": 350,
   "page": 1,
-  "limit": 25
+  "limit": 30,
+  "pages": 12
 }
 ```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
-
----
-
-### 2. POST / (Create User)
-**Description**: Create a new user account
-
-**Request**:
-```json
-{
-  "username": "alice.smith",
-  "email": "alice@company.com",
-  "password": "InitialPassword123!",
-  "role": "user",
-  "permissions": ["INVENTORY_RO"],
-  "is_active": true
-}
-```
-
-**Response** (201 Created):
-```json
-{
-  "id": "507f...",
-  "username": "alice.smith",
-  "email": "alice@company.com",
-  "role": "user",
-  "created_at": "2026-02-17T14:30:00Z",
-  "created_by": "admin"
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
-
----
-
-### 3. GET /{user_id} (Get User)
-**Description**: Get specific user details
-
-**Response** (200 OK):
-```json
-{
-  "id": "507f...",
-  "username": "alice.smith",
-  "email": "alice@company.com",
-  "role": "user",
-  "permissions": ["INVENTORY_RO"],
-  "is_active": true,
-  "groups": ["Engineers"],
-  "last_login": "2026-02-16T18:00:00Z",
-  "login_count": 142,
-  "created_at": "2025-06-15T00:00:00Z",
-  "created_by": "admin"
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
-
----
-
-### 4. PUT /{user_id} (Update User)
-**Description**: Update user details
-
-**Request**:
-```json
-{
-  "email": "alice.smith@company.com",
-  "role": "manager",
-  "permissions": ["INVENTORY_RW", "PROCUREMENT_RO"],
-  "is_active": true
-}
-```
-
-**Response** (200 OK):
-```json
-{
-  "id": "507f...",
-  "username": "alice.smith",
-  "role": "manager",
-  "updated_at": "2026-02-17T15:00:00Z",
-  "updated_by": "admin"
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
-
----
-
-### 5. DELETE /{user_id} (Delete User)
-**Description**: Delete user account
-
-**Request**:
-```json
-{
-  "reason": "Left company"
-}
-```
-
-**Response** (200 OK):
-```json
-{
-  "message": "User deleted",
-  "deleted_user": {
-    "id": "507f...",
-    "username": "alice.smith",
-    "deleted_at": "2026-02-17T15:00:00Z"
-  }
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
-
----
-
-### 6. GET /stats (User Statistics)
-**Description**: Get user statistics for dashboard
-
-**Response** (200 OK):
-```json
-{
-  "total_users": 45,
-  "active_users": 42,
-  "inactive_users": 3,
-  "by_role": {
-    "admin": 3,
-    "manager": 8,
-    "user": 32,
-    "procurement": 2
-  },
-  "by_permission": {
-    "INVENTORY_RW": 12,
-    "INVENTORY_RO": 33,
-    "PROCUREMENT_RW": 2,
-    "PROCUREMENT_RO": 5,
-    "ADMIN": 3
-  },
-  "last_7_days_logins": 142,
-  "new_users_this_month": 3
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
-
----
-
-## 🛒 Groups Module (`/api/groups`)
-
-### 1-5. Groups CRUD Operations
-Similar structure to Users. Endpoints:
-- **GET** / - List all groups
-- **POST** / - Create group
-- **GET** /{group_id} - Get group details
-- **PUT** /{group_id} - Update group
-- **DELETE** /{group_id} - Delete group
-
----
-
-## 📄 Excel Module (`/api/excel`)
-
-### 1. POST /import-excel
-**Description**: Import items from Excel file
-
-**Request**: FormData
-```
-file: <xlsx/csv file>
-```
-
-**Response** (200 OK):
-```json
-{
-  "imported_count": 47,
-  "skipped_count": 3,
-  "errors": [
-    {
-      "row": 15,
-      "catalog_number": "DUP-001",
-      "error": "Duplicate catalog number"
-    }
-  ],
-  "warnings": [
-    {
-      "row": 8,
-      "message": "Missing supplier - using default"
-    }
-  ]
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RW`
-
----
-
-### 2. POST /import-projects
-**Description**: Import projects (create collections)
-
-**Request**: FormData
-```
-file: <xlsx file with project data>
-```
-
-**Response** (200 OK):
-```json
-{
-  "imported_count": 5,
-  "created_collections": [
-    {
-      "collection_id": "507f...",
-      "name": "Project A",
-      "items_added": 45
-    }
-  ]
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
-
----
-
-### 3. GET /export-excel
-**Description**: Export inventory to Excel file
-
-**Query Parameters**:
-```
-?format=xlsx&include_hidden=false&apply_filters=true
-```
-
-**Response** (200 OK):
-```
-Binary file: inventory-2026-02-17.xlsx
-Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RO` or `INVENTORY_RW`
 
 ---
 
 ## 📚 Collections Module (`/api/collections`)
 
-### 1. GET / (List Collections)
-**Description**: Get all collections user has access to
+### POST `/api/collections`
 
-**Response** (200 OK):
+Create a new collection. Creator becomes owner.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+**Request:**
 ```json
 {
-  "collections": [
-    {
-      "id": "507f...",
-      "name": "Active Stock",
-      "description": "Items in current use",
-      "item_count": 145,
-      "owner": "john.doe",
-      "created_at": "2026-01-01T00:00:00Z",
-      "permission_level": "manage"
-    }
-  ],
-  "total": 8
+  "name": "פרויקט אלפא",
+  "description": "ציוד לשדרוג חדר שרתים"
 }
 ```
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RO` or `INVENTORY_RW`
+---
+
+### GET `/api/collections`
+
+List all collections accessible to the user (owned or has permission). Admin/SuperAdmin see all collections.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
 
 ---
 
-### 2. POST / (Create Collection)
-**Description**: Create new collection
+### GET `/api/collections/{collection_id}`
 
-**Request**:
+Get collection details.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+---
+
+### PUT `/api/collections/{collection_id}`
+
+Update collection name/description.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Owner or RW |
+
+**Request:**
 ```json
 {
-  "name": "Urgent Stock",
-  "description": "Items needed ASAP",
-  "items": ["507f...", "507g..."]
+  "name": "פרויקט אלפא v2",
+  "description": "ציוד מעודכן"
 }
 ```
 
-**Response** (201 Created):
+---
+
+### DELETE `/api/collections/{collection_id}`
+
+Delete collection and all its item assignments.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Owner or Admin |
+
+---
+
+### GET `/api/collections/{collection_id}/items`
+
+Get enriched items in collection — full inventory data merged with collection-specific data. Deleted items display as `[Item deleted]` with snapshot data.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+---
+
+### GET `/api/collections/{collection_id}/export`
+
+Export collection items to Excel file.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Response Type** | `StreamingResponse` (`.xlsx`) |
+
+---
+
+### POST `/api/collections/{collection_id}/items`
+
+Add single item to collection. Snapshots `catalog_number` and `serial` at assignment time.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Owner or RW |
+
+**Request:**
 ```json
 {
-  "id": "507f...",
-  "name": "Urgent Stock",
-  "item_count": 2,
-  "created_at": "2026-02-17T14:30:00Z"
+  "item_id": "507f...",
+  "custom_values": { "כמות נדרשת": "3" }
 }
 ```
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RW`
-
 ---
 
-### 3-5. Collection CRUD
-- **GET** /{collection_id} - Get collection details
-- **PUT** /{collection_id} - Update collection
-- **DELETE** /{collection_id} - Delete collection
+### POST `/api/collections/{collection_id}/items/bulk`
 
----
+Bulk add items to collection.
 
-### 6. GET /{collection_id}/items
-**Description**: Get items in collection
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Owner or RW |
 
-**Response** (200 OK):
+**Request:**
 ```json
 {
-  "items": [
-    {
-      "item_id": "507f...",
-      "catalog_number": "LED-001",
-      "name": "LED Red 5mm",
-      "quantity": 500,
-      "price": 1.50
-    }
-  ],
-  "total": 145
+  "item_ids": ["507f...", "508a...", "509b..."],
+  "custom_values": {}
 }
 ```
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RO` or `INVENTORY_RW`
+**Response (200):**
+```json
+{
+  "requested": 3,
+  "added": 2,
+  "skipped": 1
+}
+```
 
 ---
 
-### 7-13. Collection Items Management
-- **POST** /{collection_id}/items - Add item
-- **POST** /{collection_id}/items/bulk - Add multiple items
-- **PUT** /{collection_id}/items/{item_id} - Update item in collection
-- **DELETE** /{collection_id}/items/{item_id} - Remove item
-- **POST** /{collection_id}/items/bulk-delete - Remove multiple
-- **POST** /{collection_id}/permissions - Grant permission
-- **DELETE** /{collection_id}/permissions/{target_id} - Revoke permission
+### PUT `/api/collections/{collection_id}/items/{item_id}`
+
+Update custom values for an item in a collection.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Owner or RW |
+
+**Request:**
+```json
+{
+  "custom_values": { "כמות נדרשת": "5", "הערות פרויקט": "דחוף" }
+}
+```
 
 ---
 
-## 🛒 Procurement Module (`/api/procurement/orders`)
+### DELETE `/api/collections/{collection_id}/items/{item_id}`
 
-### 1. GET / (List Orders)
-**Description**: Get procurement orders
+Remove single item from collection (does NOT delete from inventory).
 
-**Query Parameters**:
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Owner or RW |
+
+---
+
+### POST `/api/collections/{collection_id}/items/bulk-delete`
+
+Remove multiple items from collection.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Owner or RW |
+
+**Request:**
+```json
+{
+  "item_ids": ["507f...", "508a..."]
+}
 ```
-?status=pending&supplier=Supplier%20A&page=1&limit=25
+
+**Response (200):**
+```json
+{
+  "requested": 2,
+  "deleted": 2
+}
 ```
 
-**Response** (200 OK):
+---
+
+### POST `/api/collections/{collection_id}/permissions`
+
+Grant permission to a user or group on a collection.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Owner |
+
+**Request:**
+```json
+{
+  "target_id": "user_or_group_id",
+  "target_type": "user",
+  "permission_type": "RW"
+}
+```
+
+Permission types: `RO` (read-only), `RW` (read-write), `OWNER`
+
+---
+
+### DELETE `/api/collections/{collection_id}/permissions/{target_id}`
+
+Revoke permission from user or group.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Owner |
+
+---
+
+## 🛒 Procurement Module (`/api/procurement`)
+
+### GET `/api/procurement/orders`
+
+List procurement orders with filters. Vendor-filtered based on user permissions. Price fields stripped for unauthorized users.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:ro` or vendor-specific |
+
+**Query Parameters:**
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `page` | int | 1 | Page number |
+| `page_size` | int | 20 | Items per page |
+| `search` | string | — | Free text search |
+| `catalog_number` | string | — | Filter by catalog number |
+| `manufacturer` | string | — | Filter by manufacturer/vendor |
+| `emf_number` | string | — | Filter by EMF number |
+| `status_in` | string[] | — | Filter orders IN these statuses |
+| `status_ne` | string | — | Filter orders NOT in this status |
+
+**Procurement Statuses:**
+
+| Status | Description |
+|--------|-------------|
+| `WAITING_BOM_EMF` | Initial — waiting for both BOM and EMF documents |
+| `WAITING_SHIPMENT` | Both documents received — waiting for shipment |
+| `SHIPPED` | Order shipped from vendor |
+| `RECEIVED` | Order received and closed |
+
+**Response (200):**
 ```json
 {
   "orders": [
     {
       "id": "507f...",
-      "order_number": "PO-001",
-      "supplier": "Supplier A",
-      "total_amount": 5200.00,
-      "status": "pending",
-      "expected_delivery": "2026-03-01",
-      "created_at": "2026-02-17T10:00:00Z",
+      "order_date": "2026-03-15",
+      "status": "WAITING_SHIPMENT",
+      "emf_number": "EMF-2026-0045",
+      "bom_vendor": "NetApp",
+      "total_amount": 125000.00,
+      "received_bom": true,
+      "bom_items": [...],
+      "bom_data": {...},
+      "files": [...],
       "created_by": "john.doe",
-      "item_count": 2
+      "created_at": "2026-03-15T10:00:00Z",
+      "updated_at": "2026-03-20T14:30:00Z",
+      "bom_received_at": "2026-03-16T09:00:00Z",
+      "emf_received_at": "2026-03-17T11:00:00Z"
     }
   ],
-  "total": 28,
-  "page": 1
+  "total": 85
 }
 ```
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `PROCUREMENT_RO` or `PROCUREMENT_RW`
-
 ---
 
-### 2. POST / (Create Order)
-**Description**: Create new procurement order
+### POST `/api/procurement/orders`
 
-**Request**:
+Create a new procurement order. Auto-calculates status. Integrates with BOM Analytics for price tracking.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:rw` + vendor-specific write |
+| **Audit** | ✅ `procurement_create` |
+
+**Request:**
 ```json
 {
-  "supplier": "Supplier A",
-  "items": [
+  "order_date": "2026-03-15",
+  "bom_items": [
     {
-      "item_id": "507f...",
-      "quantity": 100,
-      "unit_price": 2.50
+      "item_id": "1",
+      "catalog_number": "X-SFP-100G-LR4",
+      "manufacturer": "NetApp",
+      "description": "100G QSFP28 LR4 Transceiver",
+      "quantity": 10,
+      "bom_vendor": "NetApp"
     }
   ],
-  "total_amount": 250.00,
-  "expected_delivery": "2026-03-01",
-  "notes": "Urgent - needed for project X"
+  "total_amount": 125000.00,
+  "emf_number": "EMF-2026-0045",
+  "received_bom": true,
+  "bom_vendor": "NetApp",
+  "bom_data": { "groups": [...] }
 }
 ```
 
-**Response** (201 Created):
-```json
-{
-  "id": "507f...",
-  "order_number": "PO-004",
-  "status": "pending",
-  "created_at": "2026-02-17T14:30:00Z"
-}
-```
+---
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `PROCUREMENT_RW`
+### GET `/api/procurement/orders/{order_id}`
+
+Get single order details.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:ro` or vendor-specific |
 
 ---
 
-### 3-5. Order CRUD
-- **GET** /{order_id} - Get order details
-- **PUT** /{order_id} - Update order
-- **DELETE** /{order_id} - Cancel order
+### PUT `/api/procurement/orders/{order_id}`
+
+Update procurement order. Auto status transitions and milestone timestamps.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:rw` + vendor-specific write |
+| **Audit** | ✅ `procurement_update` |
+
+**Auto Status Logic:**
+- When both `received_bom` + EMF confirmed → `WAITING_SHIPMENT`
+- Milestone timestamps recorded: `bom_received_at`, `emf_received_at`, `shipped_at`
 
 ---
 
-### 6. POST /{order_id}/files
-**Description**: Upload file to order
+### DELETE `/api/procurement/orders/{order_id}`
 
-**Request**: FormData
-```
-file: <any file>
-```
+Delete order, all files, and associated audit logs.
 
-**Response** (201 Created):
-```json
-{
-  "file_id": "507f...",
-  "filename": "invoice.pdf",
-  "size": 125000,
-  "url": "/uploads/procurement/507f.pdf",
-  "uploaded_at": "2026-02-17T15:00:00Z"
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `PROCUREMENT_RW`
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:rw` + vendor-specific write |
+| **Audit** | ✅ `procurement_delete` |
 
 ---
 
-### 7. GET /{order_id}/files/{file_id}
-**Description**: Download file
+### POST `/api/procurement/orders/{order_id}/files`
 
-**Response** (200 OK):
-```
-Binary file download
-```
+Upload file attachment to order.
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `PROCUREMENT_RO` or `PROCUREMENT_RW`
-
----
-
-### 8. DELETE /{order_id}/files/{file_id}
-**Description**: Delete file from order
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `PROCUREMENT_RW`
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:rw` |
+| **Content-Type** | `multipart/form-data` |
+| **Max Size** | 10MB |
+| **Allowed Types** | PDF, JPG, PNG, GIF, XLSX, XLS, DOC, DOCX, TXT |
+| **Audit** | ✅ `procurement_file_upload` |
 
 ---
 
-## � BOM Scanner Module (`/api/bom`)
+### GET `/api/procurement/orders/{order_id}/files/{file_id}`
 
-### 1. POST /scan
-**Description**: Upload and scan a vendor BOM Excel file
+Download file attachment.
 
-**Query Params**: `format` (e.g. `netapp_pricing_template`, `hpe_quote`, `cisco_quote`, `dell_quote`)
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: Vendor-specific write (`procurement:{vendor}:rw`) or global `PROCUREMENT_RW`
-
-### 2. POST /parts/{part_number}
-**Description**: Save or update a part in the BOM catalog
-
-### 3. GET /parts
-**Description**: Fetch all parts from the catalog
-
-### 4. PATCH /scan/items
-**Description**: Batch-edit BOM items after AI scan (before order finalization). Edits are persisted to catalog for future model improvement.
-
-**Request**:
-```json
-{
-  "vendor": "NETAPP",
-  "items": [
-    { "part_number": "X446B-R6", "description_he": "כונן SSD 800GB", "category": "disk" },
-    { "part_number": "X6589-R6", "category": "cable" }
-  ]
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: Vendor-specific write (`procurement:{vendor}:rw`) or SUPERADMIN/ADMIN
-
-### 5. POST /api/ai/retrain
-**Description**: Retrain the AI classification model from MongoDB catalog + CSV data. Admin only.
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN` or `SUPERADMIN`
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:ro` |
 
 ---
 
-## �📊 Analytics Module (`/api/analytics`)
+### DELETE `/api/procurement/orders/{order_id}/files/{file_id}`
 
-### 1. GET /dashboard
-**Description**: Get dashboard statistics
+Delete file attachment.
 
-**Response** (200 OK):
-```json
-{
-  "total_items": 12450,
-  "total_users": 45,
-  "active_orders": 8,
-  "low_stock_count": 3,
-  "stale_items_count": 15,
-  "stats": {
-    "items_by_category": {
-      "Electronics": 4200,
-      "Hardware": 3100,
-      "Software": 2500
-    },
-    "orders_by_status": {
-      "pending": 5,
-      "in_transit": 2,
-      "received": 1
-    }
-  }
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: (Any)
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:rw` |
+| **Audit** | ✅ `procurement_file_delete` |
 
 ---
 
-### 2. GET /activity
-**Description**: Get recent activity feed
+## 🔍 BOM Scanner Module (`/api/bom`)
 
-**Response** (200 OK):
-```json
-{
-  "activities": [
-    {
-      "timestamp": "2026-02-17T15:00:00Z",
-      "user": "john.doe",
-      "action": "CREATE",
-      "resource_type": "item",
-      "resource_name": "LED-001",
-      "details": "Added new LED component"
-    }
-  ],
-  "total": 150
-}
-```
+### POST `/api/bom/scan`
 
-**Requires Auth**: ✅ Yes
+Scan and parse a BOM Excel file. Supports multiple vendor formats. AI classifier auto-categorizes components.
 
----
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:rw` + vendor-specific write |
+| **Content-Type** | `multipart/form-data` |
 
-### 3. GET /item/{catalog_number}
-**Description**: Get detailed analytics for one item
+**Supported Formats:**
 
-**Response** (200 OK):
-```json
-{
-  "catalog_number": "LED-001",
-  "name": "LED Red 5mm",
-  "history": [
-    {
-      "date": "2026-02-17",
-      "quantity": 500,
-      "reserved": 100,
-      "change": -50
-    }
-  ],
-  "usage_stats": {
-    "times_ordered": 12,
-    "total_quantity_sold": 600,
-    "last_order_date": "2026-02-15"
-  }
-}
-```
+| Format Key | Vendor |
+|-----------|--------|
+| `netapp_pricing_template` | NetApp |
+| `dell_quote` | Dell |
+| `hpe_quote` | HPE |
+| `cisco_quote` | Cisco |
+| `generic_first_col` | Generic (any vendor) |
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `INVENTORY_RO` or `INVENTORY_RW`
-
----
-
-## 📝 Audit Module (`/api/audit/logs`)
-
-### 1. GET /logs
-**Description**: Get audit logs
-
-**Query Parameters**:
-```
-?user=john.doe&action=UPDATE&from=2026-02-01&to=2026-02-17&page=1
-```
-
-**Response** (200 OK):
-```json
-{
-  "logs": [
-    {
-      "id": "507f...",
-      "timestamp": "2026-02-17T15:00:00Z",
-      "user": "john.doe",
-      "action": "UPDATE",
-      "resource_type": "item",
-      "resource_id": "507f...",
-      "changes": {
-        "quantity": { "old": 500, "new": 450 },
-        "reserved": { "old": 100, "new": 50 }
-      },
-      "ip_address": "192.168.1.100",
-      "user_agent": "Mozilla/5.0..."
-    }
-  ],
-  "total": 1250,
-  "page": 1
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
-
----
-
-### 2. POST /logs
-**Description**: Create audit log entry (internal use)
-
-**Request**:
-```json
-{
-  "action": "UPDATE",
-  "resource_type": "item",
-  "resource_id": "507f...",
-  "details": { "field": "quantity", "old": 500, "new": 450 }
-}
-```
-
-**Requires Auth**: ✅ Yes (System only)
-
----
-
-### 3. GET /users/{username}
-**Description**: Get audit logs for specific user
-
-**Response** (200 OK):
-```json
-{
-  "username": "john.doe",
-  "logs": [
-    {
-      "timestamp": "2026-02-17T15:00:00Z",
-      "action": "UPDATE",
-      "resource": "item:LED-001"
-    }
-  ],
-  "total": 342,
-  "first_login": "2025-06-15T00:00:00Z",
-  "last_login": "2026-02-17T10:00:00Z"
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
-
----
-
-## 🔍 Users Search Module (`/api/users`)
-
-### 1. GET /search
-**Description**: Search for users
-
-**Query Parameters**:
-```
-?q=john&limit=10
-```
-
-**Response** (200 OK):
-```json
-{
-  "users": [
-    {
-      "id": "507f...",
-      "username": "john.doe",
-      "email": "john@company.com",
-      "role": "admin"
-    }
-  ],
-  "total": 1
-}
-```
-
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN` or `PROCUREMENT_RW`
-
----
-
-### 2. GET /groups/search
-**Description**: Search for groups
-
-**Query Parameters**:
-```
-?q=engineer&limit=5
-```
-
-**Response** (200 OK):
+**Response (200):**
 ```json
 {
   "groups": [
     {
-      "id": "507f...",
-      "name": "Engineers",
-      "member_count": 12
+      "main": {
+        "part_number": "AFF-A90",
+        "description": "NetApp AFF A90 Storage System",
+        "quantity": 1,
+        "unit_price": 50000,
+        "category": "server-storage",
+        "confidence": 0.95,
+        "description_he": "מערכת אחסון NetApp AFF A90"
+      },
+      "children": [
+        {
+          "part_number": "X-SFP-100G-LR4",
+          "description": "100G QSFP28 LR4 Transceiver",
+          "quantity": 10,
+          "category": "sfp-qsfp",
+          "confidence": 0.88,
+          "description_he": "ג'יביק QSFP28 100G LR4"
+        }
+      ]
     }
   ],
-  "total": 1
+  "unknown_parts": ["CUSTOM-PART-001"],
+  "file_s3_key": "bom/2026/03/scan_abc123.xlsx"
 }
 ```
 
-**Requires Auth**: ✅ Yes
-**Requires Permission**: `ADMIN`
+**AI Classification Categories (16):**
+`server-storage`, `disk-shelf`, `switch`, `io-card`, `disk`, `cable`, `sfp-qsfp`, `cpu`, `memory`, `fan`, `psu`, `license-capacity`, `license-software`, `support`, `server`, `other`
 
 ---
 
-## ⏱️ Response Times (Typical)
+### POST `/api/bom/parts/{part_number}`
 
-| Endpoint | Small Load | Medium Load | Large Load |
-|----------|-----------|-------------|-----------|
-| GET /items | 50-100ms | 100-200ms | 200-500ms |
-| POST /items | 30-50ms | 50-100ms | 100-200ms |
-| POST /import-excel | 500ms-2s | 2-5s | 5-10s |
-| GET /export-excel | 200-500ms | 500ms-2s | 2-5s |
-| POST /login | 100-200ms | 200-300ms | 300-500ms |
+Save or update a part in the BOM catalog (for AI training and future lookups).
 
----
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
 
-## 🔄 Pagination Guidance
-
-**Default**: 
-- page = 1
-- limit = 30
-
-**Limits**:
-- Minimum limit = 1
-- Maximum limit = 1000
-
-**Example**:
-```
-GET /api/items?page=3&limit=50
-→ Skip first 100 items, return next 50
-→ Response includes: items[], total, page, limit, total_pages
-```
-
----
-
-## 🔐 Authorization Header Format
-
-```
-Authorization: Bearer <access_token>
-```
-
-**Example**:
-```
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huLmRvZSIsInVzZXJfaWQiOiI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3MDgxMjM0NTZ9.SIGNATURE
-```
-
----
-
-## 📊 Common Filter Examples
-
-### Items Filtering
+**Request:**
 ```json
-// Only active Electronics with low stock
 {
-  "category": "Electronics",
-  "status": "active",
-  "quantity": { "$lt": 50 }
+  "description_he": "מתג 48 פורטים 25G",
+  "category": "switch",
+  "important": true,
+  "excel_description": "48-Port 25GbE Switch"
 }
+```
 
-// Multiple statuses
+---
+
+### GET `/api/bom/parts`
+
+Get all saved parts from the BOM catalog.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+---
+
+### PATCH `/api/bom/scan/items`
+
+Edit BOM items after AI classification (correct categories/descriptions). Requires vendor-specific write permission.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Vendor-specific write |
+
+**Request:**
+```json
 {
-  "status": { "$in": ["active", "pending_review"] }
+  "vendor": "netapp",
+  "items": [
+    {
+      "part_number": "X-SFP-100G-LR4",
+      "description_he": "ג'יביק QSFP28 100G LR4",
+      "category": "sfp-qsfp",
+      "part_alias": "",
+      "excel_description": "100G QSFP28 LR4 Transceiver"
+    }
+  ]
 }
+```
 
-// Date range
+---
+
+## 📈 BOM Analytics Module (`/api/bom-analytics`)
+
+### POST `/api/bom-analytics/seed`
+
+Initialize historical price data from existing procurement orders. Run once to populate analytics.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+---
+
+### GET `/api/bom-analytics/search-parts`
+
+Autocomplete search for part numbers.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+**Query Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `q` | string | Search query |
+| `item_type` | `main` / `component` | Filter by part type |
+| `limit` | int | Max results |
+
+---
+
+### GET `/api/bom-analytics/trends/{part_number}`
+
+Get historical pricing trends for a specific part number.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:compare_prices` |
+
+**Query Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `item_type` | string | Optional: `main` or `component` |
+
+**Response (200):**
+```json
+[
+  {
+    "date": "2026-01-15",
+    "price": 1250.00,
+    "vendor": "NetApp",
+    "order_id": "507f..."
+  }
+]
+```
+
+---
+
+### POST `/api/bom-analytics/aggregate-trends`
+
+Cross-order price aggregation for product chains (e.g., product generations).
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:compare_prices` |
+
+**Request:**
+```json
 {
-  "created_at": {
-    "$gte": "2026-01-01T00:00:00Z",
-    "$lt": "2026-02-01T00:00:00Z"
+  "main_part": "AFF-A800",
+  "secondary_parts": ["AFF-A90"]
+}
+```
+
+---
+
+### GET `/api/bom-analytics/vendor-discounts`
+
+Average discount percentages by vendor.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:compare_prices` |
+
+**Query Parameters:**
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `months` | int | 12 | Lookback period in months |
+
+---
+
+### GET `/api/bom-analytics/vendor-spending`
+
+Total spending per vendor with time-series resolution.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `procurement:compare_prices` |
+
+**Query Parameters:**
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `resolution` | `daily` / `monthly` / `yearly` | `monthly` | Time granularity |
+| `start_date` | date | — | Start date |
+| `end_date` | date | — | End date |
+
+---
+
+## 🤖 AI Module (`/api/ai`)
+
+### POST `/api/ai/retrain`
+
+Retrain the BOM component classifier model. Merges verified MongoDB data with static CSV training set.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin only |
+
+**Response (200):**
+```json
+{
+  "accuracy": 0.92,
+  "cv_accuracy": 0.89,
+  "labels": ["server-storage", "disk", "cable", "sfp-qsfp", "..."],
+  "total_samples": 1250
+}
+```
+
+**Requirements:** Minimum 20 samples in training set.
+
+---
+
+## 📊 Analytics Module (`/api/analytics`)
+
+### GET `/api/analytics/dashboard`
+
+Comprehensive dashboard statistics with optional date filtering.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+**Query Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `start_date` | date | Optional — filter procurement data by start date |
+| `end_date` | date | Optional — filter procurement data by end date |
+
+**Response (200):**
+```json
+{
+  "projects": [{ "name": "פרויקט אלפא", "value": 45 }],
+  "total_items": 1250,
+  "active_allocations": 312,
+  "serial_count": 870,
+  "non_serial_count": 380,
+  "target_sites": [{ "name": "חדר שרתים", "value": 80 }],
+  "manufacturers": [{ "name": "NetApp", "value": 350 }],
+  "locations": [{ "name": "מחסן מרכזי", "value": 600 }],
+  "procurement": {
+    "waiting_emf": 5,
+    "waiting_bom": 3,
+    "ordered": 12,
+    "received": 45,
+    "total_spend": 2500000
   }
 }
 ```
 
 ---
 
-## 🧪 Testing Endpoints
+### GET `/api/analytics/activity`
 
-### With curl:
-```bash
-# Login
-curl -X POST http://localhost:8000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"password"}'
+Activity counts for the last N days.
 
-# List items (with token)
-curl -X GET http://localhost:8000/api/items \
-  -H "Authorization: Bearer YOUR_TOKEN"
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
 
-# Create item
-curl -X POST http://localhost:8000/api/items \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"catalog_number":"NEW-001","name":"Test Item","quantity":100}'
-```
+**Query Parameters:**
 
-### With Python:
-```python
-import requests
+| Param | Type | Default |
+|-------|------|---------|
+| `days` | int | 7 |
 
-# Login
-response = requests.post(
-    'http://localhost:8000/api/auth/login',
-    json={'username': 'admin', 'password': 'password'}
-)
-token = response.json()['access_token']
-
-# Get items
-headers = {'Authorization': f'Bearer {token}'}
-items = requests.get(
-    'http://localhost:8000/api/items',
-    headers=headers
-).json()
+**Response (200):**
+```json
+{
+  "created": 15,
+  "updated": 42,
+  "deleted": 3
+}
 ```
 
 ---
 
-**Last Updated**: 17-02-2026
-**API Version**: 2.0.0
-**Base URL**: http://localhost:8000/api (development) or https://api.warehouse.company.com/api (production)
-**Documentation**: http://localhost:8000/docs (Swagger UI)
+### GET `/api/analytics/item/{catalog_number}`
+
+Project allocation statistics for a specific SKU.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | `inventory:ro` |
+
+**Response (200):**
+```json
+[
+  { "name": "פרויקט אלפא", "value": 5 },
+  { "name": "פרויקט בטא", "value": 3 }
+]
+```
+
+---
+
+## 📝 Audit Module (`/api/audit`)
+
+### GET `/api/audit/logs`
+
+Get audit logs with filtering and pagination.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin or inventory permissions |
+
+**Query Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `page` | int | Page number |
+| `page_size` | int | Items per page |
+| `action` | string | Filter by action type |
+| `actor` | string | Filter by who performed the action |
+| `target_user` | string | Filter by target user |
+| `target_resource` | string | Filter by resource type |
+| `resource_id` | string | Filter by specific resource |
+| `search` | string | Free text search |
+| `start_date` | date | Start of date range |
+| `end_date` | date | End of date range |
+
+**Response (200):**
+```json
+{
+  "logs": [
+    {
+      "id": "507f...",
+      "action": "item_update",
+      "actor": "john.doe",
+      "actor_role": "admin",
+      "target_resource": "item",
+      "resource_id": "508a...",
+      "target_resource_name": "X-SFP-100G-LR4",
+      "changes": { "current_stock": { "old": "5", "new": "10" } },
+      "reason": "",
+      "ip_address": "10.0.0.55",
+      "user_agent": "Mozilla/5.0...",
+      "timestamp": "2026-03-22T14:20:00Z"
+    }
+  ],
+  "total": 5420,
+  "page": 1,
+  "page_size": 20
+}
+```
+
+**All Audit Actions:**
+
+| Category | Actions |
+|----------|---------|
+| Items | `item_create`, `item_update`, `item_delete`, `item_bulk_update`, `item_bulk_delete`, `item_import` |
+| Users | `user_create`, `user_update`, `user_delete`, `user_search` |
+| Groups | `group_create`, `group_update`, `group_delete` |
+| Collections | `collection_create`, `collection_update`, `collection_delete`, `collection_add_item`, `collection_remove_item` |
+| Procurement | `procurement_create`, `procurement_update`, `procurement_delete`, `procurement_file_upload`, `procurement_file_delete` |
+| Auth | `auth_login`, `auth_logout`, `auth_domain_login` |
+
+---
+
+### POST `/api/audit/logs`
+
+Create a manual audit entry (used internally for undo operations).
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+---
+
+### GET `/api/audit/users/{username}`
+
+Get all audit activity for a specific user.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin |
+
+---
+
+## 👥 Admin: Users Module (`/api/admin/users`)
+
+### GET `/api/admin/users`
+
+List all users.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin |
+
+---
+
+### POST `/api/admin/users`
+
+Create a new user account. Audit logged with IP and user-agent.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin |
+| **Audit** | ✅ `user_create` |
+
+**Request:**
+```json
+{
+  "username": "alice.smith",
+  "password": "InitialPassword123!",
+  "user_type": "local",
+  "role": "user",
+  "permissions": ["inventory:ro", "procurement:ro"]
+}
+```
+
+**Constraints:**
+- Username: 3–50 characters
+- Password required for `local` users only (`ad` users authenticate via domain)
+- Can only create users with lower role than creator
+
+---
+
+### GET `/api/admin/users/{user_id}`
+
+Get specific user details.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin |
+
+**Response (200):**
+```json
+{
+  "id": "507f...",
+  "username": "alice.smith",
+  "role": "user",
+  "user_type": "local",
+  "permissions": ["inventory:ro"],
+  "is_active": true,
+  "created_at": "2025-06-15T00:00:00Z",
+  "updated_at": "2026-03-01T10:00:00Z",
+  "created_by": "admin",
+  "last_login": "2026-03-22T09:00:00Z"
+}
+```
+
+---
+
+### PUT `/api/admin/users/{user_id}`
+
+Update user details (role, permissions, active status).
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin |
+| **Audit** | ✅ `user_update` |
+
+**Request:**
+```json
+{
+  "role": "admin",
+  "permissions": ["inventory:rw", "procurement:rw"],
+  "is_active": true
+}
+```
+
+---
+
+### DELETE `/api/admin/users/{user_id}`
+
+Delete a user account.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin |
+| **Audit** | ✅ `user_delete` |
+
+**Constraints:**
+- Cannot delete the last Admin
+- Cannot delete a SuperAdmin
+- Reason required in request body
+
+---
+
+### GET `/api/admin/stats`
+
+User statistics for admin dashboard.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin |
+
+**Response (200):**
+```json
+{
+  "total_users": 45,
+  "active_users": 42,
+  "superadmins": 2,
+  "admins": 5,
+  "regular_users": 38
+}
+```
+
+---
+
+## 👥 Admin: Groups Module (`/api/admin/groups`)
+
+### GET `/api/admin/groups`
+List all groups. **Permission:** Admin/SuperAdmin
+
+### POST `/api/admin/groups`
+Create a new group. **Permission:** Admin/SuperAdmin
+
+**Request:**
+```json
+{
+  "name": "מהנדסי רשת",
+  "role": "user",
+  "permissions": ["inventory:ro", "procurement:netapp:ro"]
+}
+```
+
+### GET `/api/admin/groups/{group_id}`
+Get group details. **Permission:** Admin/SuperAdmin
+
+### PUT `/api/admin/groups/{group_id}`
+Update group (name, role, permissions, active status). **Permission:** Admin/SuperAdmin
+
+### DELETE `/api/admin/groups/{group_id}`
+Delete a group. **Permission:** Admin/SuperAdmin
+
+---
+
+## 🔍 User Search Module (`/api/users`)
+
+### GET `/api/users/search`
+
+Search users by username or email. Minimum 2 characters.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+**Query:** `?q=john`
+
+---
+
+### GET `/api/users/groups/search`
+
+Search groups by name.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+
+**Query:** `?q=מהנדסי`
+
+---
+
+## ⚙️ System Endpoints
+
+### GET `/`
+
+Root information endpoint — returns app name and version.
+
+### GET `/health`
+
+Health check — returns MongoDB connection status and app version.
+
+**Response (200):**
+```json
+{
+  "status": "healthy",
+  "mongodb": "connected",
+  "version": "2.0.0"
+}
+```

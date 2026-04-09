@@ -200,6 +200,7 @@ class ExcelService:
             current_stock: Optional[str] = None,
             purpose: Optional[str] = None,
             notes: Optional[str] = None,
+            stale_days: Optional[int] = None,
             page: int = 1,
             limit: int = 100000
     ) -> io.BytesIO:
@@ -215,6 +216,7 @@ class ExcelService:
             current_stock=current_stock,
             purpose=purpose,
             notes=notes,
+            stale_days=stale_days,
             page=page,
             limit=limit,
             sort_by="updated_at",

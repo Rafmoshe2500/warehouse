@@ -60,6 +60,7 @@ class ItemFilter(BaseModel):
     target_site: Optional[str] = None
     project_allocations: Optional[str] = None
     notes: Optional[str] = None
+    stale_days: Optional[int] = None
     sort_by: Optional[str] = None
     sort_order: str = "asc"
     page: int = 1

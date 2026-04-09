@@ -43,6 +43,9 @@ async def export_excel(
         purpose: Optional[str] = Query(None),
         notes: Optional[str] = Query(None),
 
+        # פילטר פריטים ישנים
+        stale_days: Optional[int] = Query(None, ge=1),
+
         # פרמטרים לייצוא (חדש)
         export_mode: str = Query("all", pattern="^(all|current)$"),
         page: int = Query(1, ge=1),
@@ -74,6 +77,7 @@ async def export_excel(
         current_stock=current_stock,
         purpose=purpose,
         notes=notes,
+        stale_days=stale_days,
         page=final_page,
         limit=final_limit
     )

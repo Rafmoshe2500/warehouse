@@ -1,0 +1,109 @@
+.hotspot-marker {
+  position: absolute;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.hotspot-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent-primary, #3b82f6);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: hotspot-pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hotspot-dot:hover {
+  transform: scale(1.15);
+}
+
+.hotspot-dot.active {
+  animation: none;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.25);
+}
+
+.hotspot-number {
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
+@keyframes hotspot-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.hotspot-tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 50%;
+  transform: translateX(50%);
+  background: var(--bg-secondary, #1e293b);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  min-width: 220px;
+  max-width: 300px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+  animation: tooltip-fade-in 0.2s ease-out;
+}
+
+.hotspot-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: calc(50% - 6px);
+  border: 6px solid transparent;
+  border-bottom-color: var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.hotspot-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: calc(50% - 5px);
+  border: 5px solid transparent;
+  border-bottom-color: var(--bg-secondary, #1e293b);
+}
+
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(50%) translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(50%) translateY(0);
+  }
+}
+
+.hotspot-tooltip-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--accent-primary, #60a5fa);
+  margin-bottom: 0.4rem;
+}
+
+.hotspot-tooltip-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted, #94a3b8);
+  line-height: 1.6;
+}

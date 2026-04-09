@@ -1,10 +1,13 @@
 from typing import List, Optional
 from datetime import datetime, timezone
+import logging
 
 from app.db.repositories.group_repository import GroupRepository
 from app.services.audit.group_auditor import GroupAuditor
 from app.schemas.group import GroupCreate, GroupUpdate
 from app.core.exceptions import NotFoundException, BadRequestException
+
+logger = logging.getLogger(__name__)
 
 
 class GroupService:
@@ -38,6 +41,7 @@ class GroupService:
         # audit_service is removed in flavor of self.auditor
     ) -> dict:
         """Create new group"""
+        logger.info("Creating group, name=%s, created_by=%s", group_data.name, created_by)
         
         # Check if group name exists
         existing = await self.repo.get_by_name(group_data.name)
@@ -65,9 +69,7 @@ class GroupService:
                 changes=group_data.model_dump()
             )
         except Exception as e:
-            # We don't want to fail request if audit logging fails
-            # But in production we should log this error
-            pass
+            logger.exception("Failed to audit group creation, group_id=%s", created_group["id"])
 
         return created_group
     
@@ -120,7 +122,7 @@ class GroupService:
                     changes=changes
                 )
             except Exception:
-                pass
+                logger.exception("Failed to audit group update, group_id=%s", group_id)
         
         return await self.get_group_by_id(group_id)
     
@@ -132,6 +134,7 @@ class GroupService:
         deleter_role: str
     ) -> dict:
         """Delete group"""
+        logger.info("Deleting group, group_id=%s, deleted_by=%s, reason=%s", group_id, deleted_by, reason)
         existing = await self.repo.get_by_id(group_id)
         if not existing:
             raise NotFoundException("קבוצה לא נמצאה")
@@ -147,7 +150,7 @@ class GroupService:
                 reason=reason
             )
         except Exception:
-            pass
+            logger.exception("Failed to audit group deletion, group_id=%s", group_id)
 
         return {"message": "קבוצה נמחקה בהצלחה", "reason": reason}
 

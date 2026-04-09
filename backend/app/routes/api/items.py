@@ -57,10 +57,7 @@ async def create_item(
         item_service: ItemService = Depends(get_item_service)
 ):
     """הוספת פריט חדש"""
-    import sys
-    sys.stderr.write(f"DEBUG: create_item input: {item}\n")
     result = await item_service.create_item(item, current_user, undo_log_id, is_undo)
-    sys.stderr.write(f"DEBUG: create_item result: {result}\n")
     return result
 
 

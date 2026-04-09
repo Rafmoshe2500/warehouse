@@ -25,12 +25,12 @@ class AnalyticsService:
             try:
                 date_query["$gte"] = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
             except ValueError:
-                pass
+                logger.debug("Invalid start_date format: %s", start_date)
         if end_date:
             try:
                 date_query["$lte"] = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
             except ValueError:
-                pass
+                logger.debug("Invalid end_date format: %s", end_date)
         
         return {date_field: date_query} if date_query else {}
 
@@ -344,14 +344,14 @@ class AnalyticsService:
                 try:
                     date_filter["$gte"] = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
                 except ValueError:
-                    pass
+                    logger.debug("Invalid start_date format in procurement stats: %s", start_date)
             if end_date:
                 try:
                     # To include the whole end day we might want to adjust it, 
                     # but simple fromisoformat is a good start. 
                     date_filter["$lte"] = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
                 except ValueError:
-                    pass
+                    logger.debug("Invalid end_date format in procurement stats: %s", end_date)
             
             if date_filter:
                 match_stage["order_date"] = date_filter

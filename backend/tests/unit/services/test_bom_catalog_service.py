@@ -147,3 +147,87 @@ class TestBomCatalogService:
             await catalog_service.apply_item_edits([
                 {"part_number": "BAD-1", "description_he": "לא חוקי", "category": "nonexistent"}
             ])
+
+    @pytest.mark.asyncio
+    async def test_check_unknown_parts_empty_input(self, catalog_service):
+        """check_unknown_parts with empty list returns [] immediately."""
+        result = await catalog_service.check_unknown_parts([])
+        assert result == []
+
+    def test_classify_parts_ai_failure_fallback(self, catalog_service):
+        """When AI classifier throws, neutral fallback values are set."""
+        unknown_list = [
+            {"part_number": "FAIL-1", "excel_description": "Something"},
+        ]
+        with patch("app.ai.classifier.classify_batch", side_effect=Exception("AI down")):
+            result = catalog_service.classify_parts(unknown_list)
+
+        assert len(result) == 1
+        assert result[0]["ai_label"] == "אחר"
+        assert result[0]["ai_category"] == "other"
+        assert result[0]["ai_confidence"] == 0.0
+        assert result[0]["ai_low_confidence"] is True
+
+    @pytest.mark.asyncio
+    async def test_enrich_groups_empty_parts(self, catalog_service):
+        """enrich_groups returns groups unchanged when no part_numbers exist."""
+        groups = [
+            {"main": {"product": "No PN here"}, "children": []}
+        ]
+        result = await catalog_service.enrich_groups(groups)
+        assert result == groups
+
+    @pytest.mark.asyncio
+    async def test_enrich_groups_ai_exception_fallback(self, catalog_service):
+        """When AI fails in enrich_groups, 'other' fallback is used."""
+        groups = [
+            {"main": {"part_number": "NEW-PN", "product": "Mystery"}, "children": []}
+        ]
+        with patch("app.ai.classifier.classify_batch", side_effect=Exception("AI down")):
+            result = await catalog_service.enrich_groups(groups)
+
+        cat = result[0]["main"]["catalog"]
+        assert cat["category"] == "other"
+        assert cat["description_he"] == ""
+
+    @pytest.mark.asyncio
+    async def test_apply_item_edits_skip_empty_part_number(self, catalog_service):
+        """Items with empty part_number are skipped."""
+        result = await catalog_service.apply_item_edits([
+            {"part_number": "", "description_he": "should skip"},
+            {"part_number": "  ", "description_he": "also skip"},
+            {"part_number": "VALID-1", "description_he": "saved", "category": "disk"},
+        ])
+        assert len(result) == 1
+        assert result[0]["part_number"] == "VALID-1"
+
+    @pytest.mark.asyncio
+    async def test_apply_item_edits_partial_fields(self, catalog_service):
+        """apply_item_edits with only some optional fields updates correctly."""
+        # First save a baseline
+        await catalog_service.save_part("PARTIAL-1", "orig desc", "server", True, "orig excel")
+
+        # Now edit only description_he (no category change)
+        result = await catalog_service.apply_item_edits([
+            {"part_number": "PARTIAL-1", "description_he": "new desc"},
+        ])
+        assert len(result) == 1
+        assert "description_he" in result[0]
+        assert result[0]["description_he"] == "new desc"
+
+        # Verify category was NOT overwritten (since not provided)
+        all_parts = await catalog_service.get_all_parts()
+        pn_map = {p["part_number"]: p for p in all_parts}
+        assert pn_map["PARTIAL-1"]["category"] == "server"  # unchanged
+
+    @pytest.mark.asyncio
+    async def test_apply_item_edits_with_excel_description(self, catalog_service):
+        """apply_item_edits persists excel_description when provided."""
+        result = await catalog_service.apply_item_edits([
+            {"part_number": "EXCEL-1", "description_he": "desc", "category": "cable", "excel_description": "Cable 10G DAC"},
+        ])
+        assert len(result) == 1
+
+        all_parts = await catalog_service.get_all_parts()
+        pn_map = {p["part_number"]: p for p in all_parts}
+        assert pn_map["EXCEL-1"]["excel_description"] == "Cable 10G DAC"

@@ -1,4 +1,5 @@
 from typing import List, Optional
+import logging
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import StreamingResponse
 
@@ -115,8 +116,8 @@ async def export_collection_to_excel(
         from app.core.exceptions import ExcelFileException
         if isinstance(e, ExcelFileException):
             raise HTTPException(status_code=400, detail=str(e))
-        import logging
-        logging.error(f"Error exporting collection {collection_id}: {e}")
+        logger = logging.getLogger(__name__)
+        logger.error("Error exporting collection %s: %s", collection_id, e)
         raise HTTPException(status_code=500, detail="שגיאה פנימית בייצוא האוסף")
 
 @router.post("/{collection_id}/items", response_model=dict, status_code=status.HTTP_201_CREATED)

@@ -25,6 +25,9 @@ const CollectionDetails = lazy(() => import('./pages/MyComponents/CollectionDeta
 
 // User Guide
 const UserGuidePage = lazy(() => import('./pages/UserGuidePage/UserGuidePage'));
+const InventoryTableGuide = lazy(() => import('./pages/UserGuidePage/InventoryTableGuide'));
+const MyCollectionsGuide = lazy(() => import('./pages/UserGuidePage/MyCollectionsGuide'));
+const ProcurementGuide = lazy(() => import('./pages/UserGuidePage/ProcurementGuide'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -214,6 +217,30 @@ const PrivateRoute = ({ children }) => {
             element={
               <PrivateRoute>
                 <UserGuidePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/inventory-table"
+            element={
+              <PrivateRoute>
+                <InventoryTableGuide />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/collections"
+            element={
+              <PrivateRoute>
+                <MyCollectionsGuide />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/procurement"
+            element={
+              <PrivateRoute>
+                <ProcurementGuide />
               </PrivateRoute>
             }
           />

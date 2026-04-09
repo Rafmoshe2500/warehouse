@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { FiPlus, FiSearch, FiClock, FiCheckCircle, FiX, FiLayers, FiTrendingUp } from 'react-icons/fi';
-import { Button, Input, Pagination, Spinner, ToastContainer, SkeletonTable, Tabs } from '../../components/common';
+import { Button, Input, Pagination, ToastContainer, SkeletonOrderCards, Tabs } from '../../components/common';
 import ProcurementTable from '../../components/procurement/ProcurementTable';
 import ProcurementModal from '../../components/procurement/ProcurementModal';
 import OrderTypeModal from '../../components/procurement/OrderTypeModal';
 import BomPrescanModal from '../../components/procurement/BomPrescanModal';
 import ProcurementFilesModal from '../../components/procurement/ProcurementFilesModal';
-import DeleteConfirmModal from '../../components/admin/DeleteConfirmModal';
+import DeleteModal from '../../components/common/DeleteModal/DeleteModal';
 import OrderHistoryModal from '../../components/procurement/OrderHistoryModal';
 import BomScannerTab from '../../components/procurement/BomScannerTab/BomScannerTab';
 import BomPreviewModal from '../../components/procurement/BomPreviewModal';
 import ProcurementAnalyticsTab from '../../components/procurement/AnalyticsTab/ProcurementAnalyticsTab';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
+import { useProcurementModals } from '../../hooks/useProcurementModals';
 import procurementService from '../../api/services/procurementService';
 import './ProcurementPage.css';
 
@@ -44,25 +45,8 @@ const ProcurementPage = () => {
   const [pageSize, setPageSize] = useState(50);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Modal states
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingOrder, setEditingOrder] = useState(null);
-  const [isFilesModalOpen, setIsFilesModalOpen] = useState(false);
-  const [selectedOrderForFiles, setSelectedOrderForFiles] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [orderToDelete, setOrderToDelete] = useState(null);
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-  const [selectedOrderForHistory, setSelectedOrderForHistory] = useState(null);
-
-  // BOM preview modal
-  const [isBomPreviewOpen, setIsBomPreviewOpen] = useState(false);
-  const [selectedOrderForBom, setSelectedOrderForBom] = useState(null);
-
-  // Order type selection + BOM prescan
-  const [isOrderTypeModalOpen, setIsOrderTypeModalOpen] = useState(false);
-  const [newOrderType, setNewOrderType] = useState(null);       // 'bom' | 'manual'
-  const [isBomPrescanOpen, setIsBomPrescanOpen] = useState(false);
-  const [bomPrescanData, setBomPrescanData] = useState(null);   // { result, vendor }
+  // Modal states (centralized hook)
+  const modals = useProcurementModals();
 
   // Tab state: 'process' (default) or 'completed'
   const [activeTab, setActiveTab] = useState('process');
@@ -127,7 +111,7 @@ const ProcurementPage = () => {
     try {
       await procurementService.createOrder(orderData);
       success('הזמנה נוצרה בהצלחה');
-      setIsEditModalOpen(false);
+      modals.closeEditModal();
       fetchOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה ביצירת הזמנה');
@@ -136,10 +120,9 @@ const ProcurementPage = () => {
 
   const handleUpdate = async (orderData) => {
     try {
-      await procurementService.updateOrder(editingOrder.id, orderData);
+      await procurementService.updateOrder(modals.editingOrder.id, orderData);
       success('הזמנה עודכנה בהצלחה');
-      setIsEditModalOpen(false);
-      setEditingOrder(null);
+      modals.closeEditModal();
       fetchOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה בעדכון הזמנה');
@@ -148,51 +131,18 @@ const ProcurementPage = () => {
 
   const handleDelete = async (reason) => {
     try {
-      await procurementService.deleteOrder(orderToDelete.id);
+      await procurementService.deleteOrder(modals.orderToDelete.id);
       success('הזמנה נמחקה בהצלחה');
-      setIsDeleteModalOpen(false);
-      setOrderToDelete(null);
+      modals.closeDeleteModal();
       fetchOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה במחיקת הזמנה');
     }
   };
 
-  const openCreateModal = () => {
-    setEditingOrder(null);
-    setIsOrderTypeModalOpen(true); // Show type selection first
-  };
+  const handleOrderTypeSelect = modals.handleOrderTypeSelect;
 
-  const handleOrderTypeSelect = (type) => {
-    setNewOrderType(type);
-    setIsOrderTypeModalOpen(false);
-    if (type === 'bom') {
-      // BOM flow: prescan first, then open form pre-filled
-      setBomPrescanData(null);
-      setIsBomPrescanOpen(true);
-    } else {
-      // Manual flow: open form directly
-      setBomPrescanData(null);
-      setIsEditModalOpen(true);
-    }
-  };
-
-  const handleBomPrescanDone = (data) => {
-    // data = { result, vendor } from BomPrescanModal
-    setIsBomPrescanOpen(false);
-    setBomPrescanData(data);
-    setIsEditModalOpen(true);
-  };
-
-  const openEditModal = (order) => {
-    setEditingOrder(order);
-    setIsEditModalOpen(true);
-  };
-
-  const openDeleteModal = (order) => {
-    setOrderToDelete(order);
-    setIsDeleteModalOpen(true);
-  };
+  const handleBomPrescanDone = modals.handleBomPrescanDone;
 
   const handleMarkAsOrdered = async (order) => {
     try {
@@ -214,24 +164,8 @@ const ProcurementPage = () => {
     }
   };
 
-  const openFilesModal = (order) => {
-    setSelectedOrderForFiles(order);
-    setIsFilesModalOpen(true);
-  };
-
-  const openHistoryModal = (order) => {
-    setSelectedOrderForHistory(order);
-    setIsHistoryModalOpen(true);
-  };
-
-  const openBomPreviewModal = (order) => {
-    setSelectedOrderForBom(order);
-    setIsBomPreviewOpen(true);
-  };
-
   const handleFileChange = async () => {
     try {
-      // Refetch with current tab filters
       const queryParams = {
         page,
         page_size: pageSize,
@@ -252,9 +186,9 @@ const ProcurementPage = () => {
       setOrders(data.orders);
       setTotal(data.total);
       
-      const updatedOrder = data.orders.find(o => o.id === selectedOrderForFiles.id);
+      const updatedOrder = data.orders.find(o => o.id === modals.selectedOrderForFiles.id);
       if (updatedOrder) {
-        setSelectedOrderForFiles(updatedOrder);
+        modals.setSelectedOrderForFiles(updatedOrder);
       }
     } catch (err) {
       error('שגיאה בעדכון הנתונים');
@@ -296,7 +230,7 @@ const ProcurementPage = () => {
             {canEdit && (
               <Button 
                 variant="primary" 
-                onClick={openCreateModal}
+                onClick={modals.openCreateModal}
                 icon={<FiPlus />}
               >
                 הזמנה חדשה
@@ -325,7 +259,7 @@ const ProcurementPage = () => {
           </div>
 
           {loading ? (
-            <SkeletonTable rows={8} columns={7} />
+            <SkeletonOrderCards count={8} />
           ) : (
             <>
               <ProcurementTable
@@ -333,11 +267,11 @@ const ProcurementPage = () => {
                 canEdit={canEdit}
                 canEditOrder={canEditOrder}
                 isAdmin={isAdmin || isSuperAdmin}
-                onEdit={openEditModal}
-                onDelete={openDeleteModal}
-                onManageFiles={openFilesModal}
-                onHistory={openHistoryModal}
-                onViewBom={openBomPreviewModal}
+                onEdit={modals.openEditModal}
+                onDelete={modals.openDeleteModal}
+                onManageFiles={modals.openFilesModal}
+                onHistory={modals.openHistoryModal}
+                onViewBom={modals.openBomPreviewModal}
                 onMarkAsOrdered={handleMarkAsOrdered}
                 onMarkAsReceived={handleMarkAsReceived}
               />
@@ -357,60 +291,62 @@ const ProcurementPage = () => {
 
       {/* Order type selection (new orders only) */}
       <OrderTypeModal
-        isOpen={isOrderTypeModalOpen}
-        onClose={() => setIsOrderTypeModalOpen(false)}
+        isOpen={modals.isOrderTypeModalOpen}
+        onClose={modals.closeOrderTypeModal}
         onSelect={handleOrderTypeSelect}
       />
 
       {/* BOM pre-scan (for BOM orders before form opens) */}
       <BomPrescanModal
-        isOpen={isBomPrescanOpen}
-        onClose={() => setIsBomPrescanOpen(false)}
+        isOpen={modals.isBomPrescanOpen}
+        onClose={modals.closeBomPrescanModal}
         onDone={handleBomPrescanDone}
       />
 
       {/* Main procurement form (create/edit) */}
       <ProcurementModal
-        isOpen={isEditModalOpen}
-        onClose={() => { setIsEditModalOpen(false); setNewOrderType(null); setBomPrescanData(null); }}
-        onSubmit={editingOrder ? handleUpdate : handleCreate}
-        initialData={editingOrder}
-        isEdit={!!editingOrder}
-        orderType={editingOrder ? null : newOrderType}
-        bomPrescanData={editingOrder ? null : bomPrescanData}
+        isOpen={modals.isEditModalOpen}
+        onClose={modals.closeEditModal}
+        onSubmit={modals.editingOrder ? handleUpdate : handleCreate}
+        initialData={modals.editingOrder}
+        isEdit={!!modals.editingOrder}
+        orderType={modals.editingOrder ? null : modals.newOrderType}
+        bomPrescanData={modals.editingOrder ? null : modals.bomPrescanData}
       />
 
       <ProcurementFilesModal
-        isOpen={isFilesModalOpen}
-        onClose={() => setIsFilesModalOpen(false)}
-        order={selectedOrderForFiles}
+        isOpen={modals.isFilesModalOpen}
+        onClose={modals.closeFilesModal}
+        order={modals.selectedOrderForFiles}
         onFileChange={handleFileChange}
         canEdit={canEdit}
       />
 
-      <DeleteConfirmModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+      <DeleteModal
+        isOpen={modals.isDeleteModalOpen}
+        onClose={modals.closeDeleteModal}
         onConfirm={handleDelete}
-        entityName={orderToDelete?.catalog_number}
-        entityType="הזמנת רכש"
+        type="reason"
+        title="מחיקת הזמנת רכש"
+        message={`האם אתה בטוח שברצונך למחוק את ההזמנת רכש${modals.orderToDelete?.catalog_number ? `: "${modals.orderToDelete.catalog_number}"` : ''}?`}
+        warningText="פעולה זו בלתי הפיכה!"
       />
       
       <OrderHistoryModal
-        isOpen={isHistoryModalOpen}
-        onClose={() => setIsHistoryModalOpen(false)}
-        orderId={selectedOrderForHistory?.id}
-        orderNumber={selectedOrderForHistory?.catalog_number}
+        isOpen={modals.isHistoryModalOpen}
+        onClose={modals.closeHistoryModal}
+        orderId={modals.selectedOrderForHistory?.id}
+        orderNumber={modals.selectedOrderForHistory?.catalog_number}
       />
 
       <BomPreviewModal
-        isOpen={isBomPreviewOpen}
-        onClose={() => setIsBomPreviewOpen(false)}
-        bomData={selectedOrderForBom?.bom_data}
-        vendor={selectedOrderForBom?.bom_vendor}
-        orderId={selectedOrderForBom?.id}
-        canEdit={selectedOrderForBom?.bom_vendor
-          ? hasVendorAccess(selectedOrderForBom.bom_vendor.toLowerCase(), 'rw')
+        isOpen={modals.isBomPreviewOpen}
+        onClose={modals.closeBomPreviewModal}
+        bomData={modals.selectedOrderForBom?.bom_data}
+        vendor={modals.selectedOrderForBom?.bom_vendor}
+        orderId={modals.selectedOrderForBom?.id}
+        canEdit={modals.selectedOrderForBom?.bom_vendor
+          ? hasVendorAccess(modals.selectedOrderForBom.bom_vendor.toLowerCase(), 'rw')
           : false}
       />
     </div>

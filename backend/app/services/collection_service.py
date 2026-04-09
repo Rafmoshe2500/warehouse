@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict, Any
 from fastapi import HTTPException, status
 from datetime import datetime
+import logging
 
 from app.db.repositories.collection_repository import CollectionRepository
 from app.db.repositories.items import ItemsRepository
@@ -18,6 +19,8 @@ from app.schemas.collection import (
 )
 from app.core.constants import UserRole
 
+logger = logging.getLogger(__name__)
+
 class CollectionService:
     """Service for managing component collections"""
     
@@ -29,6 +32,7 @@ class CollectionService:
 
     async def create_collection(self, data: CollectionCreate, user_id: str) -> Dict[str, Any]:
         """Create a new collection"""
+        logger.info("Creating collection, name=%s, user_id=%s", data.name, user_id)
         collection_data = data.model_dump()
         collection_data["owner_id"] = user_id
         collection_data["permissions"] = [] # Start empty
@@ -117,6 +121,7 @@ class CollectionService:
 
     async def delete_collection(self, collection_id: str, user_id: str, user_role: Optional[str] = None) -> bool:
         """Delete collection"""
+        logger.info("Deleting collection, collection_id=%s, user_id=%s", collection_id, user_id)
         collection = await self.repository.get_collection(collection_id)
         if not collection:
             raise HTTPException(status_code=404, detail="Not found")
@@ -172,7 +177,7 @@ class CollectionService:
                 # data["manufacturer"] = item.get("manufacturer")
                 # data["location"] = item.get("location")
         except Exception as e:
-            print(f"Error fetching item for snapshot: {e}")
+            logger.warning(f"Error fetching item for snapshot: {e}")
 
         result = await self.repository.add_item(data)
         
@@ -187,7 +192,7 @@ class CollectionService:
                 item_description=item.get("description") if item else None
             )
         except Exception as e:
-            print(f"Error logging collection add: {e}")
+            logger.warning(f"Error logging collection add: {e}")
 
         return result
 
@@ -220,7 +225,7 @@ class CollectionService:
             for item in fetched_items:
                 items_map[str(item["_id"])] = item
         except Exception as e:
-            print(f"Error bulk fetching items for snapshot: {e}")
+            logger.warning(f"Error bulk fetching items for snapshot: {e}")
             items_map = {}
 
         # 2. Filter out already existing and prepare data
@@ -263,7 +268,7 @@ class CollectionService:
                     )
 
              except Exception as e:
-                print(f"Error logging bulk collection add: {e}")
+                logger.warning(f"Error logging bulk collection add: {e}")
 
         return {
             "requested": len(bulk_data.item_ids),
@@ -334,7 +339,7 @@ class CollectionService:
                     item_description=item.get("description") if item else None
                 )
             except Exception as e:
-                print(f"Error logging collection remove: {e}")
+                logger.warning(f"Error logging collection remove: {e}")
                 
         return result
 

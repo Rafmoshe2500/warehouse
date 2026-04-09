@@ -11,6 +11,9 @@ export const useCollectionDetails = (collectionId) => {
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState('items');
 
+  // Delete modal state
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, itemIds: [], message: '' });
+
   // Fetch Collection Details
   const { data: collection, isLoading: isCollectionLoading } = useQuery({
     queryKey: ['collection', collectionId],
@@ -54,17 +57,35 @@ export const useCollectionDetails = (collectionId) => {
   });
 
   const handleUnassignItem = (item) => {
-    const itemId = item.item_id || item; // Handle object or ID fallback
+    const itemId = item.item_id || item;
     const sku = item.catalog_number || 'Unknown';
-    if (window.confirm(`האם אתה בטוח שברצונך להסיר את פריט ${sku} מהאוסף?`)) {
-      unassignMutation.mutate(itemId);
-    }
+    setDeleteModal({
+      isOpen: true,
+      itemIds: [itemId],
+      message: `האם אתה בטוח שברצונך להסיר את פריט ${sku} מהאוסף?`
+    });
   };
 
   const handleBulkRemoveItems = (itemIds) => {
-      if (window.confirm(`האם אתה בטוח שברצונך להסיר ${itemIds.length} פריטים מהאוסף?`)) {
-          bulkRemoveMutation.mutate(itemIds);
-      }
+    setDeleteModal({
+      isOpen: true,
+      itemIds,
+      message: `האם אתה בטוח שברצונך להסיר ${itemIds.length} פריטים מהאוסף?`
+    });
+  };
+
+  const handleDeleteConfirm = () => {
+    const { itemIds } = deleteModal;
+    if (itemIds.length === 1) {
+      unassignMutation.mutate(itemIds[0]);
+    } else {
+      bulkRemoveMutation.mutate(itemIds);
+    }
+    setDeleteModal({ isOpen: false, itemIds: [], message: '' });
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteModal({ isOpen: false, itemIds: [], message: '' });
   };
 
   const handleUpdateItem = (itemId, data) => {
@@ -98,6 +119,9 @@ export const useCollectionDetails = (collectionId) => {
     handleBulkRemoveItems,
     handleUpdateItem,
     handleBulkEditItems,
+    deleteModal,
+    handleDeleteConfirm,
+    handleDeleteClose,
     navigate
   };
 };
