@@ -10,6 +10,7 @@ const Tabs = ({ tabs, activeTab, onTabChange, className = '', style = {} }) => {
           className={`tab-btn ${activeTab === tab.id ? 'active' : ''} ${tab.className || ''}`.trim()}
           onClick={() => onTabChange(tab.id)}
           disabled={tab.disabled}
+          data-testid={tab.testId}
         >
           {tab.icon}
           {tab.label}

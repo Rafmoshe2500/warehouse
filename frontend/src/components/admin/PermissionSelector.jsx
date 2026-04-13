@@ -60,6 +60,7 @@ const PermissionSelector = ({ selectedPermissions = [], onChange }) => {
           className={`ps-chip ps-chip-all ${allSelected ? 'active' : ''}`}
           style={allSelected ? { borderColor: accentColor, background: `${accentColor}20`, color: accentColor } : {}}
           onClick={toggleAll}
+          data-testid={`perm-${globalPerm.replace(/:/g, '-')}-all`}
         >
           <span className="ps-chip-dot" style={allSelected ? { background: accentColor } : {}} />
           כל הספקים
@@ -80,6 +81,7 @@ const PermissionSelector = ({ selectedPermissions = [], onChange }) => {
               style={active ? { borderColor: accentColor, background: `${accentColor}15`, color: accentColor } : {}}
               onClick={() => toggleVendor(v.id)}
               title={implied ? 'כלול בהרשאת "כל הספקים"' : undefined}
+              data-testid={`perm-procurement-${v.id}-${mode}`}
             >
               <span className="ps-chip-dot" style={active ? { background: accentColor } : {}} />
               {v.label}
@@ -91,7 +93,7 @@ const PermissionSelector = ({ selectedPermissions = [], onChange }) => {
   };
 
   return (
-    <div className="ps-root">
+    <div className="ps-root" data-testid="permission-selector">
 
       {/* ─── מלאי ─────────────────────────────── */}
       <div className="ps-group">
@@ -107,6 +109,7 @@ const PermissionSelector = ({ selectedPermissions = [], onChange }) => {
                 className={`ps-chip ${active ? 'active' : ''}`}
                 style={active ? { borderColor: '#3b82f6', background: '#3b82f620', color: '#3b82f6' } : {}}
                 onClick={() => toggle(p.id)}
+                data-testid={`perm-${p.id.replace(':', '-')}`}
               >
                 <span className="ps-chip-dot" style={active ? { background: '#3b82f6' } : {}} />
                 {p.label}

@@ -68,6 +68,7 @@ export const useProcurementModals = () => {
 
   const closeFilesModal = () => {
     setIsFilesModalOpen(false);
+    setSelectedOrderForFiles(null);
   };
 
   // History Handlers
@@ -78,6 +79,7 @@ export const useProcurementModals = () => {
 
   const closeHistoryModal = () => {
     setIsHistoryModalOpen(false);
+    setSelectedOrderForHistory(null);
   };
 
   // BOM Preview Handlers
@@ -88,6 +90,7 @@ export const useProcurementModals = () => {
 
   const closeBomPreviewModal = () => {
     setIsBomPreviewOpen(false);
+    setSelectedOrderForBom(null);
   };
 
   // Order Type Selection Handlers

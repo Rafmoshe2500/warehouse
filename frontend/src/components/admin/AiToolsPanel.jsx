@@ -22,7 +22,7 @@ const AiToolsPanel = () => {
   };
 
   return (
-    <div className="ai-tools-panel">
+    <div className="ai-tools-panel" data-testid="ai-tools-panel">
       <h3 className="atp-title">כלי AI</h3>
       <p className="atp-subtitle">ניהול מודל הסיווג האוטומטי של רכיבים. השינויים משפיעים על סריקות BOM עתידיות.</p>
 
@@ -42,13 +42,14 @@ const AiToolsPanel = () => {
           className={`atp-retrain-btn${retraining ? ' loading' : ''}`}
           onClick={handleRetrain}
           disabled={retraining}
+          data-testid="retrain-btn"
         >
           <FiRefreshCw size={15} className={retraining ? 'spin' : ''} />
           {retraining ? 'מאמן...' : 'הפעל אימון מחדש'}
         </button>
 
         {result && (
-          <div className={`atp-result${result.success ? ' success' : ' error'}`}>
+          <div className={`atp-result${result.success ? ' success' : ' error'}`} data-testid="retrain-result">
             {result.success ? <FiCheckCircle size={16} /> : <FiAlertCircle size={16} />}
             <span>{result.message}</span>
             {result.success && result.metrics && (

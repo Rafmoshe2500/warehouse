@@ -43,14 +43,14 @@ const DashboardPage = () => {
     const priceAccess = hasPricePermission();
 
     if (loading) return (
-        <div className="dashboard-loading">
+        <div className="dashboard-loading" data-testid="dashboard-loading">
             <Spinner size="large" />
             <p>מכין את הדאשבורד שלך...</p>
         </div>
     );
     
     if (error) return (
-        <div className="dashboard-error">
+        <div className="dashboard-error" data-testid="dashboard-error">
             <div className="error-content">
                 <h3>שגיאה בטעינת הנתונים</h3>
                 <p>נסה לרענן את העמוד או לפנות לתמיכה</p>
@@ -60,7 +60,7 @@ const DashboardPage = () => {
     );
 
     return (
-        <div className="dashboard-wrapper" dir="rtl">
+        <div className="dashboard-wrapper" dir="rtl" data-testid="dashboard-page">
             <main className="dashboard-container">
                 
                 {/* Global Date Filter & Header */}
@@ -69,11 +69,12 @@ const DashboardPage = () => {
                         <FiActivity style={{ marginRight: '0.5rem' }} /> תמונת מצב כללית
                     </div>
                     
-                    <div className="splunk-date-filter">
+                    <div className="splunk-date-filter" data-testid="dashboard-date-filter">
                         <div 
                             className={`splunk-date-filter-label ${(dateRange.startDate || dateRange.endDate) ? 'clickable active' : 'clickable'}`}
                             onClick={() => setDateRange({ startDate: '', endDate: '' })}
                             title="חזור לזמן נוכחי (נקה סינון)"
+                            data-testid="date-reset"
                         >
                             <FiCalendar style={{ fontSize: '1.1rem' }}/> 
                             <span>זמן נוכחי</span>
@@ -82,6 +83,7 @@ const DashboardPage = () => {
                             <label>מ:</label>
                             <input 
                                 type="date" 
+                                data-testid="date-start"
                                 value={dateRange.startDate}
                                 onChange={(e) => {
                                     const newStart = e.target.value;
@@ -100,6 +102,7 @@ const DashboardPage = () => {
                             <label>עד:</label>
                             <input 
                                 type="date" 
+                                data-testid="date-end"
                                 value={dateRange.endDate}
                                 min={dateRange.startDate} // Prevent selecting a date before startDate
                                 onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
@@ -110,8 +113,8 @@ const DashboardPage = () => {
                 
                 {/* Inventory Stats Row */}
                 {hasInventoryAccess && (
-                    <div className="bento-grid-stats">
-                        <div className="stat-tile blue">
+                    <div className="bento-grid-stats" data-testid="inventory-stats">
+                        <div className="stat-tile blue" data-testid="stat-total-items">
                                 <div className="stat-icon-bg"><FiBox /></div>
                                 <div className="stat-content">
                                     <h3>סה"כ פריטים</h3>
@@ -122,7 +125,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile green">
+                            <div className="stat-tile green" data-testid="stat-active-allocations">
                                 <div className="stat-icon-bg"><FiPackage /></div>
                                 <div className="stat-content">
                                     <h3>שריונים פעילים</h3>
@@ -133,7 +136,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile purple">
+                            <div className="stat-tile purple" data-testid="stat-serial">
                                 <div className="stat-icon-bg"><FiHash /></div>
                                 <div className="stat-content">
                                     <h3>ציוד סריאלי</h3>
@@ -144,7 +147,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile amber">
+                            <div className="stat-tile amber" data-testid="stat-non-serial">
                                 <div className="stat-icon-bg"><FiBox /></div>
                                 <div className="stat-content">
                                     <h3>ציוד נלווה</h3>
@@ -160,10 +163,10 @@ const DashboardPage = () => {
                 {/* Procurement Stats Row */}
                 {procurementAccess && stats?.procurement && (
                     <>
-                        <div className="bento-grid-stats">
+                        <div className="bento-grid-stats" data-testid="procurement-stats">
                             {/* כרטיס מחיר — רק למי שיש הרשאת מחירים */}
                             {priceAccess && (
-                                <div className="stat-tile blue">
+                                <div className="stat-tile blue" data-testid="stat-total-spend">
                                     <div className="stat-icon-bg"><FiDollarSign /></div>
                                     <div className="stat-content">
                                         <h3>סך הכל רכש</h3>
@@ -177,7 +180,7 @@ const DashboardPage = () => {
                                 </div>
                             )}
 
-                            <div className="stat-tile amber">
+                            <div className="stat-tile amber" data-testid="stat-waiting-emf">
                                 <div className="stat-icon-bg"><FiFileText /></div>
                                 <div className="stat-content">
                                     <h3>ממתין ל-EMF</h3>
@@ -188,7 +191,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile purple">
+                            <div className="stat-tile purple" data-testid="stat-waiting-bom">
                                 <div className="stat-icon-bg"><FiList /></div>
                                 <div className="stat-content">
                                     <h3>ממתין ל-BOM</h3>
@@ -199,7 +202,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile green">
+                            <div className="stat-tile green" data-testid="stat-ordered">
                                 <div className="stat-icon-bg"><FiTruck /></div>
                                 <div className="stat-content">
                                     <h3>בדרך אלינו</h3>
@@ -218,7 +221,7 @@ const DashboardPage = () => {
                     {hasInventoryAccess && (
                         <>
                             {/* Locations - Tall Item (Right) */}
-                            <div className="bento-card activity-card">
+                            <div className="bento-card activity-card" data-testid="chart-locations">
                                 <div className="card-header">
                                     <h3>מיקומים במחסן</h3>
                                 </div>
@@ -228,7 +231,7 @@ const DashboardPage = () => {
                             </div>
 
                             {/* Item Search - 1 Column (Middle) */}
-                            <div className="bento-card col-span-1">
+                            <div className="bento-card col-span-1" data-testid="chart-item-search">
                                 <div className="card-header">
                                     <h3><FiSearch /> חיפוש וניתוח לפי מק"ט</h3>
                                 </div>
@@ -238,7 +241,7 @@ const DashboardPage = () => {
                             </div>
 
                             {/* Project Distribution - 2 Columns (Left) */}
-                            <div className="bento-card"> 
+                            <div className="bento-card" data-testid="chart-projects"> 
                                 <div className="card-header">
                                     <h3>פילוג לפי פרויקט</h3>
                                 </div>
@@ -248,7 +251,7 @@ const DashboardPage = () => {
                             </div>
 
                             {/* Target Sites - 3 Columns (Bottom Left - Next to Locations) */}
-                            <div className="bento-card chart-card-lg">
+                            <div className="bento-card chart-card-lg" data-testid="chart-target-sites">
                                 <div className="card-header">
                                     <h3>פילוג לפי אתר יעד</h3>
                                 </div>
@@ -258,7 +261,7 @@ const DashboardPage = () => {
                             </div>
 
                             {/* Manufacturers - 75% Width */}
-                            <div className="bento-card col-span-3">
+                            <div className="bento-card col-span-3" data-testid="chart-manufacturers">
                                 <div className="card-header">
                                     <h3>יצרנים מובילים</h3>
                                 </div>
@@ -270,7 +273,7 @@ const DashboardPage = () => {
                     )}
 
                     {/* Activity Feed - Always visible - 25% Width */}
-                    <div className="bento-card col-span-1">
+                    <div className="bento-card col-span-1" data-testid="activity-feed">
                         <div className="card-header">
                             <h3><FiActivity /> פעילות אחרונה</h3>
                         </div>

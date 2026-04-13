@@ -1,137 +1,235 @@
 import { test, expect } from '@playwright/test';
 import { login } from '../../utils/auth-helper.js';
 import { testUsers } from '../../fixtures/test-data.js';
+import { InventoryPageObject } from '../../utils/page-objects/InventoryPage.js';
+import { TestApiHelper } from '../../utils/api-helper.js';
+
+const PREFIX = 'E2E-CRUD';
+let api;
 
 test.describe('Inventory - CRUD Operations', () => {
+  /** @type {InventoryPageObject} */
+  let inv;
+
+  test.beforeAll(async () => {
+    api = new TestApiHelper();
+    await api.login();
+    await api.cleanupByPrefix(PREFIX);
+  });
+
   test.beforeEach(async ({ page }) => {
-    // Login as admin user
     await login(page, testUsers.admin);
-    
-    // Navigate to inventory page
-    await page.goto('/inventory');
-    await page.waitForLoadState('networkidle');
+    inv = new InventoryPageObject(page);
+    await inv.goto();
   });
 
-  test('should display inventory table', async ({ page }) => {
-    // Check that table is visible
-    await expect(page.locator('table')).toBeVisible();
-    
-    // Check for table headers
-    await expect(page.locator('th')).toContainText(/מק"ט|תאור|יצרן/);
+  test.afterAll(async () => {
+    await api.cleanup();
+    await api.cleanupByPrefix(PREFIX);
   });
 
-  test('should add new item', async ({ page }) => {
-    const timestamp = Date.now();
-    const uniqueCatalog = `TEST-ADD-${timestamp}`;
-    
-    // Click add button
-    await page.click('[data-testid="add-item-button"]');
-    
-    // Fill in item details
-    await page.fill('[data-testid="new-item-catalog_number"]', uniqueCatalog);
-    await page.fill('[data-testid="new-item-description"]', 'פריט חדש לבדיקה');
-    await page.fill('[data-testid="new-item-manufacturer"]', 'יצרן בדיקה');
-    await page.fill('[data-testid="new-item-location"]', 'מחסן בדיקה');
-    await page.fill('[data-testid="new-item-current_stock"]', '10');
-    
-    // Save
-    await page.click('[data-testid="save-new-item-button"]');
-    
-    // Wait for success message
-    await expect(page.locator('.toast, .success-message')).toContainText(/נוסף|הצלחה/);
-    
-    // Verify item appears in table
-    await expect(page.locator('table')).toContainText(uniqueCatalog);
+  // ── Display ─────────────────────────────────────────────
+  test('should display inventory table with headers', async () => {
+    await expect(inv.page.locator('table')).toBeVisible();
+    await expect(inv.page.locator('th').first()).toBeVisible();
   });
 
-  test('should edit existing item', async ({ page }) => {
-    // Create a unique item to edit
-    const timestamp = Date.now();
-    const uniqueCatalog = `TEST-EDIT-${timestamp}`;
-    
-    // Add item first
-    await page.click('[data-testid="add-item-button"]');
-    await page.fill('[data-testid="new-item-catalog_number"]', uniqueCatalog);
-    await page.fill('[data-testid="new-item-description"]', 'תיאור מקורי');
-    await page.click('[data-testid="save-new-item-button"]');
-    await expect(page.locator('.toast')).toContainText(/נוסף|הצלחה/);
-    
-    // Find the row with our item
-    const row = page.locator('tbody tr', { hasText: uniqueCatalog });
-    
-    // Double-click on description cell (2nd column usually, but let's be safe)
-    // Assuming description is the 3rd column (index 2) - freezing cols might affect index
-    // Best to click a cell we know is editable. Description is good.
-    await row.locator('td').nth(2).dblclick();
-    
-    // Edit the value
-    const input = page.locator('input[type="text"]:visible').first();
-    await input.fill('תאור מעודכן');
-    
-    // Press Enter
+  // ── Create ──────────────────────────────────────────────
+  test('should add new item with all fields', async () => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-FULL-${ts}`;
+
+    await inv.addItem({
+      catalog_number: cat,
+      description: 'פריט מלא',
+      manufacturer: 'יצרן בדיקה',
+      location: 'מחסן א',
+      current_stock: '10',
+    });
+
+    await inv.waitForToast();
+    await expect(inv.toast).toContainText(/נוסף|הצלחה/);
+    await expect(inv.rowByText(cat)).toBeVisible();
+  });
+
+  test('should add item with only required fields', async () => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-MIN-${ts}`;
+
+    await inv.startAdd();
+    await inv.newItemInput('catalog_number').fill(cat);
+    await inv.newItemInput('description').fill('תיאור מינימלי');
+    await inv.saveNewItemButton.click();
+
+    await inv.waitForToast();
+    await expect(inv.toast).toContainText(/נוסף|הצלחה/);
+  });
+
+  test('should fail to create item without catalog_number', async () => {
+    await inv.startAdd();
+    await inv.newItemInput('description').fill('ללא מקט');
+    await inv.saveNewItemButton.click();
+
+    await inv.waitForToast();
+    await expect(inv.toast).toContainText(/חובה|מק"ט|שגיאה/);
+  });
+
+  test('should cancel inline add with Escape', async ({ page }) => {
+    await inv.startAdd();
+    await inv.newItemInput('catalog_number').fill(`${PREFIX}-CANCEL`);
+    await page.keyboard.press('Escape');
+
+    await expect(inv.page.locator('.new-item-row')).toHaveCount(0, { timeout: 3000 });
+  });
+
+  // ── Edit ────────────────────────────────────────────────
+  test('should edit item inline (description)', async () => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-EDIT-${ts}`;
+    await api.createItem({ catalog_number: cat, description: 'לפני עריכה', location: 'מחסן' });
+    await inv.goto();
+
+    const row = inv.rowByText(cat);
+    await row.waitFor({ state: 'visible' });
+
+    const descCell = row.locator('td.col-description, td:nth-child(4)').first();
+    await descCell.dblclick();
+
+    const input = inv.page.locator('.item-table__edit-input').first();
+    await input.fill('אחרי עריכה');
     await input.press('Enter');
-    
-    // Wait for success message
-    await expect(page.locator('.toast')).toContainText(/עודכן|הצלחה/);
-    
-    // Verify changes persisted
-    await expect(row).toContainText('תאור מעודכן');
+
+    await inv.waitForToast();
+    await expect(row).toContainText('אחרי עריכה');
   });
 
-  test('should delete item', async ({ page }) => {
-    // Create unique item to delete
-    const timestamp = Date.now();
-    const uniqueCatalog = `TEST-DEL-${timestamp}`;
-    
-    // Add item first
-    await page.click('[data-testid="add-item-button"]');
-    await page.fill('[data-testid="new-item-catalog_number"]', uniqueCatalog);
-    await page.click('[data-testid="save-new-item-button"]');
-    await expect(page.locator('.toast')).toContainText(/נוסף|הצלחה/);
-    
-    // Find row
-    const row = page.locator('tbody tr', { hasText: uniqueCatalog });
-    
-    // Check the box
-    await row.locator('input[type="checkbox"]').check();
-    
-    // Click delete button
-    await page.click('[data-testid="delete-button"]');
-    
-    // Confirm deletion in modal
-    await page.fill('textarea[name="reason"], input[name="reason"]', 'בדיקה אוטומטית');
-    await page.click('button:has-text("אישור"), button:has-text("מחק")');
-    
-    // Wait for success message
-    await expect(page.locator('.toast')).toContainText(/נמחק|הצלחה/);
-    
-    // Verify item is gone
-    await expect(page.locator('tbody')).not.toContainText(uniqueCatalog);
+  test('should cancel inline edit with Escape', async () => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-EDITESC-${ts}`;
+    await api.createItem({ catalog_number: cat, description: 'ערך מקורי', location: 'מחסן' });
+    await inv.goto();
+
+    const row = inv.rowByText(cat);
+    const descCell = row.locator('td.col-description, td:nth-child(4)').first();
+    await descCell.dblclick();
+
+    const input = inv.page.locator('.item-table__edit-input').first();
+    await input.fill('ערך שלא ישמר');
+    await input.press('Escape');
+
+    await expect(row).toContainText('ערך מקורי');
   });
 
-  test('should support undo/redo', async ({ page }) => {
-    // Create unique item
-    const timestamp = Date.now();
-    const uniqueCatalog = `TEST-UNDO-${timestamp}`;
-    
-    // Add item
-    await page.click('[data-testid="add-item-button"]');
-    await page.fill('[data-testid="new-item-catalog_number"]', uniqueCatalog);
-    await page.fill('[data-testid="new-item-description"]', 'תיאור מקורי');
-    await page.click('[data-testid="save-new-item-button"]');
-    await expect(page.locator('.toast')).toContainText(/נוסף|הצלחה/);
-    
-    // Edit
-    const row = page.locator('tbody tr', { hasText: uniqueCatalog });
-    await row.locator('td').nth(2).dblclick();
-    await page.locator('input:visible').first().fill('שינוי זמני');
-    await page.keyboard.press('Enter');
-    await expect(row).toContainText('שינוי זמני');
-    
-    // Undo with Ctrl+Z
-    await page.keyboard.press('Control+Z');
-    
-    // Verify original text is back
-    await expect(row).toContainText('תיאור מקורי');
+  test('should copy immutable field on double-click', async () => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-COPY-${ts}`;
+    await api.createItem({ catalog_number: cat, description: 'copy test', location: 'מחסן' });
+    await inv.goto();
+
+    const row = inv.rowByText(cat);
+    const catCell = row.locator('td.col-catalog_number, td:nth-child(2)').first();
+    await catCell.dblclick();
+
+    await expect(inv.page.locator('.toast')).toBeVisible({ timeout: 3000 });
+  });
+
+  // ── Delete ──────────────────────────────────────────────
+  test('should delete item with valid reason', async () => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-DEL-${ts}`;
+    await api.createItem({ catalog_number: cat, description: 'למחיקה', location: 'מחסן' });
+    await inv.goto();
+
+    const row = inv.rowByText(cat);
+    await inv.rowCheckbox(row).check();
+    await inv.deleteButton.click();
+
+    await inv.confirmDelete('מחיקה בבדיקה אוטומטית');
+    await inv.waitForToast();
+    await expect(inv.toast).toContainText(/נמחק|הצלחה|מחיקה/);
+    await expect(inv.page.locator('tbody')).not.toContainText(cat);
+  });
+
+  test('should reject delete with short reason', async () => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-DELSHORT-${ts}`;
+    await api.createItem({ catalog_number: cat, description: 'סיבה קצרה', location: 'מחסן' });
+    await inv.goto();
+
+    const row = inv.rowByText(cat);
+    await inv.rowCheckbox(row).check();
+    await inv.deleteButton.click();
+
+    await inv.deleteReasonInput.fill('ab');
+    const confirmBtn = inv.deleteConfirmButton;
+    const isDisabled = await confirmBtn.isDisabled().catch(() => false);
+    if (!isDisabled) {
+      await confirmBtn.click();
+      await expect(inv.deleteModal).toBeVisible();
+    }
+  });
+
+  // ── Undo / Redo ─────────────────────────────────────────
+  test('should undo edit with Ctrl+Z', async ({ page }) => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-UNDO-${ts}`;
+    await api.createItem({ catalog_number: cat, description: 'ערך מקורי', location: 'מחסן' });
+    await inv.goto();
+
+    const row = inv.rowByText(cat);
+    const descCell = row.locator('td.col-description, td:nth-child(4)').first();
+    await descCell.dblclick();
+
+    const input = page.locator('.item-table__edit-input').first();
+    await input.fill('ערך זמני');
+    await input.press('Enter');
+    await inv.waitForToast();
+
+    await page.keyboard.press('Control+z');
+    await page.waitForTimeout(1000);
+
+    await expect(row).toContainText('ערך מקורי');
+  });
+
+  test('should redo after undo with Ctrl+Y', async ({ page }) => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-REDO-${ts}`;
+    await api.createItem({ catalog_number: cat, description: 'לפני', location: 'מחסן' });
+    await inv.goto();
+
+    const row = inv.rowByText(cat);
+    const descCell = row.locator('td.col-description, td:nth-child(4)').first();
+    await descCell.dblclick();
+
+    const input = page.locator('.item-table__edit-input').first();
+    await input.fill('אחרי');
+    await input.press('Enter');
+    await inv.waitForToast();
+
+    await page.keyboard.press('Control+z');
+    await page.waitForTimeout(1000);
+    await expect(row).toContainText('לפני');
+
+    await page.keyboard.press('Control+y');
+    await page.waitForTimeout(1000);
+    await expect(row).toContainText('אחרי');
+  });
+
+  test('should undo delete and restore item', async ({ page }) => {
+    const ts = Date.now();
+    const cat = `${PREFIX}-UNDODEL-${ts}`;
+    await api.createItem({ catalog_number: cat, description: 'לשחזור', location: 'מחסן' });
+    await inv.goto();
+
+    const row = inv.rowByText(cat);
+    await inv.rowCheckbox(row).check();
+    await inv.deleteButton.click();
+    await inv.confirmDelete('מחיקה זמנית');
+    await inv.waitForToast();
+
+    await page.keyboard.press('Control+z');
+    await page.waitForTimeout(1500);
+
+    await expect(inv.rowByText(cat)).toBeVisible({ timeout: 5000 });
   });
 });

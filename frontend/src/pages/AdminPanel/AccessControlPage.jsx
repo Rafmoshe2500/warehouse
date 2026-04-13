@@ -12,13 +12,13 @@ const AccessControlPage = () => {
     const { isSuperAdmin } = useAuth();
 
     const tabs = [
-        { id: 'users', label: 'ניהול משתמשים וקבוצות', icon: <FiUsers /> },
-        { id: 'logs',  label: 'לוגים', icon: <FiActivity /> },
-        ...(isSuperAdmin ? [{ id: 'ai', label: 'כלי AI', icon: <FiCpu /> }] : []),
+        { id: 'users', label: 'ניהול משתמשים וקבוצות', icon: <FiUsers />, testId: 'tab-users' },
+        { id: 'logs',  label: 'לוגים', icon: <FiActivity />, testId: 'tab-logs' },
+        ...(isSuperAdmin ? [{ id: 'ai', label: 'כלי AI', icon: <FiCpu />, testId: 'tab-ai' }] : []),
     ];
 
     return (
-        <div className="access-control-page">
+        <div className="access-control-page" data-testid="access-control-page">
             <Tabs
                 tabs={tabs}
                 activeTab={activeTab}

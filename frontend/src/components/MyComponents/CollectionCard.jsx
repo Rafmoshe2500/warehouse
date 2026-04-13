@@ -19,8 +19,12 @@ const CollectionCard = ({ collection }) => {
   const stripeClass = isOwner ? 'owner' : 'shared';
 
   return (
-    <div className="collection-card" dir="rtl">
-      {/* Header Bar - Color Coded */}
+    <div
+      className="collection-card"
+      dir="rtl"
+      style={{ cursor: 'pointer' }}
+      onClick={() => navigate(`/my-components/${collection.id || collection._id}`)}
+    >      {/* Header Bar - Color Coded */}
       <div className={`card-header-stripe ${stripeClass}`} />
       
       <div className="card-content">
@@ -58,7 +62,7 @@ const CollectionCard = ({ collection }) => {
         <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => navigate(`/my-components/${collection.id || collection._id}`)}
+            onClick={(e) => { e.stopPropagation(); navigate(`/my-components/${collection.id || collection._id}`); }}
         >
             צפה <FaArrowLeft />
         </Button>

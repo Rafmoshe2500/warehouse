@@ -50,7 +50,7 @@ export function useAggregation(dateRange, resolution = 'monthly') {
   const aggregatedChartRows = useMemo(() => {
     const byDate = {};
     const startDate = dateRange?.startDate ? new Date(dateRange.startDate) : null;
-    let endDate = dateRange?.endDate ? new Date(dateRange.endDate) : null;
+    const endDate = dateRange?.endDate ? new Date(dateRange.endDate) : null;
     if (endDate) endDate.setHours(23, 59, 59, 999);
 
     groups.forEach(group => {

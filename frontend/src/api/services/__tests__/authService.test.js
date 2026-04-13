@@ -224,7 +224,7 @@ describe('authService with Dependency Injection', () => {
 
     it('should have correct number of methods', () => {
       const methods = Object.keys(authService);
-      expect(methods.length).toBe(4);
+      expect(methods.length).toBe(5);
     });
   });
 

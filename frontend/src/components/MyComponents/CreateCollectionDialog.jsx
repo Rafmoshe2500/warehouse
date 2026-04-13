@@ -46,11 +46,20 @@ const CreateCollectionDialog = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  // Close on Escape key
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e) => { if (e.key === 'Escape') handleClose(); };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
     <div className="create-collection-overlay" onClick={handleClose}>
-      <div className="create-collection-dialog" onClick={e => e.stopPropagation()}>
+      <div className="create-collection-dialog" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
         <h2>צור אוסף חדש</h2>
         
         {error && (

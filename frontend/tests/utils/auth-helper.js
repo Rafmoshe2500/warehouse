@@ -1,86 +1,60 @@
 /**
  * Authentication helper utilities for Playwright tests
- * SIMPLIFIED VERSION - Focus on making it work!
  */
 
+const LOGIN_TIMEOUT = 15000;
+
 /**
- * Login as admin user
- * @param {import('@playwright/test').Page} page - Playwright page object
- * @param {Object} user - User credentials {username, password}
+ * Login as a given user via the local login form.
+ * Waits for a navigation response (token) rather than relying on
+ * networkidle or button-enabled state, which caused timeouts.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {{ username: string, password: string }} user
  */
 export async function login(page, user) {
-  console.log('🔐 Starting login for:', user.username);
-  
-  // Go to login page
-  await page.goto('/login');
-  console.log('📍 Navigated to /login');
-  
-  // Wait for and click local login button
-  await page.waitForSelector('[data-testid="local-login-button"]', { state: 'visible', timeout: 10000 });
-  console.log('✅ Found local login button');
-  
-  await page.click('[data-testid="local-login-button"]');
-  console.log('👆 Clicked local login button');
-  
-  // Wait for form
-  await page.waitForSelector('[data-testid="username-input"]', { state: 'visible', timeout: 10000 });
-  console.log('✅ Form appeared');
-  
-  // Fill username
-  await page.fill('[data-testid="username-input"]', user.username);
-  console.log('📝 Filled username:', user.username);
-  
-  // Fill password
-  await page.fill('[data-testid="password-input"]', user.password);
-  console.log('📝 Filled password: ****');
-  
-  // Try pressing Enter
-  console.log('⏎ Pressing Enter...');
-  await page.press('[data-testid="password-input"]', 'Enter');
-  
-  // Wait a bit
-  await page.waitForTimeout(2000);
-  
-  // Check current URL
-  const currentUrl = page.url();
-  console.log('📍 Current URL after Enter:', currentUrl);
-  
-  // If still on login, try clicking the button
-  if (currentUrl.includes('/login')) {
-    console.log('⚠️ Still on login page, trying to click button...');
-    
-    const submitButton = page.locator('[data-testid="login-submit-button"]');
-    const isVisible = await submitButton.isVisible();
-    const isEnabled = await submitButton.isEnabled();
-    
-    console.log('🔘 Button visible:', isVisible, 'enabled:', isEnabled);
-    
-    if (isVisible && isEnabled) {
-      await submitButton.click();
-      console.log('👆 Clicked submit button');
-      await page.waitForTimeout(2000);
+  // Clear any existing session so LoginPage doesn't auto-redirect authenticated users
+  await page.context().clearCookies();
+
+  await page.goto('/login', { waitUntil: 'domcontentloaded' });
+
+  // Click local login button to reveal the credentials form
+  await page.locator('[data-testid="local-login-button"]').click({ timeout: LOGIN_TIMEOUT });
+
+  // Wait for credential inputs to appear
+  const usernameInput = page.locator('[data-testid="username-input"]');
+  await usernameInput.waitFor({ state: 'visible', timeout: LOGIN_TIMEOUT });
+
+  // Fill credentials
+  await usernameInput.fill(user.username);
+  await page.locator('[data-testid="password-input"]').fill(user.password);
+
+  // Submit — listen for the auth API response, then press Enter
+  const authResponse = page.waitForResponse(
+    (resp) => resp.url().includes('/auth/login') && resp.status() === 200,
+    { timeout: LOGIN_TIMEOUT }
+  );
+
+  // Try Enter first; fall back to button click if the button is visible
+  await page.locator('[data-testid="password-input"]').press('Enter');
+
+  try {
+    await authResponse;
+  } catch {
+    // If Enter didn't trigger the request, click submit button
+    const submitBtn = page.locator('[data-testid="login-submit-button"]');
+    if (await submitBtn.isVisible({ timeout: 2000 })) {
+      const retryResponse = page.waitForResponse(
+        (resp) => resp.url().includes('/auth/login') && resp.status() === 200,
+        { timeout: LOGIN_TIMEOUT }
+      );
+      await submitBtn.click();
+      await retryResponse;
     }
   }
-  
-  // Final URL check
-  const finalUrl = page.url();
-  console.log('📍 Final URL:', finalUrl);
-  
-  if (finalUrl.includes('/login')) {
-    console.log('❌ Login failed - still on login page');
-    
-    // Check for error messages
-    const errorElement = page.locator('.login-form__error, .error, [class*="error"]');
-    if (await errorElement.isVisible({ timeout: 1000 })) {
-      const errorText = await errorElement.textContent();
-      console.log('❌ Error message:', errorText);
-    }
-  } else {
-    console.log('✅ Login successful - redirected to:', finalUrl);
-  }
-  
-  // Wait for network to settle
-  await page.waitForLoadState('networkidle', { timeout: 10000 });
+
+  // Wait until we've left the login page
+  await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: LOGIN_TIMEOUT });
 }
 
 /**

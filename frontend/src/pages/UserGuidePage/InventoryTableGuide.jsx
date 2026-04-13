@@ -190,71 +190,18 @@ const InventoryTableGuide = () => {
               <span>זוהי גרסת תצוגה בלבד — הנקודות הכחולות מסבירות את תפקיד כל אזור בטבלה האמיתית.</span>
             </div>
 
-            <div className="demo-table-wrapper" style={{ position: 'relative' }}>
-              {/* Hotspots — percentage-based for responsive positioning */}
-              <HotspotMarker
-                number={1}
-                top="14px"
-                left="96%"
-                label="בחירת הכל (Checkbox)"
-                description="לחיצה על התיבה בכותרת בוחרת את כל הפריטים בדף. שימושי לפני מחיקה מרובה או שיוך לאוסף."
-              />
-              <HotspotMarker
-                number={2}
-                top="14px"
-                left="80%"
-                label='מיון לפי עמודה'
-                description='לחיצה על כותרת עמודה ממיינת את הטבלה בסדר עולה. לחיצה נוספת — סדר יורד. חץ קטן מציין את הכיוון.'
-              />
-              <HotspotMarker
-                number={3}
-                top="55px"
-                left="71%"
-                label="שורת סינון"
-                description="הקלידו טקסט בשדה הסינון שבכל עמודה כדי לצמצם את התוצאות. הסינון מופעל אוטומטית תוך חצי שנייה."
-              />
-              <HotspotMarker
-                number={4}
-                top="105px"
-                left="96%"
-                label="בחירת פריט בודד"
-                description="סמנו שורה אחת או יותר. Ctrl+Click מוסיף לבחירה, Shift+Click בוחר טווח שורות רצוף."
-              />
-              <HotspotMarker
-                number={5}
-                top="105px"
-                left="39%"
-                label="תא ניתן לעריכה"
-                description="לחיצה כפולה פותחת שדה עריכה. הקלידו ערך חדש ולחצו Enter לשמירה או Escape לביטול."
-              />
-              <HotspotMarker
-                number={6}
-                top="145px"
-                left="80%"
-                label="תא לקריאה בלבד"
-                description='שדות כמו מק"ט, סריאלי ומיקום אינם ניתנים לעריכה. לחיצה כפולה מעתיקה את הערך ללוח.'
-              />
-              <HotspotMarker
-                number={7}
-                top="235px"
-                left="17%"
-                label="שריון פרויקטים"
-                description="תגיות צבעוניות מציגות לאילו פרויקטים הפריט משוריין. מוצגים עד 3, והשאר מסומנים כ-+עוד."
-              />
-              <HotspotMarker
-                number={8}
-                top="185px"
-                left="9%"
-                label="משוייך לצוותים"
-                description="מספר שניתן ללחוץ עליו. פותח חלונית המציגה לאילו אוספים (צוותים) שוייך הפריט."
-              />
-
-              {/* Demo Table */}
+            <div className="demo-table-wrapper">
               <table className="demo-table">
                 <thead>
                   <tr>
-                    <th className="th-checkbox th-frozen"><input type="checkbox" disabled /></th>
-                    <th className="th-frozen">מק&quot;ט ▼</th>
+                    <th className="th-checkbox th-frozen">
+                      <HotspotMarker number={1} top="4px" left="6px" label="בחירת הכל (Checkbox)" description="לחיצה על התיבה בכותרת בוחרת את כל הפריטים בדף. שימושי לפני מחיקה מרובה או שיוך לאוסף." />
+                      <input type="checkbox" disabled />
+                    </th>
+                    <th className="th-frozen">
+                      <HotspotMarker number={2} top="4px" left="4px" label="מיון לפי עמודה" description="לחיצה על כותרת עמודה ממיינת את הטבלה בסדר עולה. לחיצה נוספת — סדר יורד. חץ קטן מציין את הכיוון." />
+                      מק&quot;ט ▼
+                    </th>
                     <th className="th-frozen">סריאלי</th>
                     <th>תיאור</th>
                     <th>יצרן</th>
@@ -270,7 +217,10 @@ const InventoryTableGuide = () => {
                     <td></td>
                     <td><input type="text" placeholder="סנן..." disabled /></td>
                     <td><input type="text" placeholder="סנן..." disabled /></td>
-                    <td><input type="text" placeholder="סנן..." disabled /></td>
+                    <td>
+                      <HotspotMarker number={3} top="2px" left="4px" label="שורת סינון" description="הקלידו טקסט בשדה הסינון שבכל עמודה כדי לצמצם את התוצאות. הסינון מופעל אוטומטית תוך חצי שנייה." />
+                      <input type="text" placeholder="סנן..." disabled />
+                    </td>
                     <td><input type="text" placeholder="סנן..." disabled /></td>
                     <td><input type="text" placeholder="סנן..." disabled /></td>
                     <td><input type="text" placeholder="סנן..." disabled /></td>
@@ -282,18 +232,28 @@ const InventoryTableGuide = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {DEMO_ITEMS.map((item) => (
+                  {DEMO_ITEMS.map((item, index) => (
                     <tr key={item.id}>
-                      <td className="td-checkbox td-frozen"><input type="checkbox" disabled /></td>
-                      <td className="td-frozen"><span className="demo-cell-immutable">{item.catalog_number}</span></td>
+                      <td className="td-checkbox td-frozen">
+                        {index === 0 && <HotspotMarker number={4} top="4px" left="6px" label="בחירת פריט בודד" description="סמנו שורה אחת או יותר. Ctrl+Click מוסיף לבחירה, Shift+Click בוחר טווח שורות רצוף." />}
+                        <input type="checkbox" disabled />
+                      </td>
+                      <td className="td-frozen">
+                        {index === 1 && <HotspotMarker number={6} top="4px" left="4px" label="תא לקריאה בלבד" description='שדות כמו מק"ט, סריאלי ומיקום אינם ניתנים לעריכה. לחיצה כפולה מעתיקה את הערך ללוח.' />}
+                        <span className="demo-cell-immutable">{item.catalog_number}</span>
+                      </td>
                       <td className="td-frozen"><span className="demo-cell-immutable">{item.serial}</span></td>
-                      <td><span className="demo-cell-editable">{item.description}</span></td>
+                      <td>
+                        {index === 0 && <HotspotMarker number={5} top="4px" left="4px" label="תא ניתן לעריכה" description="לחיצה כפולה פותחת שדה עריכה. הקלידו ערך חדש ולחצו Enter לשמירה או Escape לביטול." />}
+                        <span className="demo-cell-editable">{item.description}</span>
+                      </td>
                       <td><span className="demo-cell-immutable">{item.manufacturer}</span></td>
                       <td><span className="demo-cell-immutable">{item.location}</span></td>
                       <td><span className="demo-cell-editable">{item.current_stock}</span></td>
                       <td><span className="demo-cell-editable">{item.target_site}</span></td>
                       <td><span className="demo-cell-editable">{item.purpose}</span></td>
                       <td>
+                        {index === 2 && <HotspotMarker number={7} top="4px" left="4px" label="שריון פרויקטים" description="תגיות צבעוניות מציגות לאילו פרויקטים הפריט משוריין. מוצגים עד 3, והשאר מסומנים כ-+עוד." />}
                         {item.allocations.length > 0 ? (
                           item.allocations.map((a, i) => <span key={i} className="demo-tag">{a}</span>)
                         ) : (
@@ -301,6 +261,7 @@ const InventoryTableGuide = () => {
                         )}
                       </td>
                       <td>
+                        {index === 0 && <HotspotMarker number={8} top="4px" left="4px" label="משוייך לצוותים" description="מספר שניתן ללחוץ עליו. פותח חלונית המציגה לאילו אוספים (צוותים) שוייך הפריט." />}
                         {item.collections > 0 ? (
                           <span className="demo-link-btn">{item.collections}</span>
                         ) : '—'}

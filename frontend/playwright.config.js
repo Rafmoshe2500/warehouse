@@ -11,10 +11,12 @@ export default defineConfig({
   timeout: 30 * 1000,
   
   // Test execution settings
-  fullyParallel: true,
+  // Workers must be 1: tests share a real MongoDB backend and parallel execution
+  // causes data race conditions (one spec's afterAll cleanup races with another's beforeEach).
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   
   // Reporter to use
   reporter: [

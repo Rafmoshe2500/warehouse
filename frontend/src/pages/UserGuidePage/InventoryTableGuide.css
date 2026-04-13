@@ -112,6 +112,7 @@
   border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
   color: var(--text-primary, #e2e8f0);
   vertical-align: middle;
+  position: relative;
 }
 
 .demo-table td.td-frozen {

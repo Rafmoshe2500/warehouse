@@ -152,7 +152,7 @@ const UserManagement = ({ isEmbedded = false }) => {
 
   /* ── Render ───────────────────────────────────────── */
   return (
-    <div className={`um-wrapper ${isEmbedded ? 'um-wrapper--embedded' : ''}`}>
+    <div className={`um-wrapper ${isEmbedded ? 'um-wrapper--embedded' : ''}`} data-testid="user-management">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
       {/* Top header — standalone only */}
@@ -176,6 +176,7 @@ const UserManagement = ({ isEmbedded = false }) => {
             <button
               className={`um-tab ${activeTab === 'users' ? 'active' : ''}`}
               onClick={() => handleTabChange('users')}
+              data-testid="users-tab"
             >
               <FiUser /> משתמשים
               <span style={{ fontSize: '0.72rem', marginRight: '0.25rem', opacity: 0.7 }}>({users.length})</span>
@@ -183,6 +184,7 @@ const UserManagement = ({ isEmbedded = false }) => {
             <button
               className={`um-tab ${activeTab === 'groups' ? 'active' : ''}`}
               onClick={() => handleTabChange('groups')}
+              data-testid="groups-tab"
             >
               <FiUsers /> קבוצות
               <span style={{ fontSize: '0.72rem', marginRight: '0.25rem', opacity: 0.7 }}>({groups.length})</span>
@@ -200,9 +202,10 @@ const UserManagement = ({ isEmbedded = false }) => {
                     placeholder="חפש משתמש..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
+                    data-testid="user-search"
                   />
                 </div>
-                <button className="um-add-btn" title="הוסף משתמש" onClick={handleCreateUser}>
+                <button className="um-add-btn" title="הוסף משתמש" onClick={handleCreateUser} data-testid="add-user-btn">
                   <FiPlus />
                 </button>
               </div>
@@ -219,6 +222,7 @@ const UserManagement = ({ isEmbedded = false }) => {
                     key={user.id}
                     className={`um-card ${selectedUser?.id === user.id ? 'selected' : ''}`}
                     onClick={() => handleUserClick(user)}
+                    data-testid={`user-card-${user.username}`}
                   >
                     <div className="um-avatar" style={{ background: getAvatarColor(user.username) }}>
                       {user.username.charAt(0).toUpperCase()}
@@ -247,9 +251,10 @@ const UserManagement = ({ isEmbedded = false }) => {
                     placeholder="חפש קבוצה..."
                     value={groupSearch}
                     onChange={e => setGroupSearch(e.target.value)}
+                    data-testid="group-search"
                   />
                 </div>
-                <button className="um-add-btn" title="הוסף קבוצה" onClick={handleCreateGroup}>
+                <button className="um-add-btn" title="הוסף קבוצה" onClick={handleCreateGroup} data-testid="add-group-btn">
                   <FiPlus />
                 </button>
               </div>
@@ -266,6 +271,7 @@ const UserManagement = ({ isEmbedded = false }) => {
                     key={group.id}
                     className={`um-card ${selectedGroup?.id === group.id ? 'selected' : ''}`}
                     onClick={() => handleGroupClick(group)}
+                    data-testid={`group-card-${group.name}`}
                   >
                     <div className="um-avatar group-avatar" style={{ background: getGroupColor(group.name) }}>
                       {group.name.charAt(0).toUpperCase()}
@@ -329,7 +335,7 @@ const UserManagement = ({ isEmbedded = false }) => {
       {/* ── User delete modal ──────────────────── */}
       {showUserDeleteModal && userToDelete && (
         <div className="um-modal-overlay" onClick={() => setShowUserDeleteModal(false)}>
-          <div className="um-modal" onClick={e => e.stopPropagation()}>
+          <div className="um-modal" onClick={e => e.stopPropagation()} data-testid="user-delete-modal">
             <h2>מחיקת משתמש</h2>
             <div className="um-modal-warning">
               האם אתה בטוח שברצונך למחוק את <strong>{userToDelete.username}</strong>? פעולה זו אינה הפיכה.
@@ -341,27 +347,28 @@ const UserManagement = ({ isEmbedded = false }) => {
                 value={userDeleteReason}
                 onChange={e => setUserDeleteReason(e.target.value)}
                 placeholder="הזן סיבה למחיקה..."
+                data-testid="delete-reason-input"
               />
             </div>
             <div className="um-modal-actions">
-              <Button variant="secondary" onClick={() => setShowUserDeleteModal(false)}>ביטול</Button>
-              <Button variant="danger" onClick={handleUserDeleteConfirm}>מחק</Button>
+              <Button variant="secondary" onClick={() => setShowUserDeleteModal(false)} data-testid="cancel-delete-btn">ביטול</Button>
+              <Button variant="danger" onClick={handleUserDeleteConfirm} data-testid="confirm-delete-btn">מחק</Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Group delete modal ─────────────────── */}
+      {/* ── Group delete modal ───────────────── */}
       {showGroupDeleteModal && selectedGroup && (
         <div className="um-modal-overlay" onClick={() => setShowGroupDeleteModal(false)}>
-          <div className="um-modal" onClick={e => e.stopPropagation()}>
+          <div className="um-modal" onClick={e => e.stopPropagation()} data-testid="group-delete-modal">
             <h2>מחיקת קבוצה</h2>
             <div className="um-modal-warning">
               האם אתה בטוח שברצונך למחוק את <strong>{selectedGroup.name}</strong>? פעולה זו אינה הפיכה.
             </div>
             <div className="um-modal-actions">
-              <Button variant="secondary" onClick={() => setShowGroupDeleteModal(false)}>ביטול</Button>
-              <Button variant="danger" onClick={handleGroupDeleteConfirm}>מחק</Button>
+              <Button variant="secondary" onClick={() => setShowGroupDeleteModal(false)} data-testid="group-cancel-delete-btn">ביטול</Button>
+              <Button variant="danger" onClick={handleGroupDeleteConfirm} data-testid="group-confirm-delete-btn">מחק</Button>
             </div>
           </div>
         </div>

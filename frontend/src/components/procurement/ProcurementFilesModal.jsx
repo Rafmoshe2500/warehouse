@@ -66,6 +66,7 @@ const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit =
   };
 
   const formatFileSize = (bytes) => {
+    if (bytes == null || isNaN(bytes)) return '—';
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];

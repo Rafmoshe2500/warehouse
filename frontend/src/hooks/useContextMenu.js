@@ -1,4 +1,4 @@
-﻿import { useState, useCallback } from 'react';
+﻿import { useState, useCallback, useEffect } from 'react';
 
 export const useContextMenu = () => {
     const [contextMenu, setContextMenu] = useState(null);
@@ -10,6 +10,20 @@ export const useContextMenu = () => {
     const closeContextMenu = useCallback(() => {
         setContextMenu(null);
     }, []);
+
+    // Close context menu when clicking outside of it
+    useEffect(() => {
+        if (!contextMenu) return;
+
+        const handleClickOutside = (e) => {
+            if (!e.target.closest('.context-menu')) {
+                setContextMenu(null);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [contextMenu]);
 
     const handleContextMenu = useCallback((e, hasSelection) => {
         e.preventDefault();

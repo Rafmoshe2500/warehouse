@@ -31,13 +31,14 @@ export function useModelChain(dateRange, resolution = 'monthly') {
     const validSlots = slots.filter(s => s.mainPart);
     if (validSlots.length === 0) {
       showToast('נא להגדיר לפחות דור אחד עם מק"ט ראשי', 'warning');
+      setIsAdding(false);
       return;
     }
 
     setIsAdding(true);
     try {
-      // Fetch each slot separately (parallel)
-      const results = await Promise.all(
+      // Fetch each slot separately (parallel, resilient to partial failures)
+      const settled = await Promise.allSettled(
         validSlots.map(async slot => {
           if (slot.secondaryParts.length > 0) {
             // Aggregation path
@@ -58,6 +59,8 @@ export function useModelChain(dateRange, resolution = 'monthly') {
           }
         })
       );
+
+      const results = settled.map(s => s.status === 'fulfilled' ? s.value : []);
 
       // Merge all slot data points; later slots win on same date
       // Tag each point with the slot's mainPart so tooltip can show model name
@@ -98,7 +101,7 @@ export function useModelChain(dateRange, resolution = 'monthly') {
   const chainChartRows = useMemo(() => {
     const byDate = {};
     const startDate = dateRange?.startDate ? new Date(dateRange.startDate) : null;
-    let   endDate   = dateRange?.endDate   ? new Date(dateRange.endDate)   : null;
+    const endDate   = dateRange?.endDate   ? new Date(dateRange.endDate)   : null;
     if (endDate) endDate.setHours(23, 59, 59, 999);
 
     chains.forEach(chain => {

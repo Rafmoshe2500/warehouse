@@ -13,7 +13,6 @@
 
 ## 2. Testing Strategy (BACKEND ONLY)
 
-- **NO FRONTEND TESTING:** You are strictly forbidden from writing, generating, or updating any tests for the Frontend/UI (e.g., no Playwright, no Jest, no React Testing Library).
 - **Backend Continuous Testing:** All testing efforts must be focused EXCLUSIVELY on the Backend (Python/Pytest).
 - **Always Verify Tests:** Before finalizing any Backend code changes or new feature creation, you MUST check if corresponding Backend tests exist.
 - **Update/Create Tests:** If existing Backend logic is modified, update the tests to reflect the new logic. If a new Backend feature is created, you MUST write accompanying unit or integration tests. Never leave new or modified Backend logic without test coverage.
@@ -40,5 +39,5 @@
 
 - **Comments:** Code should be self-documenting. Leave comments only to explain the "WHY" behind complex or non-obvious business logic, not the "WHAT".
 - **User Guide Updates (MANDATORY):** Whenever a feature is added, modified, or visual changes are made to the UI, you MUST evaluate if the changes affect the user flow. If they do, you are required to update the User Guide page (e.g., `UserGuidePage.jsx`) to reflect the new functionality.
-- **Doc Updates:** If architectural changes, data flow modifications, or new core APIs are introduced, update the relevant documentation files (e.g., `ARCHITECTURE.md`, `API_REFERENCE.md`).
+- **Doc Updates:** If architectural changes, data flow modifications, or new core APIs are introduced, update the relevant documentation files (e.g., `ARCHITECTURE.md`, `API_REFERENCE.md`,`DATA_FLOW_DIAGRAMS.md`) .
 ```

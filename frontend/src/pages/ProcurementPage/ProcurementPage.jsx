@@ -33,7 +33,8 @@ const ProcurementPage = () => {
   const canEditOrder = (order) => {
     if (isAdmin || isSuperAdmin) return true;
     if (hasPermission('procurement:rw')) return true;
-    const vendor = order?.bom_vendor?.toLowerCase() || order?.manufacturer?.toLowerCase() || '';
+    const rawVendor = order?.bom_vendor || order?.manufacturer || '';
+    const vendor = typeof rawVendor === 'string' ? rawVendor.toLowerCase() : '';
     if (!vendor) return hasPermission('procurement:rw'); // no vendor → only global rw
     return hasVendorAccess(vendor, 'rw');
   };

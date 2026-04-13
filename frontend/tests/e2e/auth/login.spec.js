@@ -8,8 +8,8 @@ test.describe('Login Page - Local Login', () => {
   });
 
   test('should display login selection page', async ({ page }) => {
-    // Check page title
-    await expect(page.locator('h1')).toContainText(/מערכת ניהול מלאי/);
+    // Check page title — scoped to the login‐selection section to avoid the app Header h1
+    await expect(page.locator('.login-selection h1')).toContainText(/מערכת ניהול מלאי/);
     
     // Check selection text
     await expect(page.locator('text=בחר אופן התחברות')).toBeVisible();

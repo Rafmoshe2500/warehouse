@@ -1,0 +1,1341 @@
+﻿
+Running 238 tests using 1 worker
+
+  Γ£ף    1 [chromium] Γא║ tests\e2e\auth\login.spec.js:10:3 Γא║ Login Page - Local Login Γא║ should display login selection page (2.4s)
+  Γ£ף    2 [chromium] Γא║ tests\e2e\auth\login.spec.js:22:3 Γא║ Login Page - Local Login Γא║ should show local login form after clicking local button (2.2s)
+  Γ£ף    3 [chromium] Γא║ tests\e2e\auth\login.spec.js:32:3 Γא║ Login Page - Local Login Γא║ should login successfully with valid credentials (3.2s)
+  Γ£ף    4 [chromium] Γא║ tests\e2e\auth\login.spec.js:44:3 Γא║ Login Page - Local Login Γא║ should show error with invalid credentials (4.1s)
+  Γ£ף    5 [chromium] Γא║ tests\e2e\auth\login.spec.js:66:3 Γא║ Login Page - Local Login Γא║ should logout successfully (3.1s)
+  Γ£ף    6 [chromium] Γא║ tests\e2e\inventory\catalog.spec.js:35:3 Γא║ Inventory - Catalog Tab Γא║ should navigate to catalog tab via URL (3.7s)
+  Γ£ף    7 [chromium] Γא║ tests\e2e\inventory\catalog.spec.js:39:3 Γא║ Inventory - Catalog Tab Γא║ should display catalog table with correct columns (3.2s)
+  Γ£ף    8 [chromium] Γא║ tests\e2e\inventory\catalog.spec.js:47:3 Γא║ Inventory - Catalog Tab Γא║ should be read-only Γאפ no edit controls (3.4s)
+  Γ£ף    9 [chromium] Γא║ tests\e2e\inventory\catalog.spec.js:54:3 Γא║ Inventory - Catalog Tab Γא║ should sort by column header (4.1s)
+  Γ£ף   10 [chromium] Γא║ tests\e2e\inventory\catalog.spec.js:64:3 Γא║ Inventory - Catalog Tab Γא║ should filter catalog items (4.1s)
+  Γ£ף   11 [chromium] Γא║ tests\e2e\inventory\catalog.spec.js:80:3 Γא║ Inventory - Catalog Tab Γא║ should show empty state for no matching catalog items (3.9s)
+  Γ£ף   12 [chromium] Γא║ tests\e2e\inventory\inventory-add-to-collection.spec.js:38:3 Γא║ Inventory - Add to Collection Γא║ should show Add to Collection option via context menu when item selected (4.4s)
+  Γ£ף   13 [chromium] Γא║ tests\e2e\inventory\inventory-add-to-collection.spec.js:52:3 Γא║ Inventory - Add to Collection Γא║ should list available collections in submenu (4.6s)
+  Γ£ף   14 [chromium] Γא║ tests\e2e\inventory\inventory-add-to-collection.spec.js:74:3 Γא║ Inventory - Add to Collection Γא║ should show success toast after adding item to collection (4.4s)
+  Γ£ף   15 [chromium] Γא║ tests\e2e\inventory\inventory-add-to-collection.spec.js:100:3 Γא║ Inventory - Add to Collection Γא║ should add multiple selected items to collection (4.3s)
+  Γ£ף   16 [chromium] Γא║ tests\e2e\inventory\inventory-add-to-collection.spec.js:127:3 Γא║ Inventory - Add to Collection Γא║ should handle duplicate item in collection gracefully (4.1s)
+  Γ£ף   17 [chromium] Γא║ tests\e2e\inventory\inventory-add-to-collection.spec.js:157:3 Γא║ Inventory - Add to Collection Γא║ should show empty collections message when user has no collections (4.1s)
+  Γ£ף   18 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:43:3 Γא║ Inventory - Bulk Operations Γא║ should select single item via checkbox (4.0s)
+  Γ£ף   19 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:49:3 Γא║ Inventory - Bulk Operations Γא║ should select multiple items via checkboxes (4.5s)
+  Γ£ף   20 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:63:3 Γא║ Inventory - Bulk Operations Γא║ should select all via header checkbox (4.3s)
+  Γ£ף   21 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:72:3 Γא║ Inventory - Bulk Operations Γא║ should deselect all after select-all (4.8s)
+  Γ£ף   22 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:84:3 Γא║ Inventory - Bulk Operations Γא║ should disable bulk edit when nothing selected (4.0s)
+  Γ£ף   23 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:88:3 Γא║ Inventory - Bulk Operations Γא║ should enable bulk edit when items are selected (4.1s)
+  Γ£ף   24 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:93:3 Γא║ Inventory - Bulk Operations Γא║ should open bulk edit modal with selected items (4.7s)
+  Γ£ף   25 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:103:3 Γא║ Inventory - Bulk Operations Γא║ should cancel bulk edit without changes (4.7s)
+  Γ£ף   26 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:115:3 Γא║ Inventory - Bulk Operations Γא║ should disable delete when nothing selected (3.9s)
+  Γ£ף   27 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:119:3 Γא║ Inventory - Bulk Operations Γא║ should show count in delete button (4.0s)
+  Γ£ף   28 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:126:3 Γא║ Inventory - Bulk Operations Γא║ should bulk delete selected items (7.2s)
+  Γ£ף   29 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:146:3 Γא║ Inventory - Bulk Operations Γא║ should apply bulk edit to selected items (5.2s)
+  Γ£ף   30 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:170:3 Γא║ Inventory - Bulk Operations Γא║ should clear selection after bulk operation (4.7s)
+  Γ£ף   31 [chromium] Γא║ tests\e2e\inventory\inventory-bulk.spec.js:184:3 Γא║ Inventory - Bulk Operations Γא║ should select range with Shift+Click (4.4s)
+  Γ£ף   32 [chromium] Γא║ tests\e2e\inventory\inventory-collections.spec.js:33:3 Γא║ Inventory - Collections Integration Γא║ should show associated collections count column (3.9s)
+  Γ£ף   33 [chromium] Γא║ tests\e2e\inventory\inventory-collections.spec.js:41:3 Γא║ Inventory - Collections Integration Γא║ should open collections modal on count click (4.3s)
+  Γ£ף   34 [chromium] Γא║ tests\e2e\inventory\inventory-collections.spec.js:51:3 Γא║ Inventory - Collections Integration Γא║ should show empty state in collections modal for item with no collections (3.9s)
+  Γ£ף   35 [chromium] Γא║ tests\e2e\inventory\inventory-collections.spec.js:66:3 Γא║ Inventory - Collections Integration Γא║ should display collection name and owner in modal table (4.7s)
+  Γ£ף   36 [chromium] Γא║ tests\e2e\inventory\inventory-collections.spec.js:86:3 Γא║ Inventory - Collections Integration Γא║ should close collections modal on X button (3.8s)
+  Γ£ף   37 [chromium] Γא║ tests\e2e\inventory\inventory-columns.spec.js:38:3 Γא║ Inventory - Column Visibility Γא║ should show column toggle dropdown (3.3s)
+  Γ£ף   38 [chromium] Γא║ tests\e2e\inventory\inventory-columns.spec.js:46:3 Γא║ Inventory - Column Visibility Γא║ should hide a column when toggled off (3.8s)
+  Γ£ף   39 [chromium] Γא║ tests\e2e\inventory\inventory-columns.spec.js:63:3 Γא║ Inventory - Column Visibility Γא║ should restore a column when toggled back on (4.0s)
+  Γ£ף   40 [chromium] Γא║ tests\e2e\inventory\inventory-columns.spec.js:80:3 Γא║ Inventory - Column Visibility Γא║ should persist column visibility after reload (4.1s)
+  Γ£ף   41 [chromium] Γא║ tests\e2e\inventory\inventory-columns.spec.js:100:3 Γא║ Inventory - Column Visibility Γא║ should close dropdown on outside click (3.5s)
+  Γ£ף   42 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:35:3 Γא║ Inventory - Context Menu Γא║ should open context menu on right-click on a row (4.0s)
+  Γ£ף   43 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:43:3 Γא║ Inventory - Context Menu Γא║ should show Edit option in context menu (4.0s)
+  Γ£ף   44 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:55:3 Γא║ Inventory - Context Menu Γא║ should show Delete option in context menu (4.1s)
+  Γ£ף   45 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:67:3 Γא║ Inventory - Context Menu Γא║ should show Copy option in context menu (4.5s)
+  Γ£ף   46 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:80:3 Γא║ Inventory - Context Menu Γא║ should show Add to Collection submenu (4.7s)
+  Γ£ף   47 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:94:3 Γא║ Inventory - Context Menu Γא║ should close context menu on outside click (4.0s)
+  Γ£ף   48 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:106:3 Γא║ Inventory - Context Menu Γא║ should close context menu after selecting an action (4.5s)
+  Γ£ף   49 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:125:3 Γא║ Inventory - Context Menu Γא║ should open delete modal via context menu (4.7s)
+  Γ£ף   50 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:144:3 Γא║ Inventory - Context Menu Γא║ should show item count in Edit option when multiple selected (4.4s)
+  Γ£ף   51 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:161:3 Γא║ Inventory - Context Menu Γא║ should show item count in Delete option when multiple selected (4.2s)
+  Γ£ף   52 [chromium] Γא║ tests\e2e\inventory\inventory-context-menu.spec.js:176:3 Γא║ Inventory - Context Menu Γא║ should position context menu at cursor location (4.1s)
+  Γ£ף   53 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:32:3 Γא║ Inventory - CRUD Operations Γא║ should display inventory table with headers (3.1s)
+  Γ£ף   54 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:38:3 Γא║ Inventory - CRUD Operations Γא║ should add new item with all fields (4.1s)
+  Γ£ף   55 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:55:3 Γא║ Inventory - CRUD Operations Γא║ should add item with only required fields (4.0s)
+  Γ£ף   56 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:68:3 Γא║ Inventory - CRUD Operations Γא║ should fail to create item without catalog_number (4.1s)
+  Γ£ף   57 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:77:3 Γא║ Inventory - CRUD Operations Γא║ should cancel inline add with Escape (3.4s)
+  Γ£ף   58 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:86:3 Γא║ Inventory - CRUD Operations Γא║ should edit item inline (description) (4.5s)
+  Γ£ף   59 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:106:3 Γא║ Inventory - CRUD Operations Γא║ should cancel inline edit with Escape (4.4s)
+  Γ£ף   60 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:123:3 Γא║ Inventory - CRUD Operations Γא║ should copy immutable field on double-click (4.6s)
+  Γ£ף   61 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:137:3 Γא║ Inventory - CRUD Operations Γא║ should delete item with valid reason (4.9s)
+  Γ£ף   62 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:153:3 Γא║ Inventory - CRUD Operations Γא║ should reject delete with short reason (4.6s)
+  Γ£ף   63 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:173:3 Γא║ Inventory - CRUD Operations Γא║ should undo edit with Ctrl+Z (5.7s)
+  Γ£ף   64 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:194:3 Γא║ Inventory - CRUD Operations Γא║ should redo after undo with Ctrl+Y (6.6s)
+  Γ£ף   65 [chromium] Γא║ tests\e2e\inventory\inventory-crud.spec.js:218:3 Γא║ Inventory - CRUD Operations Γא║ should undo delete and restore item (6.6s)
+  Γ£ף   66 [chromium] Γא║ tests\e2e\inventory\inventory-error-states.spec.js:32:3 Γא║ Inventory - Error States & Edge Cases Γא║ should show error toast on API failure during item creation (duplicate) (5.5s)
+  Γ£ף   67 [chromium] Γא║ tests\e2e\inventory\inventory-error-states.spec.js:51:3 Γא║ Inventory - Error States & Edge Cases Γא║ should require minimum characters for deletion reason (4.8s)
+  Γ£ף   68 [chromium] Γא║ tests\e2e\inventory\inventory-error-states.spec.js:79:3 Γא║ Inventory - Error States & Edge Cases Γא║ should show error toast on invalid Excel file import (3.6s)
+  Γ£ף   69 [chromium] Γא║ tests\e2e\inventory\inventory-error-states.spec.js:110:3 Γא║ Inventory - Error States & Edge Cases Γא║ should handle special characters in text fields (3.9s)
+  Γ£ף   70 [chromium] Γא║ tests\e2e\inventory\inventory-error-states.spec.js:134:3 Γא║ Inventory - Error States & Edge Cases Γא║ should handle very long field values without UI break (4.2s)
+  Γ£ף   71 [chromium] Γא║ tests\e2e\inventory\inventory-error-states.spec.js:154:3 Γא║ Inventory - Error States & Edge Cases Γא║ should show empty state when search yields no results (5.3s)
+  Γ£ף   72 [chromium] Γא║ tests\e2e\inventory\inventory-error-states.spec.js:171:3 Γא║ Inventory - Error States & Edge Cases Γא║ should handle API timeout gracefully (3.6s)
+  Γ£ף   73 [chromium] Γא║ tests\e2e\inventory\inventory-excel.spec.js:35:3 Γא║ Inventory - Excel Import/Export Γא║ should export inventory to Excel file (4.8s)
+  Γ£ף   74 [chromium] Γא║ tests\e2e\inventory\inventory-excel.spec.js:48:3 Γא║ Inventory - Excel Import/Export Γא║ should export filtered results only (5.1s)
+  Γ£ף   75 [chromium] Γא║ tests\e2e\inventory\inventory-excel.spec.js:62:3 Γא║ Inventory - Excel Import/Export Γא║ should show import button for admin (3.3s)
+  Γ£ף   76 [chromium] Γא║ tests\e2e\inventory\inventory-excel.spec.js:66:3 Γא║ Inventory - Excel Import/Export Γא║ should handle file selection cancel gracefully (3.3s)
+  Γ£ף   77 [chromium] Γא║ tests\e2e\inventory\inventory-excel.spec.js:73:3 Γא║ Inventory - Excel Import/Export Γא║ should show export modal with page/all options (3.7s)
+  Γ£ף   78 [chromium] Γא║ tests\e2e\inventory\inventory-excel.spec.js:86:3 Γא║ Inventory - Excel Import/Export Γא║ should show item counts in export options (3.3s)
+  Γ£ף   79 [chromium] Γא║ tests\e2e\inventory\inventory-excel.spec.js:98:3 Γא║ Inventory - Excel Import/Export Γא║ should close export modal after export starts (3.5s)
+  Γ£ף   80 [chromium] Γא║ tests\e2e\inventory\inventory-keyboard.spec.js:35:3 Γא║ Inventory - Keyboard Navigation Γא║ should enter edit mode with F2 (4.4s)
+  Γ£ף   81 [chromium] Γא║ tests\e2e\inventory\inventory-keyboard.spec.js:52:3 Γא║ Inventory - Keyboard Navigation Γא║ should save edit and move down with Enter (4.3s)
+  Γ£ף   82 [chromium] Γא║ tests\e2e\inventory\inventory-keyboard.spec.js:65:3 Γא║ Inventory - Keyboard Navigation Γא║ should cancel edit with Escape (4.1s)
+  Γ£ף   83 [chromium] Γא║ tests\e2e\inventory\inventory-keyboard.spec.js:78:3 Γא║ Inventory - Keyboard Navigation Γא║ should undo with Ctrl+Z (5.4s)
+  Γ£ף   84 [chromium] Γא║ tests\e2e\inventory\inventory-keyboard.spec.js:94:3 Γא║ Inventory - Keyboard Navigation Γא║ should redo with Ctrl+Y (6.0s)
+  Γ£ף   85 [chromium] Γא║ tests\e2e\inventory\inventory-keyboard.spec.js:111:3 Γא║ Inventory - Keyboard Navigation Γא║ should select all with Ctrl+A (4.8s)
+  Γ£ף   86 [chromium] Γא║ tests\e2e\inventory\inventory-keyboard.spec.js:125:3 Γא║ Inventory - Keyboard Navigation Γא║ should navigate cells with arrow keys (4.5s)
+  Γ£ף   87 [chromium] Γא║ tests\e2e\inventory\inventory-keyboard.spec.js:140:3 Γא║ Inventory - Keyboard Navigation Γא║ should copy cell with Ctrl+C (4.8s)
+  Γ£ף   88 [chromium] Γא║ tests\e2e\inventory\inventory-keyboard.spec.js:156:3 Γא║ Inventory - Keyboard Navigation Γא║ should save with Ctrl+S during edit (5.3s)
+  Γ£ף   89 [chromium] Γא║ tests\e2e\inventory\inventory-pagination.spec.js:40:3 Γא║ Inventory - Pagination Γא║ should display pagination controls when items exceed page size (4.8s)
+  Γ£ף   90 [chromium] Γא║ tests\e2e\inventory\inventory-pagination.spec.js:44:3 Γא║ Inventory - Pagination Γא║ should show correct items count text (4.7s)
+  Γ£ף   91 [chromium] Γא║ tests\e2e\inventory\inventory-pagination.spec.js:49:3 Γא║ Inventory - Pagination Γא║ should navigate to next page (5.7s)
+  Γ£ף   92 [chromium] Γא║ tests\e2e\inventory\inventory-pagination.spec.js:59:3 Γא║ Inventory - Pagination Γא║ should navigate back to previous page (6.9s)
+  Γ£ף   93 [chromium] Γא║ tests\e2e\inventory\inventory-pagination.spec.js:70:3 Γא║ Inventory - Pagination Γא║ should change items per page (5.8s)
+  Γ£ף   94 [chromium] Γא║ tests\e2e\inventory\inventory-pagination.spec.js:81:3 Γא║ Inventory - Pagination Γא║ should disable prev button on first page (4.7s)
+  Γ£ף   95 [chromium] Γא║ tests\e2e\inventory\inventory-pagination.spec.js:85:3 Γא║ Inventory - Pagination Γא║ should update pagination when filters are applied (5.3s)
+  Γ£ף   96 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:37:5 Γא║ Inventory - Permissions Γא║ Read-Only user (inventory:ro) Γא║ should see the inventory table (3.2s)
+  Γ£ף   97 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:41:5 Γא║ Inventory - Permissions Γא║ Read-Only user (inventory:ro) Γא║ should see search input (3.1s)
+  Γ£ף   98 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:45:5 Γא║ Inventory - Permissions Γא║ Read-Only user (inventory:ro) Γא║ should see export button (3.2s)
+  Γ£ף   99 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:49:5 Γא║ Inventory - Permissions Γא║ Read-Only user (inventory:ro) Γא║ should NOT see add item button (3.0s)
+  Γ£ף  100 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:53:5 Γא║ Inventory - Permissions Γא║ Read-Only user (inventory:ro) Γא║ should NOT see import button (3.2s)
+  Γ£ף  101 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:57:5 Γא║ Inventory - Permissions Γא║ Read-Only user (inventory:ro) Γא║ should NOT see bulk edit button (3.4s)
+  Γ£ף  102 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:61:5 Γא║ Inventory - Permissions Γא║ Read-Only user (inventory:ro) Γא║ should NOT see delete button (3.2s)
+  Γ£ף  103 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:65:5 Γא║ Inventory - Permissions Γא║ Read-Only user (inventory:ro) Γא║ should NOT allow inline cell edit (4.0s)
+  Γ£ף  104 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:86:5 Γא║ Inventory - Permissions Γא║ Read-Write user (inventory:rw) Γא║ should see all action buttons (3.2s)
+  Γ£ף  105 [chromium] Γא║ tests\e2e\inventory\inventory-permissions.spec.js:94:5 Γא║ Inventory - Permissions Γא║ Read-Write user (inventory:rw) Γא║ should allow inline cell edit (3.9s)
+  Γ£ף  106 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:36:3 Γא║ Inventory - Search and Filter Γא║ should search items globally (4.0s)
+  Γ£ף  107 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:41:3 Γא║ Inventory - Search and Filter Γא║ should search with Hebrew characters (4.2s)
+  Γ£ף  108 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:46:3 Γא║ Inventory - Search and Filter Γא║ should search with special characters safely (4.6s)
+  Γ£ף  109 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:54:3 Γא║ Inventory - Search and Filter Γא║ should return all items when search is cleared (4.7s)
+  Γ£ף  110 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:63:3 Γא║ Inventory - Search and Filter Γא║ should show empty state for no matching results (5.3s)
+  Γ£ף  111 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:74:3 Γא║ Inventory - Search and Filter Γא║ should toggle filter row on/off (3.6s)
+  Γ£ף  112 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:82:3 Γא║ Inventory - Search and Filter Γא║ should filter by single column (4.2s)
+  Γ£ף  113 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:92:3 Γא║ Inventory - Search and Filter Γא║ should clear all filters and show original results (5.0s)
+  Γ£ף  114 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:102:3 Γא║ Inventory - Search and Filter Γא║ should sort by column header click (5.5s)
+  Γ£ף  115 [chromium] Γא║ tests\e2e\inventory\inventory-search-filter.spec.js:117:3 Γא║ Inventory - Search and Filter Γא║ should combine search and sort (4.4s)
+  Γ£ף  116 [chromium] Γא║ tests\e2e\inventory\inventory-states.spec.js:30:3 Γא║ Inventory - Loading & Empty States Γא║ should show loading state while data is loading (2.9s)
+  Γ£ף  117 [chromium] Γא║ tests\e2e\inventory\inventory-states.spec.js:58:3 Γא║ Inventory - Loading & Empty States Γא║ should show empty state when search yields no results (5.9s)
+  Γ£ף  118 [chromium] Γא║ tests\e2e\inventory\inventory-states.spec.js:74:3 Γא║ Inventory - Loading & Empty States Γא║ should show correct empty state on stale items tab (2.7s)
+  Γ£ף  119 [chromium] Γא║ tests\e2e\inventory\inventory-states.spec.js:91:3 Γא║ Inventory - Loading & Empty States Γא║ should show correct empty state on catalog tab (3.1s)
+  Γ£ף  120 [chromium] Γא║ tests\e2e\inventory\inventory-states.spec.js:106:3 Γא║ Inventory - Loading & Empty States Γא║ should show correct empty state on logs tab (2.8s)
+  Γ£ף  121 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:16:3 Γא║ Inventory - Tab Navigation Γא║ should default to "current" tab (3.1s)
+  Γ£ף  122 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:24:3 Γא║ Inventory - Tab Navigation Γא║ should switch to stale tab on click (3.7s)
+  Γ£ף  123 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:32:3 Γא║ Inventory - Tab Navigation Γא║ should switch to catalog tab on click (3.9s)
+  Γ£ף  124 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:40:3 Γא║ Inventory - Tab Navigation Γא║ should switch to logs tab on click (3.8s)
+  Γ£ף  125 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:48:3 Γא║ Inventory - Tab Navigation Γא║ should switch back to current tab (3.8s)
+  Γ£ף  126 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:57:3 Γא║ Inventory - Tab Navigation Γא║ should navigate directly to stale via URL (3.2s)
+  Γ£ף  127 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:63:3 Γא║ Inventory - Tab Navigation Γא║ should navigate directly to catalog via URL (3.0s)
+  Γ£ף  128 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:69:3 Γא║ Inventory - Tab Navigation Γא║ should navigate directly to logs via URL (3.7s)
+  Γ£ף  129 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:75:3 Γא║ Inventory - Tab Navigation Γא║ should handle invalid tab param by showing default (3.0s)
+  Γ£ף  130 [chromium] Γא║ tests\e2e\inventory\inventory-tabs.spec.js:83:3 Γא║ Inventory - Tab Navigation Γא║ should reflect newly created item in logs tab (5.8s)
+  Γ£ף  131 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:47:3 Γא║ Inventory - Logs Tab Γא║ should navigate to logs tab via URL (3.2s)
+  Γ£ף  132 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:52:3 Γא║ Inventory - Logs Tab Γא║ should display log entries (3.4s)
+  Γ£ף  133 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:59:3 Γא║ Inventory - Logs Tab Γא║ should show action filter dropdown (3.5s)
+  Γ£ף  134 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:66:3 Γא║ Inventory - Logs Tab Γא║ should filter logs by action type (3.9s)
+  Γ£ף  135 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:76:3 Γא║ Inventory - Logs Tab Γא║ should search logs by text (4.2s)
+  Γ£ף  136 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:91:3 Γא║ Inventory - Logs Tab Γא║ should clear filters and show all logs (4.2s)
+  Γ£ף  137 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:103:3 Γא║ Inventory - Logs Tab Γא║ should show empty state when no logs match (4.3s)
+  Γ£ף  138 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:122:3 Γא║ Inventory - Logs Tab Γא║ should show action icon per log type (3.6s)
+  Γ£ף  139 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:131:3 Γא║ Inventory - Logs Tab Γא║ should display pagination for logs (3.2s)
+  Γ£ף  140 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:140:3 Γא║ Inventory - Logs Tab Γא║ should show field changes in log detail (old Γזע new) (4.3s)
+  Γ£ף  141 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:156:3 Γא║ Inventory - Logs Tab Γא║ should display actor/user who performed action (3.4s)
+  Γ£ף  142 [chromium] Γא║ tests\e2e\inventory\logs.spec.js:166:3 Γא║ Inventory - Logs Tab Γא║ should show colored status per action type (3.3s)
+  Γ£ף  143 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:36:3 Γא║ Inventory - Stale Items Tab Γא║ should navigate to stale tab via URL (3.3s)
+  Γ£ף  144 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:42:3 Γא║ Inventory - Stale Items Tab Γא║ should show days filter input (3.8s)
+  Γ£ף  145 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:47:3 Γא║ Inventory - Stale Items Tab Γא║ should change days threshold (3.8s)
+  Γ£ף  146 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:55:3 Γא║ Inventory - Stale Items Tab Γא║ should respect minimum days value of 1 (3.8s)
+  Γ£ף  147 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:64:3 Γא║ Inventory - Stale Items Tab Γא║ should NOT show Add Item button (3.4s)
+  Γ£ף  148 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:68:3 Γא║ Inventory - Stale Items Tab Γא║ should NOT show Import button (3.3s)
+  Γ£ף  149 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:72:3 Γא║ Inventory - Stale Items Tab Γא║ should show Export button (3.3s)
+  Γ£ף  150 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:77:3 Γא║ Inventory - Stale Items Tab Γא║ should allow inline editing of stale item (4.5s)
+  Γ£ף  151 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:93:3 Γא║ Inventory - Stale Items Tab Γא║ should allow bulk delete on stale items (4.8s)
+  Γ£ף  152 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:104:3 Γא║ Inventory - Stale Items Tab Γא║ should show empty state when no stale items (4.9s)
+  Γ£ף  153 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:113:3 Γא║ Inventory - Stale Items Tab Γא║ should search stale items by text (4.7s)
+  Γ£ף  154 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:125:3 Γא║ Inventory - Stale Items Tab Γא║ should sort stale items by column (4.0s)
+  Γ£ף  155 [chromium] Γא║ tests\e2e\inventory\stale-items.spec.js:135:3 Γא║ Inventory - Stale Items Tab Γא║ should export stale items (4.0s)
+  Γ£ף  156 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:24:3 Γא║ My Components - Collection Details Γא║ should navigate to collection details page (5.7s)
+  Γ£ף  157 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:43:3 Γא║ My Components - Collection Details Γא║ should display Items tab with item count (5.7s)
+  Γ£ף  158 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:60:3 Γא║ My Components - Collection Details Γא║ should display Settings tab (5.7s)
+  Γ£ף  159 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:76:3 Γא║ My Components - Collection Details Γא║ should switch to Settings tab (6.0s)
+  Γ£ף  160 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:98:3 Γא║ My Components - Collection Details Γא║ should navigate back to dashboard via back button (6.0s)
+  Γ£ף  161 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:119:3 Γא║ My Components - Collection Details Γא║ should show Add Item button for editable collection (5.7s)
+  Γ£ף  162 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:140:3 Γא║ My Components - Collection Details Γא║ should open Assign Item dialog (6.5s)
+  Γ£ף  163 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:165:3 Γא║ My Components - Collection Details Γא║ should show remove option for collection items (6.5s)
+  Γ£ף  164 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:193:3 Γא║ My Components - Collection Details Γא║ should handle collection not found gracefully (5.4s)
+  Γ£ף  165 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:209:3 Γא║ My Components - Collection Details Γא║ should show read-only view for restricted user (6.6s)
+  Γ£ף  166 [chromium] Γא║ tests\e2e\my-components\collection-details.spec.js:236:3 Γא║ My Components - Collection Details Γא║ should show delete option in settings for owner (6.8s)
+  Γ£ף  167 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:10:3 Γא║ My Components - Dashboard Γא║ should navigate to my-components page (3.3s)
+  Γ£ף  168 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:19:3 Γא║ My Components - Dashboard Γא║ should display page title (3.1s)
+  Γ£ף  169 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:27:3 Γא║ My Components - Dashboard Γא║ should show collections grid or empty state (4.5s)
+  Γ£ף  170 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:43:3 Γא║ My Components - Dashboard Γא║ should show search input (4.5s)
+  Γ£ף  171 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:56:3 Γא║ My Components - Dashboard Γא║ should filter collections by search query (5.5s)
+  Γ£ף  172 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:78:3 Γא║ My Components - Dashboard Γא║ should show Create Collection button (4.5s)
+  Γ£ף  173 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:88:3 Γא║ My Components - Dashboard Γא║ should open Create Collection dialog (4.7s)
+  Γ£ף  174 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:106:3 Γא║ My Components - Dashboard Γא║ should show loading skeleton on page load (2.7s)
+  Γ£ף  175 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:118:3 Γא║ My Components - Dashboard Γא║ should navigate to collection details on card click (4.8s)
+  Γ£ף  176 [chromium] Γא║ tests\e2e\my-components\my-components-dashboard.spec.js:133:3 Γא║ My Components - Dashboard Γא║ should show error state with retry button on failure (5.1s)
+  Γ£ף  177 [chromium] Γא║ tests\e2e\navigation\navigation.spec.js:10:3 Γא║ Navigation Γא║ should navigate to all main pages (3.3s)
+  Γ£ף  178 [chromium] Γא║ tests\e2e\navigation\navigation.spec.js:31:3 Γא║ Navigation Γא║ should highlight active page in navigation (2.7s)
+  -  179 [chromium] Γא║ tests\e2e\navigation\navigation.spec.js:39:8 Γא║ Navigation Γא║ should restrict access based on permissions
+  Γ£ר  180 [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:11:3 Γא║ Procurement Analytics Tab Γא║ should navigate to analytics tab (30.5s)
+  Γ£ר  181 [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:24:3 Γא║ Procurement Analytics Tab Γא║ should show date range filter controls (30.4s)
+  Γ£ר  182 [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:36:3 Γא║ Procurement Analytics Tab Γא║ should show resolution selector (daily/monthly/yearly) (30.5s)
+  Γ£ר  183 [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:48:3 Γא║ Procurement Analytics Tab Γא║ should have part search input (30.5s)
+  Γ£ר  184 [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:59:3 Γא║ Procurement Analytics Tab Γא║ should have two comparison panels (Systems & Components) (30.4s)
+  Γ£ר  185 [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:71:3 Γא║ Procurement Analytics Tab Γא║ should search for parts and show suggestions (30.5s)
+  Γ£ר  186 [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:90:3 Γא║ Procurement Analytics Tab Γא║ should toggle resolution and update chart (30.4s)
+  Γ£ר  187 [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:23:3 Γא║ Procurement BOM Flow Γא║ should show order type selection modal when clicking add (9.1s)
+  Γ£ר  188 [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:45:3 Γא║ Procurement BOM Flow Γא║ should open manual order form when Manual is selected (10.3s)
+  Γ£ר  189 [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:62:3 Γא║ Procurement BOM Flow Γא║ should open BOM prescan vendor selection when BOM is selected (30.5s)
+  Γ£ר  190 [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:85:3 Γא║ Procurement BOM Flow Γא║ should show BOM preview for existing BOM order (2.6s)
+  Γ£ר  191 [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:11:3 Γא║ Procurement BOM Scanner Tab Γא║ should navigate to BOM scanner tab (30.4s)
+  Γ£ר  192 [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:23:3 Γא║ Procurement BOM Scanner Tab Γא║ should display vendor selection options (30.4s)
+  Γ£ר  193 [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:35:3 Γא║ Procurement BOM Scanner Tab Γא║ should show file upload zone after vendor selection (30.4s)
+  Γ£ר  194 [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:53:3 Γא║ Procurement BOM Scanner Tab Γא║ should return to vendor selection when back is clicked (30.5s)
+  Γ£ר  195 [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:23:3 Γא║ Procurement CRUD Γא║ should display procurement page with tabs (8.7s)
+  Γ£ף  196 [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:33:3 Γא║ Procurement CRUD Γא║ should show empty state or existing orders (3.9s)
+  Γ£ר  197 [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:43:3 Γא║ Procurement CRUD Γא║ should create an order via API and display it (3.2s)
+  Γ£ר  198 [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:57:3 Γא║ Procurement CRUD Γא║ should edit an order (2.9s)
+  Γ£ר  199 [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:84:3 Γא║ Procurement CRUD Γא║ should delete an order (3.3s)
+  Γ£ר  200 [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:124:3 Γא║ Procurement CRUD Γא║ should open files modal (2.8s)
+  Γ£ר  201 [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:146:3 Γא║ Procurement CRUD Γא║ should open history modal (3.0s)
+  Γ£ר  202 [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:170:3 Γא║ Procurement CRUD Γא║ should display order items in card (3.0s)
+  Γ£ר  203 [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:23:3 Γא║ Procurement Error States Γא║ should handle page load gracefully (7.0s)
+  Γ£ר  204 [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:39:3 Γא║ Procurement Error States Γא║ should show toast on failed delete attempt (3.1s)
+  Γ£ף  205 [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:76:3 Γא║ Procurement Error States Γא║ should handle search with special characters (8.6s)
+  Γ£ר  206 [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:96:3 Γא║ Procurement Error States Γא║ should recover from network error on tab switch (30.4s)
+  Γ£ר  207 [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:116:3 Γא║ Procurement Error States Γא║ should handle edit modal with missing fields gracefully (2.5s)
+  Γ£ר  208 [chromium] Γא║ tests\e2e\procurement\procurement-files.spec.js:32:3 Γא║ Procurement Files Management Γא║ should open files modal from order card (0ms)
+  -  209 [chromium] Γא║ tests\e2e\procurement\procurement-files.spec.js:48:3 Γא║ Procurement Files Management Γא║ files modal should show empty state when no files
+  -  210 [chromium] Γא║ tests\e2e\procurement\procurement-files.spec.js:68:3 Γא║ Procurement Files Management Γא║ should close files modal
+  -  211 [chromium] Γא║ tests\e2e\procurement\procurement-files.spec.js:85:3 Γא║ Procurement Files Management Γא║ files modal should have upload area when user has edit permission
+node.exe : Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file 
+src\win\async.c, line 76
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Assertion faile...sync.c, line 76 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Γ£ר  212 [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:23:3 Γא║ Procurement Order Lifecycle Γא║ should show pipeline bar with correct initial state (2.7s)
+  Γ£ר  213 [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:45:3 Γא║ Procurement Order Lifecycle Γא║ should transition from waiting_shipment to shipped (3.1s)
+  Γ£ר  214 [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:75:3 Γא║ Procurement Order Lifecycle Γא║ should transition from shipped to received (2.9s)
+  Γ£ר  215 [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:110:3 Γא║ Procurement Order Lifecycle Γא║ completed orders should appear in completed tab (2.9s)
+  Γ£ר  216 [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:141:3 Γא║ Procurement Order Lifecycle Γא║ should show EMF and BOM badges when set (2.7s)
+  Γ£ף  217 [chromium] Γא║ tests\e2e\procurement\procurement-pagination.spec.js:23:3 Γא║ Procurement Pagination Γא║ should show pagination controls when orders exist (4.1s)
+  Γ£ר  218 [chromium] Γא║ tests\e2e\procurement\procurement-pagination.spec.js:36:3 Γא║ Procurement Pagination Γא║ should display order count info (2.5s)
+  Γ£ף  219 [chromium] Γא║ tests\e2e\procurement\procurement-pagination.spec.js:55:3 Γא║ Procurement Pagination Γא║ should be able to click next page if available (3.9s)
+  Γ£ר  220 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:25:5 Γא║ Procurement Permissions Γא║ Read-only user restrictions Γא║ read-only user should see orders but not edit/delete buttons (0ms)
+  -  221 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:42:5 Γא║ Procurement Permissions Γא║ Read-only user restrictions Γא║ read-only user should not see create button
+  -  222 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:52:5 Γא║ Procurement Permissions Γא║ Read-only user restrictions Γא║ read-only user should still see files and history buttons
+  Γ£ר  223 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:96:5 Γא║ Procurement Permissions Γא║ Vendor-specific access Γא║ admin should see edit buttons on all vendor orders (0ms)
+  -  224 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:114:5 Γא║ Procurement Permissions Γא║ Vendor-specific access Γא║ netapp_rw user should see edit on NetApp orders only
+  -  225 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:127:5 Γא║ Procurement Permissions Γא║ Vendor-specific access Γא║ netapp_ro user should see NetApp orders but not edit
+  -  226 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:142:5 Γא║ Procurement Permissions Γא║ Vendor-specific access Γא║ dell_rw user should not see NetApp orders
+  -  227 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:161:5 Γא║ Procurement Permissions Γא║ Vendor-specific access Γא║ multi_vendor_rw should see both NetApp and Dell
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, 
+line 76
+  Γ£ף  228 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:177:5 Γא║ Procurement Permissions Γא║ Analytics tab visibility Γא║ admin should see analytics tab (3.7s)
+  Γ£ף  229 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:186:5 Γא║ Procurement Permissions Γא║ Analytics tab visibility Γא║ price_comparer should see analytics tab (3.5s)
+  Γ£ף  230 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:195:5 Γא║ Procurement Permissions Γא║ Analytics tab visibility Γא║ read-only user should not see analytics tab (3.5s)
+  Γ£ף  231 [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:204:5 Γא║ Procurement Permissions Γא║ Analytics tab visibility Γא║ vendor RW user without compare_prices should not see analytics tab (3.5s)
+  Γ£ר  232 [chromium] Γא║ tests\e2e\procurement\procurement-search-filter.spec.js:44:3 Γא║ Procurement Search & Filter Γא║ should search by catalog number (0ms)
+  -  233 [chromium] Γא║ tests\e2e\procurement\procurement-search-filter.spec.js:60:3 Γא║ Procurement Search & Filter Γא║ should search by manufacturer
+  -  234 [chromium] Γא║ tests\e2e\procurement\procurement-search-filter.spec.js:72:3 Γא║ Procurement Search & Filter Γא║ should search by EMF number
+  -  235 [chromium] Γא║ tests\e2e\procurement\procurement-search-filter.spec.js:84:3 Γא║ Procurement Search & Filter Γא║ should show no results for non-existing search
+  -  236 [chromium] Γא║ tests\e2e\procurement\procurement-search-filter.spec.js:96:3 Γא║ Procurement Search & Filter Γא║ should clear search and show all orders again
+  -  237 [chromium] Γא║ tests\e2e\procurement\procurement-search-filter.spec.js:116:3 Γא║ Procurement Search & Filter Γא║ should filter between process and completed tabs
+  -  238 [chromium] Γא║ tests\e2e\procurement\procurement-search-filter.spec.js:139:3 Γא║ Procurement Search & Filter Γא║ search should be case-insensitive
+
+
+  1) [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:11:3 Γא║ Procurement Analytics Tab Γא║ should navigate to analytics tab 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫פ╫⌐╫ץ╫ץ╫נ╫¬ ╫₧╫ק╫ש╫¿╫ש╫¥' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-analytics.spec.js:16:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-633d9-d-navigate-to-analytics-tab-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-633d9-d-navigate-to-analytics-tab-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-an-633d9-d-navigate-to-analytics-tab-chromium\error-context.md
+
+  2) [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:24:3 Γא║ Procurement Analytics Tab Γא║ should show date range filter controls 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫פ╫⌐╫ץ╫ץ╫נ╫¬ ╫₧╫ק╫ש╫¿╫ש╫¥' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-analytics.spec.js:27:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-0453a--date-range-filter-controls-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-0453a--date-range-filter-controls-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-an-0453a--date-range-filter-controls-chromium\error-context.md
+
+  3) [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:36:3 Γא║ Procurement Analytics Tab Γא║ should show resolution selector (daily/monthly/yearly) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫פ╫⌐╫ץ╫ץ╫נ╫¬ ╫₧╫ק╫ש╫¿╫ש╫¥' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-analytics.spec.js:39:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-343f6-ector-daily-monthly-yearly--chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-343f6-ector-daily-monthly-yearly--chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-an-343f6-ector-daily-monthly-yearly--chromium\error-context.md
+
+  4) [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:48:3 Γא║ Procurement Analytics Tab Γא║ should have part search input 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫פ╫⌐╫ץ╫ץ╫נ╫¬ ╫₧╫ק╫ש╫¿╫ש╫¥' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-analytics.spec.js:51:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-44ce4-ould-have-part-search-input-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-44ce4-ould-have-part-search-input-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-an-44ce4-ould-have-part-search-input-chromium\error-context.md
+
+  5) [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:59:3 Γא║ Procurement Analytics Tab Γא║ should have two comparison panels (Systems & Components) 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫פ╫⌐╫ץ╫ץ╫נ╫¬ ╫₧╫ק╫ש╫¿╫ש╫¥' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-analytics.spec.js:62:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-55926--panels-Systems-Components--chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-55926--panels-Systems-Components--chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-an-55926--panels-Systems-Components--chromium\error-context.md
+
+  6) [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:71:3 Γא║ Procurement Analytics Tab Γא║ should search for parts and show suggestions 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫פ╫⌐╫ץ╫ץ╫נ╫¬ ╫₧╫ק╫ש╫¿╫ש╫¥' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-analytics.spec.js:74:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-7126d--parts-and-show-suggestions-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-7126d--parts-and-show-suggestions-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-an-7126d--parts-and-show-suggestions-chromium\error-context.md
+
+  7) [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:90:3 Γא║ Procurement Analytics Tab Γא║ should toggle resolution and update chart 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫פ╫⌐╫ץ╫ץ╫נ╫¬ ╫₧╫ק╫ש╫¿╫ש╫¥' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-analytics.spec.js:93:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-fc2f1-resolution-and-update-chart-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-an-fc2f1-resolution-and-update-chart-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-an-fc2f1-resolution-and-update-chart-chromium\error-context.md
+
+  8) [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:23:3 Γא║ Procurement BOM Flow Γא║ should show order type selection modal when clicking add 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=BOM, text=bom').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=BOM, text=bom').first()[22m
+
+
+      36 |     // Should have BOM option
+      37 |     const bomOption = page.locator('text=BOM, text=bom');
+    > 38 |     await expect(bomOption.first()).toBeVisible();
+         |                                     ^
+      39 |
+      40 |     // Should have Manual option
+      41 |     const manualOption = page.locator('text=╫ש╫ף╫á╫ש╫¬, text=╫ש╫ף╫á╫ש');
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-bom-flow.spec.js:38:37
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-88b32-ion-modal-when-clicking-add-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-88b32-ion-modal-when-clicking-add-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-bo-88b32-ion-modal-when-clicking-add-chromium\error-context.md
+
+  9) [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:45:3 Γא║ Procurement BOM Flow Γא║ should open manual order form when Manual is selected 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.procurement-modal, .modal-overlay').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.procurement-modal, .modal-overlay').first()[22m
+
+
+      57 |
+      58 |     // Procurement modal should open with form fields
+    > 59 |     await expect(proc.editModal).toBeVisible({ timeout: 5000 });
+         |                                  ^
+      60 |   });
+      61 |
+      62 |   test('should open BOM prescan vendor selection when BOM is selected', async ({ page }) => {
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-bom-flow.spec.js:59:34
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-48e75-orm-when-Manual-is-selected-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-48e75-orm-when-Manual-is-selected-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-bo-48e75-orm-when-Manual-is-selected-chromium\error-context.md
+
+  10) [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:62:3 Γא║ Procurement BOM Flow Γא║ should open BOM prescan vendor selection when BOM is selected 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.order-type-option:has-text("BOM"), button:has-text("BOM"), .type-card:has-text("BOM")').first()[22m
+    [2m    - locator resolved to <button class="tab-btn">Γאª</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 ├ק waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <h2 class="otm-title">╫פ╫צ╫₧╫á╫פ ╫ק╫ף╫⌐╫פ</h2> from <div class="order-type-overlay">Γאª</div> subtree intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is visible, enabled and stable[22m
+    [2m    - scrolling into view if needed[22m
+    [2m    - done scrolling[22m
+    [2m    - <h2 class="otm-title">╫פ╫צ╫₧╫á╫פ ╫ק╫ף╫⌐╫פ</h2> from <div class="order-type-overlay">Γאª</div> subtree intercepts pointer events[22m
+    [2m  2 ├ק retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m      - waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="order-type-modal">Γאª</div> from <div class="order-type-overlay">Γאª</div> subtree intercepts pointer events[22m
+    [2m  9 ├ק retrying click action[22m
+    [2m      - waiting 500ms[22m
+    [2m      - waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <h2 class="otm-title">╫פ╫צ╫₧╫á╫פ ╫ק╫ף╫⌐╫פ</h2> from <div class="order-type-overlay">Γאª</div> subtree intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 500ms[22m
+    [2m      - waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <h2 class="otm-title">╫פ╫צ╫₧╫á╫פ ╫ק╫ף╫⌐╫פ</h2> from <div class="order-type-overlay">Γאª</div> subtree intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 500ms[22m
+    [2m      - waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="order-type-modal">Γאª</div> from <div class="order-type-overlay">Γאª</div> subtree intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 500ms[22m
+    [2m      - waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="order-type-modal">Γאª</div> from <div class="order-type-overlay">Γאª</div> subtree intercepts pointer events[22m
+    [2m  2 ├ק retrying click action[22m
+    [2m      - waiting 500ms[22m
+    [2m      - waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <h2 class="otm-title">╫פ╫צ╫₧╫á╫פ ╫ק╫ף╫⌐╫פ</h2> from <div class="order-type-overlay">Γאª</div> subtree intercepts pointer events[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting 500ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is visible, enabled and stable[22m
+    [2m    - scrolling into view if needed[22m
+    [2m    - done scrolling[22m
+
+
+      71 |     // Click BOM option
+      72 |     const bomOption = page.locator('.order-type-option:has-text("BOM"), button:has-text("BOM"), .type-card:has-text("BOM")').first();
+    > 73 |     await bomOption.click();
+         |                     ^
+      74 |
+      75 |     // BOM prescan modal should open showing vendor selection
+      76 |     const prescanModal = page.locator('.bom-prescan-modal, .modal:has-text("╫í╫ñ╫º"), .prescan-modal');
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-bom-flow.spec.js:73:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-ac8fb-ection-when-BOM-is-selected-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-ac8fb-ection-when-BOM-is-selected-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-bo-ac8fb-ection-when-BOM-is-selected-chromium\error-context.md
+
+  11) [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:85:3 Γא║ Procurement BOM Flow Γא║ should show BOM preview for existing BOM order 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-BOM-PREV","manufacturer":"NetApp","quantity":2,"product_name":"Preview Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-bom-flow.spec.js:87:5
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-37e61-view-for-existing-BOM-order-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-37e61-view-for-existing-BOM-order-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-bo-37e61-view-for-existing-BOM-order-chromium\error-context.md
+
+  12) [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:11:3 Γא║ Procurement BOM Scanner Tab Γא║ should navigate to BOM scanner tab 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫í╫¿╫ש╫º╫¬ BOM' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-bom-scanner.spec.js:15:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-5a2e0-navigate-to-BOM-scanner-tab-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-5a2e0-navigate-to-BOM-scanner-tab-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-bo-5a2e0-navigate-to-BOM-scanner-tab-chromium\error-context.md
+
+  13) [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:23:3 Γא║ Procurement BOM Scanner Tab Γא║ should display vendor selection options 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫í╫¿╫ש╫º╫¬ BOM' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-bom-scanner.spec.js:26:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-046b7-ay-vendor-selection-options-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-046b7-ay-vendor-selection-options-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-bo-046b7-ay-vendor-selection-options-chromium\error-context.md
+
+  14) [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:35:3 Γא║ Procurement BOM Scanner Tab Γא║ should show file upload zone after vendor selection 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫í╫¿╫ש╫º╫¬ BOM' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-bom-scanner.spec.js:38:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-c4cbb-zone-after-vendor-selection-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-c4cbb-zone-after-vendor-selection-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-bo-c4cbb-zone-after-vendor-selection-chromium\error-context.md
+
+  15) [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:53:3 Γא║ Procurement BOM Scanner Tab Γא║ should return to vendor selection when back is clicked 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫í╫¿╫ש╫º╫¬ BOM' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-bom-scanner.spec.js:56:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-b727c-ection-when-back-is-clicked-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-bo-b727c-ection-when-back-is-clicked-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-bo-b727c-ection-when-back-is-clicked-chromium\error-context.md
+
+  16) [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:23:3 Γא║ Procurement CRUD Γא║ should display procurement page with tabs 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫ס╫¬╫פ╫£╫ש╫ת' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫ס╫¬╫פ╫£╫ש╫ת' })[22m
+
+
+      26 |
+      27 |     // Verify tabs exist
+    > 28 |     await expect(proc.tabButton('╫ס╫¬╫פ╫£╫ש╫ת')).toBeVisible();
+         |                                            ^
+      29 |     await expect(proc.tabButton('╫פ╫í╫¬╫ש╫ש╫¥')).toBeVisible();
+      30 |     await expect(proc.tabButton('╫í╫¿╫ש╫º╫¬ BOM')).toBeVisible();
+      31 |   });
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-crud.spec.js:28:44
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-0384d--procurement-page-with-tabs-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-0384d--procurement-page-with-tabs-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-cr-0384d--procurement-page-with-tabs-chromium\error-context.md
+
+  17) [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:43:3 Γא║ Procurement CRUD Γא║ should create an order via API and display it 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-PROC-001","manufacturer":"Test Vendor","quantity":5,"product_name":"E2E Test Item"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-crud.spec.js:45:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-78780-rder-via-API-and-display-it-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-78780-rder-via-API-and-display-it-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-cr-78780-rder-via-API-and-display-it-chromium\error-context.md
+
+  18) [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:57:3 Γא║ Procurement CRUD Γא║ should edit an order 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-PROC-EDIT","manufacturer":"Test","quantity":1,"product_name":"Edit Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-crud.spec.js:59:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-e25b6-t-CRUD-should-edit-an-order-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-e25b6-t-CRUD-should-edit-an-order-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-cr-e25b6-t-CRUD-should-edit-an-order-chromium\error-context.md
+
+  19) [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:84:3 Γא║ Procurement CRUD Γא║ should delete an order 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-PROC-DEL","manufacturer":"Test","quantity":1,"product_name":"Delete Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-crud.spec.js:86:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-880db-CRUD-should-delete-an-order-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-880db-CRUD-should-delete-an-order-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-cr-880db-CRUD-should-delete-an-order-chromium\error-context.md
+
+  20) [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:124:3 Γא║ Procurement CRUD Γא║ should open files modal 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-PROC-FILES","manufacturer":"Test","quantity":1,"product_name":"Files Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-crud.spec.js:125:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-91b41-RUD-should-open-files-modal-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-91b41-RUD-should-open-files-modal-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-cr-91b41-RUD-should-open-files-modal-chromium\error-context.md
+
+  21) [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:146:3 Γא║ Procurement CRUD Γא║ should open history modal 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-PROC-HIST","manufacturer":"Test","quantity":1,"product_name":"History Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-crud.spec.js:147:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-02b5d-D-should-open-history-modal-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-02b5d-D-should-open-history-modal-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-cr-02b5d-D-should-open-history-modal-chromium\error-context.md
+
+  22) [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:170:3 Γא║ Procurement CRUD Γא║ should display order items in card 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-PROC-ITM1","manufacturer":"Test","quantity":5,"product_name":"Item One"}},{"type":"missing","loc":["body","bom_items",1,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-PROC-ITM2","manufacturer":"Test","quantity":10,"product_name":"Item Two"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-crud.spec.js:171:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-0d221-display-order-items-in-card-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-cr-0d221-display-order-items-in-card-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-cr-0d221-display-order-items-in-card-chromium\error-context.md
+
+  23) [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:23:3 Γא║ Procurement Error States Γא║ should handle page load gracefully 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: .error-boundary, .error-page, text=╫⌐╫ע╫ש╫נ╫פ ╫£╫נ ╫ª╫ñ╫ץ╫ש╫פ
+    Expected: [32m0[39m
+    Error: Unexpected token "=" while parsing css selector ".error-boundary, .error-page, text=╫⌐╫ע╫ש╫נ╫פ ╫£╫נ ╫ª╫ñ╫ץ╫ש╫פ". Did you mean to CSS.escape it?
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for .error-boundary, .error-page, text=╫⌐╫ע╫ש╫נ╫פ ╫£╫נ ╫ª╫ñ╫ץ╫ש╫פ[22m
+
+
+      30 |     // Should see either orders or empty state Γאפ not an error screen
+      31 |     const errorScreen = page.locator('.error-boundary, .error-page, text=╫⌐╫ע╫ש╫נ╫פ ╫£╫נ ╫ª╫ñ╫ץ╫ש╫פ');
+    > 32 |     await expect(errorScreen).toHaveCount(0);
+         |                               ^
+      33 |
+      34 |     // Tab bar should always render
+      35 |     const tabs = page.locator('button:has-text("╫ס╫¬╫פ╫£╫ש╫ת")');
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-error-states.spec.js:32:31
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-er-03940-handle-page-load-gracefully-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-er-03940-handle-page-load-gracefully-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-er-03940-handle-page-load-gracefully-chromium\error-context.md
+
+  24) [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:39:3 Γא║ Procurement Error States Γא║ should show toast on failed delete attempt 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-ERR-DEL","manufacturer":"Test","quantity":1,"product_name":"Delete Error Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-error-states.spec.js:41:19
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-er-fa774-st-on-failed-delete-attempt-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-er-fa774-st-on-failed-delete-attempt-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-er-fa774-st-on-failed-delete-attempt-chromium\error-context.md
+
+  25) [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:96:3 Γא║ Procurement Error States Γא║ should recover from network error on tab switch 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.tabs-container button, .tabs button, [role="tab"]').filter({ hasText: '╫פ╫í╫¬╫ש╫ש╫¥' })[22m
+
+
+       at ..\utils\page-objects\ProcurementPage.js:25
+
+      23 |     };
+      24 |     const label = tabLabels[tabKey] || tabKey;
+    > 25 |     await this.page.locator('.tabs-container button, .tabs button, [role="tab"]', { hasText: label }).click();
+         |                                                                                                       ^
+      26 |     await this.page.waitForTimeout(500);
+      27 |   }
+      28 |
+        at ProcurementPageObject.gotoTab (C:\my project\warehouse\frontend\tests\utils\page-objects\ProcurementPage.js:25:103)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-error-states.spec.js:102:16
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-er-22669-network-error-on-tab-switch-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-er-22669-network-error-on-tab-switch-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-er-22669-network-error-on-tab-switch-chromium\error-context.md
+
+  26) [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:116:3 Γא║ Procurement Error States Γא║ should handle edit modal with missing fields gracefully 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-ERR-MIN","manufacturer":"","quantity":0,"product_name":""}},{"type":"string_too_short","loc":["body","bom_items",0,"manufacturer"],"msg":"String should have at least 1 character","input":"","ctx":{"min_length":1}},{"type":"greater_than","loc":["body","bom_items",0,"quantity"],"msg":"Input should be greater than 0","input":0,"ctx":{"gt":0}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-error-states.spec.js:118:5
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-er-101b1-h-missing-fields-gracefully-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-er-101b1-h-missing-fields-gracefully-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-er-101b1-h-missing-fields-gracefully-chromium\error-context.md
+
+  27) [chromium] Γא║ tests\e2e\procurement\procurement-files.spec.js:32:3 Γא║ Procurement Files Management Γא║ should open files modal from order card 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-FILE-001","manufacturer":"Test","quantity":1,"product_name":"File Test Item"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-files.spec.js:17:19
+
+  28) [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:23:3 Γא║ Procurement Order Lifecycle Γא║ should show pipeline bar with correct initial state 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-LIFE-PIP","manufacturer":"Test","quantity":1,"product_name":"Pipeline Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-lifecycle.spec.js:24:5
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-4c3d9--with-correct-initial-state-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-4c3d9--with-correct-initial-state-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-li-4c3d9--with-correct-initial-state-chromium\error-context.md
+
+  29) [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:45:3 Γא║ Procurement Order Lifecycle Γא║ should transition from waiting_shipment to shipped 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-LIFE-SHIP","manufacturer":"Test","quantity":1,"product_name":"Ship Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-lifecycle.spec.js:46:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-95261-waiting-shipment-to-shipped-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-95261-waiting-shipment-to-shipped-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-li-95261-waiting-shipment-to-shipped-chromium\error-context.md
+
+  30) [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:75:3 Γא║ Procurement Order Lifecycle Γא║ should transition from shipped to received 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-LIFE-RCV","manufacturer":"Test","quantity":1,"product_name":"Receive Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-lifecycle.spec.js:77:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-525ae-on-from-shipped-to-received-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-525ae-on-from-shipped-to-received-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-li-525ae-on-from-shipped-to-received-chromium\error-context.md
+
+  31) [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:110:3 Γא║ Procurement Order Lifecycle Γא║ completed orders should appear in completed tab 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-LIFE-COMP","manufacturer":"Test","quantity":1,"product_name":"Complete Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-lifecycle.spec.js:112:21
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-abb7d-uld-appear-in-completed-tab-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-abb7d-uld-appear-in-completed-tab-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-li-abb7d-uld-appear-in-completed-tab-chromium\error-context.md
+
+  32) [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:141:3 Γא║ Procurement Order Lifecycle Γא║ should show EMF and BOM badges when set 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-LIFE-BADGE","manufacturer":"Test","quantity":1,"product_name":"Badge Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-lifecycle.spec.js:142:5
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-6d0f8-EMF-and-BOM-badges-when-set-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-li-6d0f8-EMF-and-BOM-badges-when-set-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-li-6d0f8-EMF-and-BOM-badges-when-set-chromium\error-context.md
+
+  33) [chromium] Γא║ tests\e2e\procurement\procurement-pagination.spec.js:36:3 Γא║ Procurement Pagination Γא║ should display order count info 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-PAGE-0","manufacturer":"Test","quantity":1,"product_name":"Page Test 0"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-pagination.spec.js:39:7
+
+    attachment #1: screenshot (image/png) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-pa-a32b7-ld-display-order-count-info-chromium\test-failed-1.png
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    attachment #2: video (video/webm) ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+    test-results\procurement-procurement-pa-a32b7-ld-display-order-count-info-chromium\video.webm
+    ΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפאΓפא
+
+    Error Context: test-results\procurement-procurement-pa-a32b7-ld-display-order-count-info-chromium\error-context.md
+
+  34) [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:25:5 Γא║ Procurement Permissions Γא║ Read-only user restrictions Γא║ read-only user should see orders but not edit/delete buttons 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-PERM-RO","manufacturer":"Test","quantity":1,"product_name":"RO Test"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-permissions.spec.js:15:7
+
+  35) [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:96:5 Γא║ Procurement Permissions Γא║ Vendor-specific access Γא║ admin should see edit buttons on all vendor orders 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-VEND-DELL","manufacturer":"Dell","quantity":1,"product_name":"Dell Item"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-permissions.spec.js:75:7
+
+  36) [chromium] Γא║ tests\e2e\procurement\procurement-search-filter.spec.js:44:3 Γא║ Procurement Search & Filter Γא║ should search by catalog number 
+
+    Error: Create order failed (422): {"detail":[{"type":"missing","loc":["body","bom_items",0,"item_id"],"msg":"Field required","input":{"catalog_number":"E2E-SRCH-CAT-ABC","manufacturer":"Acme Corp","quantity":5,"product_name":"Search Item A"}}]}
+
+       at ..\utils\procurement-api-helper.js:43
+
+      41 |     if (!res.ok) {
+      42 |       const detail = await res.text();
+    > 43 |       throw new Error(`Create order failed (${res.status}): ${detail}`);
+         |             ^
+      44 |     }
+      45 |     const created = await res.json();
+      46 |     const id = created._id || created.id;
+        at ProcurementApiHelper.createOrder (C:\my project\warehouse\frontend\tests\utils\procurement-api-helper.js:43:13)
+        at C:\my project\warehouse\frontend\tests\e2e\procurement\procurement-search-filter.spec.js:15:5
+
+  36 failed
+    [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:11:3 Γא║ Procurement Analytics Tab Γא║ should navigate to analytics tab 
+    [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:24:3 Γא║ Procurement Analytics Tab Γא║ should show date range filter controls 
+    [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:36:3 Γא║ Procurement Analytics Tab Γא║ should show resolution selector (daily/monthly/yearly) 
+    [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:48:3 Γא║ Procurement Analytics Tab Γא║ should have part search input 
+    [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:59:3 Γא║ Procurement Analytics Tab Γא║ should have two comparison panels (Systems & Components) 
+    [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:71:3 Γא║ Procurement Analytics Tab Γא║ should search for parts and show suggestions 
+    [chromium] Γא║ tests\e2e\procurement\procurement-analytics.spec.js:90:3 Γא║ Procurement Analytics Tab Γא║ should toggle resolution and update chart 
+    [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:23:3 Γא║ Procurement BOM Flow Γא║ should show order type selection modal when clicking add 
+    [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:45:3 Γא║ Procurement BOM Flow Γא║ should open manual order form when Manual is selected 
+    [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:62:3 Γא║ Procurement BOM Flow Γא║ should open BOM prescan vendor selection when BOM is selected 
+    [chromium] Γא║ tests\e2e\procurement\procurement-bom-flow.spec.js:85:3 Γא║ Procurement BOM Flow Γא║ should show BOM preview for existing BOM order 
+    [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:11:3 Γא║ Procurement BOM Scanner Tab Γא║ should navigate to BOM scanner tab 
+    [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:23:3 Γא║ Procurement BOM Scanner Tab Γא║ should display vendor selection options 
+    [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:35:3 Γא║ Procurement BOM Scanner Tab Γא║ should show file upload zone after vendor selection 
+    [chromium] Γא║ tests\e2e\procurement\procurement-bom-scanner.spec.js:53:3 Γא║ Procurement BOM Scanner Tab Γא║ should return to vendor selection when back is clicked 
+    [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:23:3 Γא║ Procurement CRUD Γא║ should display procurement page with tabs 
+    [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:43:3 Γא║ Procurement CRUD Γא║ should create an order via API and display it 
+    [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:57:3 Γא║ Procurement CRUD Γא║ should edit an order 
+    [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:84:3 Γא║ Procurement CRUD Γא║ should delete an order 
+    [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:124:3 Γא║ Procurement CRUD Γא║ should open files modal 
+    [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:146:3 Γא║ Procurement CRUD Γא║ should open history modal 
+    [chromium] Γא║ tests\e2e\procurement\procurement-crud.spec.js:170:3 Γא║ Procurement CRUD Γא║ should display order items in card 
+    [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:23:3 Γא║ Procurement Error States Γא║ should handle page load gracefully 
+    [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:39:3 Γא║ Procurement Error States Γא║ should show toast on failed delete attempt 
+    [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:96:3 Γא║ Procurement Error States Γא║ should recover from network error on tab switch 
+    [chromium] Γא║ tests\e2e\procurement\procurement-error-states.spec.js:116:3 Γא║ Procurement Error States Γא║ should handle edit modal with missing fields gracefully 
+    [chromium] Γא║ tests\e2e\procurement\procurement-files.spec.js:32:3 Γא║ Procurement Files Management Γא║ should open files modal from order card 
+    [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:23:3 Γא║ Procurement Order Lifecycle Γא║ should show pipeline bar with correct initial state 
+    [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:45:3 Γא║ Procurement Order Lifecycle Γא║ should transition from waiting_shipment to shipped 
+    [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:75:3 Γא║ Procurement Order Lifecycle Γא║ should transition from shipped to received 
+    [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:110:3 Γא║ Procurement Order Lifecycle Γא║ completed orders should appear in completed tab 
+    [chromium] Γא║ tests\e2e\procurement\procurement-lifecycle.spec.js:141:3 Γא║ Procurement Order Lifecycle Γא║ should show EMF and BOM badges when set 
+    [chromium] Γא║ tests\e2e\procurement\procurement-pagination.spec.js:36:3 Γא║ Procurement Pagination Γא║ should display order count info 
+    [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:25:5 Γא║ Procurement Permissions Γא║ Read-only user restrictions Γא║ read-only user should see orders but not edit/delete buttons 
+    [chromium] Γא║ tests\e2e\procurement\procurement-permissions.spec.js:96:5 Γא║ Procurement Permissions Γא║ Vendor-specific access Γא║ admin should see edit buttons on all vendor orders 
+    [chromium] Γא║ tests\e2e\procurement\procurement-search-filter.spec.js:44:3 Γא║ Procurement Search & Filter Γא║ should search by catalog number 
+  1 skipped
+  15 did not run
+  186 passed (23.3m)

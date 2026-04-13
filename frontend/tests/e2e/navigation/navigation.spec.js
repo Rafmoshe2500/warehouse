@@ -16,8 +16,8 @@ test.describe('Navigation', () => {
     await page.click('a[href="/inventory"], nav a:has-text("מלאי")');
     await expect(page).toHaveURL(/.*inventory/);
     
-    // Admin
-    await page.click('a[href="/admin"], nav a:has-text("ניהול")');
+    // Admin — use exact href to avoid matching "ניהול רכש" too
+    await page.click('a[href="/admin"]');
     await expect(page).toHaveURL(/.*admin/);
     
     // Procurement (if user has permission)

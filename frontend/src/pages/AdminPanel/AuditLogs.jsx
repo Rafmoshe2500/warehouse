@@ -103,6 +103,7 @@ const AuditLogs = ({ isEmbedded = false }) => {
           onChange={(e) => setFilters({ ...filters, action: e.target.value })}
           placeholder="הכל"
           className="filter-select"
+          data-testid="audit-action-filter"
         />
 
         <Input
@@ -111,6 +112,7 @@ const AuditLogs = ({ isEmbedded = false }) => {
           onChange={(e) => setFilters({ ...filters, actor: e.target.value })}
           placeholder="שם משתמש..."
           className="filter-input"
+          data-testid="audit-actor-filter"
         />
 
         <Input
@@ -119,6 +121,7 @@ const AuditLogs = ({ isEmbedded = false }) => {
           onChange={(e) => setFilters({ ...filters, target_user: e.target.value })}
           placeholder="שם משתמש..."
           className="filter-input"
+          data-testid="audit-target-filter"
         />
 
         <div className="filter-actions-btn">
@@ -126,6 +129,7 @@ const AuditLogs = ({ isEmbedded = false }) => {
             variant="primary" 
             icon={<FiSearch />} 
             onClick={handleSearch}
+            data-testid="audit-search-btn"
           >
             חיפוש
           </Button>
@@ -135,7 +139,7 @@ const AuditLogs = ({ isEmbedded = false }) => {
   );
 
   return (
-    <div className="audit-logs">
+    <div className="audit-logs" data-testid="audit-logs">
       <ScrollableTableLayout
         header={headerContent}
         pagination={
@@ -154,7 +158,7 @@ const AuditLogs = ({ isEmbedded = false }) => {
         {loading ? (
           <SkeletonTable rows={8} columns={5} />
         ) : (
-          <div className="audit-timeline-wrapper">
+          <div className="audit-timeline-wrapper" data-testid="audit-timeline">
              <LogTimeline logs={logs} />
           </div>
         )}

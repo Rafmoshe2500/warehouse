@@ -46,8 +46,7 @@ describe('itemService with Dependency Injection', () => {
       await itemService.getItems({ search: 'item' });
 
       expect(mockApiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('search=item'),
-        undefined
+        expect.stringContaining('search=item')
       );
     });
 
@@ -58,8 +57,7 @@ describe('itemService with Dependency Injection', () => {
       await itemService.getItems({ serial_number: '123' });
 
       expect(mockApiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('serial=123'),
-        undefined
+        expect.stringContaining('serial=123')
       );
     });
   });
@@ -76,7 +74,8 @@ describe('itemService with Dependency Injection', () => {
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
         API_ENDPOINTS.ITEMS,
-        itemData
+        itemData,
+        { params: {} }
       );
       expect(result).toEqual(mockResponse.data);
     });
@@ -91,7 +90,8 @@ describe('itemService with Dependency Injection', () => {
 
       expect(mockApiClient.patch).toHaveBeenCalledWith(
         API_ENDPOINTS.ITEM_BY_ID(1),
-        { field: 'current_stock', value: 5 }
+        { field: 'current_stock', value: 5 },
+        { params: {} }
       );
       expect(result).toEqual(mockResponse.data);
     });
@@ -121,7 +121,7 @@ describe('itemService with Dependency Injection', () => {
 
       expect(mockApiClient.delete).toHaveBeenCalledWith(
         API_ENDPOINTS.ITEM_BY_ID(1),
-        { data: { confirmation: 'confirmed' } }
+        { data: { reason: 'confirmed' } }
       );
       expect(result).toEqual(mockResponse.data);
     });
@@ -136,7 +136,7 @@ describe('itemService with Dependency Injection', () => {
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
         API_ENDPOINTS.BULK_DELETE,
-        { ids: [1, 2, 3], confirmation: 'confirmed' }
+        { ids: [1, 2, 3], reason: 'confirmed' }
       );
       expect(result).toEqual(mockResponse.data);
     });

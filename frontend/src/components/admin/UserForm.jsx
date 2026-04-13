@@ -77,7 +77,7 @@ const UserForm = ({ user, onSubmit, onCancel, onDelete }) => {
   const roleMeta = ROLE_META[user?.role] || ROLE_META.user;
 
   return (
-    <form className="uf-root" onSubmit={handleSubmit}>
+    <form className="uf-root" onSubmit={handleSubmit} data-testid="user-form">
 
       {/* ── Slim header ──────────────────────────────── */}
       <div className="uf-header">
@@ -146,9 +146,9 @@ const UserForm = ({ user, onSubmit, onCancel, onDelete }) => {
             {!user && (
               <div className="uf-field-row">
                 <Input label="שם משתמש" name="username" value={formData.username}
-                  onChange={handleChange} required minLength={3} placeholder="שם משתמש" />
+                  onChange={handleChange} required minLength={3} placeholder="שם משתמש" data-testid="username-field" />
                 <Select label="סוג" name="user_type" value={formData.user_type}
-                  onChange={handleChange} options={USER_TYPE_OPTIONS} />
+                  onChange={handleChange} options={USER_TYPE_OPTIONS} data-testid="user-type-field" />
               </div>
             )}
 
@@ -159,6 +159,7 @@ const UserForm = ({ user, onSubmit, onCancel, onDelete }) => {
                 type="password" name="password" value={formData.password}
                 onChange={handleChange} required={!user} minLength={4}
                 placeholder={user ? '••••••••' : 'הכנס סיסמה'}
+                data-testid="password-field"
               />
             )}
 
@@ -166,11 +167,11 @@ const UserForm = ({ user, onSubmit, onCancel, onDelete }) => {
             {user && user.role !== 'superadmin' && (
               <div className="uf-field-row">
                 <Select label="תפקיד" name="role" value={formData.role}
-                  onChange={handleChange} options={ROLE_OPTIONS} />
+                  onChange={handleChange} options={ROLE_OPTIONS} data-testid="role-field" />
                 <label className="uf-toggle-wrap">
                   <span className="uf-meta-label">סטטוס</span>
                   <label className={`uf-toggle ${formData.is_active ? 'is-active' : ''}`}>
-                    <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleChange} />
+                    <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleChange} data-testid="user-active-toggle" />
                     <span className="uf-toggle-track" />
                     <span className="uf-toggle-label">{formData.is_active ? 'פעיל' : 'לא פעיל'}</span>
                   </label>
@@ -194,12 +195,12 @@ const UserForm = ({ user, onSubmit, onCancel, onDelete }) => {
       <div className="uf-actions">
         <div>
           {onDelete && (
-            <Button type="button" variant="danger" onClick={onDelete} disabled={loading}>מחיקה</Button>
+            <Button type="button" variant="danger" onClick={onDelete} disabled={loading} data-testid="user-delete-btn">מחיקה</Button>
           )}
         </div>
         <div className="uf-actions-right">
-          <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>ביטול</Button>
-          <Button type="submit" variant="primary" disabled={loading}>
+          <Button type="button" variant="secondary" onClick={onCancel} disabled={loading} data-testid="user-cancel-btn">ביטול</Button>
+          <Button type="submit" variant="primary" disabled={loading} data-testid="user-submit-btn">
             {loading ? 'שומר...' : user ? 'עדכון' : 'הוספה'}
           </Button>
         </div>

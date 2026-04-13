@@ -72,9 +72,9 @@ export function usePartComparison(itemType, dateRange, resolution = 'monthly') {
   const chartData = useMemo(() => {
     const byDate = {};
     const startDate = dateRange?.startDate ? new Date(dateRange.startDate) : null;
-    let endDate = dateRange?.endDate ? new Date(dateRange.endDate) : null;
+    const endDate = dateRange?.endDate ? new Date(dateRange.endDate) : null;
     
-    // Include the entire end date day
+    // Include the entire end date day (clone to avoid mutating source)
     if (endDate) {
       endDate.setHours(23, 59, 59, 999);
     }

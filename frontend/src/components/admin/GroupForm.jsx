@@ -54,7 +54,7 @@ const GroupForm = ({ group, onSubmit, onCancel, onDelete }) => {
   };
 
   return (
-    <form className="uf-root" onSubmit={handleSubmit}>
+    <form className="uf-root" onSubmit={handleSubmit} data-testid="group-form">
 
       {/* ── Slim header ───────────────────────────────── */}
       <div className="uf-header">
@@ -114,6 +114,7 @@ const GroupForm = ({ group, onSubmit, onCancel, onDelete }) => {
               <Input
                 label="שם קבוצה" name="name" value={formData.name}
                 onChange={handleChange} required minLength={2} placeholder="שם קבוצה"
+                data-testid="group-name-field"
               />
             )}
 
@@ -122,7 +123,7 @@ const GroupForm = ({ group, onSubmit, onCancel, onDelete }) => {
                 <label className="uf-toggle-wrap">
                   <span className="uf-meta-label">סטטוס</span>
                   <label className={`uf-toggle ${formData.is_active ? 'is-active' : ''}`}>
-                    <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleChange} />
+                    <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleChange} data-testid="group-active-toggle" />
                     <span className="uf-toggle-track" />
                     <span className="uf-toggle-label">{formData.is_active ? 'פעילה' : 'לא פעילה'}</span>
                   </label>
@@ -146,12 +147,12 @@ const GroupForm = ({ group, onSubmit, onCancel, onDelete }) => {
       <div className="uf-actions">
         <div>
           {onDelete && (
-            <Button type="button" variant="danger" onClick={onDelete} disabled={loading}>מחיקה</Button>
+            <Button type="button" variant="danger" onClick={onDelete} disabled={loading} data-testid="group-delete-btn">מחיקה</Button>
           )}
         </div>
         <div className="uf-actions-right">
-          <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>ביטול</Button>
-          <Button type="submit" variant="primary" disabled={loading}>
+          <Button type="button" variant="secondary" onClick={onCancel} disabled={loading} data-testid="group-cancel-btn">ביטול</Button>
+          <Button type="submit" variant="primary" disabled={loading} data-testid="group-submit-btn">
             {loading ? 'שומר...' : group ? 'עדכון' : 'הוספה'}
           </Button>
         </div>
