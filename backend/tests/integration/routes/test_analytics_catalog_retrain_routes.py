@@ -37,23 +37,43 @@ class TestAnalyticsRoutes:
         assert response.status_code == 200
         assert response.json()["days"] == 30
 
-    async def test_item_stats(self, async_client, test_items_collection):
-        # Insert test item so the endpoint has something to query
-        await test_items_collection.insert_one({
-            "catalog_number": "STAT-001",
-            "description": "Test",
-            "manufacturer": "Dell",
-            "serial": "SN1",
-            "project_allocations": {"ProjectA": 2},
-        })
-        response = await async_client.get("/api/analytics/item/STAT-001")
-        assert response.status_code == 200
-        assert isinstance(response.json(), list)
+    async def test_item_stats(self, async_client, test_db):
+        # Analytics service queries MongoDB.get_collection("inventory") → test_inventory
+        inventory_col = test_db["test_inventory"]
+        await inventory_col.delete_many({})  # Ensure clean state
+        try:
+            await inventory_col.insert_one({
+                "catalog_number": "STAT-001",
+                "description": "Test",
+                "manufacturer": "Dell",
+                "serial": "SN1",          # serial item → qty = 1
+                "location": "LocTest",
+                "project_allocations": {"ProjectA": 1},
+            })
+            response = await async_client.get("/api/analytics/item/STAT-001")
+            assert response.status_code == 200
+            data = response.json()
+            # Response must be a dict with the expected keys
+            assert isinstance(data, dict)
+            assert data["total_quantity"] == 1
+            assert data["total_allocated"] == 1
+            assert data["unallocated"] == 0
+            assert isinstance(data["projects"], list)
+            assert len(data["projects"]) == 1
+            assert data["projects"][0]["name"] == "ProjectA"
+        finally:
+            await inventory_col.delete_many({})
 
     async def test_item_stats_nonexistent(self, async_client):
         response = await async_client.get("/api/analytics/item/DOES-NOT-EXIST")
         assert response.status_code == 200
-        assert response.json() == []
+        data = response.json()
+        # No items match → all counts should be zero, projects empty
+        assert isinstance(data, dict)
+        assert data["total_quantity"] == 0
+        assert data["total_allocated"] == 0
+        assert data["unallocated"] == 0
+        assert data["projects"] == []
 
     async def test_analytics_requires_auth(self, async_client_user):
         """Regular user can still access analytics (no special permission check)."""

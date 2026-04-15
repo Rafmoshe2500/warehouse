@@ -92,23 +92,31 @@ test.describe('Procurement BOM Flow', () => {
       emf_number: '',
       total_amount: 50000,
       bom_items: [{ catalog_number: 'E2E-BOM-PREV', manufacturer: 'NetApp', quantity: 2, product_name: 'Preview Test' }],
+      bom_data: { 
+        groups: [{ 
+          main: { part_number: 'E2E-BOM-PREV', catalog: { category: 'Test', description_he: 'Test' }, ext_qty: 2 },
+          children: [] 
+        }] 
+      }
     });
 
     const proc = new ProcurementPageObject(page);
     await proc.goto();
     await proc.search('E2E-BOM-PREV');
 
-    const orderCard = proc.orderByText('E2E-BOM-PREV');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     // Should have BOM preview button
     const bomPreviewBtn = proc.bomPreviewButton(orderCard);
-    if (await bomPreviewBtn.count() > 0) {
-      await bomPreviewBtn.click();
+    
+    // Wait for button to exist, since it is rendered conditionally
+    await expect(bomPreviewBtn).toBeVisible({ timeout: 5000 });
+    
+    await bomPreviewBtn.click();
 
-      // BOM preview modal should open
-      const previewModal = page.locator('.bom-preview-modal, .modal:has-text("BOM"), [data-testid="bom-preview-modal"]');
-      await expect(previewModal.first()).toBeVisible({ timeout: 5000 });
-    }
+    // BOM preview modal should open
+    const previewModal = page.locator('.bpv-overlay, .bpv-panel');
+    await expect(previewModal.first()).toBeVisible({ timeout: 5000 });
   });
 });

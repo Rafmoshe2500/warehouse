@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useItems } from '../../hooks/useItems';
@@ -15,9 +15,13 @@ import { useInventorySelection } from '../../hooks/useInventorySelection';
 import { useInventoryExcel } from '../../hooks/useInventoryExcel';
 import { useAddToCollection } from '../../hooks/useAddToCollection';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
+import useViewMode from '../../hooks/useViewMode';
 
 // Components
 import InventoryHeader from '../../components/inventory/InventoryHeader/InventoryHeader';
+import ActiveFiltersBar from '../../components/inventory/ActiveFiltersBar/ActiveFiltersBar';
+import DetailPanel from '../../components/inventory/DetailPanel/DetailPanel';
+import ViewModeToggle from '../../components/inventory/ViewModeToggle/ViewModeToggle';
 import InventoryContent from '../../components/inventory/InventoryContent/InventoryContent';
 import InventoryModals from '../../components/inventory/InventoryModals/InventoryModals';
 import ExcelManager from '../../components/inventory/ExcelManager/ExcelManager';
@@ -39,6 +43,7 @@ const InventoryPage = ({ isEmbedded = false }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({});
   const [sortConfig, setSortConfig] = useState({ key: 'updated_at', direction: 'desc' });
+  const [detailItem, setDetailItem] = useState(null);
   
   const [searchQuery, setSearchQuery] = useState(() => {
     const params = new URLSearchParams(location.search);
@@ -64,6 +69,18 @@ const InventoryPage = ({ isEmbedded = false }) => {
     createItem, updateItem, bulkUpdate, deleteItem, bulkDelete, restoreItems,
     loadItems // Mapped to refetch
   } = useItems(queryParams);
+
+  // Auto-open detail panel when navigated from GlobalSearch with openItemId state
+  const autoOpenRef = useRef(false);
+  useEffect(() => {
+    const openItemId = location.state?.openItemId;
+    if (!openItemId || autoOpenRef.current || !items.length) return;
+    const found = items.find(i => i._id === openItemId);
+    if (found) {
+      autoOpenRef.current = true;
+      setDetailItem(found);
+    }
+  }, [items, location.state?.openItemId]);
 
   // 6. Custom Hooks Integration
   const {
@@ -93,6 +110,8 @@ const InventoryPage = ({ isEmbedded = false }) => {
       closeCollectionsModal,
       handleAddToCollection
   } = useAddToCollection(canEdit, addToast);
+
+  const { viewMode, viewConfig, changeViewMode } = useViewMode();
 
   // File Input Ref for Excel (Local to page as it connects UI to hook)
   const fileInputRef = useRef(null);
@@ -197,6 +216,24 @@ const InventoryPage = ({ isEmbedded = false }) => {
     setShowFilters(!showFilters);
   };
 
+  const handleRemoveFilter = (key) => {
+    const newFilters = { ...filters };
+    delete newFilters[key];
+    setFilters(newFilters);
+    if (currentPage !== 1) goToPage(1);
+  };
+
+  const handleClearAllFilters = () => {
+    setFilters({});
+    setSearchQuery('');
+    if (currentPage !== 1) goToPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    if (currentPage !== 1) goToPage(1);
+  };
+
   const handleSearch = (query) => {
     setSearchQuery(query);
     goToPage(1);
@@ -268,31 +305,39 @@ const InventoryPage = ({ isEmbedded = false }) => {
         selectedItems={selectedItems}
         showFilters={showFilters}
         uploadingExcel={uploadingExcel}
+        onFilterToggle={handleFilterToggle}
+        onBulkEdit={handleBulkEditClick}
+        onBulkDelete={() => modals.openDeleteConfirm(null, '', true)}
+        // Column Toggle Props
+        allColumns={TABLE_COLUMNS}
+        visibleColumns={Object.keys(visibleColumns).filter(k => visibleColumns[k])}
+        onColumnToggle={toggleColumn}
+        extraContent={
+          <ViewModeToggle viewMode={viewMode} onChange={changeViewMode} />
+        }
         searchQuery={searchQuery}
         onSearch={handleSearch}
-        onFilterToggle={handleFilterToggle}
         onUploadClick={handleStandardImportClick}
         onExportClick={handleExportRequest}
         onAddClick={inlineAdd.startAdd}
-        onBulkEdit={handleBulkEditClick}
-        onBulkDelete={() => modals.openDeleteConfirm(null, '', true)}
-
         onImportProjectsClick={handleProjectImportClick}
-        
-        // Column Toggle Props
-        allColumns={TABLE_COLUMNS}
-        visibleColumns={Object.keys(visibleColumns).filter(k => visibleColumns[k])} // Convert object to keys array for Header if it expects array? 
-        // Wait, Header expects "visibleColumns" as array of keys? 
-        // useColumnVisibility returns object { key: true/false }.
-        // Previous State was array of strings.
-        // I need to check InventoryHeader.
-        onColumnToggle={toggleColumn}
       />
-      
-      <InventoryContent
+
+      <ActiveFiltersBar
+        filters={filters}
+        searchQuery={searchQuery}
+        onRemoveFilter={handleRemoveFilter}
+        onClearAll={handleClearAllFilters}
+        onClearSearch={handleClearSearch}
+      />
+
+      <div className="inventory-page__body">
+        <InventoryContent
         canEdit={canEdit}
         isEmbedded={isEmbedded}
         queryParams={queryParams}
+        viewMode={viewMode}
+        viewConfig={viewConfig}
         visibleColumns={Object.keys(visibleColumns).filter(k => visibleColumns[k])} // Pass array
         selection={{
           selectedItems,
@@ -319,7 +364,17 @@ const InventoryPage = ({ isEmbedded = false }) => {
         onShowCollections={openCollectionsModal} 
         userCollections={userCollections}
         onAddToCollection={onAddToCollectionClick}
+        onRowClick={setDetailItem}
       />
+
+      {detailItem && (
+        <DetailPanel
+          item={detailItem}
+          onClose={() => setDetailItem(null)}
+          onShowCollections={canEdit ? openCollectionsModal : null}
+        />
+      )}
+      </div>
 
 
       <InventoryModals

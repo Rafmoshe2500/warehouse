@@ -683,3 +683,44 @@ tbody tr.row-selected td.th-frozen {
   text-decoration: none;
   opacity: 0.8;
 }
+
+/* ==============================
+   View Mode Overrides
+   ============================== */
+
+/* Compact Mode (35px rows) */
+.item-table--compact .item-table tbody tr {
+  min-height: 35px;
+}
+
+.item-table--compact .item-table td {
+  padding: 0.25rem 0.75rem;
+  font-size: var(--text-xs);
+}
+
+/* Normal Mode (48px rows) */
+.item-table--normal .item-table tbody tr {
+  min-height: 48px;
+}
+
+.item-table--normal .item-table td {
+  padding: 0.5rem 1rem;
+  font-size: var(--text-sm);
+}
+
+/* Card Mode (visual browse) */
+.item-table--card .item-table tbody tr {
+  min-height: 72px;
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+.item-table--card .item-table td {
+  padding: 0.75rem 1rem;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+/* Clickable rows cursor */
+.item-table tbody tr {
+  cursor: pointer;
+}

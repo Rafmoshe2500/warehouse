@@ -8,7 +8,8 @@ const ItemTableRow = ({
     onRowClick,
     frozenColumns,
     scrollableColumns,
-    renderCell
+    renderCell,
+    actionsCell
 }) => {
     
     const handleCheckboxChange = (e) => {
@@ -44,6 +45,9 @@ const ItemTableRow = ({
                     {renderCell(item, col)}
                 </td>
             ))}
+            {actionsCell && (
+                <td className="col-actions">{actionsCell}</td>
+            )}
         </tr>
     );
 };
@@ -55,7 +59,8 @@ ItemTableRow.propTypes = {
     onRowClick: PropTypes.func.isRequired,
     frozenColumns: PropTypes.array.isRequired,
     scrollableColumns: PropTypes.array.isRequired,
-    renderCell: PropTypes.func.isRequired
+    renderCell: PropTypes.func.isRequired,
+    actionsCell: PropTypes.node
 };
 
 export default memo(ItemTableRow);

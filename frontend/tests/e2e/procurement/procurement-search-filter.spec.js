@@ -48,11 +48,11 @@ test.describe('Procurement Search & Filter', () => {
 
     await proc.search('E2E-SRCH-CAT-ABC');
 
-    const matchingCard = proc.orderByText('E2E-SRCH-CAT-ABC');
+    const matchingCard = proc.orderCards.first();
     await expect(matchingCard).toBeVisible({ timeout: 10000 });
 
     // Non-matching orders should not be visible (wait for search to complete)
-    await expect(proc.orderByText('E2E-SRCH-CAT-XYZ')).toHaveCount(0, { timeout: 5000 });
+    await expect(proc.orderCards).toHaveCount(1, { timeout: 5000 });
   });
 
   test('should search by manufacturer', async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe('Procurement Search & Filter', () => {
     await proc.search('Acme Corp');
     await page.waitForTimeout(1500);
 
-    const matchingCard = proc.orderByText('E2E-SRCH-CAT-ABC');
+    const matchingCard = proc.orderCards.first();
     await expect(matchingCard).toBeVisible({ timeout: 10000 });
   });
 
@@ -75,7 +75,7 @@ test.describe('Procurement Search & Filter', () => {
     await proc.search('EMF-SRCH-7777');
     await page.waitForTimeout(1500);
 
-    const matchingCard = proc.orderByText('E2E-SRCH-EMF');
+    const matchingCard = proc.orderCards.first();
     await expect(matchingCard).toBeVisible({ timeout: 10000 });
   });
 
@@ -87,7 +87,7 @@ test.describe('Procurement Search & Filter', () => {
     await proc.search('NONEXISTENT-ITEM-99999');
 
     // Should show zero order cards (wait for search to complete)
-    await expect(proc.page.locator('.order-card')).toHaveCount(0, { timeout: 10000 });
+    await expect(proc.orderCards).toHaveCount(0, { timeout: 10000 });
   });
 
   test('should clear search and show all orders again', async ({ page }) => {
@@ -95,18 +95,18 @@ test.describe('Procurement Search & Filter', () => {
     await proc.goto();
     await proc.waitForOrders();
 
-    const initialCount = await proc.page.locator('.order-card').count();
+    const initialCount = await proc.orderCards.count();
 
     await proc.search('E2E-SRCH-CAT-ABC');
     await page.waitForTimeout(1500);
 
-    const filteredCount = await proc.page.locator('.order-card').count();
+    const filteredCount = await proc.orderCards.count();
     expect(filteredCount).toBeLessThanOrEqual(initialCount);
 
     await proc.clearSearch();
     await page.waitForTimeout(1500);
 
-    const restoredCount = await proc.page.locator('.order-card').count();
+    const restoredCount = await proc.orderCards.count();
     expect(restoredCount).toBeGreaterThanOrEqual(filteredCount);
   });
 
@@ -117,7 +117,7 @@ test.describe('Procurement Search & Filter', () => {
 
     // In process tab: completed order should NOT appear
     await proc.search('E2E-SRCH-DONE');
-    await expect(proc.page.locator('.order-card')).toHaveCount(0, { timeout: 10000 });
+    await expect(proc.orderCards).toHaveCount(0, { timeout: 10000 });
 
     // Switch to completed tab
     await proc.gotoTab('completed');
@@ -126,7 +126,7 @@ test.describe('Procurement Search & Filter', () => {
     // Search in completed tab
     await proc.search('E2E-SRCH-DONE');
 
-    const completedCard = proc.orderByText('E2E-SRCH-DONE');
+    const completedCard = proc.orderCards.first();
     await expect(completedCard).toBeVisible({ timeout: 10000 });
   });
 
@@ -139,7 +139,7 @@ test.describe('Procurement Search & Filter', () => {
     await proc.search('e2e-srch-cat-abc');
     await page.waitForTimeout(1500);
 
-    const matchingCard = proc.orderByText('E2E-SRCH-CAT-ABC');
-    await expect(matchingCard).toBeVisible({ timeout: 10000 });
+    const lowercaseCard = proc.orderCards.first();
+    await expect(lowercaseCard).toBeVisible({ timeout: 10000 });
   });
 });

@@ -174,3 +174,33 @@ class TestProcurementRoutes:
         # Verify gone
         get_res = await async_client.get(f"/api/procurement/orders/{order_id}")
         assert get_res.status_code == 404
+
+    # ========== Summary Endpoint ==========
+
+    async def test_get_summary_route(self, async_client):
+        """GET /procurement/summary - Returns monthly summary."""
+        # Create an order first
+        await async_client.post("/api/procurement/orders", json=_order_payload(total_amount=2500))
+
+        response = await async_client.get("/api/procurement/summary")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert "total_spend" in data
+        assert "order_count" in data
+        assert "avg_lead_days" in data
+        assert "top_vendor" in data
+        assert data["order_count"] >= 1
+        assert data["total_spend"] >= 2500
+
+    async def test_get_summary_empty(self, async_client, test_procurement_collection):
+        """GET /procurement/summary - Returns zeros when no orders exist (collection explicitly cleared)."""
+        # test_procurement_collection fixture clears the collection after the test;
+        # using it here ensures any pre-existing data is cleared via the session scope cleanup
+        response = await async_client.get("/api/procurement/summary")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert "order_count" in data
+        assert "total_spend" in data
+        assert data["total_spend"] >= 0

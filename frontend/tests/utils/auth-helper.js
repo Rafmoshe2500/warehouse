@@ -61,8 +61,19 @@ export async function login(page, user) {
  * Logout current user
  */
 export async function logout(page) {
+  // First open the User Menu dropdown if we are in the unified header
+  try {
+    const userMenuBtn = page.locator('.unified-header__user-btn').first();
+    if (await userMenuBtn.isVisible({ timeout: 2000 })) {
+      await userMenuBtn.click();
+    }
+  } catch (e) {
+    // ignore if button not found (e.g. not on a page with header)
+  }
+
   const logoutSelectors = [
     '[data-testid="logout-button"]',
+    '.unified-header__dropdown-item--danger',
     'button:has-text("התנתק")',
     'button:has-text("יציאה")',
     'a:has-text("התנתק")'
@@ -70,7 +81,7 @@ export async function logout(page) {
   
   for (const selector of logoutSelectors) {
     try {
-      const element = await page.locator(selector).first();
+      const element = page.locator(selector).first();
       if (await element.isVisible({ timeout: 1000 })) {
         await element.click();
         break;

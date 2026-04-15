@@ -34,31 +34,27 @@ test.describe('Dashboard - Charts', () => {
     await expect(dashboard.chartProjects).not.toBeVisible({ timeout: 3000 }).catch(() => {});
   });
 
-  test('should display activity feed for all users', async ({ page }) => {
+  test('should display smart alerts panel for all users', async ({ page }) => {
     const dashboard = new DashboardPageObject(page);
     await dashboard.goto();
 
-    await expect(dashboard.activityFeed).toBeVisible();
+    await expect(dashboard.smartAlerts).toBeVisible();
   });
 
   test('should search item by catalog number in ItemSearchChart', async ({ page }) => {
     const dashboard = new DashboardPageObject(page);
     await dashboard.goto();
 
-    // Find the search input inside the item search chart
     const chartCard = dashboard.chartItemSearch;
     await expect(chartCard).toBeVisible();
 
+    // Type a catalog number and submit
     const searchInput = chartCard.locator('input');
-    await searchInput.fill('TEST-001');
+    await searchInput.fill('TEST-NONEXISTENT-99999');
     await searchInput.press('Enter');
 
-    // Should show either pie chart or "no data" message
-    await page.waitForTimeout(2000);
-    const hasChart = await chartCard.locator('.recharts-wrapper').isVisible().catch(() => false);
-    const hasEmpty = await chartCard.locator('text=לא נמצאו נתונים').isVisible().catch(() => false);
-    const hasSearchEmpty = await chartCard.locator('.item-search-empty').isVisible().catch(() => false);
-    expect(hasChart || hasEmpty || hasSearchEmpty).toBeTruthy();
+    // Should show the "no data" empty state
+    await expect(chartCard.locator('.item-search-empty')).toBeVisible({ timeout: 5000 });
   });
 
   test('should filter locations chart by search', async ({ page }) => {

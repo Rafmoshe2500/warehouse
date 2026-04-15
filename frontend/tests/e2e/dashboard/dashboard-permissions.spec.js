@@ -12,7 +12,7 @@ test.describe('Dashboard - Permissions', () => {
 
     await expect(dashboard.dashboardPage).toBeVisible();
     await expect(dashboard.inventoryStats).toBeVisible();
-    await expect(dashboard.activityFeed).toBeVisible();
+    await expect(dashboard.smartAlerts).toBeVisible();
   });
 
   test('should show only inventory for inventory-only user', async ({ page }) => {
@@ -42,17 +42,17 @@ test.describe('Dashboard - Permissions', () => {
     expect(invVisible).toBeFalsy();
 
     // Procurement stats may be visible if backend returns data
-    // Activity feed should always be visible
-    await expect(dashboard.activityFeed).toBeVisible();
+    // Smart alerts should always be visible
+    await expect(dashboard.smartAlerts).toBeVisible();
   });
 
-  test('should show activity feed regardless of permissions', async ({ page }) => {
+  test('should show smart alerts regardless of permissions', async ({ page }) => {
     // Test with regular user
     await login(page, testUsers.user);
     const dashboard = new DashboardPageObject(page);
     await dashboard.goto();
 
-    await expect(dashboard.activityFeed).toBeVisible();
+    await expect(dashboard.smartAlerts).toBeVisible();
   });
 
   test('should redirect unauthenticated user to login', async ({ page }) => {

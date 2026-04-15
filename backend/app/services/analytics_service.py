@@ -129,50 +129,79 @@ class AnalyticsService:
             "days": days
         }
 
-    async def get_item_project_stats(self, catalog_number: str) -> List[Dict[str, Any]]:
+    async def get_item_project_stats(self, catalog_number: str) -> Dict[str, Any]:
         """
-        מחזיר התפלגות פרויקטים עבור מק"ט ספציפי
+        מחזיר התפלגות פרויקטים עבור מק"ט ספציפי.
+        כולל: סה"כ כמות במלאי, כמות משוריינת לכל פרויקט, וכמות לא משוריינת.
         מסנן כפילויות לפי (מק"ט, מיקום).
         """
-        # מביא פריטים עם המק"ט (Regex)
-        cursor = self.items_repo.collection.find(
-            {
-                "catalog_number": {"$regex": catalog_number, "$options": "i"},
-                "project_allocations": {"$exists": True, "$ne": {}}
-            },
-            {"project_allocations": 1, "catalog_number": 1, "location": 1}
+        logger.debug("Fetching item project stats for catalog_number: %s", catalog_number)
+
+        # ── 1. Aggregate total inventory quantity (all matching items) ──────────
+        # For serial items: each document = 1 unit.
+        # For non-serial items: current_stock is a string, we try to parse as int.
+        all_items_cursor = self.items_repo.collection.find(
+            {"catalog_number": {"$regex": catalog_number, "$options": "i"}},
+            {"catalog_number": 1, "location": 1, "current_stock": 1,
+             "serial": 1, "project_allocations": 1}
         )
-        
-        project_totals = {}
-        processed_locations = set() # Set of locations for this catalog number
-        
-        async for item in cursor:
+
+        total_quantity = 0
+        project_totals: Dict[str, int] = {}
+        processed_locations: set = set()
+
+        async for item in all_items_cursor:
             location = item.get("location")
-            allocations = item.get("project_allocations", {})
-            
+            serial = item.get("serial")
+            current_stock_raw = item.get("current_stock")
+            allocations = item.get("project_allocations") or {}
+
+            # Determine the quantity this document represents
+            is_serial = bool(serial)
+            if is_serial:
+                item_qty = 1
+            else:
+                # Non-serial: current_stock is stored as a string (e.g. "30")
+                try:
+                    item_qty = int(current_stock_raw) if current_stock_raw is not None else 1
+                except (ValueError, TypeError):
+                    item_qty = 1
+
+            total_quantity += item_qty
+
+            # Deduplication: only count allocations once per location
             if not isinstance(allocations, dict) or not allocations:
                 continue
 
-            # Deduplication logic: If we saw this location already for this catalog search, skip.
             if location:
-                # Normalize location string just in case
                 loc_key = location.strip()
                 if loc_key in processed_locations:
                     continue
                 processed_locations.add(loc_key)
 
             for project, qty in allocations.items():
-                if project in project_totals:
-                    project_totals[project] += qty
-                else:
-                    project_totals[project] = qty
-                        
-        results = [
+                project_totals[project] = project_totals.get(project, 0) + qty
+
+        total_allocated = sum(project_totals.values())
+        unallocated = max(0, total_quantity - total_allocated)
+
+        projects_list = [
             {"name": name, "value": total}
             for name, total in project_totals.items()
         ]
-        results.sort(key=lambda x: x["value"], reverse=True)
-        return results
+        projects_list.sort(key=lambda x: x["value"], reverse=True)
+
+        result = {
+            "total_quantity": total_quantity,
+            "total_allocated": total_allocated,
+            "unallocated": unallocated,
+            "projects": projects_list,
+        }
+        logger.debug(
+            "Item stats for '%s': total=%d, allocated=%d, unallocated=%d, projects=%d",
+            catalog_number, total_quantity, total_allocated, unallocated, len(projects_list)
+        )
+        return result
 
     async def _calculate_project_distribution(self, date_filter: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """

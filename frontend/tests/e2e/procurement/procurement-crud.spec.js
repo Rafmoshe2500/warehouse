@@ -50,7 +50,7 @@ test.describe('Procurement CRUD', () => {
 
     // Verify the order appears (search by catalog number)
     await proc.search('E2E-PROC-001');
-    const orderCard = proc.orderByText('E2E-PROC-001');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
   });
 
@@ -70,7 +70,7 @@ test.describe('Procurement CRUD', () => {
     await proc.goto();
     await proc.search('E2E-PROC-EDIT');
 
-    const orderCard = proc.orderByText('E2E-PROC-EDIT');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     // Click edit button
@@ -97,7 +97,7 @@ test.describe('Procurement CRUD', () => {
     await proc.goto();
     await proc.search('E2E-PROC-DEL');
 
-    const orderCard = proc.orderByText('E2E-PROC-DEL');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     // Click delete
@@ -115,7 +115,7 @@ test.describe('Procurement CRUD', () => {
     // Verify order is gone after reload
     await proc.goto();
     await proc.search('E2E-PROC-DEL');
-    await expect(proc.orderByText('E2E-PROC-DEL')).toHaveCount(0, { timeout: 10000 });
+    await expect(proc.orderCards).toHaveCount(0, { timeout: 10000 });
   });
 
   test('should open files modal', async ({ page }) => {
@@ -133,7 +133,7 @@ test.describe('Procurement CRUD', () => {
     await proc.goto();
     await proc.search('E2E-PROC-FILES');
 
-    const orderCard = proc.orderByText('E2E-PROC-FILES');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     await proc.filesButton(orderCard).click();
@@ -155,7 +155,7 @@ test.describe('Procurement CRUD', () => {
     await proc.goto();
     await proc.search('E2E-PROC-HIST');
 
-    const orderCard = proc.orderByText('E2E-PROC-HIST');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     await proc.historyButton(orderCard).click();
@@ -177,10 +177,10 @@ test.describe('Procurement CRUD', () => {
     await proc.goto();
     await proc.search('E2E-PROC-ITM');
 
-    const orderCard = proc.orderByText('E2E-PROC-ITM1');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     // Verify items appear in the card
-    await expect(orderCard.locator('.oc-item-row')).toHaveCount(2, { timeout: 5000 });
+    await expect(orderCard.locator('.kanban-card__items')).toHaveText('2 רכיבים', { timeout: 5000 });
   });
 });

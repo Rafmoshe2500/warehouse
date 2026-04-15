@@ -13,6 +13,7 @@ import { useAuth } from '../../../context/AuthContext';
 
 import { TableCell, ContextMenu, FloatingToolbar, SelectionIndicator } from '../../common';
 import ItemTableRow from './ItemTableRow';
+import RowActionsMenu from '../RowActionsMenu/RowActionsMenu';
 
 import './ItemTable.css';
 
@@ -35,7 +36,10 @@ const ItemTable = ({
   onRestoreItems,
   onShowCollections, 
   userCollections,
-  onAddToCollection
+  onAddToCollection,
+  onRowClick,
+  viewMode = 'normal',
+  viewConfig = {}
 }) => {
   const { selectedItems = [], setSelectedItems, onSelectItem, onSelectAll } = selection;
   const { sortConfig, onSort } = sorting;
@@ -291,8 +295,13 @@ const ItemTable = ({
         }
         setLastSelectedId(id);
       }
+    } else {
+      // Regular click — open detail panel
+      if (onRowClick) {
+        onRowClick(item);
+      }
     }
-  }, [items, isAdding, selectedItems, lastSelectedId, setSelectedItems, onSelectItem]);
+  }, [items, isAdding, selectedItems, lastSelectedId, setSelectedItems, onSelectItem, onRowClick]);
 
   // Sort handler
   const handleSort = (key) => {
@@ -372,11 +381,36 @@ const ItemTable = ({
       setLastSelectedId(id);
   }, [onSelectItem]);
 
+  // Row actions handlers for three-dot menu
+  const handleRowEdit = useCallback((item) => {
+    if (setSelectedItems) setSelectedItems([item._id]);
+    queueMicrotask(() => { if (onBulkEdit) onBulkEdit(); });
+  }, [setSelectedItems, onBulkEdit]);
+
+  const handleRowDelete = useCallback((item) => {
+    if (setSelectedItems) setSelectedItems([item._id]);
+    queueMicrotask(() => { if (onBulkDelete) onBulkDelete(); });
+  }, [setSelectedItems, onBulkDelete]);
+
+  const handleRowCopy = useCallback(async (item) => {
+    try {
+      await navigator.clipboard.writeText(item.catalog_number || '');
+      if (onShowToast) onShowToast(`הועתק: ${item.catalog_number}`, 'success');
+    } catch {
+      if (onShowToast) onShowToast('שגיאה בהעתקה', 'error');
+    }
+  }, [onShowToast]);
+
+  const handleRowAddToCollection = useCallback((col, itemIds) => {
+    if (onAddToCollection) onAddToCollection(col);
+  }, [onAddToCollection]);
+
   return (
     <div
-      className="item-table-container"
+      className={`item-table-container item-table--${viewMode}`}
       onContextMenu={handleContextMenu}
       ref={tableContainerRef}
+      style={viewConfig.rowHeight ? { '--row-height': `${viewConfig.rowHeight}px` } : undefined}
     >
       <table className="item-table">
         <thead>
@@ -421,6 +455,7 @@ const ItemTable = ({
                 </div>
               </th>
             ))}
+            <th className="col-actions"></th>
           </tr>
 
           {showFilters && (
@@ -448,6 +483,7 @@ const ItemTable = ({
                   />
                 </td>
               ))}
+              <td className="filter-cell col-actions"></td>
             </tr>
           )}
         </thead>
@@ -492,12 +528,13 @@ const ItemTable = ({
                   />
                 </td>
               ))}
+              <td className="col-actions"></td>
             </tr>
           )}
 
           {items.length === 0 && !isAdding ? (
             <tr>
-              <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+              <td colSpan={columns.length + 2} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
                 לא נמצאו פריטים תואמים
               </td>
             </tr>
@@ -512,6 +549,17 @@ const ItemTable = ({
                 frozenColumns={frozenColumns}
                 scrollableColumns={scrollableColumns}
                 renderCell={renderCell}
+                actionsCell={
+                  <RowActionsMenu
+                    item={item}
+                    canEdit={canEdit}
+                    onEdit={handleRowEdit}
+                    onDelete={handleRowDelete}
+                    onCopy={handleRowCopy}
+                    onAddToCollection={onAddToCollection ? handleRowAddToCollection : null}
+                    userCollections={userCollections}
+                  />
+                }
               />
             ))
           )}

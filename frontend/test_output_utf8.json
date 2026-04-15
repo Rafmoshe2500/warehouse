@@ -1,0 +1,161 @@
+﻿{
+  "config": {
+    "configFile": "C:\\my project\\warehouse\\frontend\\playwright.config.js",
+    "rootDir": "C:/my project/warehouse/frontend/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/my project/warehouse/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/my project/warehouse/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:5173",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "procurement\\procurement-bom-flow.spec.js",
+      "file": "procurement/procurement-bom-flow.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Procurement BOM Flow",
+          "file": "procurement/procurement-bom-flow.spec.js",
+          "line": 9,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should show BOM preview for existing BOM order",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 13081,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.bom-preview-modal, .modal:has-text(\"BOM\"), [data-testid=\"bom-preview-modal\"]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.bom-preview-modal, .modal:has-text(\"BOM\"), [data-testid=\"bom-preview-modal\"]').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.bom-preview-modal, .modal:has-text(\"BOM\"), [data-testid=\"bom-preview-modal\"]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.bom-preview-modal, .modal:has-text(\"BOM\"), [data-testid=\"bom-preview-modal\"]').first()\u001b[22m\n\n    at C:\\my project\\warehouse\\frontend\\tests\\e2e\\procurement\\procurement-bom-flow.spec.js:115:40",
+                        "location": {
+                          "file": "C:\\my project\\warehouse\\frontend\\tests\\e2e\\procurement\\procurement-bom-flow.spec.js",
+                          "column": 40,
+                          "line": 115
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 113 |\u001b[39m     \u001b[90m// BOM preview modal should open\u001b[39m\n \u001b[90m 114 |\u001b[39m     \u001b[36mconst\u001b[39m previewModal \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'.bom-preview-modal, .modal:has-text(\"BOM\"), [data-testid=\"bom-preview-modal\"]'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 115 |\u001b[39m     \u001b[36mawait\u001b[39m expect(previewModal\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 116 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 117 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 118 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\my project\\warehouse\\frontend\\tests\\e2e\\procurement\\procurement-bom-flow.spec.js",
+                            "column": 40,
+                            "line": 115
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.bom-preview-modal, .modal:has-text(\"BOM\"), [data-testid=\"bom-preview-modal\"]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.bom-preview-modal, .modal:has-text(\"BOM\"), [data-testid=\"bom-preview-modal\"]').first()\u001b[22m\n\n\n  113 |     // BOM preview modal should open\n  114 |     const previewModal = page.locator('.bom-preview-modal, .modal:has-text(\"BOM\"), [data-testid=\"bom-preview-modal\"]');\n> 115 |     await expect(previewModal.first()).toBeVisible({ timeout: 5000 });\n      |                                        ^\n  116 |   });\n  117 | });\n  118 |\n    at C:\\my project\\warehouse\\frontend\\tests\\e2e\\procurement\\procurement-bom-flow.spec.js:115:40"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-14T19:31:42.721Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\my project\\warehouse\\frontend\\test-results\\procurement-procurement-bo-37e61-view-for-existing-BOM-order-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\my project\\warehouse\\frontend\\test-results\\procurement-procurement-bo-37e61-view-for-existing-BOM-order-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\my project\\warehouse\\frontend\\test-results\\procurement-procurement-bo-37e61-view-for-existing-BOM-order-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\my project\\warehouse\\frontend\\tests\\e2e\\procurement\\procurement-bom-flow.spec.js",
+                        "column": 40,
+                        "line": 115
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a500ef58a31baeb93657-a7176f37d617416f3b0c",
+              "file": "procurement/procurement-bom-flow.spec.js",
+              "line": 85,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-04-14T19:31:39.073Z",
+    "duration": 24688.379,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

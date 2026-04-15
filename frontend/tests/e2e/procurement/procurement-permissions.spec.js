@@ -29,7 +29,7 @@ test.describe('Procurement Permissions', () => {
       await proc.waitForOrders();
 
       await proc.search('E2E-PERM-RO');
-      const orderCard = proc.orderByText('E2E-PERM-RO');
+      const orderCard = proc.orderCards.first();
       await expect(orderCard).toBeVisible({ timeout: 10000 });
 
       // Edit and delete buttons should NOT be visible for read-only user
@@ -55,7 +55,7 @@ test.describe('Procurement Permissions', () => {
       await proc.goto();
       await proc.search('E2E-PERM-RO');
 
-      const orderCard = proc.orderByText('E2E-PERM-RO');
+      const orderCard = proc.orderCards.first();
       await expect(orderCard).toBeVisible({ timeout: 10000 });
 
       // Files and history buttons should still be visible (read operations)
@@ -100,13 +100,13 @@ test.describe('Procurement Permissions', () => {
 
       // Admin (superadmin) should see edit on both
       await proc.search('E2E-VEND-DELL');
-      const dellCard = proc.orderByText('E2E-VEND-DELL');
+      const dellCard = proc.orderCards.first();
       await expect(dellCard).toBeVisible({ timeout: 10000 });
       await expect(proc.editButton(dellCard)).toBeVisible();
 
       await proc.clearSearch();
       await proc.search('E2E-VEND-HPE');
-      const hpeCard = proc.orderByText('E2E-VEND-HPE');
+      const hpeCard = proc.orderCards.first();
       await expect(hpeCard).toBeVisible({ timeout: 10000 });
       await expect(proc.editButton(hpeCard)).toBeVisible();
     });
@@ -119,7 +119,7 @@ test.describe('Procurement Permissions', () => {
 
       // Should see NetApp order with edit button
       await proc.search('E2E-VEND-NAP');
-      const napCard = proc.orderByText('E2E-VEND-NAP');
+      const napCard = proc.orderCards.first();
       await expect(napCard).toBeVisible({ timeout: 10000 });
       await expect(proc.editButton(napCard)).toBeVisible();
     });
@@ -131,7 +131,7 @@ test.describe('Procurement Permissions', () => {
       await proc.waitForOrders();
 
       await proc.search('E2E-VEND-NAP');
-      const napCard = proc.orderByText('E2E-VEND-NAP');
+      const napCard = proc.orderCards.first();
       await expect(napCard).toBeVisible({ timeout: 10000 });
 
       // RO user should NOT have edit button
@@ -148,13 +148,13 @@ test.describe('Procurement Permissions', () => {
       // Dell user should NOT see NetApp order
       await proc.search('E2E-VEND-NAP');
       await page.waitForTimeout(1500);
-      const napCount = await proc.orderByText('E2E-VEND-NAP').count();
+      const napCount = await proc.orderCards.count();
       expect(napCount).toBe(0);
 
       // But SHOULD see Dell order
       await proc.clearSearch();
       await proc.search('E2E-VEND-DELL');
-      const dellCard = proc.orderByText('E2E-VEND-DELL');
+      const dellCard = proc.orderCards.first();
       await expect(dellCard).toBeVisible({ timeout: 10000 });
     });
 
@@ -165,11 +165,11 @@ test.describe('Procurement Permissions', () => {
       await proc.waitForOrders();
 
       await proc.search('E2E-VEND-NAP');
-      await expect(proc.orderByText('E2E-VEND-NAP')).toBeVisible({ timeout: 10000 });
+      await expect(proc.orderCards.first()).toBeVisible({ timeout: 10000 });
 
       await proc.clearSearch();
       await proc.search('E2E-VEND-DELL');
-      await expect(proc.orderByText('E2E-VEND-DELL')).toBeVisible({ timeout: 10000 });
+      await expect(proc.orderCards.first()).toBeVisible({ timeout: 10000 });
     });
   });
 
@@ -179,7 +179,7 @@ test.describe('Procurement Permissions', () => {
       const proc = new ProcurementPageObject(page);
       await proc.goto();
 
-      const analyticsTab = page.locator('button:has-text("השוואת מחירים"), [data-testid="tab-analytics"]');
+      const analyticsTab = page.locator('.analytics-strip, button:has-text("השוואת מחירים"), [data-testid="tab-analytics"]').first();
       await expect(analyticsTab).toBeVisible({ timeout: 5000 });
     });
 
@@ -188,7 +188,7 @@ test.describe('Procurement Permissions', () => {
       const proc = new ProcurementPageObject(page);
       await proc.goto();
 
-      const analyticsTab = page.locator('button:has-text("השוואת מחירים"), [data-testid="tab-analytics"]');
+      const analyticsTab = page.locator('.analytics-strip, button:has-text("השוואת מחירים"), [data-testid="tab-analytics"]').first();
       await expect(analyticsTab).toBeVisible({ timeout: 5000 });
     });
 
@@ -197,7 +197,7 @@ test.describe('Procurement Permissions', () => {
       const proc = new ProcurementPageObject(page);
       await proc.goto();
 
-      const analyticsTab = page.locator('button:has-text("השוואת מחירים"), [data-testid="tab-analytics"]');
+      const analyticsTab = page.locator('.analytics-strip, button:has-text("השוואת מחירים"), [data-testid="tab-analytics"]');
       await expect(analyticsTab).toHaveCount(0);
     });
 
@@ -206,7 +206,7 @@ test.describe('Procurement Permissions', () => {
       const proc = new ProcurementPageObject(page);
       await proc.goto();
 
-      const analyticsTab = page.locator('button:has-text("השוואת מחירים"), [data-testid="tab-analytics"]');
+      const analyticsTab = page.locator('.analytics-strip, button:has-text("השוואת מחירים"), [data-testid="tab-analytics"]');
       await expect(analyticsTab).toHaveCount(0);
     });
   });

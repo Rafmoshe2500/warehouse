@@ -325,6 +325,11 @@ class ProcurementService:
             logger.error("Failed to delete analytics history for order %s: %s", order_id, e)
             
         return True
+
+    async def get_monthly_summary(self) -> dict:
+        """Get procurement summary stats for the current month"""
+        logger.info("Fetching procurement monthly summary")
+        return await self.repository.get_monthly_summary()
     
     async def upload_file(
         self,

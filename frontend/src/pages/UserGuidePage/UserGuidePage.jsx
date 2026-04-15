@@ -216,6 +216,54 @@ const UserGuidePage = () => {
                 </div>
               </div>
 
+              <div className="guide-step">
+                <div className="step-number">03א</div>
+                <div className="step-content">
+                  <h3>תפריט שורה מהיר ⋯ (חדש!)</h3>
+                  <p>
+                    כל שורה בטבלת המלאי מציגה כפתור <strong>⋯</strong> בעמודה הימנית — גלויה בריחוף מעל השורה. לחיצה עליו פותחת תפריט נפתח עם הפעולות הנפוצות ביותר:
+                  </p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>✏️ עריכה:</strong> פתיחת חלון עריכת הפריט (לבעלי הרשאת כתיבה)</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>📋 העתק מק"ט:</strong> העתקת מספר המק"ט ללוח הגזירה בלחיצה אחת</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>📁 הוסף לקולקציה:</strong> שיוך הפריט לאחת מהקולקציות שלכם (תפריט משנה)</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>🗑️ מחיקה:</strong> מחיקת הפריט (לבעלי הרשאת כתיבה)</li>
+                  </ul>
+                  <p><strong>טיפ:</strong> התפריט מחליף את הצורך לסמן שורה לפני כל פעולה — מהיר יותר לפעולות חד-פעמיות.</p>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">04</div>
+                <div className="step-content">
+                  <h3>מצבי תצוגה (חדש!)</h3>
+                  <p>בפינה העליונה של עמוד המלאי תמצאו 3 מצבי תצוגה:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>קומפקטי:</strong> שורות צפופות (35px) — מקסימום מידע על המסך</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>רגיל:</strong> שורות סטנדרטיות (48px) — ברירת מחדל</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>כרטיסים:</strong> שורות גבוהות (72px) — קריאות מקסימלית</li>
+                  </ul>
+                  <p>הבחירה נשמרת אוטומטית ותישאר גם בכניסה הבאה.</p>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">05</div>
+                <div className="step-content">
+                  <h3>פאנל פרטי פריט (חדש!)</h3>
+                  <p>לחיצה על שורה בטבלה פותחת <strong>פאנל צד</strong> עם כל פרטי הפריט — ללא צורך לגלול הצידה. הפאנל מציג את כל השדות ברשת נוחה, כולל פעולות מהירות (עריכה, מחיקה, שיוך לקולקציות).</p>
+                  <p><strong>טיפ:</strong> Ctrl+Click ו-Shift+Click עדיין עובדים לסימון מרובה כרגיל.</p>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">06</div>
+                <div className="step-content">
+                  <h3>רצועת פילטרים פעילים (חדש!)</h3>
+                  <p>כשמסננים את הטבלה, מופיעה רצועה מעל הטבלה עם <strong>צ'יפים</strong> של כל הפילטרים הפעילים. לחצו X על כל צ'יפ להסרה, או "נקה הכל" לאיפוס כל הסינונים.</p>
+                </div>
+              </div>
+
               <div className="tip-box">
                 <div className="tip-icon"><FiAlertCircle /></div>
                 <div className="tip-content">
@@ -303,7 +351,7 @@ const UserGuidePage = () => {
             <div className="section-header">
               <h2 className="section-title">דשבורד - מרכז הבקרה</h2>
               <p className="section-description">
-                דשבורד הבית מציג סקירה כללית חיה של כל המערכת — מלאי, רכש ופעילות אחרונה.
+                דשבורד הבית מציג סקירה כללית חיה של כל המערכת — מלאי, רכש, התראות חכמות ופעולות מהירות.
               </p>
             </div>
 
@@ -318,13 +366,13 @@ const UserGuidePage = () => {
             <div className="guide-step">
               <div className="step-number">2</div>
               <div className="step-content">
-                <h3>כרטיסי מלאי (KPIs)</h3>
-                <p>שורת כרטיסים צבעוניים מציגה נתוני מלאי בזמן אמת:</p>
+                <h3>כרטיסי מלאי — לחיצים!</h3>
+                <p>שורת כרטיסים צבעוניים מציגה נתוני מלאי בזמן אמת. <strong>לחיצה על כל כרטיס מנווטת ישירות לעמוד הרלוונטי:</strong></p>
                   <ul className="feature-list">
-                    <li><FiCheckCircle className="list-icon" /> <strong>סה"כ פריטים:</strong> סך הפריטים הפעילים במחסן</li>
-                    <li><FiCheckCircle className="list-icon" /> <strong>שריונים פעילים:</strong> פריטים ששוריינו לפרויקטים</li>
-                    <li><FiCheckCircle className="list-icon" /> <strong>ציוד סריאלי:</strong> פריטים עם מעקב אישי (SN)</li>
-                    <li><FiCheckCircle className="list-icon" /> <strong>ציוד נלווה:</strong> פריטים בניהול כמותי</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>סה"כ פריטים:</strong> לחיצה → עמוד המלאי</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>שריונים פעילים:</strong> לחיצה → עמוד המלאי</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>ציוד סריאלי:</strong> לחיצה → עמוד המלאי</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>ציוד נלווה:</strong> לחיצה → עמוד המלאי (טאב פריטים ישנים)</li>
                   </ul>
               </div>
             </div>
@@ -332,11 +380,11 @@ const UserGuidePage = () => {
             <div className="guide-step">
               <div className="step-number">3</div>
               <div className="step-content">
-                <h3>כרטיסי רכש (KPIs)</h3>
-                <p>שורת כרטיסים נוספת מציגה נתוני רכש (לבעלי הרשאת רכש):</p>
+                <h3>כרטיסי רכש — לחיצים!</h3>
+                <p>שורת כרטיסים נוספת מציגה נתוני רכש (לבעלי הרשאת רכש). <strong>לחיצה מנווטת לעמוד הרכש:</strong></p>
                   <ul className="feature-list">
                     <li><FiCheckCircle className="list-icon" /> <strong>סך הכל רכש:</strong> הוצאות מצטברות בתקופה</li>
-                    <li><FiAlertCircle className="list-icon" /> <strong>ממתין ל-EMF:</strong> הזמנות שעעדיין לא קיבלו מספר EMF</li>
+                    <li><FiAlertCircle className="list-icon" /> <strong>ממתין ל-EMF:</strong> הזמנות שעדיין לא קיבלו מספר EMF</li>
                     <li><FiAlertCircle className="list-icon" /> <strong>ממתין ל-BOM:</strong> הזמנות שממתינות לאישור BOM</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>בדרך אלינו:</strong> הזמנות שכבר יצאו מהספק</li>
                   </ul>
@@ -345,6 +393,34 @@ const UserGuidePage = () => {
 
             <div className="guide-step">
               <div className="step-number">4</div>
+              <div className="step-content">
+                <h3>התראות חכמות</h3>
+                <p>בצד השני של הדשבורד מופיע פאנל <strong>התראות חכמות</strong> שמציג פעולות שדורשות את תשומת לבכם:</p>
+                  <ul className="feature-list">
+                    <li><FiAlertCircle className="list-icon" /> <strong>פריטים ישנים:</strong> פריטים שלא עודכנו 90+ ימים</li>
+                    <li><FiAlertCircle className="list-icon" /> <strong>הזמנות ממתינות:</strong> EMF או BOM שטרם הגיעו</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>הזמנות בדרך:</strong> הזמנות שנשלחו וממתינות להגעה</li>
+                  </ul>
+                  <p>כל התראה לחיצה — מנווטת ישירות לעמוד הרלוונטי.</p>
+              </div>
+            </div>
+
+            <div className="guide-step">
+              <div className="step-number">5</div>
+              <div className="step-content">
+                <h3>פעולות מהירות (Quick Actions)</h3>
+                <p>מתחת להתראות תמצאו כפתורי קיצור לפעולות נפוצות:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>פריט חדש:</strong> פתיחת טופס יצירת פריט</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>הזמנה חדשה:</strong> פתיחת טופס הזמנת רכש</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>ייבוא Excel:</strong> העלאת קובץ מלאי</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>ייצוא Excel:</strong> הורדת דוח מלאי</li>
+                  </ul>
+              </div>
+            </div>
+
+            <div className="guide-step">
+              <div className="step-number">6</div>
               <div className="step-content">
                 <h3>תרשימים ותובנות</h3>
                 <p>הדשבורד כולל מגוון תרשימים אינטראקטיביים:</p>
@@ -356,6 +432,20 @@ const UserGuidePage = () => {
                     <li><FiCheckCircle className="list-icon" /> <strong>יצרנים מובילים:</strong> אילו יצרנים הכי נפוצים במחסן</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>פעילות אחרונה:</strong> פעולות שנעשו לאחרונה במערכת</li>
                   </ul>
+              </div>
+            </div>
+
+            <div className="tip-box">
+              <div className="tip-icon"><FiAlertCircle /></div>
+              <div className="tip-content">
+                <h4>🔍 חיפוש גלובלי (Ctrl+K)</h4>
+                <p>בכל עמוד במערכת, לחצו <strong>Ctrl+K</strong> לפתיחת חלון חיפוש מהיר. החיפוש מחפש <strong>בו-זמנית</strong> בשלושה מקורות:</p>
+                <ul className="feature-list" style={{ marginTop: '0.5rem' }}>
+                  <li><FiCheckCircle className="list-icon" /> <strong>📦 פריטי מלאי:</strong> לפי מק"ט, תיאור, יצרן, מיקום וסריאל</li>
+                  <li><FiCheckCircle className="list-icon" /> <strong>🛒 הזמנות רכש:</strong> לפי מספר EMF ורכיבי ה-BOM</li>
+                  <li><FiCheckCircle className="list-icon" /> <strong>📁 קולקציות:</strong> לפי שם ותיאור הקולקציה</li>
+                </ul>
+                <p>לחצו Enter על תוצאה לניווט ישיר לעמוד הרלוונטי. ↑↓ לניווט, Esc לסגירה.</p>
               </div>
             </div>
           </section>
@@ -537,7 +627,7 @@ const UserGuidePage = () => {
               <div className="section-header">
                 <h2 className="section-title">רכש והצטיידות</h2>
                 <p className="section-description">
-                  ניהול כל תהליך הרכש — מיצירת הזמנה ועד קליטתה במחסן.
+                  ניהול כל תהליך הרכש — מיצירת הזמנה ועד קליטתה במחסן. עם תצוגת קנבן חדשה למעקב ויזואלי.
                 </p>
               </div>
 
@@ -547,7 +637,7 @@ const UserGuidePage = () => {
                   <h3>טאבים: בתהליך / הסתיים</h3>
                   <p>הדף מחולק לשני טאבים:</p>
                   <ul className="feature-list">
-                    <li><FiCheckCircle className="list-icon" /> <strong>בתהליך:</strong> כל ההזמנות הפעילות (שטרם התקבלו)</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>בתהליך:</strong> כל ההזמנות הפעילות (שטרם התקבלו) — ברירת מחדל: תצוגת קנבן</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>הסתיים:</strong> הזמנות שהגיעו ונסגרו</li>
                   </ul>
                 </div>
@@ -555,6 +645,20 @@ const UserGuidePage = () => {
 
               <div className="guide-step">
                 <div className="step-number">2</div>
+                <div className="step-content">
+                  <h3>תצוגת קנבן (חדש!)</h3>
+                  <p>בטאב <strong>"בתהליך"</strong>, ההזמנות מוצגות כלוח קנבן עם 3 עמודות:</p>
+                  <ul className="feature-list">
+                    <li><FiAlertCircle className="list-icon" /> <strong>ממתין:</strong> הזמנות שממתינות ל-BOM, EMF או הזמנה</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>בתהליך:</strong> הזמנות שממתינות לשילוח או שהוזמנו</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>נשלח:</strong> הזמנות שיצאו לדרך ומחכות להגעה</li>
+                  </ul>
+                  <p>לחצו על כפתור <strong>הרשימה/קנבן</strong> בשורת הפעולות כדי להחליף בין תצוגת קנבן לתצוגת רשימה.</p>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">3</div>
                 <div className="step-content">
                   <h3>מסלול הסטטוסים</h3>
                   <p>כל הזמנה עוברת את השלבים הבאים לפי הסדר:</p>
@@ -569,7 +673,7 @@ const UserGuidePage = () => {
               </div>
 
               <div className="guide-step">
-                <div className="step-number">3</div>
+                <div className="step-number">4</div>
                 <div className="step-content">
                   <h3>כפתורי הפעולה (2×2)</h3>
                   <p>לכל הזמנה יש עד 4 כפתורי פעולה המסודרים ברשת:</p>
@@ -584,7 +688,7 @@ const UserGuidePage = () => {
               </div>
 
               <div className="guide-step">
-                <div className="step-number">4</div>
+                <div className="step-number">5</div>
                 <div className="step-content">
                   <h3>קבצים ומסמכים</h3>
                   <p>לכל הזמנה ניתן לצרף קבצים — EMF, BOM, חשבוניות ותמונות. לחצו על אייקון <strong>המהדק</strong> (📎) בטור הקבצים לניהול המסמכים.</p>
@@ -592,7 +696,7 @@ const UserGuidePage = () => {
               </div>
 
               <div className="guide-step">
-                <div className="step-number">5</div>
+                <div className="step-number">6</div>
                 <div className="step-content">
                   <h3>סורק הצעות מחיר (BOM Scanner)</h3>
                   <p>ייבוא מהיר של קבצי Excel/CSV מהספקים השונים:</p>
@@ -664,6 +768,21 @@ const UserGuidePage = () => {
                     ולהפעיל אימון מחדש של מנוע הסיווג בכל עת — ללא צורך לבצע סריקת BOM חדשה.
                     מומלץ להריץ אחרי עדכון קטלוג משמעותי.
                   </p>
+                </div>
+              </div>
+
+              <div className="guide-step">
+                <div className="step-number">6א</div>
+                <div className="step-content">
+                  <h3>רצועת נתוני חודש שוטף (Analytics Strip) — חדש!</h3>
+                  <p>בתחתית עמוד הרכש מוצגת <strong>רצועה קבועה</strong> עם 4 מדדים על החודש הנוכחי:</p>
+                  <ul className="feature-list">
+                    <li><FiCheckCircle className="list-icon" /> <strong>💰 סה"כ הוצאה:</strong> סכום כל ההזמנות שנפתחו החודש (מוצג בש"ח, K או M)</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>⏱ ממוצע ימי אספקה:</strong> זמן אספקה ממוצע להזמנות שהושלמו החודש</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>📦 מספר הזמנות:</strong> כמות ההזמנות שנפתחו בחודש הנוכחי</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>🏆 ספק מוביל:</strong> הספק עם הכי הרבה הזמנות החודש</li>
+                  </ul>
+                  <p>הרצועה מתרעננת אוטומטית ומשקפת תמיד את הנתונים העדכניים.</p>
                 </div>
               </div>
 
@@ -774,6 +893,10 @@ const UserGuidePage = () => {
             </div>
             
             <div className="shortcuts-grid">
+              <div className="shortcut-item">
+                <span className="key-combo">Ctrl + K</span>
+                <span className="key-desc">חיפוש גלובלי (פריטים, הזמנות, קולקציות)</span>
+              </div>
               <div className="shortcut-item">
                 <span className="key-combo">Ctrl + Z</span>
                 <span className="key-desc">ביטול פעולה אחרונה (Undo)</span>

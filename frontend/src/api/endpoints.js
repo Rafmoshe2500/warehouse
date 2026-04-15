@@ -29,6 +29,9 @@ export const API_ENDPOINTS = {
   ANALYTICS_ITEM: (catalogNumber) => `/analytics/item/${catalogNumber}`,
   ANALYTICS_ACTIVITY: '/analytics/activity',
 
+  // Search
+  GLOBAL_SEARCH: '/search',
+
   // Admin
   ADMIN_USERS: '/admin/users',
   ADMIN_USER_BY_ID: (id) => `/admin/users/${id}`,
@@ -44,6 +47,7 @@ export const API_ENDPOINTS = {
 
   // Procurement
   PROCUREMENT_ORDERS: '/procurement/orders',
+  PROCUREMENT_SUMMARY: '/procurement/summary',
   PROCUREMENT_ORDER_BY_ID: (id) => `/procurement/orders/${id}`,
   PROCUREMENT_FILES: (orderId) => `/procurement/orders/${orderId}/files`,
   PROCUREMENT_FILE_BY_ID: (orderId, fileId) => `/procurement/orders/${orderId}/files/${fileId}`,

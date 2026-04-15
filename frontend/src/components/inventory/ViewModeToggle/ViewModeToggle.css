@@ -1,0 +1,56 @@
+/* ==============================
+   View Mode Toggle — Segmented control for table display modes
+   ============================== */
+
+.view-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  height: 32px;
+}
+
+.view-mode-toggle__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.view-mode-toggle__btn:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: var(--border-color);
+}
+
+[dir="rtl"] .view-mode-toggle__btn:not(:last-child)::after {
+  left: auto;
+  right: 0;
+}
+
+.view-mode-toggle__btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.view-mode-toggle__btn--active {
+  color: var(--accent-primary);
+  background: var(--bg-secondary);
+}
+
+.view-mode-toggle__btn--active:hover {
+  color: var(--accent-primary);
+}

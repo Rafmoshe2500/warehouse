@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
     FiBox, 
     FiPackage, 
@@ -11,11 +12,13 @@ import {
     FiFileText,
     FiList,
     FiTruck,
-    FiDollarSign
+    FiDollarSign,
+    FiAlertTriangle,
+    FiClock
 } from 'react-icons/fi';
 import Spinner from '../../components/common/Spinner/Spinner';
 import { useAnalytics } from '../../hooks/useAnalytics';
-import { useAuth } from '../../context/AuthContext'; // Corrected import path
+import { useAuth } from '../../context/AuthContext';
 
 // Dashboard Components
 import StatCard from '../../components/dashboard/StatCard';
@@ -26,10 +29,13 @@ import ItemSearchChart from '../../components/dashboard/charts/ItemSearchChart';
 import ActivityStatsCard from '../../components/dashboard/charts/ActivityStatsCard';
 import ManufacturerChart from '../../components/dashboard/charts/ManufacturerChart';
 import LocationChart from '../../components/dashboard/charts/LocationChart';
+import SmartAlertsPanel from '../../components/dashboard/SmartAlertsPanel/SmartAlertsPanel';
+
 
 import './DashboardPage.css';
 
 const DashboardPage = () => {
+    const navigate = useNavigate();
     // State for Procurement Date Filter
     const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
 
@@ -114,7 +120,7 @@ const DashboardPage = () => {
                 {/* Inventory Stats Row */}
                 {hasInventoryAccess && (
                     <div className="bento-grid-stats" data-testid="inventory-stats">
-                        <div className="stat-tile blue" data-testid="stat-total-items">
+                        <div className="stat-tile blue stat-tile--clickable" data-testid="stat-total-items" onClick={() => navigate('/inventory')}>
                                 <div className="stat-icon-bg"><FiBox /></div>
                                 <div className="stat-content">
                                     <h3>סה"כ פריטים</h3>
@@ -125,7 +131,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile green" data-testid="stat-active-allocations">
+                            <div className="stat-tile green stat-tile--clickable" data-testid="stat-active-allocations" onClick={() => navigate('/inventory')}>
                                 <div className="stat-icon-bg"><FiPackage /></div>
                                 <div className="stat-content">
                                     <h3>שריונים פעילים</h3>
@@ -136,7 +142,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile purple" data-testid="stat-serial">
+                            <div className="stat-tile purple stat-tile--clickable" data-testid="stat-serial" onClick={() => navigate('/inventory')}>
                                 <div className="stat-icon-bg"><FiHash /></div>
                                 <div className="stat-content">
                                     <h3>ציוד סריאלי</h3>
@@ -147,8 +153,8 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile amber" data-testid="stat-non-serial">
-                                <div className="stat-icon-bg"><FiBox /></div>
+                            <div className="stat-tile amber stat-tile--clickable" data-testid="stat-non-serial" onClick={() => navigate('/inventory', { state: { tab: 'stale' } })}>
+                                <div className="stat-icon-bg"><FiClock /></div>
                                 <div className="stat-content">
                                     <h3>ציוד נלווה</h3>
                                     <div className="stat-number">{stats?.non_serial_equipment?.toLocaleString() || 0}</div>
@@ -166,7 +172,7 @@ const DashboardPage = () => {
                         <div className="bento-grid-stats" data-testid="procurement-stats">
                             {/* כרטיס מחיר — רק למי שיש הרשאת מחירים */}
                             {priceAccess && (
-                                <div className="stat-tile blue" data-testid="stat-total-spend">
+                                <div className="stat-tile blue stat-tile--clickable" data-testid="stat-total-spend" onClick={() => navigate('/procurement')}>
                                     <div className="stat-icon-bg"><FiDollarSign /></div>
                                     <div className="stat-content">
                                         <h3>סך הכל רכש</h3>
@@ -180,7 +186,7 @@ const DashboardPage = () => {
                                 </div>
                             )}
 
-                            <div className="stat-tile amber" data-testid="stat-waiting-emf">
+                            <div className="stat-tile amber stat-tile--clickable" data-testid="stat-waiting-emf" onClick={() => navigate('/procurement')}>
                                 <div className="stat-icon-bg"><FiFileText /></div>
                                 <div className="stat-content">
                                     <h3>ממתין ל-EMF</h3>
@@ -191,7 +197,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile purple" data-testid="stat-waiting-bom">
+                            <div className="stat-tile purple stat-tile--clickable" data-testid="stat-waiting-bom" onClick={() => navigate('/procurement')}>
                                 <div className="stat-icon-bg"><FiList /></div>
                                 <div className="stat-content">
                                     <h3>ממתין ל-BOM</h3>
@@ -202,7 +208,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile green" data-testid="stat-ordered">
+                            <div className="stat-tile green stat-tile--clickable" data-testid="stat-ordered" onClick={() => navigate('/procurement')}>
                                 <div className="stat-icon-bg"><FiTruck /></div>
                                 <div className="stat-content">
                                     <h3>בדרך אלינו</h3>
@@ -272,8 +278,17 @@ const DashboardPage = () => {
                         </>
                     )}
 
-                    {/* Activity Feed - Always visible - 25% Width */}
-                    <div className="bento-card col-span-1" data-testid="activity-feed">
+                    {/* Smart Alerts + Activity Feed - Side Column */}
+                    <div className="bento-card activity-card" data-testid="dashboard-side-panel">
+                        <div className="card-header">
+                            <h3><FiAlertTriangle /> התראות חכמות</h3>
+                        </div>
+                        <div className="card-body">
+                            <SmartAlertsPanel procurement={stats?.procurement} />
+                        </div>
+
+                        <div className="dashboard-side-divider" />
+
                         <div className="card-header">
                             <h3><FiActivity /> פעילות אחרונה</h3>
                         </div>

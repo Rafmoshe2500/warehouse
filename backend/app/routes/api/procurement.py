@@ -75,6 +75,19 @@ async def get_orders(
     })
 
 
+@router.get("/summary")
+async def get_procurement_summary(
+    current_user: dict = Depends(get_current_user),
+    procurement_service: ProcurementService = Depends(get_procurement_service)
+):
+    """Get procurement monthly summary stats for analytics strip"""
+    if not has_procurement_read_access(current_user):
+        raise ForbiddenException("נדרשת הרשאת קריאה לרכש")
+
+    summary = await procurement_service.get_monthly_summary()
+    return JSONResponse(content=summary)
+
+
 @router.post("/orders", response_model=ProcurementOrderResponse)
 async def create_order(
     order_data: ProcurementOrderCreate,

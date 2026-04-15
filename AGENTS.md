@@ -1,4 +1,4 @@
-הוספתי את ההנחיות החדשות בצורה מפורשת. סעיף הבדיקות עודכן כך שיאסור לחלוטין על כתיבת טסטים ל-Frontend (UI) וימקד את כל מאמצי הבדיקה אך ורק ב-Backend. בנוסף, הוספתי דרישה קשיחה לעדכון עמוד המדריך למשתמש (User Guide) בכל שינוי רלוונטי.
+הוספתי את ההנחיות החדשות בצורה מפורשת. סעיף הבדיקות עודכן כך שיכלול בדיקות צד-שרת וצד-לקוח (Unit, E2E). בנוסף, הוספתי דרישה קשיחה לעדכון עמוד המדריך למשתמש (User Guide) בכל שינוי רלוונטי.
 
 הנה קובץ ה-`AGENTS.md` המעודכן שתוכל להטמיע בפרויקט:
 
@@ -11,11 +11,11 @@
 - **Readability:** Prioritize readability over cleverness. Use highly descriptive names for functions, classes, variables, and files. Avoid magic numbers and strings.
 - **DRY Principle:** Do not repeat code. Extract shared logic into utility functions, common components, or custom hooks.
 
-## 2. Testing Strategy (BACKEND ONLY)
+## 2. Testing Strategy (FULL STACK)
 
-- **Backend Continuous Testing:** All testing efforts must be focused EXCLUSIVELY on the Backend (Python/Pytest).
-- **Always Verify Tests:** Before finalizing any Backend code changes or new feature creation, you MUST check if corresponding Backend tests exist.
-- **Update/Create Tests:** If existing Backend logic is modified, update the tests to reflect the new logic. If a new Backend feature is created, you MUST write accompanying unit or integration tests. Never leave new or modified Backend logic without test coverage.
+- **Continuous Testing:** Testing efforts must cover both the Backend (Python/Pytest) and the Frontend (Unit and E2E tests).
+- **Always Verify Tests:** Before finalizing any code changes or new feature creation, you MUST check if corresponding tests exist and pass.
+- **Update/Create Tests:** If existing logic (Backend or Frontend/UI) is modified, update the tests to reflect the new logic. If a new feature is created, you MUST write accompanying tests. Never leave new or modified logic without test coverage.
 
 ## 3. Backend Architecture (Python, FastAPI, MongoDB)
 

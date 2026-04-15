@@ -47,8 +47,7 @@ test.describe('Procurement Pagination', () => {
     await proc.waitForOrders();
 
     // Should show order cards
-    const orderCards = page.locator('.order-card');
-    const count = await orderCards.count();
+    const count = await proc.orderCards.count();
     expect(count).toBeGreaterThanOrEqual(3);
   });
 
@@ -60,12 +59,12 @@ test.describe('Procurement Pagination', () => {
     const nextBtn = page.locator('.pagination-next, button:has-text("הבא"), button[aria-label="next"], .next-page').first();
 
     if (await nextBtn.isVisible() && await nextBtn.isEnabled()) {
-      const ordersBefore = await page.locator('.order-card').first().textContent();
+      const ordersBefore = await proc.orderCards.first().textContent();
       await nextBtn.click();
       await page.waitForTimeout(2000);
 
       // Page should have changed (different orders or page indicator)
-      const ordersAfter = await page.locator('.order-card').first().textContent();
+      const ordersAfter = await proc.orderCards.first().textContent();
       // Content might differ on next page
     }
   });

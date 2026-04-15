@@ -145,3 +145,8 @@ def get_procurement_service(
     analytics_service: BomAnalyticsService = Depends(get_bom_analytics_service),
 ) -> ProcurementService:
     return ProcurementService(repo, s3_service, auditor, analytics_service)
+
+from app.services.search_service import SearchService
+
+def get_search_service() -> SearchService:
+    return SearchService()

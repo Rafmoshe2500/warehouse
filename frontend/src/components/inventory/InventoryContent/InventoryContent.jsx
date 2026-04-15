@@ -7,7 +7,9 @@ import { useItems } from '../../../hooks/useItems';
 
 const InventoryContent = ({
   canEdit = false,
-  queryParams = null, // New prop instead of data
+  queryParams = null,
+  viewMode = 'normal',
+  viewConfig = {},
   selection = {},
   sorting = {},
   filtering = {},
@@ -28,7 +30,8 @@ const InventoryContent = ({
   visibleColumns, // New prop
   onShowCollections, // New prop
   userCollections,
-  onAddToCollection
+  onAddToCollection,
+  onRowClick
 }) => {
   // Fetch data directly using the hook and passed params
   const { items = [], totalItems = 0, loading = false, error = null } = useItems(queryParams);
@@ -95,6 +98,9 @@ const InventoryContent = ({
           onShowCollections={onShowCollections}
           userCollections={userCollections}
           onAddToCollection={onAddToCollection}
+          onRowClick={onRowClick}
+          viewMode={viewMode}
+          viewConfig={viewConfig}
         />
 
         {totalItems === 0 && !loading && !isAdding && (

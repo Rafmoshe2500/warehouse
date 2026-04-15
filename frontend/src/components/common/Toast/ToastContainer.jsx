@@ -4,7 +4,7 @@ import './ToastContainer.css';
 
 const ToastContainer = ({ toasts, removeToast }) => {
   return (
-    <div className="toast-container">
+    <div className="toast-container" aria-live="polite" aria-atomic="false">
       {toasts.map((toast) => (
         <Toast
           key={toast.id}

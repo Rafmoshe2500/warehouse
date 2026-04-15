@@ -37,6 +37,11 @@ const procurementService = {
     return response.data;
   },
 
+  getMonthlySummary: async () => {
+    const response = await apiClient.get(API_ENDPOINTS.PROCUREMENT_SUMMARY);
+    return response.data;
+  },
+
   /**
    * Upload file to procurement order
    */

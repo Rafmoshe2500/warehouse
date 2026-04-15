@@ -2,8 +2,8 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useAuth } from './context/AuthContext';
-import Header from './components/layout/Header/Header';
-import Navigation from './components/layout/Navigation/Navigation';
+import UnifiedHeader from './components/layout/UnifiedHeader/UnifiedHeader';
+import GlobalSearch from './components/common/GlobalSearch/GlobalSearch';
 import { Spinner } from './components/common';
 
 // Lazy load page components for code splitting
@@ -125,6 +125,7 @@ const PrivateRoute = ({ children }) => {
 
   const AppRouter = () => {
     const { isAuthenticated, loading } = useAuth();
+    const [showGlobalSearch, setShowGlobalSearch] = React.useState(false);
 
     if (loading) {
       return (
@@ -138,10 +139,14 @@ const PrivateRoute = ({ children }) => {
     <BrowserRouter>
       <div className="app-root-layout">
         {isAuthenticated && (
-          <>
-            <Header />
-            <Navigation />
-          </>
+          <UnifiedHeader onOpenSearch={() => setShowGlobalSearch(true)} />
+        )}
+
+        {isAuthenticated && (
+          <GlobalSearch
+            isOpen={showGlobalSearch}
+            onClose={() => setShowGlobalSearch(false)}
+          />
         )}
 
         <main className="app-main-content">

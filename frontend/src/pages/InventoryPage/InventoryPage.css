@@ -1,13 +1,13 @@
 .inventory-page {
-  height: calc(100vh - 80px);
+  height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 2rem;
+  padding: var(--space-4);
   max-width: var(--page-max-width);
   margin: 0 auto;
   direction: rtl;
-  min-height: 0; /* Important for flex children */
+  min-height: 0;
 }
 
 .inventory-page-embedded {
@@ -16,34 +16,50 @@
   flex-direction: column;
   overflow: hidden;
   direction: rtl;
-  min-height: 0; /* Important for flex children */
+  min-height: 0;
+}
+
+/* Body: Table + Detail Panel side by side */
+.inventory-page__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+}
+
+.inventory-page__body > .inventory-content {
+  flex: 1;
+  min-width: 0;
 }
 
 .inventory-page__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding: 2rem;
+  margin-bottom: var(--space-6);
+  padding: var(--space-6);
   background: var(--bg-secondary);
-  border-radius: 16px;
+  border-radius: var(--radius-2xl);
   border: 1px solid var(--border-color);
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: var(--space-5);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .inventory-page__header-main {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: var(--space-5);
   flex: 1;
   min-width: 200px;
 }
 
 .inventory-page__header h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: var(--text-3xl);
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -52,11 +68,11 @@
 .inventory-page__selection-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
   background: var(--bg-tertiary);
   border: 2px solid var(--accent-primary);
-  border-radius: 10px;
+  border-radius: var(--radius-round);
   animation: fadeInScale 0.3s ease;
 }
 
@@ -78,8 +94,8 @@
   min-width: 28px;
   height: 28px;
   background: var(--accent-primary);
-  border-radius: 6px;
-  font-size: 1rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
   font-weight: 800;
   color: white;
   padding: 0 0.5rem;

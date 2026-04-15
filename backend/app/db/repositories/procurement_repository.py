@@ -174,3 +174,61 @@ class ProcurementRepository:
         
         order["id"] = str(order.pop("_id"))
         return order
+
+    async def get_monthly_summary(self) -> Dict[str, Any]:
+        """Get procurement summary stats for the current month"""
+        now = datetime.now(timezone.utc)
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+        pipeline = [
+            {"$match": {"order_date": {"$gte": month_start}}},
+            {"$facet": {
+                "totals": [
+                    {"$group": {
+                        "_id": None,
+                        "total_spend": {"$sum": "$total_amount"},
+                        "order_count": {"$sum": 1}
+                    }}
+                ],
+                "top_vendor": [
+                    {"$match": {"bom_vendor": {"$ne": None}}},
+                    {"$group": {"_id": "$bom_vendor", "count": {"$sum": 1}}},
+                    {"$sort": {"count": -1}},
+                    {"$limit": 1}
+                ],
+                "lead_times": [
+                    {"$match": {
+                        "status": "received",
+                        "received_at": {"$ne": None}
+                    }},
+                    {"$project": {
+                        "lead_days": {
+                            "$divide": [
+                                {"$subtract": ["$received_at", "$order_date"]},
+                                86400000
+                            ]
+                        }
+                    }},
+                    {"$group": {
+                        "_id": None,
+                        "avg_lead_days": {"$avg": "$lead_days"}
+                    }}
+                ]
+            }}
+        ]
+
+        results = await self.collection.aggregate(pipeline).to_list(length=1)
+        if not results:
+            return {"total_spend": 0, "order_count": 0, "avg_lead_days": None, "top_vendor": None}
+
+        facets = results[0]
+        totals = facets["totals"][0] if facets["totals"] else {"total_spend": 0, "order_count": 0}
+        top_vendor = facets["top_vendor"][0]["_id"] if facets["top_vendor"] else None
+        avg_lead = facets["lead_times"][0]["avg_lead_days"] if facets["lead_times"] else None
+
+        return {
+            "total_spend": totals.get("total_spend", 0),
+            "order_count": totals.get("order_count", 0),
+            "avg_lead_days": round(avg_lead, 1) if avg_lead is not None else None,
+            "top_vendor": top_vendor
+        }

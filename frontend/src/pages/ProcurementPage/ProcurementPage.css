@@ -1,6 +1,6 @@
 .procurement-page {
-  padding: 2rem;
-  height: calc(100vh - 80px);
+  padding: 1.25rem 1.5rem 0;
+  height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -18,19 +18,59 @@
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
-  padding: 1.5rem 0;
+  padding: var(--space-5) 0;
 }
 
 .procurement-controls-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 1.5rem 0;
+  margin: var(--space-5) 0;
+}
+
+.procurement-controls-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.procurement-view-toggle {
+  display: flex;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: var(--radius-round);
+  overflow: hidden;
+}
+
+.procurement-view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.procurement-view-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary, rgba(255, 255, 255, 0.03));
+}
+
+.procurement-view-btn.active {
+  color: var(--accent-primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.procurement-view-btn + .procurement-view-btn {
+  border-right: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
 }
 
 .search-form {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: center;
 }
 
@@ -42,7 +82,7 @@
 .loading-container {
   display: flex;
   justify-content: center;
-  padding: 4rem;
+  padding: var(--space-9);
 }
 
 @media (max-width: 768px) {

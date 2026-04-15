@@ -416,3 +416,100 @@ class TestProcurementRepository:
         result = await repo.get_file_metadata(order_id, "non-existent-file")
 
         assert result is None
+    # ========== Monthly Summary Tests ==========
+
+    @pytest.mark.asyncio
+    async def test_get_monthly_summary_empty(self, test_procurement_collection):
+        """Monthly summary on empty collection returns zeros."""
+        repo = ProcurementRepository()
+        repo.collection = test_procurement_collection
+
+        result = await repo.get_monthly_summary()
+
+        assert result["total_spend"] == 0
+        assert result["order_count"] == 0
+        assert result["avg_lead_days"] is None
+        assert result["top_vendor"] is None
+
+    @pytest.mark.asyncio
+    async def test_get_monthly_summary_counts_and_spend(self, test_procurement_collection):
+        """Monthly summary returns correct spend and order count."""
+        repo = ProcurementRepository()
+        repo.collection = test_procurement_collection
+
+        now = datetime.now(timezone.utc)
+        await test_procurement_collection.insert_many([
+            {
+                "order_date": now,
+                "total_amount": 500.0,
+                "status": "waiting_bom_emf",
+                "bom_vendor": "DELL",
+                "bom_items": [],
+                "created_at": now,
+            },
+            {
+                "order_date": now,
+                "total_amount": 1500.0,
+                "status": "ordered",
+                "bom_vendor": "HPE",
+                "bom_items": [],
+                "created_at": now,
+            },
+        ])
+
+        result = await repo.get_monthly_summary()
+
+        assert result["order_count"] == 2
+        assert result["total_spend"] == 2000.0
+
+    @pytest.mark.asyncio
+    async def test_get_monthly_summary_top_vendor(self, test_procurement_collection):
+        """Monthly summary returns the most frequent vendor."""
+        repo = ProcurementRepository()
+        repo.collection = test_procurement_collection
+
+        now = datetime.now(timezone.utc)
+        await test_procurement_collection.insert_many([
+            {"order_date": now, "total_amount": 100, "status": "ordered", "bom_vendor": "DELL", "bom_items": [], "created_at": now},
+            {"order_date": now, "total_amount": 200, "status": "ordered", "bom_vendor": "DELL", "bom_items": [], "created_at": now},
+            {"order_date": now, "total_amount": 300, "status": "ordered", "bom_vendor": "HPE", "bom_items": [], "created_at": now},
+        ])
+
+        result = await repo.get_monthly_summary()
+
+        assert result["top_vendor"] == "DELL"
+
+    @pytest.mark.asyncio
+    async def test_get_monthly_summary_avg_lead_days(self, test_procurement_collection):
+        """Monthly summary returns average lead time for received orders."""
+        from datetime import timedelta
+
+        repo = ProcurementRepository()
+        repo.collection = test_procurement_collection
+
+        now = datetime.now(timezone.utc)
+        await test_procurement_collection.insert_many([
+            {
+                "order_date": now - timedelta(days=10),
+                "received_at": now,
+                "total_amount": 100,
+                "status": "received",
+                "bom_vendor": "DELL",
+                "bom_items": [],
+                "created_at": now,
+            },
+            {
+                "order_date": now - timedelta(days=6),
+                "received_at": now,
+                "total_amount": 200,
+                "status": "received",
+                "bom_vendor": "HPE",
+                "bom_items": [],
+                "created_at": now,
+            },
+        ])
+
+        result = await repo.get_monthly_summary()
+
+        assert result["avg_lead_days"] is not None
+        assert 7.5 <= result["avg_lead_days"] <= 8.5  # avg of 10 and 6 = 8

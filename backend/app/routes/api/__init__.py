@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.routes.api import auth, items, excel, admin, groups, analytics, audit, procurement, collections, users, catalog, bom, bom_analytics, retrain
+from app.routes.api import auth, items, excel, admin, groups, analytics, audit, procurement, collections, users, catalog, bom, bom_analytics, retrain, search
 
 api_router = APIRouter(prefix="/api")
 
@@ -18,3 +18,4 @@ api_router.include_router(catalog.router)
 api_router.include_router(bom.router)
 api_router.include_router(bom_analytics.router)
 api_router.include_router(retrain.router)
+api_router.include_router(search.router)

@@ -128,8 +128,32 @@ export class DashboardPageObject {
     return this.page.locator('[data-testid="chart-manufacturers"]');
   }
 
-  get activityFeed() {
-    return this.page.locator('[data-testid="activity-feed"]');
+  get smartAlerts() {
+    return this.page.locator('.smart-alerts-panel');
+  }
+
+  // ─── Item Search Chart Results ────────────────────────────────────────
+  /**
+   * The summary pill showing total inventory quantity for searched catalog.
+   * Only visible after a successful search.
+   */
+  get itemSearchTotalPill() {
+    return this.page.locator('.item-stats-pill--total');
+  }
+
+  /** Pill showing total allocated quantity. */
+  get itemSearchAllocatedPill() {
+    return this.page.locator('.item-stats-pill--allocated');
+  }
+
+  /** Pill showing unallocated count (only rendered when unallocated > 0). */
+  get itemSearchUnallocatedPill() {
+    return this.page.locator('.item-stats-pill--unallocated');
+  }
+
+  /** List of per-project allocation rows. */
+  get itemProjectRows() {
+    return this.page.locator('.item-project-row');
   }
 
   // ─── Helpers ──────────────────────────────────────────

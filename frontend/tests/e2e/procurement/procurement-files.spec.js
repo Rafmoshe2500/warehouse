@@ -34,7 +34,7 @@ test.describe('Procurement Files Management', () => {
     await proc.goto();
     await proc.search('E2E-FILE-001');
 
-    const orderCard = proc.orderByText('E2E-FILE-001');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     const filesBtn = proc.filesButton(orderCard);
@@ -50,7 +50,7 @@ test.describe('Procurement Files Management', () => {
     await proc.goto();
     await proc.search('E2E-FILE-001');
 
-    const orderCard = proc.orderByText('E2E-FILE-001');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     await proc.filesButton(orderCard).click();
@@ -70,7 +70,7 @@ test.describe('Procurement Files Management', () => {
     await proc.goto();
     await proc.search('E2E-FILE-001');
 
-    const orderCard = proc.orderByText('E2E-FILE-001');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     await proc.filesButton(orderCard).click();
@@ -87,7 +87,7 @@ test.describe('Procurement Files Management', () => {
     await proc.goto();
     await proc.search('E2E-FILE-001');
 
-    const orderCard = proc.orderByText('E2E-FILE-001');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     await proc.filesButton(orderCard).click();

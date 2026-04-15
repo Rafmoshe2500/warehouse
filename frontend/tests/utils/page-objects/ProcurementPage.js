@@ -29,7 +29,7 @@ export class ProcurementPageObject {
   // ─── Waits ────────────────────────────────────────────
   async waitForOrders() {
     // Wait for either order cards or empty state
-    await this.page.locator('.orders-card-list, .orders-empty, .skeleton-cards').first().waitFor({
+    await this.page.locator('.kanban-board, .kanban-empty, .orders-card-list, .orders-empty, .skeleton-cards').first().waitFor({
       state: 'visible',
       timeout: 15000,
     });
@@ -63,7 +63,7 @@ export class ProcurementPageObject {
 
   // ─── Order Cards ──────────────────────────────────────
   get orderCards() {
-    return this.page.locator('.order-card');
+    return this.page.locator('.kanban-card, .order-card');
   }
 
   get orderCount() {
@@ -75,12 +75,12 @@ export class ProcurementPageObject {
   }
 
   orderByText(text) {
-    return this.page.locator('.order-card', { hasText: text });
+    return this.page.locator('.kanban-card, .order-card').filter({ hasText: text }).first();
   }
 
   // ─── Empty State ──────────────────────────────────────
   get emptyState() {
-    return this.page.locator('.orders-empty');
+    return this.page.locator('.empty-state, .procurement-empty, .kanban-column__empty, .kanban-empty, .orders-empty');
   }
 
   // ─── Header Actions ───────────────────────────────────
@@ -90,36 +90,36 @@ export class ProcurementPageObject {
 
   // ─── Order Card Actions ───────────────────────────────
   editButton(orderCard) {
-    return orderCard.locator('.oc-icon-btn.edit, button[title="ערוך"]');
+    return orderCard.locator('.kanban-card__btn--edit, .oc-icon-btn.edit, button[title="ערוך"]');
   }
 
   deleteButton(orderCard) {
-    return orderCard.locator('.oc-icon-btn.delete, button[title="מחק"]');
+    return orderCard.locator('.kanban-card__btn--danger, .oc-icon-btn.delete, button[title="מחק"]');
   }
 
   filesButton(orderCard) {
-    return orderCard.locator('.oc-icon-btn[title="קבצים"], button[title="קבצים"]');
+    return orderCard.locator('.kanban-card__btn[title="קבצים"], .oc-icon-btn[title="קבצים"], button[title="קבצים"]');
   }
 
   historyButton(orderCard) {
-    return orderCard.locator('.oc-icon-btn.history, button[title="היסטוריה"]');
+    return orderCard.locator('.kanban-card__btn[title="היסטוריה"], .oc-icon-btn.history, button[title="היסטוריה"]');
   }
 
   shipButton(orderCard) {
-    return orderCard.locator('.oc-icon-btn.truck, button[title*="נשלח"]');
+    return orderCard.locator('.kanban-card__btn--info, .oc-icon-btn.truck, button[title*="נשלח"]');
   }
 
   receiveButton(orderCard) {
-    return orderCard.locator('.oc-icon-btn.received, button[title*="התקבל"]');
+    return orderCard.locator('.kanban-card__btn--success, .oc-icon-btn.received, button[title*="התקבל"]');
   }
 
   bomPreviewButton(orderCard) {
-    return orderCard.locator('.oc-icon-btn.bom-icon, button[title*="BOM"]');
+    return orderCard.locator('.kanban-card__btn[title="צפה ב-BOM"], .oc-icon-btn.bom-icon, button[title*="BOM"]');
   }
 
   // ─── Status ───────────────────────────────────────────
   getOrderStatus(orderCard) {
-    return orderCard.locator('.status-pill').textContent();
+    return orderCard.locator('.kanban-card__status, .status-pill').textContent();
   }
 
   // ─── Pipeline Bar ─────────────────────────────────────

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { FiPlus, FiUpload, FiDownload, FiEdit2, FiTrash2, FiFilter } from 'react-icons/fi';
 import Button from '../../common/Button/Button';
 import Spinner from '../../common/Spinner/Spinner';
@@ -66,13 +66,16 @@ const InventoryHeader = ({
         )}
 
         {canEdit && !hideAdd && (
+          <Button onClick={onAddClick} className="btn-icon" data-testid="add-item-button">
+            <FiPlus /> הוסף
+          </Button>
+        )}
+
+        {canEdit && !hideAdd && (
           <>
-            <Button onClick={onAddClick} className="btn-icon" data-testid="add-item-button">
-              <FiPlus /> הוסף
-            </Button>
-            <Button 
-              variant="secondary" 
-              onClick={onBulkEdit} 
+            <Button
+              variant="secondary"
+              onClick={onBulkEdit}
               disabled={selectedItems.length === 0}
               className="btn-icon"
               title={selectedItems.length === 0 ? "סמן פריטים לעריכה" : "ערוך פריטים מסומנים"}
@@ -81,9 +84,9 @@ const InventoryHeader = ({
               <FiEdit2 /> עריכה {selectedItems.length > 0 && `(${selectedItems.length})`}
             </Button>
 
-            <Button 
-              variant="danger" 
-              onClick={onBulkDelete} 
+            <Button
+              variant="danger"
+              onClick={onBulkDelete}
               disabled={selectedItems.length === 0}
               className="btn-icon"
               title={selectedItems.length === 0 ? "סמן פריטים למחיקה" : "מחק פריטים מסומנים"}
@@ -98,16 +101,16 @@ const InventoryHeader = ({
       </div>
 
       <div className="header-search">
-         <div className="search-input-wrapper">
-             <input 
-                type="text" 
-                placeholder="חיפוש חופשי..." 
-                value={searchQuery}
-                onChange={(e) => onSearch(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && e.target.blur()} 
-                className="global-search-input"
-             />
-         </div>
+        <div className="search-input-wrapper">
+          <input
+            type="text"
+            placeholder="חיפוש חופשי..."
+            value={searchQuery}
+            onChange={(e) => onSearch(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
+            className="global-search-input"
+          />
+        </div>
       </div>
     </div>
   );

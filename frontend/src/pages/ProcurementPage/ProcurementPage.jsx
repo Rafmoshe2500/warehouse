@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlus, FiSearch, FiClock, FiCheckCircle, FiX, FiLayers, FiTrendingUp } from 'react-icons/fi';
+import { useLocation } from 'react-router-dom';
+import { FiPlus, FiSearch, FiClock, FiCheckCircle, FiX, FiLayers, FiTrendingUp, FiColumns, FiList } from 'react-icons/fi';
 import { Button, Input, Pagination, ToastContainer, SkeletonOrderCards, Tabs } from '../../components/common';
 import ProcurementTable from '../../components/procurement/ProcurementTable';
+import KanbanBoard from '../../components/procurement/KanbanBoard/KanbanBoard';
 import ProcurementModal from '../../components/procurement/ProcurementModal';
 import OrderTypeModal from '../../components/procurement/OrderTypeModal';
 import BomPrescanModal from '../../components/procurement/BomPrescanModal';
@@ -11,6 +13,7 @@ import OrderHistoryModal from '../../components/procurement/OrderHistoryModal';
 import BomScannerTab from '../../components/procurement/BomScannerTab/BomScannerTab';
 import BomPreviewModal from '../../components/procurement/BomPreviewModal';
 import ProcurementAnalyticsTab from '../../components/procurement/AnalyticsTab/ProcurementAnalyticsTab';
+import AnalyticsStrip from '../../components/procurement/AnalyticsStrip/AnalyticsStrip';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../hooks/useToast';
 import { useProcurementModals } from '../../hooks/useProcurementModals';
@@ -20,6 +23,7 @@ import './ProcurementPage.css';
 const ProcurementPage = () => {
   const { isAdmin, isSuperAdmin, hasPermission, hasVendorAccess, hasPricePermission } = useAuth();
   const { toasts, removeToast, success, error } = useToast();
+  const location = useLocation();
 
   const VENDORS = ['dell', 'hpe', 'netapp', 'cisco', 'commvault'];
   // canEdit: גלובלי OR כל הרשאת עריכה של ספק ספציפי
@@ -44,17 +48,26 @@ const ProcurementPage = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('search') || '';
+  });
 
   // Modal states (centralized hook)
   const modals = useProcurementModals();
 
   // Tab state: 'process' (default) or 'completed'
   const [activeTab, setActiveTab] = useState('process');
+  
+  // View mode for process tab: 'kanban' (default) or 'list'
+  const [processViewMode, setProcessViewMode] = useState(() => {
+    return localStorage.getItem('procurement_view_mode') || 'kanban';
+  });
 
-
-
-
+  const toggleProcessViewMode = (mode) => {
+    setProcessViewMode(mode);
+    localStorage.setItem('procurement_view_mode', mode);
+  };
   useEffect(() => {
     if (activeTab !== 'bom-netapp' && activeTab !== 'analytics') {
       fetchOrders();
@@ -228,15 +241,35 @@ const ProcurementPage = () => {
       ) : (
         <>
           <div className="procurement-controls-row">
-            {canEdit && (
-              <Button 
-                variant="primary" 
-                onClick={modals.openCreateModal}
-                icon={<FiPlus />}
-              >
-                הזמנה חדשה
-              </Button>
-            )}
+            <div className="procurement-controls-left">
+              {canEdit && (
+                <Button 
+                  variant="primary" 
+                  onClick={modals.openCreateModal}
+                  icon={<FiPlus />}
+                >
+                  הזמנה חדשה
+                </Button>
+              )}
+              {activeTab === 'process' && (
+                <div className="procurement-view-toggle">
+                  <button
+                    className={`procurement-view-btn ${processViewMode === 'kanban' ? 'active' : ''}`}
+                    onClick={() => toggleProcessViewMode('kanban')}
+                    title="תצוגת קנבן"
+                  >
+                    <FiColumns size={15} />
+                  </button>
+                  <button
+                    className={`procurement-view-btn ${processViewMode === 'list' ? 'active' : ''}`}
+                    onClick={() => toggleProcessViewMode('list')}
+                    title="תצוגת רשימה"
+                  >
+                    <FiList size={15} />
+                  </button>
+                </div>
+              )}
+            </div>
 
             <form onSubmit={handleSearch} className="search-form">
               <Input
@@ -263,19 +296,35 @@ const ProcurementPage = () => {
             <SkeletonOrderCards count={8} />
           ) : (
             <>
-              <ProcurementTable
-                orders={orders}
-                canEdit={canEdit}
-                canEditOrder={canEditOrder}
-                isAdmin={isAdmin || isSuperAdmin}
-                onEdit={modals.openEditModal}
-                onDelete={modals.openDeleteModal}
-                onManageFiles={modals.openFilesModal}
-                onHistory={modals.openHistoryModal}
-                onViewBom={modals.openBomPreviewModal}
-                onMarkAsOrdered={handleMarkAsOrdered}
-                onMarkAsReceived={handleMarkAsReceived}
-              />
+              {activeTab === 'process' && processViewMode === 'kanban' ? (
+                <KanbanBoard
+                  orders={orders}
+                  canEdit={canEdit}
+                  canEditOrder={canEditOrder}
+                  isAdmin={isAdmin || isSuperAdmin}
+                  onEdit={modals.openEditModal}
+                  onDelete={modals.openDeleteModal}
+                  onManageFiles={modals.openFilesModal}
+                  onHistory={modals.openHistoryModal}
+                  onViewBom={modals.openBomPreviewModal}
+                  onMarkAsOrdered={handleMarkAsOrdered}
+                  onMarkAsReceived={handleMarkAsReceived}
+                />
+              ) : (
+                <ProcurementTable
+                  orders={orders}
+                  canEdit={canEdit}
+                  canEditOrder={canEditOrder}
+                  isAdmin={isAdmin || isSuperAdmin}
+                  onEdit={modals.openEditModal}
+                  onDelete={modals.openDeleteModal}
+                  onManageFiles={modals.openFilesModal}
+                  onHistory={modals.openHistoryModal}
+                  onViewBom={modals.openBomPreviewModal}
+                  onMarkAsOrdered={handleMarkAsOrdered}
+                  onMarkAsReceived={handleMarkAsReceived}
+                />
+              )}
 
               <Pagination
                 currentPage={page}
@@ -289,6 +338,8 @@ const ProcurementPage = () => {
           )}
         </>
       )}
+
+      {hasPermission('compare_prices') && <AnalyticsStrip />}
 
       {/* Order type selection (new orders only) */}
       <OrderTypeModal

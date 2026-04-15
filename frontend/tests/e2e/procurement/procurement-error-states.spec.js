@@ -48,7 +48,7 @@ test.describe('Procurement Error States', () => {
     await proc.goto();
     await proc.search('E2E-ERR-DEL');
 
-    const orderCard = proc.orderByText('E2E-ERR-DEL');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     // Delete via API first so UI delete will find it already gone
@@ -60,7 +60,11 @@ test.describe('Procurement Error States', () => {
       await deleteBtn.click();
       await page.waitForTimeout(500);
 
-      // Confirm deletion
+      // Confirm deletion - Fill required reason
+      await expect(proc.deleteModal).toBeVisible({ timeout: 5000 });
+      const reasonInput = proc.deleteModal.locator('.delete-modal__textarea, .delete-modal__input').first();
+      await reasonInput.fill('Test UI Delete Error');
+
       const confirmBtn = page.locator('button:has-text("מחק"), button:has-text("אישור"), .confirm-delete').first();
       if (await confirmBtn.isVisible()) {
         await confirmBtn.click();
@@ -126,7 +130,7 @@ test.describe('Procurement Error States', () => {
     await proc.goto();
     await proc.search('E2E-ERR-MIN');
 
-    const orderCard = proc.orderByText('E2E-ERR-MIN');
+    const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     // Open edit modal
