@@ -1,0 +1,32 @@
+/* ==============================
+   AppLayout — Main layout wrapper
+   TopBar (40px) on top, then Sidebar + Content side by side (RTL)
+   ============================== */
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.app-layout__body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  /* RTL: flex-direction is row by default, sidebar will be on the right
+     because in RTL the first flex child appears on the right.
+     We place content first in DOM so sidebar can overlay on mobile,
+     but visually sidebar is on the right via CSS order or flex-direction. */
+  flex-direction: row-reverse;
+}
+
+.app-layout__content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}

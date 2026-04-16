@@ -14,22 +14,35 @@ export class ProcurementPageObject {
   }
 
   async gotoTab(tabKey) {
-    // tabKey: 'process' | 'completed' | 'bom-netapp' | 'analytics'
-    const tabLabels = {
-      process: 'בתהליך',
-      completed: 'הסתיים',
-      'bom-netapp': 'סריקת BOM',
-      analytics: 'השוואת מחירים',
-    };
-    const label = tabLabels[tabKey] || tabKey;
-    await this.page.locator('button.tab-btn', { hasText: label }).click();
+    // tabKey: 'orders' | 'bom-netapp' | 'analytics'
+    // Legacy aliases: 'process' → orders + in_process filter, 'completed' → orders + completed filter
+    if (tabKey === 'process') {
+      await this.page.goto('/procurement?tab=orders');
+      await this.page.waitForTimeout(400);
+      await this.statusFilterButton('in_process').click();
+      await this.page.waitForTimeout(500);
+      return;
+    }
+    if (tabKey === 'completed') {
+      await this.page.goto('/procurement?tab=orders');
+      await this.page.waitForTimeout(400);
+      await this.statusFilterButton('completed').click();
+      await this.page.waitForTimeout(500);
+      return;
+    }
+    const sidebarChild = this.page.locator(`[data-testid="sidebar-child-${tabKey}"]`);
+    if (await sidebarChild.isVisible().catch(() => false)) {
+      await sidebarChild.click();
+    } else {
+      await this.page.goto(`/procurement?tab=${tabKey}`);
+    }
     await this.page.waitForTimeout(500);
   }
 
   // ─── Waits ────────────────────────────────────────────
   async waitForOrders() {
-    // Wait for either order cards or empty state
-    await this.page.locator('.kanban-board, .kanban-empty, .orders-card-list, .orders-empty, .skeleton-cards').first().waitFor({
+    // Wait for either order cards, table, empty state, or skeleton
+    await this.page.locator('.pc-list, .pc-empty, .pdt-wrapper, .skeleton-cards').first().waitFor({
       state: 'visible',
       timeout: 15000,
     });
@@ -63,7 +76,7 @@ export class ProcurementPageObject {
 
   // ─── Order Cards ──────────────────────────────────────
   get orderCards() {
-    return this.page.locator('.kanban-card, .order-card');
+    return this.page.locator('.pc-card');
   }
 
   get orderCount() {
@@ -75,12 +88,12 @@ export class ProcurementPageObject {
   }
 
   orderByText(text) {
-    return this.page.locator('.kanban-card, .order-card').filter({ hasText: text }).first();
+    return this.page.locator('.pc-card').filter({ hasText: text }).first();
   }
 
   // ─── Empty State ──────────────────────────────────────
   get emptyState() {
-    return this.page.locator('.empty-state, .procurement-empty, .kanban-column__empty, .kanban-empty, .orders-empty');
+    return this.page.locator('.pc-empty, .procurement-empty');
   }
 
   // ─── Header Actions ───────────────────────────────────
@@ -90,41 +103,55 @@ export class ProcurementPageObject {
 
   // ─── Order Card Actions ───────────────────────────────
   editButton(orderCard) {
-    return orderCard.locator('.kanban-card__btn--edit, .oc-icon-btn.edit, button[title="ערוך"]');
+    return orderCard.locator('button[title="ערוך"], .pc-btn--edit');
   }
 
   deleteButton(orderCard) {
-    return orderCard.locator('.kanban-card__btn--danger, .oc-icon-btn.delete, button[title="מחק"]');
+    return orderCard.locator('button[title="מחק"], .pc-btn--danger');
   }
 
   filesButton(orderCard) {
-    return orderCard.locator('.kanban-card__btn[title="קבצים"], .oc-icon-btn[title="קבצים"], button[title="קבצים"]');
+    return orderCard.locator('button[title="קבצים"]');
   }
 
   historyButton(orderCard) {
-    return orderCard.locator('.kanban-card__btn[title="היסטוריה"], .oc-icon-btn.history, button[title="היסטוריה"]');
+    return orderCard.locator('button[title="היסטוריה"]');
   }
 
   shipButton(orderCard) {
-    return orderCard.locator('.kanban-card__btn--info, .oc-icon-btn.truck, button[title*="נשלח"]');
+    return orderCard.locator('button[title="שלח לדרך"], .pc-btn--info');
   }
 
   receiveButton(orderCard) {
-    return orderCard.locator('.kanban-card__btn--success, .oc-icon-btn.received, button[title*="התקבל"]');
+    return orderCard.locator('button[title="סמן כהגיע"], .pc-btn--success');
   }
 
   bomPreviewButton(orderCard) {
-    return orderCard.locator('.kanban-card__btn[title="צפה ב-BOM"], .oc-icon-btn.bom-icon, button[title*="BOM"]');
+    return orderCard.locator('button[title="צפה ב-BOM"]');
   }
 
   // ─── Status ───────────────────────────────────────────
   getOrderStatus(orderCard) {
-    return orderCard.locator('.kanban-card__status, .status-pill').textContent();
+    return orderCard.locator('.pc-status').textContent();
   }
 
   // ─── Pipeline Bar ─────────────────────────────────────
   pipelineSteps(orderCard) {
-    return orderCard.locator('.pipeline .step');
+    return orderCard.locator('.pc-pip-step');
+  }
+
+  // ─── Status Filter (replaces old separate tabs) ───────
+  statusFilterButton(filterId) {
+    // filterId: 'in_process' | 'completed' | 'all'
+    const labels = { in_process: 'בתהליך', completed: 'הסתיים', all: 'הכל' };
+    return this.page.locator(`.procurement-sf-btn:has-text("${labels[filterId] || filterId}")`);
+  }
+
+  // ─── View Toggle ──────────────────────────────────────
+  viewToggleButton(mode) {
+    // mode: 'cards' | 'table'
+    const titles = { cards: 'תצוגת כרטיסיות', table: 'תצוגת טבלה' };
+    return this.page.locator(`button[title="${titles[mode] || mode}"]`);
   }
 
   // ─── Order Type Modal ─────────────────────────────────

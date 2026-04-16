@@ -89,19 +89,19 @@ const CollectionDetails = () => {
         />
         
         {/* Title and Back Button Row */}
-        <div className="flex items-center justify-center relative mb-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/my-components')} className="text-gray-500 hover:text-gray-900 absolute right-0">
+        <div className="collection-details-title-row">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/my-components')} className="collection-back-btn">
                 <FaArrowRight className="ml-2" /> חזרה
             </Button>
-            <h3 className="text-xl font-bold text-gray-900">{collection.name}</h3>
+            <h3 className="collection-details-name">{collection.name}</h3>
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className="collection-details-body">
             {activeTab === 'items' && (
-                <div className="flex-1 flex flex-col min-h-0">
+                <div className="collection-details-items-wrapper">
                     {isItemsLoading ? (
-                        <div className="flex justify-center py-12"><Spinner /></div>
+                        <div className="collection-details-loading"><Spinner /></div>
                     ) : (
                         <CollectionItemsTable 
                             items={items} 

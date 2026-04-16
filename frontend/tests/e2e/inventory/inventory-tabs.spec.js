@@ -3,7 +3,7 @@ import { login } from '../../utils/auth-helper.js';
 import { testUsers } from '../../fixtures/test-data.js';
 import { InventoryPageObject } from '../../utils/page-objects/InventoryPage.js';
 
-test.describe('Inventory - Tab Navigation', () => {
+test.describe('Inventory - Tab Navigation (via Sidebar)', () => {
   /** @type {InventoryPageObject} */
   let inv;
 
@@ -16,39 +16,38 @@ test.describe('Inventory - Tab Navigation', () => {
   test('should default to "current" tab', async ({ page }) => {
     await page.goto('/inventory');
     await inv.waitForTable();
-    // The current tab should show the main inventory
     await expect(inv.page.locator('.inventory-tab-content')).toBeVisible();
   });
 
-  // ── Tab Switching via Clicks ────────────────────────────
-  test('should switch to stale tab on click', async ({ page }) => {
+  // ── Tab Switching via Sidebar ───────────────────────────
+  test('should switch to stale tab via sidebar', async ({ page }) => {
     await page.goto('/inventory');
     await inv.waitForTable();
-    await inv.tab('מלאי ישן').click();
+    await inv.sidebarTab('stale').click();
     await page.waitForTimeout(500);
     expect(page.url()).toContain('tab=stale');
   });
 
-  test('should switch to catalog tab on click', async ({ page }) => {
+  test('should switch to catalog tab via sidebar', async ({ page }) => {
     await page.goto('/inventory');
     await inv.waitForTable();
-    await inv.tab('קטלוג פריטים').click();
+    await inv.sidebarTab('catalog').click();
     await page.waitForTimeout(500);
     expect(page.url()).toContain('tab=catalog');
   });
 
-  test('should switch to logs tab on click', async ({ page }) => {
+  test('should switch to logs tab via sidebar', async ({ page }) => {
     await page.goto('/inventory');
     await inv.waitForTable();
-    await inv.tab('תנועות').click();
+    await inv.sidebarTab('logs').click();
     await page.waitForTimeout(500);
     expect(page.url()).toContain('tab=logs');
   });
 
-  test('should switch back to current tab', async ({ page }) => {
+  test('should switch back to current tab via sidebar', async ({ page }) => {
     await page.goto('/inventory?tab=stale');
     await page.waitForTimeout(500);
-    await inv.tab('מלאי נוכחי').click();
+    await inv.sidebarTab('current').click();
     await page.waitForTimeout(500);
     expect(page.url()).toContain('tab=current');
   });
@@ -63,7 +62,7 @@ test.describe('Inventory - Tab Navigation', () => {
   test('should navigate directly to catalog via URL', async ({ page }) => {
     await page.goto('/inventory?tab=catalog');
     await page.waitForTimeout(500);
-    await expect(inv.page.locator('table')).toBeVisible({ timeout: 5000 });
+    await expect(inv.page.locator('table').first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should navigate directly to logs via URL', async ({ page }) => {
@@ -75,8 +74,8 @@ test.describe('Inventory - Tab Navigation', () => {
   test('should handle invalid tab param by showing default', async ({ page }) => {
     await page.goto('/inventory?tab=INVALID');
     await page.waitForTimeout(500);
-    // The tab navigation should still render (no crash)
-    await expect(inv.page.locator('.inventory-tabbed-page, .tabs').first()).toBeVisible({ timeout: 5000 });
+    // Page should still render without crash (defaults to current)
+    await expect(inv.page.locator('.inventory-tabbed-page').first()).toBeVisible({ timeout: 5000 });
   });
 
   // ── Cross-Tab Data Flow ─────────────────────────────────
@@ -90,8 +89,8 @@ test.describe('Inventory - Tab Navigation', () => {
     await inv.addItem({ catalog_number: cat, description: 'cross-tab test' });
     await inv.waitForToast();
 
-    // Switch to logs tab
-    await inv.tab('תנועות').click();
+    // Switch to logs tab via sidebar
+    await inv.sidebarTab('logs').click();
     await page.waitForTimeout(1000);
 
     // The creation action should appear as a log entry

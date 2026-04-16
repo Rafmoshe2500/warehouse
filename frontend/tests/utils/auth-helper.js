@@ -61,37 +61,16 @@ export async function login(page, user) {
  * Logout current user
  */
 export async function logout(page) {
-  // First open the User Menu dropdown if we are in the unified header
-  try {
-    const userMenuBtn = page.locator('.unified-header__user-btn').first();
-    if (await userMenuBtn.isVisible({ timeout: 2000 })) {
-      await userMenuBtn.click();
-    }
-  } catch (e) {
-    // ignore if button not found (e.g. not on a page with header)
-  }
+  // Open user menu dropdown via data-testid (works with both TopBar and UnifiedHeader)
+  const userMenuBtn = page.locator('[data-testid="user-menu-btn"]').first();
+  await userMenuBtn.click({ timeout: 5000 });
 
-  const logoutSelectors = [
-    '[data-testid="logout-button"]',
-    '.unified-header__dropdown-item--danger',
-    'button:has-text("התנתק")',
-    'button:has-text("יציאה")',
-    'a:has-text("התנתק")'
-  ];
-  
-  for (const selector of logoutSelectors) {
-    try {
-      const element = page.locator(selector).first();
-      if (await element.isVisible({ timeout: 1000 })) {
-        await element.click();
-        break;
-      }
-    } catch (e) {
-      continue;
-    }
-  }
-  
-  await page.waitForURL('**/login', { timeout: 5000 });
+  // Wait for logout button to appear in dropdown, then click
+  const logoutBtn = page.locator('[data-testid="logout-button"]');
+  await logoutBtn.waitFor({ state: 'visible', timeout: 5000 });
+  await logoutBtn.click();
+
+  await page.waitForURL('**/login', { timeout: 10000 });
 }
 
 /**

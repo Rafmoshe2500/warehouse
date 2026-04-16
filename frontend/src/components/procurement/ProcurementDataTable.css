@@ -1,0 +1,204 @@
+/* ══════════════════════════════════════════════════════════
+   PROCUREMENT DATA TABLE — Table View
+   ══════════════════════════════════════════════════════════ */
+
+.pdt-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+.pdt-table {
+  width: 100%;
+  border-collapse: collapse;
+  direction: rtl;
+  font-size: 0.82rem;
+  min-width: 900px;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.pdt-th {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-table-header, 10);
+  background: var(--bg-tertiary);
+  padding: 0.6rem 0.75rem;
+  text-align: right;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.pdt-th--sortable {
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.pdt-th--sortable:hover { color: var(--accent-primary); }
+.pdt-th--sortable svg { vertical-align: middle; margin-right: 2px; }
+
+.pdt-th--actions {
+  text-align: center;
+  min-width: 160px;
+}
+
+/* ── Rows ───────────────────────────────────────────────── */
+.pdt-row {
+  transition: background 0.12s;
+  border-right: 3px solid transparent;
+}
+
+.pdt-row:hover { background: rgba(255,255,255,0.02); }
+
+.pdt-row:nth-child(even) { background: rgba(255,255,255,0.01); }
+.pdt-row:nth-child(even):hover { background: rgba(255,255,255,0.03); }
+
+/* Status accent — right border */
+.pdt-row--waiting_bom_emf,
+.pdt-row--waiting_emf,
+.pdt-row--waiting_bom       { border-right-color: var(--accent-warning); }
+.pdt-row--waiting_shipment   { border-right-color: var(--accent-secondary); }
+.pdt-row--shipped            { border-right-color: var(--accent-primary); }
+.pdt-row--received           { border-right-color: var(--accent-success); }
+
+/* Received rows */
+.pdt-row--received { opacity: 0.72; }
+.pdt-row--received:hover { opacity: 1; }
+
+/* ── Cells ──────────────────────────────────────────────── */
+.pdt-td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.pdt-td--date { white-space: nowrap; font-size: 0.78rem; color: var(--text-muted); }
+.pdt-td--emf  { font-size: 0.78rem; }
+.pdt-td--count { text-align: center; font-weight: 600; font-size: 0.8rem; }
+.pdt-td--amount { font-weight: 700; color: var(--accent-success); white-space: nowrap; direction: ltr; text-align: left; }
+.pdt-td--actions { text-align: center; }
+
+.pdt-muted { color: var(--text-muted); opacity: 0.5; }
+
+/* Vendor cell */
+.pdt-vendor {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+.pdt-vendor-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.pdt-vendor--manual { color: var(--text-muted); }
+
+/* Status pill */
+.pdt-status {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.pdt-status--waiting_emf,
+.pdt-status--waiting_bom,
+.pdt-status--waiting_bom_emf { background: rgba(245,158,11,0.12); color: var(--accent-warning); }
+.pdt-status--waiting_shipment { background: rgba(139,92,246,0.12); color: var(--accent-secondary); }
+.pdt-status--shipped          { background: rgba(59,130,246,0.12); color: var(--accent-primary); }
+.pdt-status--received         { background: rgba(16,185,129,0.12); color: var(--accent-success); }
+
+/* EMF */
+.pdt-emf {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-success);
+}
+
+/* Item cell */
+.pdt-td--item { max-width: 200px; }
+
+.pdt-item-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.pdt-item-name {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.pdt-item-qty {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ── Action Buttons ─────────────────────────────────────── */
+.pdt-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  flex-wrap: nowrap;
+}
+
+.pdt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.78rem;
+  transition: all 0.15s;
+}
+.pdt-btn:hover { background: var(--bg-tertiary); border-color: var(--border-subtle); color: var(--text-primary); }
+
+.pdt-btn--edit:hover    { color: var(--accent-primary); border-color: rgba(59,130,246,0.35); background: rgba(59,130,246,0.08); }
+.pdt-btn--danger:hover  { color: var(--accent-danger);  border-color: rgba(239,68,68,0.35);  background: rgba(239,68,68,0.08); }
+.pdt-btn--success:hover { color: var(--accent-success); border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.08); }
+.pdt-btn--info:hover    { color: var(--accent-primary); border-color: rgba(59,130,246,0.35); background: rgba(59,130,246,0.08); }
+
+/* ── Empty state ─────────────────────────────────────────── */
+.pdt-empty {
+  text-align: center;
+  padding: 3.5rem 2rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.pdt-empty span { font-size: 2.5rem; opacity: 0.4; }
+.pdt-empty p    { font-size: 0.9rem; }
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pdt-wrapper { border-radius: 8px; }
+}

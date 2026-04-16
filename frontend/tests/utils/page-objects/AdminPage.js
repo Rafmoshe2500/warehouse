@@ -20,21 +20,21 @@ export class AdminPageObject {
     });
   }
 
-  // ─── Tabs ─────────────────────────────────────────────
+  // ─── Tabs (via Sidebar sub-items) ────────────────────
   get tabUsers() {
-    return this.page.locator('[data-testid="tab-users"]');
+    return this.page.locator('[data-testid="sidebar-child-users"]');
   }
 
   get tabLogs() {
-    return this.page.locator('[data-testid="tab-logs"]');
+    return this.page.locator('[data-testid="sidebar-child-audit-logs"]');
   }
 
   get tabAi() {
-    return this.page.locator('[data-testid="tab-ai"]');
+    return this.page.locator('[data-testid="sidebar-child-ai"]');
   }
 
   async switchTab(tabId) {
-    const tab = this.page.locator(`[data-testid="tab-${tabId}"]`);
+    const tab = this.page.locator(`[data-testid="sidebar-child-${tabId}"]`);
     await tab.click();
     await this.page.waitForTimeout(500);
   }

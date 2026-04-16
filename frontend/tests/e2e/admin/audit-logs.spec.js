@@ -12,7 +12,7 @@ test.describe('Admin - Audit Logs', () => {
     const admin = new AdminPageObject(page);
     await admin.goto();
 
-    await admin.switchTab('logs');
+    await admin.switchTab('audit-logs');
     await page.waitForTimeout(500);
 
     await expect(admin.auditTimeline).toBeVisible({ timeout: 10000 });
@@ -22,7 +22,7 @@ test.describe('Admin - Audit Logs', () => {
     const admin = new AdminPageObject(page);
     await admin.goto();
 
-    await admin.switchTab('logs');
+    await admin.switchTab('audit-logs');
     await page.waitForTimeout(500);
 
     await expect(admin.auditActionFilter).toBeVisible();
@@ -35,7 +35,7 @@ test.describe('Admin - Audit Logs', () => {
     const admin = new AdminPageObject(page);
     await admin.goto();
 
-    await admin.switchTab('logs');
+    await admin.switchTab('audit-logs');
     await page.waitForTimeout(500);
 
     await admin.filterAuditLogs({ action: 'user_login' });
@@ -49,7 +49,7 @@ test.describe('Admin - Audit Logs', () => {
     const admin = new AdminPageObject(page);
     await admin.goto();
 
-    await admin.switchTab('logs');
+    await admin.switchTab('audit-logs');
     await page.waitForTimeout(500);
 
     await admin.filterAuditLogs({ actor: testUsers.admin.username });
@@ -62,7 +62,7 @@ test.describe('Admin - Audit Logs', () => {
     const admin = new AdminPageObject(page);
     await admin.goto();
 
-    await admin.switchTab('logs');
+    await admin.switchTab('audit-logs');
     await page.waitForTimeout(500);
 
     await admin.filterAuditLogs({ targetUser: testUsers.admin.username });
@@ -75,7 +75,7 @@ test.describe('Admin - Audit Logs', () => {
     const admin = new AdminPageObject(page);
     await admin.goto();
 
-    await admin.switchTab('logs');
+    await admin.switchTab('audit-logs');
     await page.waitForTimeout(500);
 
     await admin.filterAuditLogs({
@@ -91,7 +91,7 @@ test.describe('Admin - Audit Logs', () => {
     const admin = new AdminPageObject(page);
     await admin.goto();
 
-    await admin.switchTab('logs');
+    await admin.switchTab('audit-logs');
     await page.waitForTimeout(500);
 
     // Look for pagination controls - use .first() since pagination has nested elements

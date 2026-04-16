@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { FiPlus, FiSearch, FiClock, FiCheckCircle, FiX, FiLayers, FiTrendingUp, FiColumns, FiList } from 'react-icons/fi';
-import { Button, Input, Pagination, ToastContainer, SkeletonOrderCards, Tabs } from '../../components/common';
-import ProcurementTable from '../../components/procurement/ProcurementTable';
-import KanbanBoard from '../../components/procurement/KanbanBoard/KanbanBoard';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import { FiPlus, FiSearch, FiX, FiGrid, FiList } from 'react-icons/fi';
+import { Button, Input, Pagination, ToastContainer, SkeletonOrderCards } from '../../components/common';
+import ProcurementCards from '../../components/procurement/ProcurementCards';
+import ProcurementDataTable from '../../components/procurement/ProcurementDataTable';
 import ProcurementModal from '../../components/procurement/ProcurementModal';
 import OrderTypeModal from '../../components/procurement/OrderTypeModal';
 import BomPrescanModal from '../../components/procurement/BomPrescanModal';
@@ -20,10 +20,17 @@ import { useProcurementModals } from '../../hooks/useProcurementModals';
 import procurementService from '../../api/services/procurementService';
 import './ProcurementPage.css';
 
+const STATUS_FILTERS = [
+  { id: 'in_process', label: 'בתהליך' },
+  { id: 'completed',  label: 'הסתיים' },
+  { id: 'all',        label: 'הכל' },
+];
+
 const ProcurementPage = () => {
   const { isAdmin, isSuperAdmin, hasPermission, hasVendorAccess, hasPricePermission } = useAuth();
   const { toasts, removeToast, success, error } = useToast();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const VENDORS = ['dell', 'hpe', 'netapp', 'cisco', 'commvault'];
   // canEdit: גלובלי OR כל הרשאת עריכה של ספק ספציפי
@@ -56,25 +63,36 @@ const ProcurementPage = () => {
   // Modal states (centralized hook)
   const modals = useProcurementModals();
 
-  // Tab state: 'process' (default) or 'completed'
-  const [activeTab, setActiveTab] = useState('process');
-  
-  // View mode for process tab: 'kanban' (default) or 'list'
-  const [processViewMode, setProcessViewMode] = useState(() => {
-    return localStorage.getItem('procurement_view_mode') || 'kanban';
+  // Tab state: driven by URL search params from sidebar navigation
+  const VALID_TABS = ['orders', 'bom-netapp', 'analytics'];
+  const tabParam = searchParams.get('tab');
+  // Backward compat: map old tab names to new
+  const resolvedTab = tabParam === 'process' || tabParam === 'completed' ? 'orders' : tabParam;
+  const activeTab = VALID_TABS.includes(resolvedTab) ? resolvedTab : 'orders';
+
+  // Status filter for orders tab: 'in_process' | 'completed' | 'all'
+  const [statusFilter, setStatusFilter] = useState(() => {
+    // If user came from old ?tab=completed URL, default to completed filter
+    if (tabParam === 'completed') return 'completed';
+    return 'in_process';
   });
 
-  const toggleProcessViewMode = (mode) => {
-    setProcessViewMode(mode);
+  // View mode: 'cards' or 'table'
+  const [viewMode, setViewMode] = useState(() => {
+    return localStorage.getItem('procurement_view_mode') || 'cards';
+  });
+
+  const toggleViewMode = (mode) => {
+    setViewMode(mode);
     localStorage.setItem('procurement_view_mode', mode);
   };
   useEffect(() => {
     if (activeTab !== 'bom-netapp' && activeTab !== 'analytics') {
       fetchOrders();
     }
-  }, [page, pageSize, activeTab]); // Reload when tab changes
+  }, [page, pageSize, activeTab, statusFilter]); // Reload when tab or status filter changes
 
-  const fetchOrders = async (filtersOverride = null) => {
+  const fetchOrders = async () => {
     setLoading(true);
     try {
       const queryParams = {
@@ -86,12 +104,13 @@ const ProcurementPage = () => {
         queryParams.search = searchTerm;
       }
 
-      // Add status filter based on active tab
-      if (activeTab === 'process') {
+      // Add status filter
+      if (statusFilter === 'in_process') {
         queryParams.status_ne = 'received';
-      } else if (activeTab === 'completed') {
+      } else if (statusFilter === 'completed') {
         queryParams.status_in = ['received'];
       }
+      // 'all' → no status filter
 
       const data = await procurementService.getOrders(queryParams);
       setOrders(data.orders);
@@ -116,7 +135,7 @@ const ProcurementPage = () => {
   };
 
   const handleTabChange = (tab) => {
-    setActiveTab(tab);
+    setSearchParams({ tab });
     setPage(1);
     // fetchOrders triggered by useEffect
   };
@@ -189,10 +208,10 @@ const ProcurementPage = () => {
         queryParams.search = searchTerm;
       }
 
-      // Add status filter based on active tab
-      if (activeTab === 'process') {
+      // Add status filter
+      if (statusFilter === 'in_process') {
         queryParams.status_ne = 'received';
-      } else {
+      } else if (statusFilter === 'completed') {
         queryParams.status_in = ['received'];
       }
 
@@ -221,18 +240,8 @@ const ProcurementPage = () => {
   return (
     <div className="procurement-page">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
-      
-      <Tabs 
-        tabs={[
-          { id: 'process', label: 'בתהליך', icon: <FiClock /> },
-          { id: 'completed', label: 'הסתיים', icon: <FiCheckCircle /> },
-          { id: 'bom-netapp', label: 'סריקת BOM', icon: <FiLayers /> },
-          ...(canCompare ? [{ id: 'analytics', label: 'השוואת מחירים', icon: <FiTrendingUp /> }] : []),
-        ]}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
 
+      <div className="procurement-tab-content">
       {/* Analytics Tab */}
       {activeTab === 'analytics' ? (
         <ProcurementAnalyticsTab />
@@ -251,24 +260,37 @@ const ProcurementPage = () => {
                   הזמנה חדשה
                 </Button>
               )}
-              {activeTab === 'process' && (
-                <div className="procurement-view-toggle">
+
+              {/* Status filter segmented control */}
+              <div className="procurement-status-filter">
+                {STATUS_FILTERS.map(f => (
                   <button
-                    className={`procurement-view-btn ${processViewMode === 'kanban' ? 'active' : ''}`}
-                    onClick={() => toggleProcessViewMode('kanban')}
-                    title="תצוגת קנבן"
+                    key={f.id}
+                    className={`procurement-sf-btn ${statusFilter === f.id ? 'active' : ''}`}
+                    onClick={() => { setStatusFilter(f.id); setPage(1); }}
                   >
-                    <FiColumns size={15} />
+                    {f.label}
                   </button>
-                  <button
-                    className={`procurement-view-btn ${processViewMode === 'list' ? 'active' : ''}`}
-                    onClick={() => toggleProcessViewMode('list')}
-                    title="תצוגת רשימה"
-                  >
-                    <FiList size={15} />
-                  </button>
-                </div>
-              )}
+                ))}
+              </div>
+
+              {/* View mode toggle */}
+              <div className="procurement-view-toggle">
+                <button
+                  className={`procurement-view-btn ${viewMode === 'cards' ? 'active' : ''}`}
+                  onClick={() => toggleViewMode('cards')}
+                  title="תצוגת כרטיסיות"
+                >
+                  <FiGrid size={15} />
+                </button>
+                <button
+                  className={`procurement-view-btn ${viewMode === 'table' ? 'active' : ''}`}
+                  onClick={() => toggleViewMode('table')}
+                  title="תצוגת טבלה"
+                >
+                  <FiList size={15} />
+                </button>
+              </div>
             </div>
 
             <form onSubmit={handleSearch} className="search-form">
@@ -296,8 +318,8 @@ const ProcurementPage = () => {
             <SkeletonOrderCards count={8} />
           ) : (
             <>
-              {activeTab === 'process' && processViewMode === 'kanban' ? (
-                <KanbanBoard
+              {viewMode === 'table' ? (
+                <ProcurementDataTable
                   orders={orders}
                   canEdit={canEdit}
                   canEditOrder={canEditOrder}
@@ -311,7 +333,7 @@ const ProcurementPage = () => {
                   onMarkAsReceived={handleMarkAsReceived}
                 />
               ) : (
-                <ProcurementTable
+                <ProcurementCards
                   orders={orders}
                   canEdit={canEdit}
                   canEditOrder={canEditOrder}
@@ -338,6 +360,7 @@ const ProcurementPage = () => {
           )}
         </>
       )}
+      </div>
 
       {hasPermission('compare_prices') && <AnalyticsStrip />}
 

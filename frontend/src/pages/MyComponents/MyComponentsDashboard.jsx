@@ -2,7 +2,7 @@
 import { FaPlus, FaSearch, FaLayerGroup } from 'react-icons/fa';
 import CollectionCard from '../../components/MyComponents/CollectionCard';
 import CreateCollectionDialog from '../../components/MyComponents/CreateCollectionDialog';
-import { Button, Input, Spinner, SkeletonCards, ScrollableTableLayout, Tabs } from '../../components/common';
+import { Button, Input, Spinner, SkeletonCards, ScrollableTableLayout } from '../../components/common';
 import { useMyComponents } from '../../hooks/useMyComponents';
 import './MyComponents.css';
 
@@ -52,13 +52,6 @@ const MyComponentsDashboard = () => {
 
   const header = (
     <div dir="rtl">
-      {/* Tabs */}
-      <Tabs 
-        tabs={[{ id: 'collections', label: 'אוספים', icon: <FaLayerGroup /> }]}
-        activeTab="collections"
-        onTabChange={() => {}}
-      />
-
       {/* Controls Row */}
       <div className="mycomponents-controls-row">
         {showHeaderCreateButton && (

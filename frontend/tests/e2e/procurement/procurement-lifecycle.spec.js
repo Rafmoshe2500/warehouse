@@ -33,8 +33,7 @@ test.describe('Procurement Order Lifecycle', () => {
     const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
-    // Note: Pipeline is not rendered in kanban view by default, but statuses are checked.
-    // If we wanted to check pipeline we'd need to switch to list view. Kanban shows only status string.
+    // Pipeline is visible in card view — check that the status reflects waiting state
     const statusText = await proc.getOrderStatus(orderCard);
     expect(statusText).toContain('ממתין');
   });
@@ -93,7 +92,7 @@ test.describe('Procurement Order Lifecycle', () => {
     await recvBtn.click();
     await page.waitForTimeout(2000);
 
-    // After receiving, order should move to completed tab
+    // After receiving, order should appear under the 'completed' status filter
     await proc.gotoTab('completed');
     await page.waitForTimeout(1000);
 
@@ -117,13 +116,13 @@ test.describe('Procurement Order Lifecycle', () => {
     const proc = new ProcurementPageObject(page);
     await proc.goto();
 
-    // Should NOT appear in process tab
+    // Should NOT appear in 'בתהליך' filter (default)
     await proc.search('E2E-LIFE-COMP');
     await page.waitForTimeout(1000);
     const inProcessCount = await proc.orderCards.count();
     expect(inProcessCount).toBe(0);
 
-    // Should appear in completed tab
+    // Should appear under 'completed' status filter
     await proc.gotoTab('completed');
     await page.waitForTimeout(1500);
 
@@ -150,6 +149,6 @@ test.describe('Procurement Order Lifecycle', () => {
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
     // Should show EMF badge
-    await expect(orderCard.locator('.oc-emf-badge, .emf-number-badge, .kanban-card__emf').first()).toBeVisible();
+    await expect(orderCard.locator('.pc-emf-badge').first()).toBeVisible();
   });
 });

@@ -209,10 +209,12 @@ const CollectionItemsTable = ({
               )}
               {COLLECTION_TABLE_COLUMNS.map(col => visibleColumns[col.key] !== false ? (
                 <th key={col.key} scope="col" onClick={() => handleSort(col.key)}
-                  className="sortable-header" style={{ cursor: 'pointer' }}>
-                  <div className="flex items-center gap-1">
+                  className="sortable-header">
+                  <div className="th-content">
                     {col.label}
-                    {sortConfig.key === col.key && (sortConfig.direction === 'asc' ? ' ↑' : ' ↓')}
+                    <span className="sort-icon">
+                      {sortConfig.key === col.key && (sortConfig.direction === 'asc' ? ' ↑' : ' ↓')}
+                    </span>
                   </div>
                 </th>
               ) : null)}
@@ -221,17 +223,16 @@ const CollectionItemsTable = ({
             </tr>
 
             {showFilters && (
-              <tr className="filter-row bg-gray-50">
-                {!isReadOnly && <th className="p-1" />}
+              <tr className="filter-row">
+                {!isReadOnly && <th />}
                 {COLLECTION_TABLE_COLUMNS.map(col => visibleColumns[col.key] !== false ? (
-                  <th key={`f-${col.key}`} className="p-1">
-                    <Input placeholder="סינון..." value={filters[col.key] || ''}
-                      onChange={e => handleFilterChange(col.key, e.target.value)}
-                      className="h-[25px] text-xs w-full" />
+                  <th key={`f-${col.key}`}>
+                    <Input placeholder="סנן..." value={filters[col.key] || ''}
+                      onChange={e => handleFilterChange(col.key, e.target.value)} />
                   </th>
                 ) : null)}
-                {customFields.map(f => <th key={`f-${f.key}`} className="p-1" />)}
-                {!isReadOnly && <th className="p-1" />}
+                {customFields.map(f => <th key={`f-${f.key}`} />)}
+                {!isReadOnly && <th />}
               </tr>
             )}
           </thead>

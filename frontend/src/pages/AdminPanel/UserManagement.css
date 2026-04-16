@@ -7,7 +7,7 @@
 .um-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px); /* subtract navbar height */
+  height: 100%;
   overflow: hidden;
 }
 

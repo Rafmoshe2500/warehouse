@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaUsers, FaArrowLeft } from 'react-icons/fa';
+import { FaUser, FaUsers, FaArrowLeft, FaLayerGroup } from 'react-icons/fa';
 import { Button } from '../common';
 import '../../pages/MyComponents/MyComponents.css';
 
@@ -27,6 +27,9 @@ const CollectionCard = ({ collection }) => {
     >      {/* Header Bar - Color Coded */}
       <div className={`card-header-stripe ${stripeClass}`} />
       
+      {/* Icon watermark background */}
+      <div className="card-icon-bg"><FaLayerGroup /></div>
+
       <div className="card-content">
         <div className="card-title-row">
           <h3 className="card-title" title={collection.name}>

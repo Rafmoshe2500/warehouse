@@ -16,7 +16,7 @@
   min-height: 100vh;
 }
 
-/* === Layout Container === */
+/* === Layout Container (legacy — deep-dive pages) === */
 .guide-container {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -24,6 +24,16 @@
   max-width: var(--page-max-width);
   margin: 0 auto;
   padding: var(--space-9) var(--space-6);
+}
+
+/* === Single-column layout (new section pages) === */
+.guide-content-only {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
 }
 
 /* === Sidebar Navigation === */

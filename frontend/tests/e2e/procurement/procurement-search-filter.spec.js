@@ -110,20 +110,20 @@ test.describe('Procurement Search & Filter', () => {
     expect(restoredCount).toBeGreaterThanOrEqual(filteredCount);
   });
 
-  test('should filter between process and completed tabs', async ({ page }) => {
+  test('should filter between in_process and completed status filters', async ({ page }) => {
     const proc = new ProcurementPageObject(page);
     await proc.goto();
     await proc.waitForOrders();
 
-    // In process tab: completed order should NOT appear
+    // Default filter is 'בתהליך' — completed order should NOT appear
     await proc.search('E2E-SRCH-DONE');
     await expect(proc.orderCards).toHaveCount(0, { timeout: 10000 });
 
-    // Switch to completed tab
+    // Switch to 'הסתיים' status filter
     await proc.gotoTab('completed');
     await page.waitForTimeout(1500);
 
-    // Search in completed tab
+    // Search in completed filter
     await proc.search('E2E-SRCH-DONE');
 
     const completedCard = proc.orderCards.first();

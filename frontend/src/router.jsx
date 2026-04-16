@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useAuth } from './context/AuthContext';
-import UnifiedHeader from './components/layout/UnifiedHeader/UnifiedHeader';
+import AppLayout from './components/layout/AppLayout/AppLayout';
 import GlobalSearch from './components/common/GlobalSearch/GlobalSearch';
 import { Spinner } from './components/common';
 
@@ -23,8 +23,17 @@ const MyComponentsDashboard = lazy(() => import('./pages/MyComponents/MyComponen
 
 const CollectionDetails = lazy(() => import('./pages/MyComponents/CollectionDetails'));
 
-// User Guide
-const UserGuidePage = lazy(() => import('./pages/UserGuidePage/UserGuidePage'));
+// User Guide — section pages (Stripe Docs style)
+const GuideOverview = lazy(() => import('./pages/UserGuidePage/GuideOverview'));
+const GuideInterface = lazy(() => import('./pages/UserGuidePage/GuideInterface'));
+const GuideCollections = lazy(() => import('./pages/UserGuidePage/GuideCollections'));
+const GuideDashboard = lazy(() => import('./pages/UserGuidePage/GuideDashboard'));
+const GuideStaleItems = lazy(() => import('./pages/UserGuidePage/GuideStaleItems'));
+const GuideAuditLogs = lazy(() => import('./pages/UserGuidePage/GuideAuditLogs'));
+const GuideAdmin = lazy(() => import('./pages/UserGuidePage/GuideAdmin'));
+const GuideProcurement = lazy(() => import('./pages/UserGuidePage/GuideProcurement'));
+const GuideTips = lazy(() => import('./pages/UserGuidePage/GuideTips'));
+// Deep-dive interactive guides
 const InventoryTableGuide = lazy(() => import('./pages/UserGuidePage/InventoryTableGuide'));
 const MyCollectionsGuide = lazy(() => import('./pages/UserGuidePage/MyCollectionsGuide'));
 const ProcurementGuide = lazy(() => import('./pages/UserGuidePage/ProcurementGuide'));
@@ -138,21 +147,16 @@ const PrivateRoute = ({ children }) => {
   return (
     <BrowserRouter>
       <div className="app-root-layout">
-        {isAuthenticated && (
-          <UnifiedHeader onOpenSearch={() => setShowGlobalSearch(true)} />
-        )}
-
-        {isAuthenticated && (
-          <GlobalSearch
-            isOpen={showGlobalSearch}
-            onClose={() => setShowGlobalSearch(false)}
-          />
-        )}
-
-        <main className="app-main-content">
-          <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
+        {isAuthenticated ? (
+          <>
+            <GlobalSearch
+              isOpen={showGlobalSearch}
+              onClose={() => setShowGlobalSearch(false)}
+            />
+            <AppLayout onOpenSearch={() => setShowGlobalSearch(true)}>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+          <Route path="/login" element={<Navigate to="/dashboard" />} />
           <Route
             path="/dashboard"
             element={
@@ -221,10 +225,75 @@ const PrivateRoute = ({ children }) => {
             path="/guide"
             element={
               <PrivateRoute>
-                <UserGuidePage />
+                <GuideOverview />
               </PrivateRoute>
             }
           />
+          <Route
+            path="/guide/interface"
+            element={
+              <PrivateRoute>
+                <GuideInterface />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/collections"
+            element={
+              <PrivateRoute>
+                <GuideCollections />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/dashboard"
+            element={
+              <PrivateRoute>
+                <GuideDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/stale-items"
+            element={
+              <PrivateRoute>
+                <GuideStaleItems />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/audit-logs"
+            element={
+              <PrivateRoute>
+                <GuideAuditLogs />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/admin"
+            element={
+              <PrivateRoute>
+                <GuideAdmin />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/procurement"
+            element={
+              <PrivateRoute>
+                <GuideProcurement />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/guide/tips"
+            element={
+              <PrivateRoute>
+                <GuideTips />
+              </PrivateRoute>
+            }
+          />
+          {/* Deep-dive interactive guides */}
           <Route
             path="/guide/inventory-table"
             element={
@@ -234,7 +303,7 @@ const PrivateRoute = ({ children }) => {
             }
           />
           <Route
-            path="/guide/collections"
+            path="/guide/collections-deep"
             element={
               <PrivateRoute>
                 <MyCollectionsGuide />
@@ -242,7 +311,7 @@ const PrivateRoute = ({ children }) => {
             }
           />
           <Route
-            path="/guide/procurement"
+            path="/guide/procurement-deep"
             element={
               <PrivateRoute>
                 <ProcurementGuide />
@@ -252,7 +321,16 @@ const PrivateRoute = ({ children }) => {
           <Route path="/" element={<Navigate to="/dashboard" />} />
           </Routes>
         </Suspense>
-        </main>
+            </AppLayout>
+          </>
+        ) : (
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </Routes>
+          </Suspense>
+        )}
       </div>
     </BrowserRouter>
   );

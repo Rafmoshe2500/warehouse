@@ -155,6 +155,11 @@
 
   /* Layout */
   --page-max-width: 95%;
+  
+  /* Sidebar */
+  --sidebar-width-expanded: 240px;
+  --sidebar-width-collapsed: 60px;
+  --topbar-height: 48px;
 }
 
 /* === Light Mode Overrides === */

@@ -1,36 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FiPackage, FiClock, FiActivity } from 'react-icons/fi';
 import InventoryPage from './InventoryPage';
 import CatalogPage from '../CatalogPage/CatalogPage';
 import StaleItemsPage from '../StaleItemsPage/StaleItemsPage';
 import LogsPage from '../LogsPage/LogsPage';
-import { Tabs } from '../../components/common';
 import './InventoryTabbedPage.css';
 
-const InventoryTabbedPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get('tab') || 'current';
-  const [activeTab, setActiveTab] = useState(initialTab);
+const VALID_TABS = ['current', 'stale', 'catalog', 'logs'];
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setSearchParams({ tab });
-  };
+const InventoryTabbedPage = () => {
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab = VALID_TABS.includes(tabParam) ? tabParam : 'current';
 
   return (
     <div className="inventory-tabbed-page">
-      <Tabs 
-        tabs={[
-          { id: 'current', label: 'מלאי נוכחי', icon: <FiPackage /> },
-          { id: 'stale', label: 'מלאי ישן', icon: <FiClock /> },
-          { id: 'catalog', label: 'קטלוג פריטים', icon: <FiPackage /> },
-          { id: 'logs', label: 'תנועות', icon: <FiActivity /> }
-        ]}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
-
       <div className="inventory-tab-content">
         {activeTab === 'current' && <InventoryPage isEmbedded={true} />}
         {activeTab === 'stale' && <StaleItemsPage isEmbedded={true} />}

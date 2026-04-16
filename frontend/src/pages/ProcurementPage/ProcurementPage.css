@@ -1,13 +1,22 @@
 .procurement-page {
   padding: 1.25rem 1.5rem 0;
-  height: calc(100vh - 48px);
+  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
   max-width: var(--page-max-width);
   width: 100%;
   margin: 0 auto;
   direction: rtl;
+}
+
+/* Tab content area — scrolls independently while strip stays at bottom */
+.procurement-tab-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,0.12) transparent;
 }
@@ -65,6 +74,41 @@
 }
 
 .procurement-view-btn + .procurement-view-btn {
+  border-right: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+/* ── Status Filter Segmented Control ───────────────────── */
+.procurement-status-filter {
+  display: flex;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: var(--radius-round);
+  overflow: hidden;
+}
+
+.procurement-sf-btn {
+  padding: 0.35rem 0.85rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.procurement-sf-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary, rgba(255, 255, 255, 0.03));
+}
+
+.procurement-sf-btn.active {
+  color: var(--accent-primary);
+  background: rgba(99, 102, 241, 0.1);
+  font-weight: 600;
+}
+
+.procurement-sf-btn + .procurement-sf-btn {
   border-right: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
 }
 

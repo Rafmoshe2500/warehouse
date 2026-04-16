@@ -20,14 +20,15 @@ test.describe('Procurement CRUD', () => {
     await login(page, procurementTestUsers.admin);
   });
 
-  test('should display procurement page with tabs', async ({ page }) => {
+  test('should display procurement page with orders tab and status filters', async ({ page }) => {
     const proc = new ProcurementPageObject(page);
     await proc.goto();
 
-    // Verify tabs exist
-    await expect(proc.tabButton('בתהליך')).toBeVisible();
-    await expect(proc.tabButton('הסתיים')).toBeVisible();
-    await expect(proc.tabButton('סריקת BOM')).toBeVisible();
+    // Status filter buttons (replace old separate tabs)
+    await expect(proc.statusFilterButton('in_process')).toBeVisible();
+    await expect(proc.statusFilterButton('completed')).toBeVisible();
+    // BOM scanner is a sidebar child item
+    await expect(page.locator('[data-testid="sidebar-child-bom-netapp"]')).toBeVisible();
   });
 
   test('should show empty state or existing orders', async ({ page }) => {
@@ -180,7 +181,8 @@ test.describe('Procurement CRUD', () => {
     const orderCard = proc.orderCards.first();
     await expect(orderCard).toBeVisible({ timeout: 10000 });
 
-    // Verify items appear in the card
-    await expect(orderCard.locator('.kanban-card__items')).toHaveText('2 רכיבים', { timeout: 5000 });
+    // Verify items appear as chips in the card
+    const chips = orderCard.locator('.pc-chip');
+    await expect(chips).toHaveCount(2, { timeout: 5000 });
   });
 });

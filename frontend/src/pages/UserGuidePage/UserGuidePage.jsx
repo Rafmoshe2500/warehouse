@@ -16,7 +16,8 @@ import {
   FiArchive,
   FiClipboard,
   FiSettings,
-  FiUsers
+  FiUsers,
+  FiChevronsRight
 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import './UserGuidePage.css';
@@ -34,6 +35,7 @@ const UserGuidePage = () => {
   const sections = React.useMemo(() => {
     const baseSections = [
       { id: 'intro', label: 'מבוא למערכת', icon: <FiBox />, visible: true },
+      { id: 'navigation', label: 'ניווט במערכת', icon: <FiChevronsRight />, visible: true },
       { id: 'interface', label: 'ממשק וטבלאות', icon: <FiLayout />, visible: hasInventoryAccess },
       { id: 'collections', label: 'המלאי שלי', icon: <FiLayers />, visible: hasInventoryAccess },
       { id: 'dashboard', label: 'דשבורד', icon: <FiLayout />, visible: true },
@@ -162,22 +164,80 @@ const UserGuidePage = () => {
             </div>
           </section>
 
+          {/* Navigation Section */}
+          <section id="navigation" className="content-section">
+            <div className="section-header">
+              <h2 className="section-title">ניווט במערכת</h2>
+              <p className="section-description">
+                המערכת משתמשת בתפריט צד אנכי (Sidebar) לניווט בין העמודים, וסרגל עליון דק (TopBar) לפעולות מהירות.
+              </p>
+            </div>
+
+            <div className="guide-step">
+              <div className="step-number">01</div>
+              <div className="step-content">
+                <h3>תפריט צד (Sidebar)</h3>
+                <p>בצד ימין של המסך מופיע תפריט ניווט אנכי. לחצו על כל פריט כדי לנווט לעמוד הרלוונטי:</p>
+                <ul className="feature-list">
+                  <li><FiCheckCircle className="list-icon" /> <strong>דשבורד:</strong> מרכז הבקרה ומידע כללי</li>
+                  <li><FiCheckCircle className="list-icon" /> <strong>מלאי:</strong> ניהול מלאי — כולל תת-פריטים: מלאי נוכחי, מלאי ישן, קטלוג, תנועות</li>
+                  <li><FiCheckCircle className="list-icon" /> <strong>המלאי שלי:</strong> אוספים אישיים ורשימות פרויקטים</li>
+                  <li><FiCheckCircle className="list-icon" /> <strong>רכש:</strong> ניהול הזמנות — כולל תת-פריטים: בתהליך, הסתיים, אנליטיקס, השוואת מחירים</li>
+                  <li><FiCheckCircle className="list-icon" /> <strong>ניהול (Admin):</strong> ניהול משתמשים, לוגים וכלי AI</li>
+                  <li><FiCheckCircle className="list-icon" /> <strong>מדריך למשתמש:</strong> מדריך זה שאתם קוראים כרגע</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="guide-step">
+              <div className="step-number">02</div>
+              <div className="step-content">
+                <h3>כיווץ והרחבת התפריט</h3>
+                <p>
+                  לחצו על כפתור <strong>החץ</strong> בראש התפריט, או השתמשו בקיצור <strong>Ctrl+B</strong>, כדי לכווץ את התפריט לאייקונים בלבד.
+                  במצב מכווץ, העבירו את העכבר מעל אייקון כדי לראות <strong>Tooltip</strong> עם שם העמוד. עבור פריטים עם תת-תפריט, יופיע תפריט מרחף עם כל האפשרויות.
+                </p>
+              </div>
+            </div>
+
+            <div className="guide-step">
+              <div className="step-number">03</div>
+              <div className="step-content">
+                <h3>סרגל עליון (TopBar)</h3>
+                <p>בראש המסך מופיע סרגל דק הכולל:</p>
+                <ul className="feature-list">
+                  <li><FiCheckCircle className="list-icon" /> <strong>לוגו:</strong> לחצו על לוגו 890 Warehouse לחזרה לדשבורד</li>
+                  <li><FiCheckCircle className="list-icon" /> <strong>חיפוש (Ctrl+K):</strong> פתיחת חלון חיפוש גלובלי</li>
+                  <li><FiCheckCircle className="list-icon" /> <strong>תפריט משתמש:</strong> מעבר בין מצב כהה/בהיר, ערכת נושא, ויציאה מהמערכת</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="tip-box">
+              <div className="tip-icon"><FiAlertCircle /></div>
+              <div className="tip-content">
+                <h4>💡 ניווט מהיר</h4>
+                <p>במסכים קטנים או בטלפונים, התפריט מופיע כשכבת-על (Overlay). לחצו על האייקון בפינה כדי לפתוח ולסגור אותו.</p>
+              </div>
+            </div>
+          </section>
+
           {/* Interface Section - Only for inventory access */}
           {hasInventoryAccess && (
             <section id="interface" className="content-section">
               <div className="section-header">
                 <h2 className="section-title">ממשק וטבלאות חכמות</h2>
                 <p className="section-description">
-                  עמוד המלאי מחולק ל-4 טאבים: <strong>מלאי נוכחי</strong>, <strong>מלאי ישן</strong>, <strong>קטלוג פריטים</strong> ו<strong>תנועות</strong>. הטבלאות בכל טאב מאפשרות סינון, מיון, עריכה ופעולות מהירות.
+                  עמוד המלאי מחולק ל-4 תת-עמודים הנגישים דרך תפריט הצד: <strong>מלאי נוכחי</strong>, <strong>מלאי ישן</strong>, <strong>קטלוג פריטים</strong> ו<strong>תנועות</strong>. הטבלאות בכל עמוד מאפשרות סינון, מיון, עריכה ופעולות מהירות.
                 </p>
               </div>
 
               <div className="guide-step">
                 <div className="step-number">00</div>
                 <div className="step-content">
-                  <h3>טאבים בעמוד המלאי</h3>
+                  <h3>תת-עמודי המלאי בתפריט הצד</h3>
                   <ul className="feature-list">
-                    <li><FiCheckCircle className="list-icon" /> <strong>מלאי נוכחי:</strong> כל הפריטים הפעילים במחסן — הטאב הראשי לניהול יומיומי</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>מלאי נוכחי:</strong> כל הפריטים הפעילים במחסן — העמוד הראשי לניהול יומיומי</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>מלאי ישן:</strong> פריטים שלא עודכנו זמן רב — לזיהוי מלאי מתיישן</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>קטלוג פריטים:</strong> מאגר המק"טים — צפייה וחיפוש מהיר בקטלוג</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>תנועות:</strong> יומן שינויים ועדכונים של פריטי המלאי</li>
@@ -559,7 +619,7 @@ const UserGuidePage = () => {
               <div className="section-header">
                 <h2 className="section-title">ניהול מערכת (Admin)</h2>
                 <p className="section-description">
-                  ממשק הניהול מאפשר לנהל משתמשים, קבוצות הרשאות וכלי AI. נגיש רק למנהלים.
+                  ממשק הניהול מאפשר לנהל משתמשים, קבוצות הרשאות וכלי AI. נגיש רק למנהלים. העמודים הנגישים דרך תפריט הצד תחת "ניהול".
                 </p>
               </div>
 
@@ -567,7 +627,7 @@ const UserGuidePage = () => {
                 <div className="step-number">1</div>
                 <div className="step-content">
                   <h3>ניהול משתמשים</h3>
-                  <p>טאב <strong>"ניהול משתמשים וקבוצות"</strong> מציג את כל המשתמשים הרשומים:</p>
+                  <p>עמוד <strong>"ניהול משתמשים וקבוצות"</strong> מציג את כל המשתמשים הרשומים:</p>
                   <ul className="feature-list">
                     <li><FiCheckCircle className="list-icon" /> <strong>יצירת משתמש:</strong> הגדרת שם, סיסמה, תפקיד (User/Admin) והרשאות מפורטות</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>עריכת משתמש:</strong> שינוי תפקיד, איפוס סיסמה, עדכון הרשאות</li>
@@ -595,7 +655,7 @@ const UserGuidePage = () => {
                 <div className="step-number">3</div>
                 <div className="step-content">
                   <h3>לוגים (יומן פעילות מנהלים)</h3>
-                  <p>טאב <strong>"לוגים"</strong> מציג את כל הפעולות הניהוליות — יצירה, עדכון ומחיקה של משתמשים וקבוצות. ניתן לסנן לפי סוג פעולה, משתמש ותאריך.</p>
+                  <p>עמוד <strong>"לוגים"</strong> (נגיש מתפריט הצד תחת ניהול) מציג את כל הפעולות הניהוליות — יצירה, עדכון ומחיקה של משתמשים וקבוצות. ניתן לסנן לפי סוג פעולה, משתמש ותאריך.</p>
                 </div>
               </div>
 
@@ -603,7 +663,7 @@ const UserGuidePage = () => {
                 <div className="step-number">4</div>
                 <div className="step-content">
                   <h3>כלי AI (SuperAdmin בלבד)</h3>
-                  <p>טאב <strong>"כלי AI"</strong> זמין רק למנהלי-על ומאפשר:</p>
+                  <p>עמוד <strong>"כלי AI"</strong> (נגיש מתפריט הצד תחת ניהול) זמין רק למנהלי-על ומאפשר:</p>
                   <ul className="feature-list">
                     <li><FiCheckCircle className="list-icon" /> <strong>אימון מחדש:</strong> הפעלת אימון מחדש של מודל סיווג הרכיבים (AI Classifier) על בסיס הקטלוג העדכני</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>מדדי ביצועים:</strong> צפייה באחוז דיוק המודל, מספר דוגמאות האימון ונתיב המודל</li>
@@ -634,11 +694,13 @@ const UserGuidePage = () => {
               <div className="guide-step">
                 <div className="step-number">1</div>
                 <div className="step-content">
-                  <h3>טאבים: בתהליך / הסתיים</h3>
-                  <p>הדף מחולק לשני טאבים:</p>
+                  <h3>תת-עמודים: בתהליך / הסתיים</h3>
+                  <p>עמוד הרכש כולל תת-עמודים הנגישים מתפריט הצד:</p>
                   <ul className="feature-list">
                     <li><FiCheckCircle className="list-icon" /> <strong>בתהליך:</strong> כל ההזמנות הפעילות (שטרם התקבלו) — ברירת מחדל: תצוגת קנבן</li>
                     <li><FiCheckCircle className="list-icon" /> <strong>הסתיים:</strong> הזמנות שהגיעו ונסגרו</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>אנליטיקס:</strong> נתוני רכש חודשיים ותובנות</li>
+                    <li><FiCheckCircle className="list-icon" /> <strong>השוואת מחירים:</strong> מעקב מחירים לאורך זמן</li>
                   </ul>
                 </div>
               </div>
@@ -870,7 +932,7 @@ const UserGuidePage = () => {
                   <div className="step-number">2</div>
                   <div className="step-content">
                     <h4>סנו לפי סטטוס</h4>
-                    <p>השתמשו בטאבים למעל ("בתהליך" ו"הסתיים") כדי למיין בחזקה בין הזמנות פתוחות ובחסום.</p>
+                    <p>השתמשו בתת-הפריטים בתפריט הצד ("בתהליך" ו"הסתיים") כדי למיין בין הזמנות פתוחות וסגורות.</p>
                   </div>
                 </div>
               </>
@@ -881,18 +943,22 @@ const UserGuidePage = () => {
               <div className="step-number">1</div>
               <div className="step-content">
                 <h4>מצב תצוגה (Dark/Light)</h4>
-                <p>לחצו על אייקון הירח/שמש בסרגל העליון למעבר בין מצב כהה ובהיר.</p>
+                <p>לחצו על שם המשתמש בסרגל העליון ובחרו במעבר בין מצב כהה ובהיר.</p>
               </div>
             </div>
             <div className="guide-step">
               <div className="step-number">2</div>
               <div className="step-content">
                 <h4>ערכות נושא (Theme Variants)</h4>
-                <p>בחרו ערכת נושא מהתפריט בסרגל העליון: <strong>רגיל</strong>, <strong>עץ</strong>, <strong>חלל</strong> או <strong>קלאסי</strong>. הבחירה נשמרת אוטומטית.</p>
+                <p>לחצו על שם המשתמש בסרגל העליון ובחרו ערכת נושא: <strong>רגיל</strong>, <strong>עץ</strong>, <strong>חלל</strong> או <strong>קלאסי</strong>. הבחירה נשמרת אוטומטית.</p>
               </div>
             </div>
             
             <div className="shortcuts-grid">
+              <div className="shortcut-item">
+                <span className="key-combo">Ctrl + B</span>
+                <span className="key-desc">כיווץ / הרחבת תפריט הצד</span>
+              </div>
               <div className="shortcut-item">
                 <span className="key-combo">Ctrl + K</span>
                 <span className="key-desc">חיפוש גלובלי (פריטים, הזמנות, קולקציות)</span>
@@ -966,7 +1032,7 @@ const UserGuidePage = () => {
               <details className="faq-item">
                 <summary>איך משנים ערכת נושא?</summary>
                 <div className="faq-answer">
-                  בסרגל העליון מימין יש אייקון ירח/שמש למעבר בין מצב כהה/בהיר, ותפריט לבחירת ערכת נושא (רגיל, עץ, חלל, קלאסי). הבחירה נשמרת אוטומטית.
+                  לחצו על שם המשתמש בסרגל העליון כדי לפתוח את תפריט ההעדפות. משם ניתן לעבור בין מצב כהה/בהיר, ולבחור ערכת נושא (רגיל, עץ, חלל, קלאסי). הבחירה נשמרת אוטומטית.
                 </div>
               </details>
               <details className="faq-item">

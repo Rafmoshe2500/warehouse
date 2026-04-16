@@ -1,37 +1,30 @@
-import React, { useState } from 'react';
-import { FiUsers, FiActivity, FiCpu } from 'react-icons/fi';
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import UserManagement from './UserManagement';
 import AuditLogs from './AuditLogs';
 import AiToolsPanel from '../../components/admin/AiToolsPanel';
-import { Tabs } from '../../components/common';
 import { useAuth } from '../../context/AuthContext';
 import './AccessControlPage.css';
 
-const AccessControlPage = () => {
-    const [activeTab, setActiveTab] = useState('users');
-    const { isSuperAdmin } = useAuth();
+const VALID_TABS = ['users', 'logs', 'ai'];
 
-    const tabs = [
-        { id: 'users', label: 'ניהול משתמשים וקבוצות', icon: <FiUsers />, testId: 'tab-users' },
-        { id: 'logs',  label: 'לוגים', icon: <FiActivity />, testId: 'tab-logs' },
-        ...(isSuperAdmin ? [{ id: 'ai', label: 'כלי AI', icon: <FiCpu />, testId: 'tab-ai' }] : []),
-    ];
+const AccessControlPage = () => {
+    const [searchParams] = useSearchParams();
+    const { isSuperAdmin } = useAuth();
+    const tabParam = searchParams.get('tab');
+    const activeTab = VALID_TABS.includes(tabParam) ? tabParam : 'users';
 
     return (
         <div className="access-control-page" data-testid="access-control-page">
-            <Tabs
-                tabs={tabs}
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-            />
-
             <div className="access-content">
                 {activeTab === 'users' ? (
                     <UserManagement isEmbedded={true} />
                 ) : activeTab === 'logs' ? (
                     <AuditLogs isEmbedded={true} />
-                ) : (
+                ) : activeTab === 'ai' && isSuperAdmin ? (
                     <AiToolsPanel />
+                ) : (
+                    <UserManagement isEmbedded={true} />
                 )}
             </div>
         </div>

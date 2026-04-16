@@ -195,9 +195,14 @@ export class InventoryPageObject {
     return this.page.locator('.pagination button[aria-label="Previous"], .pagination button:has(svg)').nth(1);
   }
 
-  // ─── Tabs ─────────────────────────────────────────────
+  // ─── Tabs (via Sidebar sub-items) ───────────────────
   tab(label) {
-    return this.page.locator(`button:has-text("${label}"), [role="tab"]:has-text("${label}")`).first();
+    // First try sidebar child items, then fallback to inline tab buttons
+    return this.page.locator(`[data-testid^="sidebar-child-"]:has-text("${label}"), button:has-text("${label}"), [role="tab"]:has-text("${label}")`).first();
+  }
+
+  sidebarTab(tabId) {
+    return this.page.locator(`[data-testid="sidebar-child-${tabId}"]`);
   }
 
   get activeTabContent() {
