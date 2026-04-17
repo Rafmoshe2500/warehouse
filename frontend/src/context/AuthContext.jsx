@@ -56,8 +56,6 @@ export const AuthProvider = ({ children }) => {
     );
   }, [hasPermission, isSuperAdmin, isAdmin]);
 
-  const PROCUREMENT_VENDORS = ['dell', 'hpe', 'netapp', 'cisco', 'commvault'];
-
   /**
    * Check if user has ANY procurement access (global or vendor-specific).
    * Used to show/hide the procurement tab, nav link and dashboard cards.
@@ -65,11 +63,10 @@ export const AuthProvider = ({ children }) => {
   const hasProcurementAccess = useCallback(() => {
     if (isSuperAdmin || isAdmin) return true;
     if (hasPermission('procurement:ro') || hasPermission('procurement:rw')) return true;
-    // Any vendor-specific permission grants access
-    return PROCUREMENT_VENDORS.some(
-      v => hasPermission(`procurement:${v}:ro`) || hasPermission(`procurement:${v}:rw`)
-    );
-  }, [hasPermission, isSuperAdmin, isAdmin]); // eslint-disable-line react-hooks/exhaustive-deps
+    // Any vendor-specific permission grants access (dynamic — matches any procurement:<vendor>:ro/rw)
+    const perms = user?.permissions || [];
+    return perms.some(p => /^procurement:[a-z0-9_-]+:(ro|rw)$/.test(p));
+  }, [hasPermission, isSuperAdmin, isAdmin, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Memoize only the stable values, not the mutation functions
   const value = useMemo(() => ({

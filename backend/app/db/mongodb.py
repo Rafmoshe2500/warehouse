@@ -157,6 +157,12 @@ class MongoDB:
             await collection_items.create_index("item_id")
             # Compound index for uniqueness if needed, but at least these for performance
             await collection_items.create_index([("collection_id", 1), ("item_id", 1)], unique=True)
+
+            # BOM Templates
+            bom_templates = cls.get_collection("bom_templates")
+            await bom_templates.create_index("format_id", unique=True)
+            await bom_templates.create_index("vendor_name")
+            await bom_templates.create_index("is_active")
             
             logger.info("✅ Database indexes created/verified")
             

@@ -40,11 +40,14 @@ const bomService = {
    * Batch-edit BOM items after AI scan (before order finalization).
    * @param {string} vendor - Vendor slug (e.g. 'netapp', 'hpe')
    * @param {Array<{part_number: string, description_he?: string, category?: string, part_alias?: string}>} items
+   * @param {string|null} orderId - Optional procurement order ID; when provided the backend
+   *   also patches bom_data.groups inside the order document so changes survive page reloads.
    */
-  updateBomItems: async (vendor, items) => {
+  updateBomItems: async (vendor, items, orderId = null) => {
     const res = await api.patch('/bom/scan/items', {
       vendor: vendor.toUpperCase(),
       items,
+      ...(orderId ? { order_id: orderId } : {}),
     });
     return res.data;
   },

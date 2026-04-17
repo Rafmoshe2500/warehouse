@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
     FiBox, 
@@ -13,7 +13,6 @@ import {
     FiList,
     FiTruck,
     FiDollarSign,
-    FiAlertTriangle,
     FiClock
 } from 'react-icons/fi';
 import Spinner from '../../components/common/Spinner/Spinner';
@@ -29,10 +28,13 @@ import ItemSearchChart from '../../components/dashboard/charts/ItemSearchChart';
 import ActivityStatsCard from '../../components/dashboard/charts/ActivityStatsCard';
 import ManufacturerChart from '../../components/dashboard/charts/ManufacturerChart';
 import LocationChart from '../../components/dashboard/charts/LocationChart';
-import SmartAlertsPanel from '../../components/dashboard/SmartAlertsPanel/SmartAlertsPanel';
 
 
 import './DashboardPage.css';
+
+// Module-level style constants — avoid creating new objects on every render
+const ACTIVITY_ICON_STYLE = { marginRight: '0.5rem' };
+const CALENDAR_ICON_STYLE = { fontSize: '1.1rem' };
 
 const DashboardPage = () => {
     const navigate = useNavigate();
@@ -43,18 +45,17 @@ const DashboardPage = () => {
     const { data: stats, isLoading: loading, error } = useDashboardStats(dateRange);
     const { user, hasPermission, hasProcurementAccess, hasPricePermission } = useAuth();
     
-    // Check permissions
-    const hasInventoryAccess = hasPermission('inventory:ro') || hasPermission('inventory:rw');
-    const procurementAccess = hasProcurementAccess();
-    const priceAccess = hasPricePermission();
-
-    if (loading) return (
-        <div className="dashboard-loading" data-testid="dashboard-loading">
-            <Spinner size="large" />
-            <p>מכין את הדאשבורד שלך...</p>
-        </div>
+    // Check permissions — memoized so they don't recompute on every dateRange keystroke
+    const hasInventoryAccess = useMemo(
+        () => hasPermission('inventory:ro') || hasPermission('inventory:rw'),
+        [hasPermission]
     );
-    
+    const procurementAccess = useMemo(() => hasProcurementAccess(), [hasProcurementAccess]);
+    const priceAccess = useMemo(() => hasPricePermission(), [hasPricePermission]);
+
+    // Keep error early-return; remove the loading early-return so child components
+    // (ActivityStatsCard) mount immediately and their independent
+    // queries fire in parallel with useDashboardStats instead of waterfall-after it.
     if (error) return (
         <div className="dashboard-error" data-testid="dashboard-error">
             <div className="error-content">
@@ -67,12 +68,15 @@ const DashboardPage = () => {
 
     return (
         <div className="dashboard-wrapper" dir="rtl" data-testid="dashboard-page">
+            {loading && (
+                <div className="dashboard-loading-bar" data-testid="dashboard-loading" aria-busy="true" />
+            )}
             <main className="dashboard-container">
                 
                 {/* Global Date Filter & Header */}
                 <div className="dashboard-header-row">
                     <div className="dashboard-section-title">
-                        <FiActivity style={{ marginRight: '0.5rem' }} /> תמונת מצב כללית
+                        <FiActivity style={ACTIVITY_ICON_STYLE} /> תמונת מצב כללית
                     </div>
                     
                     <div className="splunk-date-filter" data-testid="dashboard-date-filter">
@@ -82,7 +86,7 @@ const DashboardPage = () => {
                             title="חזור לזמן נוכחי (נקה סינון)"
                             data-testid="date-reset"
                         >
-                            <FiCalendar style={{ fontSize: '1.1rem' }}/> 
+                            <FiCalendar style={CALENDAR_ICON_STYLE} /> 
                             <span>זמן נוכחי</span>
                         </div>
                         <div className="splunk-date-input-wrapper">
@@ -278,23 +282,14 @@ const DashboardPage = () => {
                         </>
                     )}
 
-                    {/* Smart Alerts + Activity Feed - Side Column */}
+                    {/* Activity Feed - Side Column */}
                     <div className="bento-card activity-card" data-testid="dashboard-side-panel">
-                        <div className="card-header">
-                            <h3><FiAlertTriangle /> התראות חכמות</h3>
-                        </div>
-                        <div className="card-body">
-                            <SmartAlertsPanel procurement={stats?.procurement} />
-                        </div>
-
-                        <div className="dashboard-side-divider" />
-
-                        <div className="card-header">
-                            <h3><FiActivity /> פעילות אחרונה</h3>
-                        </div>
-                        <div className="card-body scrollable">
-                            <ActivityStatsCard />
-                        </div>
+                            <div className="card-header">
+                                <h3><FiActivity /> פעילות אחרונה</h3>
+                            </div>
+                            <div className="card-body scrollable">
+                                <ActivityStatsCard />
+                            </div>
                     </div>
 
                 </div>

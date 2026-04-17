@@ -128,10 +128,6 @@ export class DashboardPageObject {
     return this.page.locator('[data-testid="chart-manufacturers"]');
   }
 
-  get smartAlerts() {
-    return this.page.locator('.smart-alerts-panel');
-  }
-
   // ─── Item Search Chart Results ────────────────────────────────────────
   /**
    * The summary pill showing total inventory quantity for searched catalog.

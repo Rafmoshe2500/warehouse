@@ -291,7 +291,8 @@
 .pc-btn--danger:hover  { color: var(--accent-danger);  border-color: rgba(239,68,68,0.35);  background: rgba(239,68,68,0.08); }
 .pc-btn--success:hover { color: var(--accent-success); border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.08); }
 .pc-btn--info:hover    { color: var(--accent-primary); border-color: rgba(59,130,246,0.35); background: rgba(59,130,246,0.08); }
-.pc-btn--bom           { font-size: 0.9rem; border: none; background: none; }
+.pc-btn--bom           { width: auto; padding: 0 10px; gap: 0.35rem; font-size: 0.78rem; font-weight: 600; color: var(--accent-primary); border-color: rgba(59,130,246,0.4); background: rgba(59,130,246,0.07); letter-spacing: 0.02em; }
+.pc-btn--bom:hover     { color: #fff; border-color: var(--accent-primary); background: var(--accent-primary); }
 
 .pc-file-count {
   position: absolute;

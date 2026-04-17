@@ -14,16 +14,29 @@ from app.core.constants import Permission, UserRole
 from app.core.exceptions import ForbiddenException
 from app.dependencies import get_s3_service
 from app.schemas.procurement import BOMItemEditRequest
+from app.db.repositories.procurement_repository import ProcurementRepository
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/bom", tags=["BOM"])
 
-# מיפוי פורמט BOM לשם הספק (באותיות כמו ב-bom_vendor ב-MongoDB)
+# מיפוי פורמט BOM לשם הספק — fallback for built-in formats.
+# Dynamic templates carry their own vendor_name, so this is consulted only
+# for legacy hard-coded strategies.
 _FORMAT_TO_VENDOR = {
     "netapp_pricing_template": "NETAPP",
     "dell_quote":              "DELL",
     "hpe_quote":               "HPE",
+    "cisco_quote":             "CISCO",
+    "generic_first_col":       "GENERIC",
 }
+
+
+def _resolve_vendor(format_id: str) -> str | None:
+    """Resolve vendor name for a given format, checking DB templates first."""
+    if format_id in _FORMAT_TO_VENDOR:
+        return _FORMAT_TO_VENDOR[format_id]
+    # Dynamic templates encode vendor in the format_id slug
+    return format_id.replace("_", " ").upper() if format_id else None
 
 
 def _has_vendor_write(user: dict, vendor: str) -> bool:
@@ -42,6 +55,9 @@ def get_bom_service() -> BomService:
 
 def get_bom_catalog_service() -> BomCatalogService:
     return BomCatalogService()
+
+def get_procurement_repository() -> ProcurementRepository:
+    return ProcurementRepository()
 
 
 class SavePartRequest(BaseModel):
@@ -63,15 +79,16 @@ async def scan_bom(
     if not file.filename.endswith((".xlsx", ".xls")):
         raise HTTPException(status_code=400, detail="יש להעלות קובץ Excel בלבד (.xlsx)")
 
-    from app.services.bom_service import SUPPORTED_FORMATS
-    if format not in SUPPORTED_FORMATS:
+    from app.services.bom_strategies import BomStrategyFactory
+    supported = BomStrategyFactory.get_supported_formats()
+    if format not in supported:
         raise HTTPException(
             status_code=400,
-            detail=f"פורמט לא נתמך: {format}. פורמטים זמינים: {', '.join(SUPPORTED_FORMATS)}"
+            detail=f"פורמט לא נתמך: {format}. פורמטים זמינים: {', '.join(supported)}"
         )
 
     # בדיקת הרשאת עריכה לספק המבוקש
-    vendor = _FORMAT_TO_VENDOR.get(format)
+    vendor = _resolve_vendor(format)
     if vendor and not _has_vendor_write(current_user, vendor):
         raise ForbiddenException(f"אין לך הרשאת יצירת הזמנות עבור {vendor}")
 
@@ -136,11 +153,13 @@ async def edit_bom_items(
     body: BOMItemEditRequest,
     current_user: dict = Depends(get_current_user),
     catalog_service: BomCatalogService = Depends(get_bom_catalog_service),
+    procurement_repo: ProcurementRepository = Depends(get_procurement_repository),
 ):
     """עריכת פריטי BOM לאחר סריקה וסיווג AI — לפני סיום ההזמנה.
 
     דורש הרשאת כתיבה לספק (vendor-specific write permission).
     העריכות נשמרות גם בקטלוג לשיפור המודל בעתיד.
+    כשמועבר order_id, מעדכן גם את bom_data.groups במסמך ההזמנה עצמו.
     """
     vendor = body.vendor.upper()
     if not _has_vendor_write(current_user, vendor):
@@ -154,11 +173,23 @@ async def edit_bom_items(
     try:
         edited_items = [item.model_dump(exclude_none=True) for item in body.items]
         results = await catalog_service.apply_item_edits(edited_items)
+
+        # Also persist the edits directly into the procurement order document so that
+        # re-fetching the order (after page reload / modal reopen) returns updated data.
+        if body.order_id:
+            patched = await procurement_repo.patch_bom_catalog_in_groups(body.order_id, edited_items)
+            if not patched:
+                logger.warning(
+                    "BOM item edit: catalog updated but order bom_data patch skipped (order_id=%s not found)",
+                    body.order_id,
+                )
+
         logger.info(
-            "BOM items edited: user=%s vendor=%s count=%d",
+            "BOM items edited: user=%s vendor=%s count=%d order_id=%s",
             current_user.get("username"),
             vendor,
             len(results),
+            body.order_id,
         )
         return {"ok": True, "updated": results}
     except ValueError as e:

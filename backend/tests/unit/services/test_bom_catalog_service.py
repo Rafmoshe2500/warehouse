@@ -231,3 +231,34 @@ class TestBomCatalogService:
         all_parts = await catalog_service.get_all_parts()
         pn_map = {p["part_number"]: p for p in all_parts}
         assert pn_map["EXCEL-1"]["excel_description"] == "Cable 10G DAC"
+
+    @pytest.mark.asyncio
+    async def test_apply_item_edits_with_part_alias(self, catalog_service):
+        """apply_item_edits persists part_alias when provided."""
+        result = await catalog_service.apply_item_edits([
+            {"part_number": "ALIAS-1", "description_he": "שרת", "category": "server", "part_alias": "SRV-MAIN-01"},
+        ])
+        assert len(result) == 1
+        assert result[0]["part_alias"] == "SRV-MAIN-01"
+
+        all_parts = await catalog_service.get_all_parts()
+        pn_map = {p["part_number"]: p for p in all_parts}
+        assert pn_map["ALIAS-1"]["part_alias"] == "SRV-MAIN-01"
+
+    @pytest.mark.asyncio
+    async def test_apply_item_edits_part_alias_not_set_when_absent(self, catalog_service):
+        """part_alias is not overwritten when not provided in edit payload."""
+        # Seed with part_alias
+        await catalog_service.apply_item_edits([
+            {"part_number": "ALIAS-2", "description_he": "דיסק", "category": "disk", "part_alias": "DISK-A"},
+        ])
+
+        # Edit only description — part_alias should remain
+        await catalog_service.apply_item_edits([
+            {"part_number": "ALIAS-2", "description_he": "דיסק חדש"},
+        ])
+
+        all_parts = await catalog_service.get_all_parts()
+        pn_map = {p["part_number"]: p for p in all_parts}
+        assert pn_map["ALIAS-2"]["description_he"] == "דיסק חדש"
+        assert pn_map["ALIAS-2"]["part_alias"] == "DISK-A"  # unchanged

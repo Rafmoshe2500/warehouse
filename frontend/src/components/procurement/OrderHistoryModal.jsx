@@ -135,6 +135,7 @@ const OrderHistoryModal = ({ isOpen, onClose, orderId, orderNumber }) => {
       title={`היסטוריית הזמנה ${orderNumber || ''}`}
       size="medium"
     >
+      {!isOpen ? null : (
       <div className="order-history-modal">
         {loading ? (
           <div className="history-loading">
@@ -170,6 +171,7 @@ const OrderHistoryModal = ({ isOpen, onClose, orderId, orderNumber }) => {
           </div>
         )}
       </div>
+      )}
     </Modal>
   );
 };

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { FiPlus, FiSearch, FiX, FiGrid, FiList } from 'react-icons/fi';
 import { Button, Input, Pagination, ToastContainer, SkeletonOrderCards } from '../../components/common';
@@ -50,12 +51,15 @@ const ProcurementPage = () => {
     return hasVendorAccess(vendor, 'rw');
   };
   
-  const [orders, setOrders] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
   const [searchTerm, setSearchTerm] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('search') || '';
+  });
+  // submittedSearch is what actually drives the query — only updated on form submit / clear.
+  // This matches the original UX (fetch on submit, not on each keystroke).
+  const [submittedSearch, setSubmittedSearch] = useState(() => {
     const params = new URLSearchParams(location.search);
     return params.get('search') || '';
   });
@@ -86,52 +90,40 @@ const ProcurementPage = () => {
     setViewMode(mode);
     localStorage.setItem('procurement_view_mode', mode);
   };
-  useEffect(() => {
-    if (activeTab !== 'bom-netapp' && activeTab !== 'analytics') {
-      fetchOrders();
-    }
-  }, [page, pageSize, activeTab, statusFilter]); // Reload when tab or status filter changes
 
-  const fetchOrders = async () => {
-    setLoading(true);
-    try {
-      const queryParams = {
-        page,
-        page_size: pageSize,
-      };
+  // ── React Query: orders fetch ─────────────────────────────────────────────
+  const queryClient = useQueryClient();
 
-      if (searchTerm) {
-        queryParams.search = searchTerm;
-      }
+  const { data: ordersData, isLoading: loading, refetch: refetchOrders } = useQuery({
+    queryKey: ['procurement-orders', page, pageSize, submittedSearch, statusFilter],
+    queryFn: async () => {
+      const queryParams = { page, page_size: pageSize };
+      if (submittedSearch) queryParams.search = submittedSearch;
+      if (statusFilter === 'in_process') queryParams.status_ne = 'received';
+      else if (statusFilter === 'completed') queryParams.status_in = ['received'];
+      return procurementService.getOrders(queryParams);
+    },
+    enabled: activeTab !== 'bom-netapp' && activeTab !== 'analytics',
+    placeholderData: keepPreviousData,
+  });
 
-      // Add status filter
-      if (statusFilter === 'in_process') {
-        queryParams.status_ne = 'received';
-      } else if (statusFilter === 'completed') {
-        queryParams.status_in = ['received'];
-      }
-      // 'all' → no status filter
+  const orders = ordersData?.orders ?? [];
+  const total  = ordersData?.total  ?? 0;
 
-      const data = await procurementService.getOrders(queryParams);
-      setOrders(data.orders);
-      setTotal(data.total);
-    } catch (err) {
-      error('שגיאה בטעינת הזמנות רכש');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Invalidate helper — triggers a background refetch with current query key
+  const invalidateOrders = () =>
+    queryClient.invalidateQueries({ queryKey: ['procurement-orders'] });
 
   const handleSearch = (e) => {
     e.preventDefault();
+    setSubmittedSearch(searchTerm);
     setPage(1);
-    fetchOrders();
   };
 
   const handleClearFilters = () => {
     setSearchTerm('');
+    setSubmittedSearch('');
     setPage(1);
-    fetchOrders(); // This will not use searchTerm anymore
   };
 
   const handleTabChange = (tab) => {
@@ -145,7 +137,7 @@ const ProcurementPage = () => {
       await procurementService.createOrder(orderData);
       success('הזמנה נוצרה בהצלחה');
       modals.closeEditModal();
-      fetchOrders();
+      invalidateOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה ביצירת הזמנה');
     }
@@ -156,7 +148,7 @@ const ProcurementPage = () => {
       await procurementService.updateOrder(modals.editingOrder.id, orderData);
       success('הזמנה עודכנה בהצלחה');
       modals.closeEditModal();
-      fetchOrders();
+      invalidateOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה בעדכון הזמנה');
     }
@@ -167,7 +159,7 @@ const ProcurementPage = () => {
       await procurementService.deleteOrder(modals.orderToDelete.id);
       success('הזמנה נמחקה בהצלחה');
       modals.closeDeleteModal();
-      fetchOrders();
+      invalidateOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה במחיקת הזמנה');
     }
@@ -181,7 +173,7 @@ const ProcurementPage = () => {
     try {
       await procurementService.updateOrder(order.id, { status: 'shipped' });
       success('הסטטוס עודכן ל"נשלח"');
-      fetchOrders();
+      invalidateOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה בעדכון הסטטוס');
     }
@@ -191,7 +183,7 @@ const ProcurementPage = () => {
     try {
       await procurementService.updateOrder(order.id, { status: 'received' });
       success('הסטטוס עודכן ל"התקבל"');
-      fetchOrders();
+      invalidateOrders();
     } catch (err) {
       error(err.response?.data?.detail || 'שגיאה בעדכון הסטטוס');
     }
@@ -199,29 +191,10 @@ const ProcurementPage = () => {
 
   const handleFileChange = async () => {
     try {
-      const queryParams = {
-        page,
-        page_size: pageSize,
-      };
-
-      if (searchTerm) {
-        queryParams.search = searchTerm;
-      }
-
-      // Add status filter
-      if (statusFilter === 'in_process') {
-        queryParams.status_ne = 'received';
-      } else if (statusFilter === 'completed') {
-        queryParams.status_in = ['received'];
-      }
-
-      const data = await procurementService.getOrders(queryParams);
-      setOrders(data.orders);
-      setTotal(data.total);
-      
-      const updatedOrder = data.orders.find(o => o.id === modals.selectedOrderForFiles.id);
-      if (updatedOrder) {
-        modals.setSelectedOrderForFiles(updatedOrder);
+      const result = await refetchOrders();
+      if (result.data && modals.selectedOrderForFiles) {
+        const updatedOrder = result.data.orders.find(o => o.id === modals.selectedOrderForFiles.id);
+        if (updatedOrder) modals.setSelectedOrderForFiles(updatedOrder);
       }
     } catch (err) {
       error('שגיאה בעדכון הנתונים');
@@ -423,6 +396,24 @@ const ProcurementPage = () => {
         canEdit={modals.selectedOrderForBom?.bom_vendor
           ? hasVendorAccess(modals.selectedOrderForBom.bom_vendor.toLowerCase(), 'rw')
           : false}
+        onBomDataChange={(updatedGroups) => {
+          const orderId = modals.selectedOrderForBom?.id;
+          modals.updateSelectedOrderBomGroups(updatedGroups);
+          queryClient.setQueriesData(
+            { queryKey: ['procurement-orders'] },
+            (old) => {
+              if (!old?.orders) return old;
+              return {
+                ...old,
+                orders: old.orders.map(o =>
+                  o.id === orderId
+                    ? { ...o, bom_data: { ...o.bom_data, groups: updatedGroups } }
+                    : o
+                ),
+              };
+            }
+          );
+        }}
       />
     </div>
   );

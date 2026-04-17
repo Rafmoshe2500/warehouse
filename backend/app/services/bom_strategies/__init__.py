@@ -4,6 +4,7 @@ from .dell_strategy import DellBomStrategy
 from .hpe_strategy import HpeBomStrategy
 from .generic_strategy import GenericBomStrategy
 from .cisco_strategy import CiscoBomStrategy
+from .dynamic_strategy import DynamicBomStrategy
 from .factory import BomStrategyFactory
 
 __all__ = [
@@ -13,5 +14,6 @@ __all__ = [
     "HpeBomStrategy",
     "GenericBomStrategy",
     "CiscoBomStrategy",
+    "DynamicBomStrategy",
     "BomStrategyFactory",
 ]

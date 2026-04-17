@@ -55,4 +55,4 @@ const ProjectDistributionChart = ({ data }) => {
     );
 };
 
-export default ProjectDistributionChart;
+export default React.memo(ProjectDistributionChart);

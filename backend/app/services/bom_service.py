@@ -338,6 +338,25 @@ class BomService:
         enriched_groups = await self.enrich_groups(groups)
         enriched_groups = self._reorganize_groups(enriched_groups)
 
+        # Track which vendors supply each part (cross-BOM deduplication aid)
+        vendor_name = fmt.split("_")[0].upper() if fmt else "UNKNOWN"
+        try:
+            from app.services.bom_strategies import BomStrategyFactory
+            strategy = BomStrategyFactory.get_strategy(fmt)
+            # Dynamic strategies may have a vendor_name attribute
+            if hasattr(strategy, '_config') and isinstance(strategy._config, dict):
+                vendor_name = strategy._config.get("vendor_name", vendor_name).upper()
+        except Exception:
+            pass
+        if all_part_numbers:
+            try:
+                await self.collection.update_many(
+                    {"part_number": {"$in": all_part_numbers}},
+                    {"$addToSet": {"vendors_seen": vendor_name}},
+                )
+            except Exception as exc:
+                logger.warning("vendors_seen update failed: %s", exc)
+
         unknown_list = [
             {"part_number": pn, "excel_description": extracted_descriptions.get(pn, "")}
             for pn in unknown_parts if pn

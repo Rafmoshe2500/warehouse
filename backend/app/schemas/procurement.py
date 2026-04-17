@@ -54,6 +54,7 @@ class BOMItemEditRequest(BaseModel):
     """Request body for batch BOM item edits."""
     vendor: str = Field(..., min_length=1, description="שם ספק (uppercase: DELL/NETAPP/HPE)")
     items: List[BOMItemEdit] = Field(..., min_length=1, description="פריטים לעריכה")
+    order_id: Optional[str] = Field(default=None, description="מזהה הזמנה לעדכון bom_data ישיר במסד")
 
 
 class ProcurementOrderBase(BaseModel):

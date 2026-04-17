@@ -30,6 +30,10 @@ async def lifespan(app: FastAPI):
         
         # Create Indexes
         await MongoDB.create_indexes()
+
+        # Load dynamic BOM templates from DB
+        from app.services.bom_strategies import BomStrategyFactory
+        await BomStrategyFactory.load_templates_from_db()
         
         collection = MongoDB.get_collection("inventory")
         count = await collection.count_documents({})

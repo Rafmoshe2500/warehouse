@@ -513,3 +513,130 @@ class TestProcurementRepository:
 
         assert result["avg_lead_days"] is not None
         assert 7.5 <= result["avg_lead_days"] <= 8.5  # avg of 10 and 6 = 8
+
+    # ========== patch_bom_catalog_in_groups Tests ==========
+
+    @pytest.mark.asyncio
+    async def test_patch_bom_catalog_updates_main_group(self, test_procurement_collection, sample_procurement_data):
+        """Editing the main part of a BOM group must persist description_he and category to the DB."""
+        repo = ProcurementRepository()
+        repo.collection = test_procurement_collection
+
+        sample_procurement_data["bom_data"] = {
+            "groups": [
+                {
+                    "main": {
+                        "part_number": "SRV-X100",
+                        "product": "Server X100",
+                        "ext_qty": 1,
+                        "catalog": {"description_he": "שרת ישן", "category": "other"},
+                    },
+                    "children": [],
+                    "total_net_price": 1000,
+                }
+            ]
+        }
+        created = await repo.create_order(sample_procurement_data)
+        order_id = created["id"]
+
+        result = await repo.patch_bom_catalog_in_groups(
+            order_id,
+            [{"part_number": "SRV-X100", "description_he": "שרת חדש", "category": "server"}],
+        )
+
+        assert result is True
+        refreshed = await repo.get_order_by_id(order_id)
+        main_catalog = refreshed["bom_data"]["groups"][0]["main"]["catalog"]
+        assert main_catalog["description_he"] == "שרת חדש"
+        assert main_catalog["category"] == "server"
+
+    @pytest.mark.asyncio
+    async def test_patch_bom_catalog_updates_child(self, test_procurement_collection, sample_procurement_data):
+        """Editing a child part must persist its catalog fields without touching the main."""
+        repo = ProcurementRepository()
+        repo.collection = test_procurement_collection
+
+        sample_procurement_data["bom_data"] = {
+            "groups": [
+                {
+                    "main": {
+                        "part_number": "SRV-MAIN",
+                        "product": "Main",
+                        "ext_qty": 1,
+                        "catalog": {"description_he": "ראשי", "category": "server"},
+                    },
+                    "children": [
+                        {
+                            "part_number": "CHILD-001",
+                            "product": "Child",
+                            "ext_qty": 2,
+                            "catalog": {"description_he": "ילד ישן", "category": "other"},
+                        }
+                    ],
+                    "total_net_price": 500,
+                }
+            ]
+        }
+        created = await repo.create_order(sample_procurement_data)
+        order_id = created["id"]
+
+        result = await repo.patch_bom_catalog_in_groups(
+            order_id,
+            [{"part_number": "CHILD-001", "description_he": "ילד חדש", "category": "storage"}],
+        )
+
+        assert result is True
+        refreshed = await repo.get_order_by_id(order_id)
+        child_catalog = refreshed["bom_data"]["groups"][0]["children"][0]["catalog"]
+        assert child_catalog["description_he"] == "ילד חדש"
+        assert child_catalog["category"] == "storage"
+        # main must be untouched
+        main_catalog = refreshed["bom_data"]["groups"][0]["main"]["catalog"]
+        assert main_catalog["description_he"] == "ראשי"
+
+    @pytest.mark.asyncio
+    async def test_patch_bom_catalog_persists_part_alias(self, test_procurement_collection, sample_procurement_data):
+        """part_alias must also be written into bom_data.groups when provided."""
+        repo = ProcurementRepository()
+        repo.collection = test_procurement_collection
+
+        sample_procurement_data["bom_data"] = {
+            "groups": [
+                {
+                    "main": {
+                        "part_number": "SRV-ALIAS",
+                        "product": "Alias Test",
+                        "ext_qty": 1,
+                        "catalog": {},
+                    },
+                    "children": [],
+                    "total_net_price": 0,
+                }
+            ]
+        }
+        created = await repo.create_order(sample_procurement_data)
+        order_id = created["id"]
+
+        await repo.patch_bom_catalog_in_groups(
+            order_id,
+            [{"part_number": "SRV-ALIAS", "part_alias": "MY-ALIAS-01"}],
+        )
+
+        refreshed = await repo.get_order_by_id(order_id)
+        assert refreshed["bom_data"]["groups"][0]["main"]["catalog"]["part_alias"] == "MY-ALIAS-01"
+
+    @pytest.mark.asyncio
+    async def test_patch_bom_catalog_unknown_order_returns_false(self, test_procurement_collection):
+        """Passing a non-existent order_id must return False gracefully."""
+        from bson import ObjectId
+
+        repo = ProcurementRepository()
+        repo.collection = test_procurement_collection
+
+        fake_id = str(ObjectId())
+        result = await repo.patch_bom_catalog_in_groups(
+            fake_id,
+            [{"part_number": "ANYTHING", "description_he": "X"}],
+        )
+
+        assert result is False

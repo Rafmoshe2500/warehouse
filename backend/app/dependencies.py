@@ -150,3 +150,13 @@ from app.services.search_service import SearchService
 
 def get_search_service() -> SearchService:
     return SearchService()
+
+# ── BOM Templates ─────────────────────────────────────────────────────────────
+from app.db.repositories.bom_template_repository import BomTemplateRepository
+from app.services.bom_template_service import BomTemplateService
+
+def get_bom_template_repository() -> BomTemplateRepository:
+    return BomTemplateRepository()
+
+def get_bom_template_service() -> BomTemplateService:
+    return BomTemplateService()

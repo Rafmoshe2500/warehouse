@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { FiPlus, FiTrash2, FiUploadCloud, FiRefreshCw, FiEye, FiCheckCircle, FiX } from 'react-icons/fi';
 import { Button, Input } from '../common';
 import Spinner from '../common/Spinner/Spinner';
@@ -11,13 +11,17 @@ import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCatalog } from '../../hooks/useCatalog';
 import { useDebounce } from '../../hooks/useDebounce';
+import useBomTemplates from '../../hooks/useBomTemplates';
 import './ProcurementModal.css';
 
-// ── Vendor config ────────────────────────────────────────────────────────────
-const BOM_VENDORS = [
-  { id: 'NETAPP', label: 'NetApp', logo: '🟠', color: '#f59e0b', format: 'netapp_pricing_template' },
-  { id: 'DELL',   label: 'Dell',   logo: '🔵', color: '#3b82f6', format: 'dell_quote'              },
-  { id: 'HPE',    label: 'HPE',    logo: '🟢', color: '#22c55e', format: 'hpe_quote'               },
+// ── Vendor color palette ─────────────────────────────────────────────────────
+const VENDOR_COLORS = [
+  { logo: '🟠', color: '#f59e0b' },
+  { logo: '🔵', color: '#3b82f6' },
+  { logo: '🟢', color: '#22c55e' },
+  { logo: '🟣', color: '#a855f7' },
+  { logo: '🟡', color: '#eab308' },
+  { logo: '🔴', color: '#ef4444' },
 ];
 
 // ── Classification keywords ───────────────────────────────────────────────────
@@ -74,7 +78,18 @@ const ProcurementModal = ({
   const [showEmfInput, setShowEmfInput] = useState(false);
   const { showToast } = useToast();
   const { hasPricePermission, hasVendorAccess } = useAuth();
+  const { templates } = useBomTemplates();
   const showPrices = hasPricePermission();
+
+  // Build vendor list dynamically from BOM templates
+  const BOM_VENDORS = useMemo(() => templates.map((t, i) => ({
+    id: t.vendor_name.toUpperCase(),
+    label: t.vendor_name,
+    logo: VENDOR_COLORS[i % VENDOR_COLORS.length].logo,
+    color: VENDOR_COLORS[i % VENDOR_COLORS.length].color,
+    format: t.format_id,
+  })), [templates]);
+
   const canEdit = formData.bom_vendor
     ? hasVendorAccess(formData.bom_vendor.toLowerCase(), 'rw')
     : false;
@@ -258,7 +273,7 @@ const ProcurementModal = ({
 
   // ── Form helpers ──────────────────────────────────────────────────────────
   const addBomItem = () => {
-    const newId = Math.max(...formData.bom_items.map(i => i.item_id), 0) + 1;
+    const newId = formData.bom_items.reduce((max, i) => Math.max(max, i.item_id), 0) + 1;
     setFormData(prev => ({
       ...prev,
       bom_items: [...prev.bom_items, { item_id: newId, product_name: '', catalog_number: '', manufacturer: '', description: '', quantity: 1 }],

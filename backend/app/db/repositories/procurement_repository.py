@@ -115,6 +115,59 @@ class ProcurementRepository:
         except Exception:
             return None
     
+    async def patch_bom_catalog_in_groups(
+        self,
+        order_id: str,
+        changed_items: List[Dict[str, Any]],
+    ) -> bool:
+        """Apply catalog field edits (description_he, category, part_alias) directly into
+        bom_data.groups inside the procurement_orders document so the data persists across
+        page reloads.  Returns True on success, False if the order was not found."""
+        import logging
+        logger = logging.getLogger(__name__)
+        try:
+            order = await self.get_order_by_id(order_id)
+            if not order or not order.get("bom_data"):
+                logger.warning("patch_bom_catalog_in_groups: order %s not found or has no bom_data", order_id)
+                return False
+
+            by_pn: Dict[str, Dict] = {item["part_number"]: item for item in changed_items if item.get("part_number")}
+            if not by_pn:
+                return True  # nothing to do
+
+            def _apply(item_dict: Dict[str, Any]) -> Dict[str, Any]:
+                pn = item_dict.get("part_number")
+                if not pn or pn not in by_pn:
+                    return item_dict
+                edit = by_pn[pn]
+                catalog = dict(item_dict.get("catalog") or {})
+                if "description_he" in edit and edit["description_he"] is not None:
+                    catalog["description_he"] = edit["description_he"]
+                if "category" in edit and edit["category"] is not None:
+                    catalog["category"] = edit["category"]
+                if "part_alias" in edit and edit["part_alias"] is not None:
+                    catalog["part_alias"] = edit["part_alias"]
+                return {**item_dict, "catalog": catalog}
+
+            updated_groups = []
+            for g in order["bom_data"].get("groups", []):
+                updated_g = dict(g)
+                if g.get("main"):
+                    updated_g["main"] = _apply(g["main"])
+                updated_g["children"] = [_apply(c) for c in g.get("children", [])]
+                updated_groups.append(updated_g)
+
+            updated_bom_data = {**order["bom_data"], "groups": updated_groups}
+            await self.collection.update_one(
+                {"_id": ObjectId(order_id)},
+                {"$set": {"bom_data": updated_bom_data, "updated_at": datetime.now(timezone.utc)}},
+            )
+            logger.info("patch_bom_catalog_in_groups: patched %d parts in order %s", len(by_pn), order_id)
+            return True
+        except Exception as e:
+            logger.error("patch_bom_catalog_in_groups failed for order %s: %s", order_id, e, exc_info=True)
+            return False
+
     async def delete_order(self, order_id: str) -> bool:
         """Delete procurement order"""
         try:

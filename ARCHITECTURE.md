@@ -145,6 +145,7 @@ graph TB
 | `audit` | `/api/audit` | Audit log queries |
 | `admin_users` | `/api/admin/users` | User management (admin) |
 | `admin_groups` | `/api/admin/groups` | Group management (admin) |
+| `bom_templates` | `/api/bom-templates` | Admin-configurable BOM vendor format templates (CRUD, preview, validate) |
 | `users_search` | `/api/users` | User/group search (autocomplete) |
 
 ### Service Layer
@@ -161,7 +162,8 @@ graph TB
 | `ProcurementService` | Order lifecycle management, auto status transitions, file storage, BOM Analytics integration |
 | `AnalyticsService` | Dashboard KPIs, project distribution, activity stats, procurement aggregations |
 | `AuditService` | Centralized audit logging, query by user/action/resource, action counting |
-| `BomService` | Multi-vendor Excel parsing (NetApp/Dell/HPE/Cisco/Generic), AI enrichment |
+| `BomService` | Multi-vendor Excel parsing (NetApp/Dell/HPE/Cisco/Generic + dynamic templates), AI enrichment, vendors_seen tracking |
+| `BomTemplateService` | CRUD for admin-configurable BOM templates, Excel preview, template validation |
 | `BomAnalyticsService` | Historical price tracking, vendor spending, discount analysis, product chain comparison |
 | `S3Service` | File upload/download/delete (S3 or local fallback) |
 | `AITrainingService` | Classifier retraining from MongoDB + CSV data |
@@ -391,6 +393,7 @@ src/components/
 | `collections` | Personal collections | `owner_id` |
 | `collection_items` | Item-to-collection assignments | `collection_id`, `item_id` |
 | `procurement_orders` | Procurement orders with BOM data | `status`, `order_date`, `bom_vendor` |
+| `bom_templates` | Admin-configurable BOM parsing templates per vendor | `format_id` (unique), `vendor_name`, `is_active` |
 | `warehouse-audit-logs` | Unified audit trail | `action`, `actor`, `timestamp`, `target_resource` |
 | `bom_part_catalog` | Saved BOM parts for AI training | `part_number` |
 | `bom_analytics` | Historical pricing data | `part_number`, `order_id` |

@@ -17,6 +17,7 @@
 | **Audit** | `/api/audit` | 3 | logs list, create, user activity |
 | **Admin: Users** | `/api/admin/users` | 6 | CRUD, stats |
 | **Admin: Groups** | `/api/admin/groups` | 5 | CRUD |
+| **BOM Templates** | `/api/bom-templates` | 7 | template CRUD, preview-excel, validate (admin) |
 | **User Search** | `/api/users` | 2 | search users, search groups |
 | **System** | `/` | 2 | root info, health |
 | **Total** | | **72** | |
@@ -963,7 +964,64 @@ Delete file attachment.
 
 ---
 
-## 🔍 BOM Scanner Module (`/api/bom`)
+## � BOM Templates Module (`/api/bom-templates`)
+
+Admin-configurable BOM vendor format templates. Allows adding new vendor BOM formats without code changes.
+
+### GET `/api/bom-templates`
+
+List all BOM templates (optionally filter by `?active_only=true`).
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Any authenticated user |
+
+### GET `/api/bom-templates/{id}`
+
+Get a single BOM template by MongoDB `_id`.
+
+### POST `/api/bom-templates`
+
+Create a new BOM template. Requires admin role.
+
+| Property | Value |
+|----------|-------|
+| **Auth Required** | ✅ |
+| **Permission** | Admin/SuperAdmin |
+
+**Request Body:**
+```json
+{
+  "vendor_name": "Juniper",
+  "header_detection": { "keyword": "part number", "max_scan_rows": 25 },
+  "column_map": { "Part Number": "part_number", "Description": "product", "Qty": "ext_qty" },
+  "group_detection": { "mode": "all_rows", "config": {} },
+  "data_row_filter": null,
+  "color": "#00B4D8",
+  "logo": "🔧"
+}
+```
+
+### PUT `/api/bom-templates/{id}`
+
+Update an existing BOM template. Requires admin role.
+
+### DELETE `/api/bom-templates/{id}`
+
+Deactivate a BOM template (soft-delete). Requires admin role.
+
+### POST `/api/bom-templates/preview-excel`
+
+Upload an Excel file and return the first N rows for column mapping preview. `multipart/form-data` with `file` field and optional `max_rows` (default 50).
+
+### POST `/api/bom-templates/validate`
+
+Validate a template config against an uploaded Excel file. `multipart/form-data` with `file` and `config` (JSON string) fields.
+
+---
+
+## �🔍 BOM Scanner Module (`/api/bom`)
 
 ### POST `/api/bom/scan`
 
@@ -984,6 +1042,7 @@ Scan and parse a BOM Excel file. Supports multiple vendor formats. AI classifier
 | `hpe_quote` | HPE |
 | `cisco_quote` | Cisco |
 | `generic_first_col` | Generic (any vendor) |
+| *dynamic* | Any admin-configured template from `/api/bom-templates` |
 
 **Response (200):**
 ```json

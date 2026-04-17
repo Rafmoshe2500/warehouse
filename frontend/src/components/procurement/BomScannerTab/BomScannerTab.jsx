@@ -1,63 +1,36 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import UploadAnimation from '../../common/UploadAnimation/UploadAnimation';
 import BomGroupCard from './BomGroupCard';
 import UnknownPartsModal from './UnknownPartsModal';
 import bomService from '../../../api/services/bomService';
 import { useAuth } from '../../../context/AuthContext';
+import useBomTemplates from '../../../hooks/useBomTemplates';
 import { FiUploadCloud, FiRefreshCw, FiChevronRight, FiCpu } from 'react-icons/fi';
 import './BomScannerTab.css';
 
-// ── Vendor Registry ────────────────────────────────────────────────────────────
-// To add a new vendor, just add an entry here.
-const VENDORS = [
-  {
-    id: 'netapp',
-    name: 'NetApp',
-    description: 'Pricing Template',
-    logo: '🟣',
-    color: '#a855f7',
-    bg: 'rgba(168,85,247,0.10)',
-    border: 'rgba(168,85,247,0.30)',
-    format: 'netapp_pricing_template',
-    accept: '.xlsx,.xls',
-  },
-  {
-    id: 'hpe',
-    name: 'HPE',
-    description: 'Quote Summary',
-    logo: '🟢',
-    color: '#22c55e',
-    bg: 'rgba(34,197,94,0.10)',
-    border: 'rgba(34,197,94,0.30)',
-    format: 'hpe_quote',
-    accept: '.xlsx,.xls',
-  },
-  {
-    id: 'cisco',
-    name: 'Cisco',
-    description: 'Quote Summary',
-    logo: '🟠',
-    color: '#f97316',
-    bg: 'rgba(249,115,22,0.10)',
-    border: 'rgba(249,115,22,0.30)',
-    format: 'cisco_quote',
-    accept: '.xlsx,.xls',
-  },
-  {
-    id: 'dell',
-    name: 'Dell',
-    description: 'Quote Summary',
-    logo: '🔵',
-    color: '#3b82f6',
-    bg: 'rgba(59,130,246,0.10)',
-    border: 'rgba(59,130,246,0.30)',
-    format: 'dell_quote',
-    accept: '.xlsx,.xls',
-  },
+// ── Color palette for vendor cards ─────────────────────────────────────────────
+const PALETTES = [
+  { logo: '🟣', color: '#a855f7', bg: 'rgba(168,85,247,0.10)', border: 'rgba(168,85,247,0.30)' },
+  { logo: '🟢', color: '#22c55e', bg: 'rgba(34,197,94,0.10)',  border: 'rgba(34,197,94,0.30)' },
+  { logo: '🟠', color: '#f97316', bg: 'rgba(249,115,22,0.10)', border: 'rgba(249,115,22,0.30)' },
+  { logo: '🔵', color: '#3b82f6', bg: 'rgba(59,130,246,0.10)', border: 'rgba(59,130,246,0.30)' },
+  { logo: '🟡', color: '#eab308', bg: 'rgba(234,179,8,0.10)',  border: 'rgba(234,179,8,0.30)' },
+  { logo: '🔴', color: '#ef4444', bg: 'rgba(239,68,68,0.10)',  border: 'rgba(239,68,68,0.30)' },
 ];
 
 // ── BomScannerTab ──────────────────────────────────────────────────────────────
 const BomScannerTab = () => {
+  const { templates } = useBomTemplates();
+
+  // Build vendor list dynamically from BOM templates
+  const VENDORS = useMemo(() => templates.map((t, i) => ({
+    id: t.vendor_name.toLowerCase(),
+    name: t.vendor_name,
+    description: t.format_id,
+    ...PALETTES[i % PALETTES.length],
+    format: t.format_id,
+    accept: '.xlsx,.xls',
+  })), [templates]);
   // phase: 'select' | 'upload' | 'scanning' | 'resolve' | 'results' | 'error'
   const [phase, setPhase] = useState('select');
   const [selectedVendor, setSelectedVendor] = useState(null);

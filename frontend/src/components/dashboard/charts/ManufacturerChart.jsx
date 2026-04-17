@@ -72,4 +72,4 @@ const ManufacturerChart = ({ data }) => {
     );
 };
 
-export default ManufacturerChart;
+export default React.memo(ManufacturerChart);

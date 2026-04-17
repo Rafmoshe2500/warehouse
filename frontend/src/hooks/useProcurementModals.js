@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 /**
  * Hook for managing modal states in ProcurementPage
@@ -32,69 +32,75 @@ export const useProcurementModals = () => {
   const [bomPrescanData, setBomPrescanData] = useState(null);
 
   // Edit/Create Handlers
-  const openCreateModal = () => {
+  const openCreateModal = useCallback(() => {
     setEditingOrder(null);
     setIsOrderTypeModalOpen(true);
-  };
+  }, []);
 
-  const openEditModal = (order) => {
+  const openEditModal = useCallback((order) => {
     setEditingOrder(order);
     setIsEditModalOpen(true);
-  };
+  }, []);
 
-  const closeEditModal = () => {
+  const closeEditModal = useCallback(() => {
     setIsEditModalOpen(false);
     setEditingOrder(null);
     setNewOrderType(null);
     setBomPrescanData(null);
-  };
+  }, []);
 
   // Delete Handlers
-  const openDeleteModal = (order) => {
+  const openDeleteModal = useCallback((order) => {
     setOrderToDelete(order);
     setIsDeleteModalOpen(true);
-  };
+  }, []);
 
-  const closeDeleteModal = () => {
+  const closeDeleteModal = useCallback(() => {
     setIsDeleteModalOpen(false);
     setOrderToDelete(null);
-  };
+  }, []);
 
   // Files Handlers
-  const openFilesModal = (order) => {
+  const openFilesModal = useCallback((order) => {
     setSelectedOrderForFiles(order);
     setIsFilesModalOpen(true);
-  };
+  }, []);
 
-  const closeFilesModal = () => {
+  const closeFilesModal = useCallback(() => {
     setIsFilesModalOpen(false);
     setSelectedOrderForFiles(null);
-  };
+  }, []);
 
   // History Handlers
-  const openHistoryModal = (order) => {
+  const openHistoryModal = useCallback((order) => {
     setSelectedOrderForHistory(order);
     setIsHistoryModalOpen(true);
-  };
+  }, []);
 
-  const closeHistoryModal = () => {
+  const closeHistoryModal = useCallback(() => {
     setIsHistoryModalOpen(false);
     setSelectedOrderForHistory(null);
-  };
+  }, []);
 
   // BOM Preview Handlers
-  const openBomPreviewModal = (order) => {
+  const openBomPreviewModal = useCallback((order) => {
     setSelectedOrderForBom(order);
     setIsBomPreviewOpen(true);
-  };
+  }, []);
 
-  const closeBomPreviewModal = () => {
+  const closeBomPreviewModal = useCallback(() => {
     setIsBomPreviewOpen(false);
     setSelectedOrderForBom(null);
-  };
+  }, []);
+
+  const updateSelectedOrderBomGroups = useCallback((updatedGroups) => {
+    setSelectedOrderForBom(prev =>
+      prev ? { ...prev, bom_data: { ...prev.bom_data, groups: updatedGroups } } : prev
+    );
+  }, []);
 
   // Order Type Selection Handlers
-  const handleOrderTypeSelect = (type) => {
+  const handleOrderTypeSelect = useCallback((type) => {
     setNewOrderType(type);
     setIsOrderTypeModalOpen(false);
     if (type === 'bom') {
@@ -104,22 +110,22 @@ export const useProcurementModals = () => {
       setBomPrescanData(null);
       setIsEditModalOpen(true);
     }
-  };
+  }, []);
 
-  const closeOrderTypeModal = () => {
+  const closeOrderTypeModal = useCallback(() => {
     setIsOrderTypeModalOpen(false);
-  };
+  }, []);
 
   // BOM Prescan Handlers
-  const handleBomPrescanDone = (data) => {
+  const handleBomPrescanDone = useCallback((data) => {
     setIsBomPrescanOpen(false);
     setBomPrescanData(data);
     setIsEditModalOpen(true);
-  };
+  }, []);
 
-  const closeBomPrescanModal = () => {
+  const closeBomPrescanModal = useCallback(() => {
     setIsBomPrescanOpen(false);
-  };
+  }, []);
 
   return {
     // Edit/Create
@@ -154,6 +160,7 @@ export const useProcurementModals = () => {
     selectedOrderForBom,
     openBomPreviewModal,
     closeBomPreviewModal,
+    updateSelectedOrderBomGroups,
 
     // Order Type + BOM Prescan
     isOrderTypeModalOpen,

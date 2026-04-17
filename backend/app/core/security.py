@@ -145,6 +145,26 @@ _VENDOR_RW_PERMS = (
 )
 
 
+def _is_vendor_perm(perm: str, mode: str = "any") -> bool:
+    """Check if a permission string matches the vendor permission pattern.
+
+    mode: 'any' matches both :ro and :rw, 'ro' matches :ro only, 'rw' matches :rw only.
+    """
+    import re
+    if mode == "rw":
+        return bool(re.match(r"^procurement:[a-z0-9_-]+:rw$", perm))
+    elif mode == "ro":
+        return bool(re.match(r"^procurement:[a-z0-9_-]+:ro$", perm))
+    return bool(re.match(r"^procurement:[a-z0-9_-]+:(ro|rw)$", perm))
+
+
+def _extract_vendor_from_perm(perm: str) -> str | None:
+    """Extract vendor name from 'procurement:<vendor>:(ro|rw)' permission string."""
+    import re
+    m = re.match(r"^procurement:([a-z0-9_-]+):(ro|rw)$", perm)
+    return m.group(1).upper() if m else None
+
+
 def has_procurement_read_access(user: dict) -> bool:
     """True if user can read any procurement orders (global or vendor-specific)."""
     role = user.get("role")
@@ -153,8 +173,11 @@ def has_procurement_read_access(user: dict) -> bool:
     perms = user.get("permissions", [])
     if Permission.PROCUREMENT_RO in perms or Permission.PROCUREMENT_RW in perms or Permission.ADMIN in perms:
         return True
-    # Any vendor-level permission (ro OR rw) grants read access
-    return any(p in perms for p in _VENDOR_RO_PERMS + _VENDOR_RW_PERMS)
+    # Legacy enum-based vendor perms
+    if any(p in perms for p in _VENDOR_RO_PERMS + _VENDOR_RW_PERMS):
+        return True
+    # Dynamic string-based vendor perms (procurement:<vendor>:ro/rw)
+    return any(_is_vendor_perm(p) for p in perms)
 
 
 def has_procurement_write_access(user: dict) -> bool:
@@ -165,7 +188,11 @@ def has_procurement_write_access(user: dict) -> bool:
     perms = user.get("permissions", [])
     if Permission.PROCUREMENT_RW in perms or Permission.ADMIN in perms:
         return True
-    return any(p in perms for p in _VENDOR_RW_PERMS)
+    # Legacy enum-based vendor perms
+    if any(p in perms for p in _VENDOR_RW_PERMS):
+        return True
+    # Dynamic string-based vendor perms
+    return any(_is_vendor_perm(p, mode="rw") for p in perms)
 
 
 # Map: vendor name (lowercase, as stored in bom_vendor) -> (ro perm, rw perm)
@@ -191,13 +218,19 @@ def get_allowed_vendors(user: dict) -> list[str] | None:
     # Global permissions → no restriction
     if Permission.PROCUREMENT_RO in perms or Permission.PROCUREMENT_RW in perms or Permission.ADMIN in perms:
         return None
-    # Build list of allowed vendors from specific perms
-    allowed = [
-        vendor
-        for vendor, (ro, rw) in _VENDOR_PERM_MAP.items()
-        if ro in perms or rw in perms
-    ]
-    return allowed  # may be empty if user somehow has no vendor perms
+
+    allowed = set()
+    # Legacy enum-based perms
+    for vendor, (ro, rw) in _VENDOR_PERM_MAP.items():
+        if ro in perms or rw in perms:
+            allowed.add(vendor)
+    # Dynamic string-based perms (procurement:<vendor>:ro/rw)
+    for p in perms:
+        v = _extract_vendor_from_perm(p)
+        if v:
+            allowed.add(v)
+
+    return list(allowed)  # may be empty if user has no vendor perms
 
 
 # Price fields to strip from order-level and BOM data

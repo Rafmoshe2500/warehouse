@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FiEdit2, FiTrash2, FiClock, FiPaperclip, FiTruck, FiCheck, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import './ProcurementDataTable.css';
@@ -73,7 +73,7 @@ const ProcurementDataTable = ({
     }
   };
 
-  const sorted = [...(orders || [])].sort((a, b) => {
+  const sorted = useMemo(() => [...(orders || [])].sort((a, b) => {
     let va = a[sortKey];
     let vb = b[sortKey];
     if (sortKey === 'order_date') {
@@ -89,7 +89,7 @@ const ProcurementDataTable = ({
     if (va < vb) return sortDir === 'asc' ? -1 : 1;
     if (va > vb) return sortDir === 'asc' ? 1 : -1;
     return 0;
-  });
+  }), [orders, sortKey, sortDir]);
 
   const SortIcon = ({ col }) => {
     if (sortKey !== col) return null;
@@ -258,4 +258,4 @@ const ProcurementDataTable = ({
   );
 };
 
-export default ProcurementDataTable;
+export default React.memo(ProcurementDataTable);

@@ -201,6 +201,8 @@ class BomCatalogService:
                 update["category"] = category
             if item.get("excel_description") is not None:
                 update["excel_description"] = item["excel_description"]
+            if item.get("part_alias") is not None:
+                update["part_alias"] = item["part_alias"]
 
             await self.collection.update_one(
                 {"part_number": pn},

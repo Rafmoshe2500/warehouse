@@ -1,19 +1,33 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { FiUploadCloud, FiRefreshCw } from 'react-icons/fi';
 import UploadAnimation from '../common/UploadAnimation/UploadAnimation';
 import bomService from '../../api/services/bomService';
 import { useAuth } from '../../context/AuthContext';
+import useBomTemplates from '../../hooks/useBomTemplates';
 import './BomPrescanModal.css';
 
-const BOM_VENDORS = [
-  { id: 'NETAPP', label: 'NetApp', logo: '🟣', color: '#a855f7', format: 'netapp_pricing_template' },
-  { id: 'HPE',    label: 'HPE',    logo: '🟢', color: '#22c55e', format: 'hpe_quote'               },
-  { id: 'CISCO',  label: 'Cisco',  logo: '🟠', color: '#f97316', format: 'cisco_quote'             },
-  { id: 'DELL',   label: 'Dell',   logo: '🔵', color: '#3b82f6', format: 'dell_quote'              },
+// Color palette for vendor cards — cycles if more vendors than colors
+const VENDOR_PALETTES = [
+  { logo: '🟣', color: '#a855f7' },
+  { logo: '🟢', color: '#22c55e' },
+  { logo: '🟠', color: '#f97316' },
+  { logo: '🔵', color: '#3b82f6' },
+  { logo: '🟡', color: '#eab308' },
+  { logo: '🔴', color: '#ef4444' },
 ];
 
 const BomPrescanModal = ({ isOpen, onClose, onDone }) => {
   const { hasVendorAccess } = useAuth();
+  const { templates } = useBomTemplates();
+
+  // Build vendor list dynamically from templates
+  const BOM_VENDORS = useMemo(() => templates.map((t, i) => ({
+    id: t.vendor_name.toUpperCase(),
+    label: t.vendor_name,
+    logo: VENDOR_PALETTES[i % VENDOR_PALETTES.length].logo,
+    color: VENDOR_PALETTES[i % VENDOR_PALETTES.length].color,
+    format: t.format_id,
+  })), [templates]);
 
   // סנן רק ספקים שיש למשתמש הרשאת עריכה עלייהם
   const allowedVendors = BOM_VENDORS.filter(v => hasVendorAccess(v.id, 'rw'));

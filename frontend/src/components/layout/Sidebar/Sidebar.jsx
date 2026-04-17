@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../../context/AuthContext';
 import collectionsService from '../../../api/services/collectionsService';
 import navigationConfig from '../../../config/navigationConfig';
-import Logo from '../Logo/Logo';
 import './Sidebar.css';
 
 const Sidebar = ({ isCollapsed, onToggle }) => {
@@ -22,7 +21,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
   const { data: collections = [] } = useQuery({
     queryKey: ['collections'],
     queryFn: collectionsService.getCollections,
-    staleTime: 30_000,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Inject dynamic collection children into 'my-components' nav item
@@ -134,13 +133,6 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
       >
         {isCollapsed ? <FiChevronLeft size={16} /> : <FiChevronRight size={16} />}
       </button>
-
-      {/* Logo (shown only in collapsed mode as icon) */}
-      {isCollapsed && (
-        <div className="sidebar__logo">
-          <Logo variant="icon" size={28} />
-        </div>
-      )}
 
       {/* Navigation Items */}
       <nav className="sidebar__nav" data-testid="sidebar-nav">

@@ -51,4 +51,4 @@ const TargetSiteChart = ({ data }) => {
     );
 };
 
-export default TargetSiteChart;
+export default React.memo(TargetSiteChart);

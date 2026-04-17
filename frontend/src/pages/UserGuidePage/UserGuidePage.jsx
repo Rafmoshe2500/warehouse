@@ -671,6 +671,66 @@ const UserGuidePage = () => {
                 </div>
               </div>
 
+              <div className="guide-step">
+                <div className="step-number">5</div>
+                <div className="step-content">
+                  <h3>ניהול תבניות BOM — הוספת ספק חדש</h3>
+                  <p>
+                    עמוד <strong>"תבניות BOM"</strong> (תפריט ניהול ← תבניות BOM) מאפשר להגדיר פורמטים חדשים של קבצי BOM לכל ספק — ללא צורך בשינוי קוד.
+                    לחצו על <strong>"+ תבנית חדשה"</strong> ועקבו אחרי האשף בן 6 שלבים:
+                  </p>
+                  <ul className="feature-list">
+                    <li>
+                      <FiCheckCircle className="list-icon" />
+                      <strong>שלב 1 — פרטי ספק:</strong> הזינו את שם הספק (לדוגמה: <em>Juniper</em>).
+                      המזהה (slug) נוצר אוטומטית — ניתן לשנות אותו ידנית אם רוצים שם קצר יותר.
+                      <em> שימו לב: המזהה לא ניתן לשינוי לאחר השמירה.</em>
+                    </li>
+                    <li>
+                      <FiCheckCircle className="list-icon" />
+                      <strong>שלב 2 — זיהוי כותרת:</strong> פתחו את קובץ ה-Excel של הספק וחפשו את שורת הכותרת (הרוב בשורות 1–10).
+                      הזינו מילת מפתח שמופיעה בה — למשל <em>"part number"</em> או <em>"sku"</em>.
+                      הגדירו כמה שורות לסרוק (25 הוא ברירת המחדל; הגדילו אם הכותרת נמצאת מאוחר יותר).
+                    </li>
+                    <li>
+                      <FiCheckCircle className="list-icon" />
+                      <strong>שלב 3 — מיפוי עמודות:</strong> לכל כותרת עמודה ב-Excel בחרו את השדה הפנימי המתאים.
+                      <strong> חובה</strong> למפות לפחות עמודה אחת ל-<em>מק"ט (part_number)</em> — בלי זה לא ניתן להמשיך.
+                      מיפויים שכדאי להוסיף: תיאור מוצר, כמות, מחיר רשימה, מחיר נטו.
+                    </li>
+                    <li>
+                      <FiCheckCircle className="list-icon" />
+                      <strong>שלב 4 — זיהוי קבוצות:</strong> בחרו כיצד המערכת מזהה כותרת קבוצה בתוך ה-BOM:
+                      <ul style={{marginTop: '6px', marginRight: '16px'}}>
+                        <li><strong>צבע מילוי (עמודת מק"ט):</strong> השורה הראשית צבועה — כמו ב-NetApp.</li>
+                        <li><strong>צבע מילוי (כל תא):</strong> כל תא בשורה הראשית צבוע — כמו ב-Dell.</li>
+                        <li><strong>עומק מספר שורה:</strong> מספר השורה תואם לתבנית (לדוגמה "1.0") — כמו ב-Cisco.</li>
+                        <li><strong>כל שורה = קבוצה:</strong> אין היררכיה, כל שורה היא פריט עצמאי — כמו ב-HPE.</li>
+                        <li><strong>שינוי ערך + כמות = 1:</strong> כאשר הערך הראשי משתנה וכמות = 1.</li>
+                      </ul>
+                    </li>
+                    <li>
+                      <FiCheckCircle className="list-icon" />
+                      <strong>שלב 5 — סינון שורות (אופציונלי):</strong> אם הקובץ מכיל שורות ריקות, סיכומים או כותרות ביניים —
+                      הפעילו סינון והגדירו ביטוי רגולרי (Regex) שמתאר שורת נתון תקינה.
+                      לדוגמה: <code>^\d+[\.\d]*$</code> על עמודת line_number ישמור רק שורות עם מספר.
+                    </li>
+                    <li>
+                      <FiCheckCircle className="list-icon" />
+                      <strong>שלב 6 — סיכום ושמירה:</strong> בדקו את כל ההגדרות בסיכום ולחצו <em>"שמור תבנית"</em>.
+                      הספק יופיע מיד בסורק ה-BOM ובמסך ניהול ההרשאות.
+                    </li>
+                  </ul>
+                  <div className="tip-box" style={{marginTop: '14px'}}>
+                    <div className="tip-icon"><FiAlertCircle /></div>
+                    <div className="tip-content">
+                      <h4>💡 טיפ: איך לדעת מה להזין?</h4>
+                      <p>פתחו את קובץ ה-Excel בצד שני של המסך בזמן מילוי האשף. לשלב 2 — חפשו את הכותרת בשורה הראשית. לשלב 3 — כתבו את הכותרות בדיוק כפי שהן מופיעות בגיליון (לא רגיש לרישיות). לשלב 4 — בדקו אם יש שורות שצבועות אחרת — אם כן, השתמשו במצב צבע מילוי.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="tip-box highlight">
                 <div className="tip-icon"><FiAlertCircle /></div>
                 <div className="tip-content">

@@ -1,5 +1,5 @@
-﻿import React, { useState } from 'react';
-import { FiEdit2, FiTrash2, FiClock, FiPaperclip, FiTruck, FiCheck } from 'react-icons/fi';
+﻿import React, { useState, memo } from 'react';
+import { FiEdit2, FiTrash2, FiClock, FiPaperclip, FiTruck, FiCheck, FiFileText } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import './ProcurementCards.css';
 
@@ -103,7 +103,7 @@ const MiniPipeline = ({ order }) => {
 };
 
 // -- Order Card --
-const OrderCard = ({
+const OrderCard = memo(({
   order,
   onEdit, onDelete, onManageFiles, onHistory, onViewBom,
   onMarkAsOrdered, onMarkAsReceived,
@@ -167,7 +167,7 @@ const OrderCard = ({
           {order.emf_number && <span className="pc-badge-sm" title="EMF התקבל">EMF</span>}
 
           {order.bom_data && onViewBom && (
-            <button className="pc-btn pc-btn--bom" title="צפה ב-BOM" onClick={() => onViewBom(order)}>BOM</button>
+            <button className="pc-btn pc-btn--bom" title="צפה ב-BOM" onClick={() => onViewBom(order)}><FiFileText /> </button>
           )}
           <button className="pc-btn" title="קבצים" onClick={() => onManageFiles(order)}>
             <FiPaperclip size={13} />
@@ -205,7 +205,7 @@ const OrderCard = ({
       </div>
     </div>
   );
-};
+});
 
 // -- Main Cards Component --
 const ProcurementCards = ({
@@ -247,4 +247,4 @@ const ProcurementCards = ({
   );
 };
 
-export default ProcurementCards;
+export default memo(ProcurementCards);

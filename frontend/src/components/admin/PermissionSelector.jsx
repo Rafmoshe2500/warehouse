@@ -1,13 +1,6 @@
 import React from 'react';
+import useBomTemplates from '../../hooks/useBomTemplates';
 import './PermissionSelector.css';
-
-const VENDORS = [
-  { id: 'dell',      label: 'Dell'      },
-  { id: 'hpe',       label: 'HPE'       },
-  { id: 'netapp',    label: 'NetApp'    },
-  { id: 'cisco',     label: 'Cisco'     },
-  { id: 'commvault', label: 'CommVault' },
-];
 
 /**
  * PermissionSelector
@@ -20,6 +13,11 @@ const VENDORS = [
  *  - מערכת:   admin
  */
 const PermissionSelector = ({ selectedPermissions = [], onChange }) => {
+  const { templates } = useBomTemplates();
+
+  // Build VENDORS dynamically from BOM templates (hook provides fallback if API unavailable)
+  const VENDORS = templates.map(t => ({ id: t.vendor_name.toLowerCase(), label: t.vendor_name }));
+
   const has = (id) => selectedPermissions.includes(id);
 
   const toggle = (id) => {

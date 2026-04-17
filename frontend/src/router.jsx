@@ -17,6 +17,7 @@ const AccessControlPage = lazy(() => import('./pages/AdminPanel/AccessControlPag
 const UserManagement = lazy(() => import('./pages/AdminPanel/UserManagement')); // Kept for legacy or direct link safety
 const AuditLogs = lazy(() => import('./pages/AdminPanel/AuditLogs'));
 const ProcurementPage = lazy(() => import('./pages/ProcurementPage/ProcurementPage'));
+const BomTemplatesPage = lazy(() => import('./pages/BomTemplatesPage/BomTemplatesPage'));
 
 // My Components
 const MyComponentsDashboard = lazy(() => import('./pages/MyComponents/MyComponentsDashboard'));
@@ -33,10 +34,6 @@ const GuideAuditLogs = lazy(() => import('./pages/UserGuidePage/GuideAuditLogs')
 const GuideAdmin = lazy(() => import('./pages/UserGuidePage/GuideAdmin'));
 const GuideProcurement = lazy(() => import('./pages/UserGuidePage/GuideProcurement'));
 const GuideTips = lazy(() => import('./pages/UserGuidePage/GuideTips'));
-// Deep-dive interactive guides
-const InventoryTableGuide = lazy(() => import('./pages/UserGuidePage/InventoryTableGuide'));
-const MyCollectionsGuide = lazy(() => import('./pages/UserGuidePage/MyCollectionsGuide'));
-const ProcurementGuide = lazy(() => import('./pages/UserGuidePage/ProcurementGuide'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -198,6 +195,14 @@ const PrivateRoute = ({ children }) => {
             }
           />
           <Route
+            path="/admin/bom-templates"
+            element={
+              <AdminRoute>
+                <BomTemplatesPage />
+              </AdminRoute>
+            }
+          />
+          <Route
             path="/procurement"
             element={
               <ProcurementRoute>
@@ -290,31 +295,6 @@ const PrivateRoute = ({ children }) => {
             element={
               <PrivateRoute>
                 <GuideTips />
-              </PrivateRoute>
-            }
-          />
-          {/* Deep-dive interactive guides */}
-          <Route
-            path="/guide/inventory-table"
-            element={
-              <PrivateRoute>
-                <InventoryTableGuide />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/guide/collections-deep"
-            element={
-              <PrivateRoute>
-                <MyCollectionsGuide />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/guide/procurement-deep"
-            element={
-              <PrivateRoute>
-                <ProcurementGuide />
               </PrivateRoute>
             }
           />

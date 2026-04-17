@@ -1,0 +1,293 @@
+/* ── BomTemplateWizard.css ────────────────────────────────────────────── */
+
+/* ── Tooltip ─────────────────────────────────────────────────────────── */
+.wiz-tip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.wiz-tip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-primary, #6366f1);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: default;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.wiz-tip-bubble {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 50%;
+  transform: translateX(50%);
+  background: var(--bg-primary, #1e1e2e);
+  color: var(--text-primary, #cdd6f4);
+  border: 1px solid var(--border-color, #313244);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  width: 260px;
+  white-space: pre-wrap;
+  z-index: 9999;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  direction: rtl;
+  text-align: right;
+  pointer-events: none;
+}
+
+.wiz-tip-wrap:hover .wiz-tip-bubble {
+  display: block;
+}
+
+/* ── Step description banner ─────────────────────────────────────────── */
+.bom-wiz-step-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  background: var(--bg-tertiary, rgba(99,102,241,0.06));
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 14px;
+  line-height: 1.6;
+  direction: rtl;
+}
+
+/* ── Group mode description ───────────────────────────────────────────── */
+.bom-wiz-mode-desc {
+  font-size: 0.83rem;
+  color: var(--accent-primary, #6366f1);
+  background: rgba(99,102,241,0.07);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+/* ── col-label-wrap (input + tooltip inline) ─────────────────────────── */
+.bom-wiz-col-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.bom-wiz-col-label-wrap input,
+.bom-wiz-col-label-wrap select {
+  flex: 1;
+}
+
+.bom-wiz-page {
+  direction: rtl;
+  padding: 24px;
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+}
+
+.bom-wiz-card {
+  width: 100%;
+  max-width: 720px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── step indicator ──────────────────────────────────────────────────── */
+
+.bom-wiz-steps {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.bom-wiz-step-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+  flex: 1;
+}
+
+.bom-wiz-step-dot.done {
+  cursor: pointer;
+}
+
+.bom-wiz-dot-num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 2px solid var(--border-color);
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.bom-wiz-step-dot.active .bom-wiz-dot-num {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary);
+  color: #fff;
+}
+
+.bom-wiz-step-dot.done .bom-wiz-dot-num {
+  border-color: var(--accent-success);
+  color: var(--accent-success);
+}
+
+.bom-wiz-dot-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.bom-wiz-step-dot.active .bom-wiz-dot-label {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ── step content ────────────────────────────────────────────────────── */
+
+.bom-wiz-body {
+  flex: 1;
+}
+
+.bom-wiz-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bom-wiz-step-content label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.bom-wiz-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.bom-wiz-col-error {
+  font-size: 0.85rem;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 8px;
+}
+
+.bom-wiz-slug-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bom-wiz-slug-row input {
+  flex: 1;
+}
+
+/* ── column map rows ─────────────────────────────────────────────────── */
+
+.bom-wiz-col-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bom-wiz-col-row input {
+  flex: 1;
+}
+
+.bom-wiz-select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  min-width: 160px;
+}
+
+.bom-wiz-select.full {
+  width: 100%;
+}
+
+.bom-wiz-remove-btn {
+  background: none;
+  border: none;
+  color: var(--accent-danger);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.bom-wiz-remove-btn:hover {
+  background: rgba(var(--accent-danger-rgb, 220, 53, 69), 0.1);
+}
+
+/* ── checkbox ────────────────────────────────────────────────────────── */
+
+.bom-wiz-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.bom-wiz-checkbox-label input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── review table ────────────────────────────────────────────────────── */
+
+.bom-wiz-review-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bom-wiz-review-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bom-wiz-review-table td:first-child {
+  font-weight: 600;
+  color: var(--text-muted);
+  width: 140px;
+}
+
+/* ── footer ──────────────────────────────────────────────────────────── */
+
+.bom-wiz-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}

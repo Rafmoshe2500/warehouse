@@ -80,4 +80,4 @@ const LocationChart = ({ data }) => {
     );
 };
 
-export default LocationChart;
+export default React.memo(LocationChart);

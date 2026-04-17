@@ -1,16 +1,34 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { FiLogOut, FiUser, FiSun, FiMoon, FiLayers, FiSearch, FiChevronDown } from 'react-icons/fi';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
 import ThemeSelector from '../ThemeSelector/ThemeSelector';
 import Logo from '../Logo/Logo';
+import navigationConfig from '../../../config/navigationConfig';
 import './TopBar.css';
+
+const getPageTitle = (pathname) => {
+  for (const item of navigationConfig) {
+    if (item.children) {
+      for (const child of item.children) {
+        if (child.path && pathname === child.path) return child.label;
+      }
+    }
+    if (item.path === pathname) return item.label;
+  }
+  for (const item of navigationConfig) {
+    if (item.path !== '/' && pathname.startsWith(item.path)) return item.label;
+  }
+  return '';
+};
 
 const TopBar = ({ onOpenSearch }) => {
   const { user, logout } = useAuth();
   const { mode, toggleMode } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+  const pageTitle = getPageTitle(location.pathname);
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
@@ -55,6 +73,13 @@ const TopBar = ({ onOpenSearch }) => {
         <NavLink to="/dashboard" className="topbar__logo-link">
           <Logo variant="full" size={28} />
         </NavLink>
+
+        {/* Page Title */}
+        {pageTitle && (
+          <div className="topbar__page-title" aria-label="עמוד נוכחי">
+            <span className="topbar__page-title-text">{pageTitle}</span>
+          </div>
+        )}
 
         {/* Right Actions */}
         <div className="topbar__actions">

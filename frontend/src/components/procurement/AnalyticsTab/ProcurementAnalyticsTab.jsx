@@ -80,14 +80,23 @@ const ComparisonPanel = ({ title, Icon, itemType, accentColor, onSeed, seeding, 
     return Object.values(byDate).sort((a, b) => a._ts - b._ts);
   }, [chartData, aggregatedChartRows, chainChartRows]);
 
-  // Debounced autocomplete
+  // Debounced autocomplete with in-memory cache (avoids redundant requests for already-typed queries)
+  const autocompleteCache = useRef(new Map());
   useEffect(() => {
     if (searchPart.trim().length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
+    const cacheKey = `${searchPart.trim().toLowerCase()}:${itemType}`;
+    if (autocompleteCache.current.has(cacheKey)) {
+      setSuggestions(autocompleteCache.current.get(cacheKey));
+      setShowSuggestions(true);
+      return;
+    }
     const t = setTimeout(async () => {
       setIsLoadingSugg(true);
       try {
         const res = await bomAnalyticsService.searchParts(searchPart, itemType);
-        setSuggestions(res.parts || []);
+        const parts = res.parts || [];
+        autocompleteCache.current.set(cacheKey, parts);
+        setSuggestions(parts);
         setShowSuggestions(true);
       } catch { /* ignore */ } finally { setIsLoadingSugg(false); }
     }, 200);

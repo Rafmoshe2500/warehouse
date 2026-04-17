@@ -34,13 +34,6 @@ test.describe('Dashboard - Charts', () => {
     await expect(dashboard.chartProjects).not.toBeVisible({ timeout: 3000 }).catch(() => {});
   });
 
-  test('should display smart alerts panel for all users', async ({ page }) => {
-    const dashboard = new DashboardPageObject(page);
-    await dashboard.goto();
-
-    await expect(dashboard.smartAlerts).toBeVisible();
-  });
-
   test('should search item by catalog number in ItemSearchChart', async ({ page }) => {
     const dashboard = new DashboardPageObject(page);
     await dashboard.goto();

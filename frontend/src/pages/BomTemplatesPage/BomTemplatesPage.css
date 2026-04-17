@@ -1,0 +1,245 @@
+/* ── BomTemplatesPage.css ─────────────────────────────────────────────── */
+/* RTL two-panel admin layout, consistent with UserManagement.css        */
+
+.bom-tpl-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.bom-tpl-page {
+  direction: rtl;
+  padding: 24px;
+  min-height: 80vh;
+}
+
+.bom-tpl-header {
+  margin-bottom: 24px;
+}
+
+.bom-tpl-header h1 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+}
+
+.bom-tpl-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ── panels ────────────────────────────────────────────────────────────── */
+
+.bom-tpl-panels {
+  display: flex;
+  gap: 20px;
+  min-height: 65vh;
+}
+
+.bom-tpl-list-panel {
+  width: 300px;
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.bom-tpl-list-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.bom-tpl-list {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bom-tpl-empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 32px 0;
+  font-size: 0.9rem;
+}
+
+/* ── card ──────────────────────────────────────────────────────────────── */
+
+.bom-tpl-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+}
+
+.bom-tpl-card:hover {
+  background: var(--bg-tertiary);
+}
+
+.bom-tpl-card.active {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-primary);
+}
+
+.bom-tpl-card-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.bom-tpl-card-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.bom-tpl-card-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bom-tpl-card-id {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.bom-tpl-badge {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-right: auto;
+  white-space: nowrap;
+}
+
+.bom-tpl-badge.builtin {
+  background: var(--accent-primary);
+  color: #fff;
+}
+
+/* ── detail panel ─────────────────────────────────────────────────────── */
+
+.bom-tpl-detail-panel {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.bom-tpl-detail-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: var(--text-muted);
+  gap: 12px;
+}
+
+.bom-tpl-detail-icon {
+  font-size: 2.5rem;
+}
+
+.bom-tpl-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.bom-tpl-detail-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.bom-tpl-detail-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.bom-tpl-detail-section {
+  margin-bottom: 20px;
+}
+
+.bom-tpl-detail-section h3 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bom-tpl-detail-section code {
+  background: var(--bg-tertiary);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+/* ── column map table ─────────────────────────────────────────────────── */
+
+.bom-tpl-colmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.bom-tpl-colmap-table th,
+.bom-tpl-colmap-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: right;
+}
+
+.bom-tpl-colmap-table th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ── color swatches ──────────────────────────────────────────────────── */
+
+.bom-tpl-color-swatches {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.bom-tpl-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+/* ── error ────────────────────────────────────────────────────────────── */
+
+.bom-tpl-error {
+  color: var(--accent-danger);
+  margin-top: 16px;
+  text-align: center;
+}
