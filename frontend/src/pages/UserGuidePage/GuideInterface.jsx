@@ -23,7 +23,7 @@ import HotspotMarker from '../../components/guide/HotspotMarker/HotspotMarker';
 import QuizCard from '../../components/guide/QuizCard/QuizCard';
 import ActionMapCard from '../../components/guide/ActionMapCard/ActionMapCard';
 import GuidePageLayout from './GuidePageLayout';
-import './InventoryTableGuide.css';
+import './GuideInterface.css';
 
 const DEMO_ITEMS = [
   { id: '1', catalog_number: 'CAT-1024', serial: 'SN-88721', description: 'מתאם רשת אלחוטי', manufacturer: 'Cisco', location: 'A-03-12', current_stock: 15, target_site: 'אתר צפון', purpose: 'תקשורת', notes: '', collections: 2, allocations: ['פרויקט אלפא'] },
@@ -88,7 +88,7 @@ const GuideInterface = () => {
         </div>
 
         <div className="guide-step">
-          <div className="step-number">03א</div>
+          <div className="step-number">04</div>
           <div className="step-content">
             <h3>תפריט שורה מהיר ⋯ (חדש!)</h3>
             <p>כל שורה בטבלת המלאי מציגה כפתור <strong>⋯</strong> בעמודה הימנית — גלויה בריחוף מעל השורה.</p>
@@ -102,7 +102,7 @@ const GuideInterface = () => {
         </div>
 
         <div className="guide-step">
-          <div className="step-number">04</div>
+          <div className="step-number">05</div>
           <div className="step-content">
             <h3>מצבי תצוגה (חדש!)</h3>
             <ul className="feature-list">
@@ -115,7 +115,7 @@ const GuideInterface = () => {
         </div>
 
         <div className="guide-step">
-          <div className="step-number">05</div>
+          <div className="step-number">06</div>
           <div className="step-content">
             <h3>פאנל פרטי פריט (חדש!)</h3>
             <p>לחיצה על שורה בטבלה פותחת <strong>פאנל צד</strong> עם כל פרטי הפריט — ללא צורך לגלול הצידה. <strong>טיפ:</strong> Ctrl+Click ו-Shift+Click עדיין עובדים לסימון מרובה.</p>
@@ -123,7 +123,7 @@ const GuideInterface = () => {
         </div>
 
         <div className="guide-step">
-          <div className="step-number">06</div>
+          <div className="step-number">07</div>
           <div className="step-content">
             <h3>רצועת פילטרים פעילים (חדש!)</h3>
             <p>כשמסננים, מופיעה רצועה עם <strong>צ'יפים</strong> של כל הפילטרים הפעילים. לחצו X על כל צ'יפ להסרה, או "נקה הכל" לאיפוס.</p>

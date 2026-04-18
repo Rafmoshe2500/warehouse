@@ -121,3 +121,49 @@ class TestAuthService:
         
         # Verify audit log called
         auth_service.auth_auditor.log_logout.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_login_user_not_found_raises_unauthorized(self, auth_service, mock_user_service, mock_request):
+        """Test login raises Unauthorized when user does not exist."""
+        mock_user_service.get_user_by_username.return_value = None
+
+        login_data = LoginRequest(username="ghost", password="irrelevant")
+        with pytest.raises(UnauthorizedException):
+            await auth_service.login(login_data, MagicMock(), mock_request)
+
+    @pytest.mark.asyncio
+    async def test_login_audit_failure_does_not_break_login(self, auth_service, mock_user_service, mock_request):
+        """Audit log failure should be swallowed — login must still succeed."""
+        from app.core.password import hash_password
+
+        mock_user_service.get_user_by_username.return_value = {
+            "id": "u1",
+            "username": "tester",
+            "password_hash": hash_password("secret"),
+            "role": "user",
+            "permissions": [],
+            "is_active": True,
+            "user_type": "local",
+        }
+        # Make auditor raise
+        auth_service.auth_auditor.log_login.side_effect = Exception("Audit DB is down")
+
+        mock_response = MagicMock(spec=Response)
+        login_data = LoginRequest(username="tester", password="secret")
+
+        # Must NOT raise — audit failure is swallowed
+        result = await auth_service.login(login_data, mock_response, mock_request)
+        assert "access_token" in result
+
+    @pytest.mark.asyncio
+    async def test_logout_audit_failure_does_not_raise(self, auth_service, mock_request):
+        """Audit log failure during logout must be swallowed."""
+        auth_service.auth_auditor.log_logout.side_effect = Exception("Audit DB is down")
+
+        mock_response = MagicMock(spec=Response)
+        user = {"username": "tester", "role": "user"}
+
+        # Must NOT raise
+        result = await auth_service.logout(mock_response, user, mock_request)
+        mock_response.delete_cookie.assert_called_once_with(key="access_token")
+        assert result is not None

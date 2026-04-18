@@ -225,7 +225,7 @@ class ProcurementRepository:
         if not order:
             return {}
         
-        order["id"] = str(order.pop("_id"))
+        order["id"] = str(order.pop("_id", None) or "")
         return order
 
     async def get_monthly_summary(self) -> Dict[str, Any]:

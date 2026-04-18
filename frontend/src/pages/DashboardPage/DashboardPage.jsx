@@ -157,7 +157,7 @@ const DashboardPage = () => {
                                 </div>
                             </div>
 
-                            <div className="stat-tile amber stat-tile--clickable" data-testid="stat-non-serial" onClick={() => navigate('/inventory', { state: { tab: 'stale' } })}>
+                            <div className="stat-tile amber stat-tile--clickable" data-testid="stat-non-serial" onClick={() => navigate('/inventory?tab=stale')}>
                                 <div className="stat-icon-bg"><FiClock /></div>
                                 <div className="stat-content">
                                     <h3>ציוד נלווה</h3>

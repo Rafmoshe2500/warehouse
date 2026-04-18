@@ -73,7 +73,7 @@ const CreateCollectionDialog = ({ isOpen, onClose }) => {
             <Input
               label="שם האוסף"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => { setName(e.target.value); setError(''); }}
               placeholder="לדוגמה: רכיבי אלקטרוניקה"
               required
               autoFocus

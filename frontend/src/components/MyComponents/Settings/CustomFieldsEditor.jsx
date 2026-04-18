@@ -41,7 +41,7 @@ const CustomFieldsEditor = ({ collection, canEdit }) => {
     setNewField(prev => ({
       ...prev,
       label: val,
-      key: prev.key || generateKey(val) // Auto-generate key if empty
+      key: generateKey(val)
     }));
   };
 

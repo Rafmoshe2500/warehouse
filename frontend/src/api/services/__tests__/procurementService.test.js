@@ -119,7 +119,7 @@ describe('procurementService', () => {
 
       const result = await procurementService.deleteOrder('123');
 
-      expect(apiClient.delete).toHaveBeenCalledWith('/procurement/orders/123');
+      expect(apiClient.delete).toHaveBeenCalledWith('/procurement/orders/123', undefined);
       expect(result.message).toContain('נמחקה');
     });
 

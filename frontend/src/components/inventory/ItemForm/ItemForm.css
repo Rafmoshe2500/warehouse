@@ -29,6 +29,23 @@
   grid-column: 1 / -1;
 }
 
+.item-form__select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  direction: rtl;
+}
+
+.item-form__select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 .form-actions {
   display: flex;
   gap: 1rem;

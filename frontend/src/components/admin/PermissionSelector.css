@@ -42,6 +42,18 @@
   user-select: none;
 }
 
+.ps-vendor-loading,
+.ps-vendor-error {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.ps-vendor-error {
+  color: var(--accent-warning, #f59e0b);
+  cursor: help;
+}
+
 /* ─── base chip ─── */
 .ps-chip {
   display: inline-flex;

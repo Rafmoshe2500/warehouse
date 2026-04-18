@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../../common/Modal/Modal';
 import Input from '../../common/Input/Input';
 import Button from '../../common/Button/Button';
@@ -12,6 +12,16 @@ const BulkEditModal = ({ isOpen, onClose, onConfirm, selectedCount }) => {
     target_site: { enabled: false, value: '' }
   });
 
+  // Reset state whenever modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setUpdates({
+        purpose: { enabled: false, value: '' },
+        notes: { enabled: false, value: '' },
+        target_site: { enabled: false, value: '' }
+      });
+    }
+  }, [isOpen]);
   const handleToggle = (field) => {
     setUpdates(prev => ({
       ...prev,

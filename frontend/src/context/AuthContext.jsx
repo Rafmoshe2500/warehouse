@@ -6,19 +6,23 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const { 
     user, 
-    isAuthenticated, 
     isLoading, 
     login, 
     logout 
   } = useAuthQuery();
 
-  const isAdmin = user?.role === 'admin' || user?.role === 'superadmin' || user?.permissions?.includes('admin');
+  const isAuthenticated = !!user;
+
+  const isAdmin = !!(user?.role === 'admin' || user?.role === 'superadmin' || user?.permissions?.includes('admin'));
   const isSuperAdmin = user?.role === 'superadmin';
 
   const hasPermission = useCallback((permission) => {
     // 1. SuperAdmin / Admin has full access
     if (isSuperAdmin || isAdmin) return true;
-    
+
+    // Guard: no permission specified → deny
+    if (!permission) return false;
+
     // 2. Exact match
     if (user?.permissions?.includes(permission)) return true;
 

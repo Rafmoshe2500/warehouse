@@ -5,7 +5,7 @@ from app.schemas.user import UserCreate, UserUpdate, UserResponse, UsersListResp
 from app.services.user_service import UserService
 from app.core.security import get_current_user, require_admin
 
-# All routes in this router require admin permissions
+# All routes in this router require admin permissions — enforced at router level
 router = APIRouter(
     prefix="/admin",
     tags=["Admin"],
@@ -19,7 +19,7 @@ from app.dependencies import get_user_service
 
 @router.get("/users", response_model=UsersListResponse)
 async def get_users(
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service)
 ):
     """Get all users (admin only)"""
@@ -30,11 +30,10 @@ async def get_users(
 async def create_user(
     user_data: UserCreate,
     request: Request,
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service)
 ):
     """Create new user (admin only)"""
-    # Fallback: use 'sub' if 'username' not in token (for old tokens)
     username = current_user.get("username") or current_user.get("sub")
     role = current_user.get("role", "user")
     
@@ -50,7 +49,7 @@ async def create_user(
 @router.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(
     user_id: str,
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service)
 ):
     """Get user by ID (admin only)"""
@@ -62,11 +61,10 @@ async def update_user(
     user_id: str,
     update_data: UserUpdate,
     request: Request,
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service)
 ):
     """Update user (admin only)"""
-    # Fallback: use 'sub' if 'username' not in token (for old tokens)
     username = current_user.get("username") or current_user.get("sub")
     role = current_user.get("role", "user")
     
@@ -85,11 +83,10 @@ async def delete_user(
     user_id: str,
     delete_data: DeleteRequest,
     request: Request,
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service)
 ):
     """Delete user (admin only)"""
-    # Fallback: use 'sub' if 'username' not in token (for old tokens)
     username = current_user.get("username") or current_user.get("sub")
     role = current_user.get("role", "user")
     
@@ -105,7 +102,7 @@ async def delete_user(
 
 @router.get("/stats")
 async def get_user_stats(
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service)
 ):
     """Get user statistics for admin dashboard"""

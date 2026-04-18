@@ -10,6 +10,7 @@ const FILTER_LABELS = {
   location: 'מיקום',
   project: 'פרויקט',
   target_site: 'אתר יעד',
+  serial: 'סריאלי',
   serial_number: 'מספר סריאלי',
   notes: 'הערות',
   stock: 'כמות',

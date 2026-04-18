@@ -5,10 +5,11 @@ import './ProcurementCards.css';
 
 // -- Vendor color / label map --
 const VENDOR_META = {
-  NETAPP: { color: '#a855f7', dot: '#a855f7', label: 'NetApp' },
-  HPE:    { color: '#22c55e', dot: '#22c55e', label: 'HPE'    },
-  CISCO:  { color: '#f97316', dot: '#f97316', label: 'Cisco'  },
-  DELL:   { color: '#3b82f6', dot: '#3b82f6', label: 'Dell'   },
+  NETAPP:    { color: '#a855f7', dot: '#a855f7', label: 'NetApp'    },
+  HPE:       { color: '#22c55e', dot: '#22c55e', label: 'HPE'       },
+  CISCO:     { color: '#f97316', dot: '#f97316', label: 'Cisco'     },
+  DELL:      { color: '#3b82f6', dot: '#3b82f6', label: 'Dell'      },
+  COMMVAULT: { color: '#0066cc', dot: '#0066cc', label: 'Commvault' },
 };
 
 const STATUS_LABELS = {

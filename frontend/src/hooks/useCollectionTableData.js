@@ -29,6 +29,9 @@ export const useCollectionTableData = (items) => {
       result = result.filter(item =>
         COLLECTION_TABLE_COLUMNS.some(col =>
           String(item[col.key] || '').toLowerCase().includes(q)
+        ) ||
+        Object.values(item.custom_values || {}).some(v =>
+          String(v || '').toLowerCase().includes(q)
         )
       );
     }

@@ -80,9 +80,11 @@ async def create_log(
     """
     Create a manual audit log entry (e.g. for UNDO actions).
     """
-    # For security, we might want to override the actor with the current user
-    # But for now, we trust the input or at least validate it matches
-    log_data.actor = current_user.get("sub", log_data.actor)
+    # Always force the actor to be the authenticated user — prevent forgery
+    actor = current_user.get("username") or current_user.get("sub")
+    if not actor:
+        raise ForbiddenException("לא ניתן לזהות את המשתמש")
+    log_data.actor = actor
     log_data.actor_role = current_user.get("role", "unknown")
     
     log_id = await audit_service.create_manual_log(log_data)

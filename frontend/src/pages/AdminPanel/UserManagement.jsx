@@ -45,7 +45,7 @@ const UserManagement = ({ isEmbedded = false }) => {
   const { toasts, removeToast, success, error: toastError } = useToast();
 
   /* ── Users ─────────────────────────────────── */
-  const { users, loading: usersLoading, error: usersError, createUser, updateUser, deleteUser } = useUsers();
+  const { users, loading: usersLoading, error: usersError, createUser, updateUser, deleteUser, isDeleting } = useUsers();
 
   const [activeTab,    setActiveTab]    = useState('users');
   const [searchQuery,  setSearchQuery]  = useState('');
@@ -64,6 +64,7 @@ const UserManagement = ({ isEmbedded = false }) => {
   const [selectedGroup,  setSelectedGroup]  = useState(null);
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [showGroupDeleteModal, setShowGroupDeleteModal] = useState(false);
+  const [groupDeleteReason, setGroupDeleteReason] = useState('');
 
   React.useEffect(() => {
     if (usersError)  toastError('שגיאה בטעינת משתמשים');
@@ -132,11 +133,13 @@ const UserManagement = ({ isEmbedded = false }) => {
   };
 
   const handleGroupDeleteConfirm = async () => {
+    if (!groupDeleteReason.trim()) { toastError('נא להזין סיבה למחיקה'); return; }
     try {
-      await deleteGroup({ id: selectedGroup.id, reason: 'מחיקה ידנית' });
+      await deleteGroup({ id: selectedGroup.id, reason: groupDeleteReason });
       success('קבוצה נמחקה בהצלחה');
       setShowGroupDeleteModal(false);
       setSelectedGroup(null);
+      setGroupDeleteReason('');
     } catch (err) {
       toastError(err.response?.data?.detail || 'שגיאה במחיקת קבוצה');
     }
@@ -144,10 +147,10 @@ const UserManagement = ({ isEmbedded = false }) => {
 
   /* ── Filtered lists ─────────────────────────── */
   const filteredUsers  = users.filter(u =>
-    u.username.toLowerCase().includes(searchQuery.toLowerCase())
+    u.username.toLowerCase().includes(searchQuery.trim().toLowerCase())
   );
   const filteredGroups = groups.filter(g =>
-    g.name.toLowerCase().includes(groupSearch.toLowerCase())
+    g.name.toLowerCase().includes(groupSearch.trim().toLowerCase())
   );
 
   /* ── Render ───────────────────────────────────────── */
@@ -172,8 +175,10 @@ const UserManagement = ({ isEmbedded = false }) => {
         <div className="um-list-panel">
 
           {/* Tab switcher */}
-          <div className="um-tabs">
+          <div className="um-tabs" role="tablist">
             <button
+              role="tab"
+              aria-selected={activeTab === 'users'}
               className={`um-tab ${activeTab === 'users' ? 'active' : ''}`}
               onClick={() => handleTabChange('users')}
               data-testid="users-tab"
@@ -182,6 +187,8 @@ const UserManagement = ({ isEmbedded = false }) => {
               <span style={{ fontSize: '0.72rem', marginRight: '0.25rem', opacity: 0.7 }}>({users.length})</span>
             </button>
             <button
+              role="tab"
+              aria-selected={activeTab === 'groups'}
               className={`um-tab ${activeTab === 'groups' ? 'active' : ''}`}
               onClick={() => handleTabChange('groups')}
               data-testid="groups-tab"
@@ -200,12 +207,13 @@ const UserManagement = ({ isEmbedded = false }) => {
                   <input
                     className="um-search-input"
                     placeholder="חפש משתמש..."
+                    aria-label="חפש משתמש"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     data-testid="user-search"
                   />
                 </div>
-                <button className="um-add-btn" title="הוסף משתמש" onClick={handleCreateUser} data-testid="add-user-btn">
+                <button className="um-add-btn" title="הוסף משתמש" aria-label="הוסף משתמש" onClick={handleCreateUser} data-testid="add-user-btn">
                   <FiPlus />
                 </button>
               </div>
@@ -249,12 +257,13 @@ const UserManagement = ({ isEmbedded = false }) => {
                   <input
                     className="um-search-input"
                     placeholder="חפש קבוצה..."
+                    aria-label="חפש קבוצה"
                     value={groupSearch}
                     onChange={e => setGroupSearch(e.target.value)}
                     data-testid="group-search"
                   />
                 </div>
-                <button className="um-add-btn" title="הוסף קבוצה" onClick={handleCreateGroup} data-testid="add-group-btn">
+                <button className="um-add-btn" title="הוסף קבוצה" aria-label="הוסף קבוצה" onClick={handleCreateGroup} data-testid="add-group-btn">
                   <FiPlus />
                 </button>
               </div>
@@ -352,7 +361,7 @@ const UserManagement = ({ isEmbedded = false }) => {
             </div>
             <div className="um-modal-actions">
               <Button variant="secondary" onClick={() => setShowUserDeleteModal(false)} data-testid="cancel-delete-btn">ביטול</Button>
-              <Button variant="danger" onClick={handleUserDeleteConfirm} data-testid="confirm-delete-btn">מחק</Button>
+              <Button variant="danger" onClick={handleUserDeleteConfirm} disabled={isDeleting} data-testid="confirm-delete-btn">{isDeleting ? 'מוחק...' : 'מחק'}</Button>
             </div>
           </div>
         </div>
@@ -360,14 +369,24 @@ const UserManagement = ({ isEmbedded = false }) => {
 
       {/* ── Group delete modal ───────────────── */}
       {showGroupDeleteModal && selectedGroup && (
-        <div className="um-modal-overlay" onClick={() => setShowGroupDeleteModal(false)}>
+        <div className="um-modal-overlay" onClick={() => { setShowGroupDeleteModal(false); setGroupDeleteReason(''); }}>
           <div className="um-modal" onClick={e => e.stopPropagation()} data-testid="group-delete-modal">
             <h2>מחיקת קבוצה</h2>
             <div className="um-modal-warning">
               האם אתה בטוח שברצונך למחוק את <strong>{selectedGroup.name}</strong>? פעולה זו אינה הפיכה.
             </div>
+            <div>
+              <label className="input-label" style={{ marginBottom: '0.4rem', display: 'block' }}>סיבה למחיקה</label>
+              <input
+                type="text"
+                value={groupDeleteReason}
+                onChange={e => setGroupDeleteReason(e.target.value)}
+                placeholder="הזן סיבה למחיקה..."
+                data-testid="group-delete-reason-input"
+              />
+            </div>
             <div className="um-modal-actions">
-              <Button variant="secondary" onClick={() => setShowGroupDeleteModal(false)} data-testid="group-cancel-delete-btn">ביטול</Button>
+              <Button variant="secondary" onClick={() => { setShowGroupDeleteModal(false); setGroupDeleteReason(''); }} data-testid="group-cancel-delete-btn">ביטול</Button>
               <Button variant="danger" onClick={handleGroupDeleteConfirm} data-testid="group-confirm-delete-btn">מחק</Button>
             </div>
           </div>

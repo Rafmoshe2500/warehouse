@@ -126,6 +126,12 @@ async def update_order(
 ):
     if not has_procurement_write_access(current_user):
         raise ForbiddenException("נדרשת הרשאת עריכה לרכש")
+    allowed_vendors = get_allowed_vendors(current_user)
+    if allowed_vendors is not None:
+        order = await procurement_service.get_order_by_id(order_id)
+        order_vendor = order.get("bom_vendor")
+        if order_vendor and order_vendor not in allowed_vendors:
+            raise ForbiddenException("אין הרשאה לעדכן הזמנה של ספק זה")
     username = current_user.get("username") or current_user.get("sub")
     return await procurement_service.update_order(
         order_id=order_id,
@@ -137,14 +143,21 @@ async def update_order(
 @router.delete("/orders/{order_id}")
 async def delete_order(
     order_id: str,
+    reason: Optional[str] = Query(None, description="סיבת מחיקה"),
     current_user: dict = Depends(get_current_user),
     procurement_service: ProcurementService = Depends(get_procurement_service)
 ):
     """Delete procurement order"""
     if not has_procurement_write_access(current_user):
         raise ForbiddenException("נדרשת הרשאת עריכה לרכש")
+    allowed_vendors = get_allowed_vendors(current_user)
+    if allowed_vendors is not None:
+        order = await procurement_service.get_order_by_id(order_id)
+        order_vendor = order.get("bom_vendor")
+        if order_vendor and order_vendor not in allowed_vendors:
+            raise ForbiddenException("אין הרשאה למחוק הזמנה של ספק זה")
     username = current_user.get("username") or current_user.get("sub")
-    await procurement_service.delete_order(order_id=order_id, username=username)
+    await procurement_service.delete_order(order_id=order_id, username=username, reason=reason)
     return {"message": "ההזמנה נמחקה בהצלחה"}
 
 

@@ -9,7 +9,6 @@ export { default as Pagination } from './Pagination/Pagination';
 export { default as TableCell } from './TableCell/TableCell';
 export { default as ContextMenu } from './ContextMenu/ContextMenu';
 export { default as FloatingToolbar } from './FloatingToolbar/FloatingToolbar';
-export { default as SelectionIndicator } from './SelectionIndicator/SelectionIndicator';
 export { default as ScrollableTableLayout } from './ScrollableTableLayout/ScrollableTableLayout';
 export { default as Select } from './Select/Select';
 export { default as NavigationWarningModal } from './NavigationWarningModal/NavigationWarningModal';

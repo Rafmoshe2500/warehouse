@@ -11,7 +11,7 @@ import { formatCellValue } from '../../../utils/formatters';
 import logService from '../../../api/services/logService';
 import { useAuth } from '../../../context/AuthContext';
 
-import { TableCell, ContextMenu, FloatingToolbar, SelectionIndicator } from '../../common';
+import { TableCell, ContextMenu, FloatingToolbar } from '../../common';
 import ItemTableRow from './ItemTableRow';
 import RowActionsMenu from '../RowActionsMenu/RowActionsMenu';
 
@@ -39,7 +39,8 @@ const ItemTable = ({
   onAddToCollection,
   onRowClick,
   viewMode = 'normal',
-  viewConfig = {}
+  viewConfig = {},
+  onRegisterRecordDelete, // Bug #25: replaces window.__tableRecordDelete
 }) => {
   const { selectedItems = [], setSelectedItems, onSelectItem, onSelectAll } = selection;
   const { sortConfig, onSort } = sorting;
@@ -220,17 +221,13 @@ const ItemTable = ({
     immutableFields: IMMUTABLE_FIELDS
   });
 
-  // Expose recordDelete for parent component
+  // Expose recordDelete via prop callback instead of window global (Bug #25)
   useEffect(() => {
-    if (window) {
-      window.__tableRecordDelete = recordDelete;
-    }
+    if (onRegisterRecordDelete) onRegisterRecordDelete(recordDelete);
     return () => {
-      if (window) {
-        delete window.__tableRecordDelete;
-      }
+      if (onRegisterRecordDelete) onRegisterRecordDelete(null);
     };
-  }, [recordDelete]);
+  }, [recordDelete, onRegisterRecordDelete]);
 
   // Double-click handler for cells
   const handleCellDoubleClick = async (item, field, value) => {
@@ -383,13 +380,13 @@ const ItemTable = ({
 
   // Row actions handlers for three-dot menu
   const handleRowEdit = useCallback((item) => {
-    if (setSelectedItems) setSelectedItems([item._id]);
-    queueMicrotask(() => { if (onBulkEdit) onBulkEdit(); });
-  }, [setSelectedItems, onBulkEdit]);
+    // Pass item IDs directly to avoid stale closure (Bug #15)
+    if (onBulkEdit) onBulkEdit([item._id]);
+  }, [onBulkEdit]);
 
   const handleRowDelete = useCallback((item) => {
     if (setSelectedItems) setSelectedItems([item._id]);
-    queueMicrotask(() => { if (onBulkDelete) onBulkDelete(); });
+    if (onBulkDelete) onBulkDelete();
   }, [setSelectedItems, onBulkDelete]);
 
   const handleRowCopy = useCallback(async (item) => {
@@ -402,7 +399,8 @@ const ItemTable = ({
   }, [onShowToast]);
 
   const handleRowAddToCollection = useCallback((col, itemIds) => {
-    if (onAddToCollection) onAddToCollection(col);
+    // Forward the specific item IDs instead of relying on page selection (Bug #6)
+    if (onAddToCollection) onAddToCollection(col, itemIds);
   }, [onAddToCollection]);
 
   return (
@@ -575,9 +573,6 @@ const ItemTable = ({
           onRedo={handleRedo}
         />
       )}
-
-      {/* Multi-cell selection indicator */}
-      <SelectionIndicator count={selectedCells.length} />
 
       {/* Context Menu */}
       <ContextMenu

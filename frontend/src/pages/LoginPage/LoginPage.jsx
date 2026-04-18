@@ -5,14 +5,30 @@ import { FiUsers, FiServer, FiArrowRight } from 'react-icons/fi';
 import LoginForm from '../../components/auth/LoginForm/LoginForm';
 import { useToast } from '../../hooks/useToast';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
+import { useTheme } from '../../context/ThemeContext';
+import ThemeSelector from '../../components/layout/ThemeSelector/ThemeSelector';
+import Logo from '../../components/layout/Logo/Logo';
+import { FiLayers, FiSun, FiMoon } from 'react-icons/fi';
 import './LoginPage.css';
-
-import Header from '../../components/layout/Header/Header';
 
 
 const LoginPage = () => {
   const [authMode, setAuthMode] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { mode, toggleMode } = useTheme();
+  const [showThemeSelector, setShowThemeSelector] = React.useState(false);
+  const themeSelectorRef = React.useRef(null);
+
+  // Close theme dropdown on outside click
+  React.useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (themeSelectorRef.current && !themeSelectorRef.current.contains(e.target)) {
+        setShowThemeSelector(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const { toasts, removeToast, error: toastError } = useToast();
   const { login, isAuthenticated, isAdmin, hasPermission } = useAuth();
   const navigate = useNavigate();
@@ -125,7 +141,34 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      <Header isLogin={true} />
+      <header className="login-page__header">
+        <div className="login-page__header-logo">
+          <Logo variant="full" />
+        </div>
+        <div className="login-page__header-actions">
+          <div className="login-page__theme-container" ref={themeSelectorRef}>
+            <button
+              className={`login-page__theme-btn ${showThemeSelector ? 'active' : ''}`}
+              onClick={() => setShowThemeSelector(!showThemeSelector)}
+              title="בחר ערכת נושא"
+            >
+              <FiLayers size={20} />
+            </button>
+            {showThemeSelector && (
+              <div className="login-page__theme-dropdown">
+                <ThemeSelector />
+              </div>
+            )}
+          </div>
+          <button
+            className="login-page__theme-btn"
+            onClick={toggleMode}
+            title={mode === 'dark' ? 'עבור למצב בהיר' : 'עבור למצב כהה'}
+          >
+            {mode === 'dark' ? <FiSun size={20} /> : <FiMoon size={20} />}
+          </button>
+        </div>
+      </header>
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       <div className="login-page__container">
         {authMode === null && renderAuthSelection()}

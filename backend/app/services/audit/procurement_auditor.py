@@ -14,7 +14,7 @@ class ProcurementAuditor:
         await self.audit_service.log_user_action(
             action=AuditAction.PROCUREMENT_CREATE,
             actor=username,
-            actor_role=UserRole.ADMIN,  # Assuming admin or authorized user
+            actor_role="unknown",
             target_resource="procurement_order",
             resource_id=order_id,
             changes=order_data

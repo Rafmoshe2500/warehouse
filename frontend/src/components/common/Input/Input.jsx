@@ -73,6 +73,7 @@ const Input = ({
               onChange={onChange}
               placeholder={placeholder}
               disabled={isDisabled}
+              required={isRequired}
               className={inputClass}
               {...props}
             />

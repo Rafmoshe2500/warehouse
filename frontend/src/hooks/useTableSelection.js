@@ -1,131 +1,70 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+﻿import { useCallback, useMemo } from 'react';
+import { useCellSelection } from './useCellSelection';
 import { formatCellValue } from '../utils/formatters';
 
+/**
+ * Adapter over useCellSelection for the inventory ItemTable.
+ * Preserves the original API where:
+ * - handlers receive (e, item, field, value) with full item objects
+ * - focusedCell uses `.field` instead of `.colKey`
+ * - selectedCells use `.field` instead of `.colKey`
+ */
 export const useTableSelection = ({ onShowToast, items = [], columns = [] }) => {
-    const [selectedCells, setSelectedCells] = useState([]);
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragStart, setDragStart] = useState(null);
-    const [focusedCell, setFocusedCell] = useState(null);
+  const result = useCellSelection({
+    idField: '_id',
+    items,
+    allColumns: columns,
+    formatValue: formatCellValue,
+    onShowToast,
+    tableSelector: '.item-table__cell--editable, .item-table__cell--immutable',
+  });
 
-    const copySelectedCells = useCallback(async () => {
-        if (selectedCells.length === 0) return;
+  // Wrap handlers to accept (e, item, field, value) → (e, itemId, colKey, value)
+  const handleCellMouseDown = useCallback((e, item, field, value) => {
+    result.handleCellMouseDown(e, item._id, field, value);
+  }, [result.handleCellMouseDown]);
 
-        // Determine display order from items/columns arrays
-        const itemOrder = items.map(i => i._id);
-        const colOrder  = columns.map(c => c.key);
+  const handleCellMouseEnter = useCallback((e, item, field, value) => {
+    result.handleCellMouseEnter(e, item._id, field, value);
+  }, [result.handleCellMouseEnter]);
 
-        // Group cells: byRow[itemId][field] = value
-        const byRow = {};
-        for (const cell of selectedCells) {
-            if (!byRow[cell.itemId]) byRow[cell.itemId] = {};
-            byRow[cell.itemId][cell.field] = cell.value;
-        }
+  // Map focusedCell.colKey → .field for backward compat
+  const focusedCell = useMemo(() => {
+    if (!result.focusedCell) return null;
+    return { itemId: result.focusedCell.itemId, field: result.focusedCell.colKey };
+  }, [result.focusedCell]);
 
-        const rowIds = itemOrder.filter(id => byRow[id]);
-        if (rowIds.length === 0) return;
+  // Map selectedCells[].colKey → .field for backward compat
+  const selectedCells = useMemo(() =>
+    result.selectedCells.map(c => ({ ...c, field: c.colKey })),
+    [result.selectedCells]
+  );
 
-        const selectedFields = [...new Set(selectedCells.map(c => c.field))];
-        const orderedFields  = colOrder.filter(k => selectedFields.includes(k));
+  // Wrap setFocusedCell to accept { itemId, field } → { itemId, colKey }
+  const setFocusedCell = useCallback((cell) => {
+    if (!cell) return result.setFocusedCell(cell);
+    result.setFocusedCell({ itemId: cell.itemId, colKey: cell.field || cell.colKey });
+  }, [result.setFocusedCell]);
 
-        let text;
-        if (rowIds.length === 1) {
-            // Single row → tab-separated (horizontal)
-            text = orderedFields.map(k => formatCellValue(byRow[rowIds[0]][k])).join('\t');
-        } else if (orderedFields.length === 1) {
-            // Single column → newline-separated (vertical)
-            text = rowIds.map(id => formatCellValue(byRow[id]?.[orderedFields[0]])).join('\n');
-        } else {
-            // Multi-row multi-col → full grid
-            text = rowIds
-                .map(id => orderedFields.map(k => formatCellValue(byRow[id]?.[k])).join('\t'))
-                .join('\n');
-        }
+  // Wrap setSelectedCells to accept cells with .field → .colKey
+  const setSelectedCells = useCallback((cells) => {
+    result.setSelectedCells(cells.map(c => ({
+      ...c,
+      colKey: c.colKey || c.field,
+    })));
+  }, [result.setSelectedCells]);
 
-        try {
-            await navigator.clipboard.writeText(text);
-            if (onShowToast) onShowToast(`${selectedCells.length} תאים הועתקו`, 'success');
-        } catch {
-            if (onShowToast) onShowToast('שגיאה בהעתקה', 'error');
-        }
-    }, [selectedCells, items, columns, onShowToast]);
-
-    const handleCellMouseDown = useCallback((e, item, field, value) => {
-        if (e.button !== 0) return;
-
-        // Ctrl/Meta click = row selection only, don't capture cell
-        if (e.ctrlKey || e.metaKey) return;
-
-        e.preventDefault();
-        e.stopPropagation();
-        const cellKey = `${item._id}-${field}`;
-
-        setIsDragging(true);
-        setDragStart({ itemId: item._id, field, value });
-        // Plain click: start a fresh single-cell selection
-        setSelectedCells([{ key: cellKey, itemId: item._id, field, value }]);
-    }, []);
-
-    const handleCellMouseEnter = useCallback((e, item, field, value) => {
-        if (!isDragging || !dragStart) return;
-        const cellKey = `${item._id}-${field}`;
-        setSelectedCells(prev => {
-            if (!prev.find(c => c.key === cellKey)) {
-                return [...prev, { key: cellKey, itemId: item._id, field, value }];
-            }
-            return prev;
-        });
-    }, [isDragging, dragStart]);
-
-    const handleMouseUp = useCallback(() => {
-        setIsDragging(false);
-        setDragStart(null);
-    }, []);
-
-    const clearSelection = useCallback(() => {
-        setSelectedCells([]);
-        setFocusedCell(null);
-    }, []);
-
-    const setFocus = useCallback((cell) => {
-        setFocusedCell(prev => {
-            if (prev && prev.itemId === cell.itemId && prev.field === cell.field) {
-                return null;
-            }
-            return cell;
-        });
-    }, []);
-
-    useEffect(() => {
-        document.addEventListener('mouseup', handleMouseUp);
-        return () => document.removeEventListener('mouseup', handleMouseUp);
-    }, [handleMouseUp]);
-
-    useEffect(() => {
-        const handleGlobalMouseDown = (e) => {
-            if (e.target.closest('.item-table__context-menu')) return;
-            if (e.target.closest('.item-table__edit-container')) return;
-            if (e.target.closest('.item-table__cell--editable') ||
-                e.target.closest('.item-table__cell--immutable')) return;
-
-            if (selectedCells.length > 0) setSelectedCells([]);
-            setFocusedCell(null);
-        };
-
-        document.addEventListener('mousedown', handleGlobalMouseDown);
-        return () => document.removeEventListener('mousedown', handleGlobalMouseDown);
-    }, [selectedCells]);
-
-    return {
-        selectedCells,
-        focusedCell,
-        isDragging,
-        setSelectedCells,
-        setFocusedCell: setFocus,
-        copySelectedCells,
-        clearSelection,
-        handleCellMouseDown,
-        handleCellMouseEnter,
-        handleMouseUp
-    };
+  return {
+    selectedCells,
+    focusedCell,
+    isDragging: result.isDragging,
+    setSelectedCells,
+    setFocusedCell,
+    copySelectedCells: result.copySelectedCells,
+    clearSelection: result.clearSelection,
+    handleCellMouseDown,
+    handleCellMouseEnter,
+    handleMouseUp: () => {},
+  };
 };
 

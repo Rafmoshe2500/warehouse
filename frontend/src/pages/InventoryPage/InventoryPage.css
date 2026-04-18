@@ -334,3 +334,36 @@
     transform: translateY(0); 
   }
 }
+
+/* Stale mode: days filter */
+.days-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.days-input {
+    width: 60px;
+    max-width: 70px;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.days-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--input-focus-shadow);
+}
+
+.days-input:hover {
+    border-color: var(--accent-primary);
+}

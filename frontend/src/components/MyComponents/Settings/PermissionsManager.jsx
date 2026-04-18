@@ -60,40 +60,6 @@ const PermissionsManager = ({ collection, isOwner }) => {
     search();
   }, [debouncedSearchTerm, permissionType]);
 
-  // Effect for handling search when debounced term changes
-  React.useEffect(() => {
-    const search = async () => {
-      if (debouncedSearchTerm.length < 2) {
-        setSearchResults([]);
-        return;
-      }
-
-      setIsSearching(true);
-      try {
-        if (permissionType === 'user') {
-          const results = await userService.searchUsers(debouncedSearchTerm);
-          setSearchResults(results);
-        } else {
-          // Use server-side search
-          const groups = await groupService.searchGroups(debouncedSearchTerm);
-          // Map to common structure
-          setSearchResults(groups.map(g => ({
-              id: g.id,
-              username: g.name, // Use name as username for display consistency
-              type: 'group'
-          })));
-        }
-      } catch (error) {
-        console.error(error);
-        showToast(`שגיאה בחיפוש ${permissionType === 'user' ? 'משתמשים' : 'קבוצות'}`, 'error');
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    search();
-  }, [debouncedSearchTerm, permissionType]);
-
   const handleSearch = (term) => {
     setSearchTerm(term);
     // Clear results immediately if term is too short
@@ -119,6 +85,7 @@ const PermissionsManager = ({ collection, isOwner }) => {
       showToast('הרשאה נוספה בהצלחה', 'success');
       setSearchTerm('');
       setSelectedEntity(null);
+      setSelectedRole('RO');
       queryClient.invalidateQueries(['collection', collection.id]);
     } catch (error) {
       console.error('Add permission error:', error);

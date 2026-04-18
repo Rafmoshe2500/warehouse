@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FaTrash, FaEdit, FaCheck, FaTimes, FaPlus, FaFilter, FaFileExcel } from 'react-icons/fa';
 import { FiEdit2, FiColumns } from 'react-icons/fi';
@@ -34,9 +34,13 @@ const CollectionItemsTable = ({
 
   const handleStartEdit  = (item) => { setEditingId(item.item_id); setEditValues(item.custom_values || {}); };
   const handleCancelEdit = ()     => { setEditingId(null); setEditValues({}); };
-  const handleSaveEdit   = async (item) => {
-    await onUpdateCustomValue(item.item_id, { custom_values: editValues });
-    setEditingId(null);
+  const handleSaveEdit = async (item) => {
+    try {
+      await onUpdateCustomValue(item.item_id, { custom_values: editValues });
+      setEditingId(null);
+    } catch {
+      // Toast is shown by the mutation's onError handler; keep row in edit mode for retry
+    }
   };
 
   // ── Bulk-edit modal ───────────────────────────────────────────────────────
@@ -84,6 +88,12 @@ const CollectionItemsTable = ({
 
   // ── Pagination ────────────────────────────────────────────────────────────
   const { currentPage, itemsPerPage, goToPage, setItemsPerPage } = usePagination(1, 25);
+
+  // Reset to page 1 whenever search query or filters change
+  useEffect(() => {
+    goToPage(1);
+  }, [searchQuery, filters]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const totalItems = processedItems.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -100,7 +110,7 @@ const CollectionItemsTable = ({
           <p>אין פריטים באוסף זה עדיין.</p>
           {!isReadOnly && onAddItem && (
             <Button variant="primary" onClick={onAddItem} className="mt-4">
-              <FaPlus className="ml-2" /> הוסף פריטים
+              <FaPlus className="me-2" /> הוסף פריטים
             </Button>
           )}
         </div>
@@ -283,13 +293,35 @@ const CollectionItemsTable = ({
 
                   {customFields.map(field => (
                     <td key={field.key}>
-                      {isEditing
-                        ? <Input value={editValues[field.key] || ''}
+                      {isEditing ? (
+                        field.type === 'boolean' ? (
+                          <input
+                            type="checkbox"
+                            checked={!!editValues[field.key]}
+                            onChange={e => setEditValues(prev => ({ ...prev, [field.key]: e.target.checked }))}
+                          />
+                        ) : field.type === 'date' ? (
+                          <input
+                            type="date"
+                            value={editValues[field.key] || ''}
+                            onChange={e => setEditValues(prev => ({ ...prev, [field.key]: e.target.value }))}
+                            className="h-8 text-sm w-full min-w-[100px]"
+                          />
+                        ) : (
+                          <Input
+                            value={editValues[field.key] || ''}
                             onChange={e => setEditValues(prev => ({ ...prev, [field.key]: e.target.value }))}
                             type={field.type === 'number' ? 'number' : 'text'}
-                            className="h-8 text-sm w-full min-w-[100px]" />
-                        : <span>{item.custom_values?.[field.key] || '-'}</span>
-                      }
+                            className="h-8 text-sm w-full min-w-[100px]"
+                          />
+                        )
+                      ) : (
+                        <span>
+                          {field.type === 'boolean'
+                            ? (item.custom_values?.[field.key] ? '✓' : '✗')
+                            : (item.custom_values?.[field.key] || '-')}
+                        </span>
+                      )}
                     </td>
                   ))}
 

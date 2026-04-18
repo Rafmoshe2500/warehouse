@@ -28,6 +28,7 @@ vi.mock('react-icons/fi', () => ({
   FiEdit2: () => <span>✎</span>,
   FiTrash2: () => <span>🗑</span>,
   FiFilter: () => <span>⫶</span>,
+  FiX: () => <span data-testid="fi-x">×</span>,
 }));
 
 describe('InventoryHeader', () => {
@@ -184,5 +185,25 @@ describe('InventoryHeader', () => {
     render(<InventoryHeader {...defaultProps} />);
 
     expect(screen.getByText('יבוא שריונים')).toBeInTheDocument();
+  });
+
+  it('should not show clear button when searchQuery is empty', () => {
+    render(<InventoryHeader {...defaultProps} searchQuery="" />);
+
+    expect(screen.queryByTestId('search-clear-btn')).not.toBeInTheDocument();
+  });
+
+  it('should show clear button when searchQuery is not empty', () => {
+    render(<InventoryHeader {...defaultProps} searchQuery="some text" />);
+
+    expect(screen.getByTestId('search-clear-btn')).toBeInTheDocument();
+  });
+
+  it('should call onSearch with empty string when clear button clicked', () => {
+    render(<InventoryHeader {...defaultProps} searchQuery="some text" />);
+
+    fireEvent.click(screen.getByTestId('search-clear-btn'));
+
+    expect(defaultProps.onSearch).toHaveBeenCalledWith('');
   });
 });

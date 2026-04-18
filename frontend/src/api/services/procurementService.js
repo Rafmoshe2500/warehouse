@@ -32,8 +32,9 @@ const procurementService = {
   /**
    * Delete procurement order
    */
-  deleteOrder: async (orderId) => {
-    const response = await apiClient.delete(API_ENDPOINTS.PROCUREMENT_ORDER_BY_ID(orderId));
+  deleteOrder: async (orderId, reason) => {
+    const config = reason ? { params: { reason } } : undefined;
+    const response = await apiClient.delete(API_ENDPOINTS.PROCUREMENT_ORDER_BY_ID(orderId), config);
     return response.data;
   },
 

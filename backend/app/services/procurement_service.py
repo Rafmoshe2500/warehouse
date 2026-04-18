@@ -293,7 +293,7 @@ class ProcurementService:
         
         return updated_order
     
-    async def delete_order(self, order_id: str, username: str = "unknown") -> bool:
+    async def delete_order(self, order_id: str, username: str = "unknown", reason: Optional[str] = None) -> bool:
         """Delete procurement order and all associated files"""
         logger.info(f"Deleting order {order_id} by User={username}")
         
@@ -312,6 +312,16 @@ class ProcurementService:
         if not success:
             raise HTTPException(status_code=404, detail="הזמנה לא נמצאה")
         
+        # Audit: log the deletion event before removing all logs
+        try:
+            await self.auditor.log_delete_order(
+                username=username,
+                order_id=order_id,
+                reason=reason or "Deleted by user"
+            )
+        except Exception as e:
+            logger.error(f"Failed to log audit for delete order {order_id}: {e}")
+
         # Delete all existing audit logs for this order
         try:
             await self.auditor.delete_all_order_logs(order_id=order_id)
@@ -345,6 +355,19 @@ class ProcurementService:
         # Validate file
         self._validate_file(file)
         
+        # Attempt early size rejection via Content-Length header (avoids reading the full body)
+        _headers = getattr(file, "headers", None)
+        content_length_header = _headers.get("content-length") if _headers else None
+        if content_length_header:
+            try:
+                if int(content_length_header) > MAX_FILE_SIZE:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"גודל הקובץ חורג מהמקסימום המותר ({MAX_FILE_SIZE // (1024 * 1024)}MB)"
+                    )
+            except ValueError:
+                pass  # invalid header value — fall through to actual size check
+
         # Read file content
         file_content = await file.read()
         

@@ -1,5 +1,6 @@
 
 import pytest
+from datetime import timedelta
 from fastapi import HTTPException
 from app.core.security import (
     require_permission,
@@ -374,3 +375,109 @@ class TestStripPriceFields:
         assert result["bom_data"]["groups"][1]["total_net_price"] is None
         assert result["bom_data"]["groups"][1]["main"]["unit_net_price"] is None
         assert result["bom_data"]["groups"][1]["children"][0]["ext_net_price"] is None
+
+
+# ── _is_vendor_perm ─────────────────────────────────────────────
+
+
+class TestIsVendorPerm:
+
+    def test_any_mode_matches_ro(self):
+        from app.core.security import _is_vendor_perm
+        assert _is_vendor_perm("procurement:dell:ro") is True
+
+    def test_any_mode_matches_rw(self):
+        from app.core.security import _is_vendor_perm
+        assert _is_vendor_perm("procurement:hpe:rw") is True
+
+    def test_rw_mode_matches_rw(self):
+        from app.core.security import _is_vendor_perm
+        assert _is_vendor_perm("procurement:dell:rw", "rw") is True
+
+    def test_rw_mode_rejects_ro(self):
+        from app.core.security import _is_vendor_perm
+        assert _is_vendor_perm("procurement:dell:ro", "rw") is False
+
+    def test_ro_mode_matches_ro(self):
+        from app.core.security import _is_vendor_perm
+        assert _is_vendor_perm("procurement:dell:ro", "ro") is True
+
+    def test_ro_mode_rejects_rw(self):
+        from app.core.security import _is_vendor_perm
+        assert _is_vendor_perm("procurement:dell:rw", "ro") is False
+
+    def test_invalid_format_returns_false(self):
+        from app.core.security import _is_vendor_perm
+        assert _is_vendor_perm("inventory:rw") is False
+
+    def test_partial_pattern_returns_false(self):
+        from app.core.security import _is_vendor_perm
+        assert _is_vendor_perm("procurement:dell") is False
+
+    def test_extra_segments_returns_false(self):
+        from app.core.security import _is_vendor_perm
+        assert _is_vendor_perm("procurement:dell:ro:extra") is False
+
+
+# ── _extract_vendor_from_perm ────────────────────────────────────
+
+
+class TestExtractVendorFromPerm:
+
+    def test_extracts_vendor_rw(self):
+        from app.core.security import _extract_vendor_from_perm
+        assert _extract_vendor_from_perm("procurement:dell:rw") == "DELL"
+
+    def test_extracts_vendor_ro(self):
+        from app.core.security import _extract_vendor_from_perm
+        assert _extract_vendor_from_perm("procurement:hpe:ro") == "HPE"
+
+    def test_invalid_format_returns_none(self):
+        from app.core.security import _extract_vendor_from_perm
+        assert _extract_vendor_from_perm("inventory:rw") is None
+
+    def test_partial_pattern_returns_none(self):
+        from app.core.security import _extract_vendor_from_perm
+        assert _extract_vendor_from_perm("procurement:cisco") is None
+
+    def test_vendor_uppercased(self):
+        from app.core.security import _extract_vendor_from_perm
+        assert _extract_vendor_from_perm("procurement:netapp:ro") == "NETAPP"
+
+
+# ── create_access_token / verify_token ──────────────────────────
+
+
+class TestJWTFunctions:
+
+    def test_create_access_token_default_expiry(self):
+        from app.core.security import create_access_token, verify_token
+        token = create_access_token({"sub": "testuser"})
+        payload = verify_token(token)
+        assert payload["sub"] == "testuser"
+        assert "exp" in payload
+
+    def test_create_access_token_custom_expiry(self):
+        from app.core.security import create_access_token, verify_token
+        token = create_access_token({"sub": "u1"}, expires_delta=timedelta(minutes=30))
+        payload = verify_token(token)
+        assert payload["sub"] == "u1"
+
+    def test_verify_token_valid(self):
+        from app.core.security import create_access_token, verify_token
+        token = create_access_token({"sub": "admin", "role": "admin"})
+        payload = verify_token(token)
+        assert payload["role"] == "admin"
+
+    def test_verify_token_expired_raises(self):
+        from app.core.security import create_access_token, verify_token
+        from app.core.exceptions import UnauthorizedException
+        token = create_access_token({"sub": "u"}, expires_delta=timedelta(seconds=-1))
+        with pytest.raises(UnauthorizedException):
+            verify_token(token)
+
+    def test_verify_token_invalid_signature_raises(self):
+        from app.core.exceptions import UnauthorizedException
+        with pytest.raises(UnauthorizedException):
+            from app.core.security import verify_token
+            verify_token("not.a.real.token")

@@ -64,15 +64,16 @@ const HotspotMarker = ({ top, left, label, description, number }) => {
         setIsOpen(false);
       }
     };
+    // Only dismiss on page-level scroll (window), not on overflow-container scroll
     const handleScroll = () => setIsOpen(false);
     const handleResize = () => setIsOpen(false);
 
     document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
     };
   }, [isOpen, computePosition]);
@@ -84,6 +85,8 @@ const HotspotMarker = ({ top, left, label, description, number }) => {
         className={`hotspot-dot ${isOpen ? 'active' : ''}`}
         onClick={() => setIsOpen(prev => !prev)}
         aria-label={label}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
       >
         {number && <span className="hotspot-number">{number}</span>}
       </button>
@@ -92,6 +95,9 @@ const HotspotMarker = ({ top, left, label, description, number }) => {
           ref={tooltipRef}
           className={`hotspot-tooltip hotspot-tooltip--${openDirection}`}
           style={tooltipStyle}
+          dir="rtl"
+          role="dialog"
+          aria-label={label}
         >
           <div className="hotspot-tooltip-arrow" style={arrowStyle} />
           <div className="hotspot-tooltip-title">{label}</div>

@@ -45,7 +45,7 @@ const InventoryModals = ({
         title={editingItem ? 'עריכת פריט' : 'הוספת פריט חדש'}
       >
         <ItemForm
-          initialItem={editingItem}
+          initialData={editingItem}
           onSubmit={onSaveItem}
           onCancel={onCloseItemForm}
         />
@@ -70,36 +70,6 @@ const InventoryModals = ({
         onConfirm={onConfirmBulkEdit}
         selectedCount={selectedCount}
       />
-
-      {/* Export Progress Modal */}
-      {showExportModal && (
-        <Modal
-          isOpen={showExportModal}
-          onClose={onCloseExport}
-          title="התקדמות ייצוא"
-        >
-          <div className="export-modal-content">
-            <div className="progress-container">
-              <div className="progress-bar">
-                <div
-                  className="progress-fill"
-                  style={{
-                    width: `${exportProgress || 0}%`,
-                  }}
-                ></div>
-              </div>
-              <p className="progress-text">{exportProgress || 0}% Complete</p>
-            </div>
-            <button
-              onClick={onExecuteExport}
-              className="btn btn-primary"
-              disabled={exportProgress === 100}
-            >
-              {exportProgress === 100 ? 'Export Complete' : 'Start Export'}
-            </button>
-          </div>
-        </Modal>
-      )}
 
       {/* Associated Collections Modal */}
       {showCollectionsModal && (

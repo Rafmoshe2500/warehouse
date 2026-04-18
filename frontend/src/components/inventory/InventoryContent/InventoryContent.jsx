@@ -31,7 +31,8 @@ const InventoryContent = ({
   onShowCollections, // New prop
   userCollections,
   onAddToCollection,
-  onRowClick
+  onRowClick,
+  onRegisterRecordDelete, // Bug #25: replaces window.__tableRecordDelete
 }) => {
   // Fetch data directly using the hook and passed params
   const { items = [], totalItems = 0, loading = false, error = null } = useItems(queryParams);
@@ -101,13 +102,9 @@ const InventoryContent = ({
           onRowClick={onRowClick}
           viewMode={viewMode}
           viewConfig={viewConfig}
+          onRegisterRecordDelete={onRegisterRecordDelete}
         />
 
-        {totalItems === 0 && !loading && !isAdding && (
-          <div className="empty-state">
-            <p>לא נמצאו פריטים</p>
-          </div>
-        )}
       </ScrollableTableLayout>
     </div>
   );

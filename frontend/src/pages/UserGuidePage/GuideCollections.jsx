@@ -23,7 +23,7 @@ import HotspotMarker from '../../components/guide/HotspotMarker/HotspotMarker';
 import QuizCard from '../../components/guide/QuizCard/QuizCard';
 import ActionMapCard from '../../components/guide/ActionMapCard/ActionMapCard';
 import GuidePageLayout from './GuidePageLayout';
-import './MyCollectionsGuide.css';
+import './GuideCollections.css';
 
 const GuideCollections = () => {
   return (
@@ -141,7 +141,7 @@ const GuideCollections = () => {
                 <h4 className="demo-card-title">פרויקט אלפא — שרתים</h4>
                 <span className="demo-card-role owner">בעלים</span>
                 <p className="demo-card-desc">ציוד שרתים לפריסה באתר צפון.</p>
-                <div className="demo-card-footer"><span>24 פריטים</span><button className="demo-card-view-btn">צפה באוסף</button></div>
+                <div className="demo-card-footer"><span>24 פריטים</span><button type="button" disabled className="demo-card-view-btn">צפה באוסף</button></div>
               </div>
             </div>
           </div>
@@ -153,18 +153,20 @@ const GuideCollections = () => {
                 <h4 className="demo-card-title">פרויקט בטא — תשתיות</h4>
                 <span className="demo-card-role shared">עורך</span>
                 <p className="demo-card-desc">רכיבי תקשורת למרכז הנתונים.</p>
-                <div className="demo-card-footer"><span>58 פריטים</span><button className="demo-card-view-btn">צפה באוסף</button></div>
+                <div className="demo-card-footer"><span>58 פריטים</span><button type="button" disabled className="demo-card-view-btn">צפה באוסף</button></div>
               </div>
             </div>
           </div>
-          <div className="demo-collection-card">
+          <div className="demo-card-hotspot-wrapper">
+            <div className="demo-collection-card">
             <div className="demo-card-stripe owner" />
             <div className="demo-card-body">
               <h4 className="demo-card-title">תחזוקה שנתית 2025</h4>
               <span className="demo-card-role owner">בעלים</span>
               <p className="demo-card-desc">חלקי חילוף לתחזוקה שוטפת.</p>
-              <div className="demo-card-footer"><span>12 פריטים</span><button className="demo-card-view-btn">צפה באוסף</button></div>
+              <div className="demo-card-footer"><span>12 פריטים</span><button type="button" disabled className="demo-card-view-btn">צפה באוסף</button></div>
             </div>
+          </div>
           </div>
         </div>
 
@@ -252,7 +254,7 @@ const GuideCollections = () => {
         <div className="demo-danger-zone">
           <div className="demo-danger-title"><FiAlertCircle /> אזור סכנה</div>
           <p className="demo-danger-desc">מחיקת האוסף תסיר אותו לצמיתות, כולל כל הקישורים לפריטים. הפריטים עצמם נשארים במלאי.</p>
-          <button className="demo-danger-btn"><FiTrash2 /> מחק אוסף</button>
+          <button type="button" disabled className="demo-danger-btn"><FiTrash2 /> מחק אוסף</button>
         </div>
       </section>
 

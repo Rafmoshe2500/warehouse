@@ -4,10 +4,11 @@ import { useAuth } from '../../context/AuthContext';
 import './ProcurementDataTable.css';
 
 const VENDOR_META = {
-  NETAPP: { color: '#a855f7', label: 'NetApp' },
-  HPE:    { color: '#22c55e', label: 'HPE'    },
-  CISCO:  { color: '#f97316', label: 'Cisco'  },
-  DELL:   { color: '#3b82f6', label: 'Dell'   },
+  NETAPP:    { color: '#a855f7', label: 'NetApp'    },
+  HPE:       { color: '#22c55e', label: 'HPE'       },
+  CISCO:     { color: '#f97316', label: 'Cisco'     },
+  DELL:      { color: '#3b82f6', label: 'Dell'      },
+  COMMVAULT: { color: '#0066cc', label: 'Commvault' },
 };
 
 const STATUS_LABELS = {
@@ -22,8 +23,8 @@ const STATUS_LABELS = {
 const fmtQty = (qty) => {
   if (qty == null) return '';
   return typeof qty === 'number' && qty >= 1000
-    ? `${(qty / 1000).toFixed(0)}K`
-    : String(qty);
+    ? `×${(qty / 1000).toFixed(0)}K`
+    : `×${qty}`;
 };
 
 const resolveDisplayItems = (order) => {
@@ -145,7 +146,7 @@ const ProcurementDataTable = ({
               >
                 {/* Date */}
                 <td className="pdt-td pdt-td--date">
-                  {new Date(order.order_date).toLocaleDateString('he-IL')}
+                  {order.order_date ? new Date(order.order_date).toLocaleDateString('he-IL') : '—'}
                 </td>
 
                 {/* Vendor */}

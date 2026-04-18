@@ -45,7 +45,7 @@ describe('useTableSelection', () => {
     });
 
     expect(result.current.selectedCells).toHaveLength(1);
-    expect(result.current.selectedCells[0]).toEqual({
+    expect(result.current.selectedCells[0]).toMatchObject({
       key: 'item1-description',
       itemId: 'item1',
       field: 'description',
@@ -265,7 +265,7 @@ describe('useTableSelection', () => {
     expect(result.current.isDragging).toBe(true);
 
     act(() => {
-      result.current.handleMouseUp();
+      document.dispatchEvent(new Event('mouseup'));
     });
     expect(result.current.isDragging).toBe(false);
   });

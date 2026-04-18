@@ -30,10 +30,13 @@ const FIELD_LABELS = {
 };
 
 const STATUS_LABELS = {
-  'waiting_emf': 'מחכה ל-EMF',
-  'waiting_bom': 'מחכה ל-BOM',
-  'ordered': 'רכש יצא',
-  'received': 'רכש הגיע'
+  'waiting_emf':      'מחכה ל-EMF',
+  'waiting_bom':      'מחכה ל-BOM',
+  'ordered':          'רכש יצא',
+  'received':         'רכש הגיע',
+  'waiting_bom_emf':  'ממתין ל-BOM ו-EMF',
+  'waiting_shipment': 'ממתין לשילוח',
+  'shipped':          'נשלח',
 };
 
 const OrderHistoryModal = ({ isOpen, onClose, orderId, orderNumber }) => {
@@ -98,11 +101,11 @@ const OrderHistoryModal = ({ isOpen, onClose, orderId, orderNumber }) => {
             // Skip if old/new are themselves objects/arrays
             if (typeof value.old === 'object' || typeof value.new === 'object') return null;
             return (
-              <div key={key} className="change-item">
-                <span className="change-field">{label}:</span>
+              <div key={key} className="change-item" dir="ltr">
                 <span className="change-old">{formatValue(key, value.old)}</span>
-                <span className="arrow">←</span>
+                <span className="arrow">→</span>
                 <span className="change-new">{formatValue(key, value.new)}</span>
+                <span className="change-field"> :{label}</span>
               </div>
             );
           }

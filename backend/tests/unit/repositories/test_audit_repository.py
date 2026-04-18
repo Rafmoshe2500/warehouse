@@ -314,3 +314,112 @@ class TestAuditRepository:
         
         assert len(logs) == 3
         assert total == 5
+
+
+# ── count_actions ─────────────────────────────────────────────────────────────
+
+
+class TestCountActions:
+    """Tests for AuditRepository.count_actions."""
+
+    @pytest.mark.asyncio
+    async def test_count_actions_since_date(self, test_audit_collection):
+        """Count only actions that fall within the date window."""
+        from datetime import timedelta, timezone as tz
+        repo = AuditRepository()
+        repo.collection = test_audit_collection
+
+        now = datetime.now(timezone.utc)
+
+        # Two logs within range
+        for _ in range(2):
+            await repo.create_audit_log(AuditLogCreate(
+                action=AuditAction.ITEM_CREATE,
+                actor="admin",
+                actor_role="admin",
+            ))
+
+        # One log with older timestamp — insert directly
+        await test_audit_collection.insert_one({
+            "item_action": {
+                "action": "item_create",
+                "actor": "admin",
+                "actor_role": "admin",
+                "timestamp": now - timedelta(days=10),
+            }
+        })
+
+        start_date = now - timedelta(days=3)
+        count = await repo.count_actions(["item_create"], start_date)
+        assert count == 2
+
+    @pytest.mark.asyncio
+    async def test_count_actions_multiple_action_types(self, test_audit_collection):
+        repo = AuditRepository()
+        repo.collection = test_audit_collection
+
+        for action in [AuditAction.ITEM_CREATE, AuditAction.USER_CREATE, AuditAction.ITEM_DELETE]:
+            await repo.create_audit_log(AuditLogCreate(
+                action=action, actor="admin", actor_role="admin"
+            ))
+
+        from datetime import timedelta
+        start_date = datetime.now(timezone.utc) - timedelta(minutes=5)
+        count = await repo.count_actions(["item_create", "item_delete"], start_date)
+        assert count == 2
+
+    @pytest.mark.asyncio
+    async def test_count_actions_no_match_returns_zero(self, test_audit_collection):
+        repo = AuditRepository()
+        repo.collection = test_audit_collection
+
+        from datetime import timedelta
+        start_date = datetime.now(timezone.utc) - timedelta(minutes=5)
+        count = await repo.count_actions(["item_create"], start_date)
+        assert count == 0
+
+
+# ── delete_logs_by_resource ───────────────────────────────────────────────────
+
+
+class TestDeleteLogsByResource:
+    """Tests for AuditRepository.delete_logs_by_resource."""
+
+    @pytest.mark.asyncio
+    async def test_delete_logs_for_specific_resource(self, test_audit_collection):
+        repo = AuditRepository()
+        repo.collection = test_audit_collection
+
+        # Create logs for target resource
+        for _ in range(3):
+            await repo.create_audit_log(AuditLogCreate(
+                action=AuditAction.ITEM_DELETE,
+                actor="admin",
+                actor_role="admin",
+                target_resource="item",
+                resource_id="item_to_delete",
+            ))
+
+        # Create an unrelated log
+        await repo.create_audit_log(AuditLogCreate(
+            action=AuditAction.ITEM_CREATE,
+            actor="admin",
+            actor_role="admin",
+            target_resource="item",
+            resource_id="other_item",
+        ))
+
+        deleted = await repo.delete_logs_by_resource("item", "item_to_delete")
+        assert deleted == 3
+
+        # Unrelated log still present
+        remaining, total = await repo.get_audit_logs()
+        assert total == 1
+
+    @pytest.mark.asyncio
+    async def test_delete_logs_no_matching_resource_returns_zero(self, test_audit_collection):
+        repo = AuditRepository()
+        repo.collection = test_audit_collection
+
+        deleted = await repo.delete_logs_by_resource("item", "nonexistent_id")
+        assert deleted == 0

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FiBox, FiLayers, FiShoppingCart, FiCheckCircle, FiAlertCircle, FiChevronsRight } from 'react-icons/fi';
 import GuidePageLayout from './GuidePageLayout';
 
@@ -15,27 +16,27 @@ const GuideOverview = () => {
         </div>
         
         <div className="cards-grid">
-          <div className="feature-card">
+          <Link to="/guide/interface" className="feature-card" style={{ textDecoration: 'none' }}>
             <h3 className="feature-card-header">
               <div className="card-icon blue"><FiBox /></div>
               <span>ניהול מלאי</span>
             </h3>
-            <p>צפייה בזמן אמת בכמויות, מיקומים וסטטוסים של פריטים במחסן המרכזי.</p>
-          </div>
-          <div className="feature-card">
+            <p>צפייה בזמן אמת בכמויות, מיקומים וסטאטוסים של פריטים במחסן המרכזי.</p>
+          </Link>
+          <Link to="/guide/collections" className="feature-card" style={{ textDecoration: 'none' }}>
             <h3 className="feature-card-header">
               <div className="card-icon purple"><FiLayers /></div>
               <span>אוספים אישיים</span>
             </h3>
             <p>יצירת רשימות ציוד מותאמות לפרויקטים עליהם אתם עובדים.</p>
-          </div>
-          <div className="feature-card">
+          </Link>
+          <Link to="/guide/procurement" className="feature-card" style={{ textDecoration: 'none' }}>
             <h3 className="feature-card-header">
               <div className="card-icon green"><FiShoppingCart /></div>
               <span>תהליכי רכש</span>
             </h3>
-            <p>ביצוע הזמנות, מעקב אחר סטטוסים וניהול ספקים במקום אחד.</p>
-          </div>
+            <p>ביצוע הזמנות, מעקב אחר סטאטוסים וניהול ספקים במקום אחד.</p>
+          </Link>
         </div>
       </section>
 

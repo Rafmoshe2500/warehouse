@@ -133,7 +133,7 @@ const GlobalSearch = ({ isOpen, onClose }) => {
           <kbd className="global-search__kbd">Esc</kbd>
         </div>
 
-        {(results.length > 0 || loading) && (
+        {(results.length > 0 || loading || debouncedQuery.length >= 2) && (
           <div className="global-search__results">
             {loading && (
               <div className="global-search__loading">מחפש...</div>

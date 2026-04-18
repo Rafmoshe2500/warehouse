@@ -263,3 +263,110 @@ class TestExcelService:
         assert doc is not None
         stored_serial = doc.get("serial", "")
         assert stored_serial != "nan", "The string 'nan' was incorrectly stored as a serial"
+
+    # ------------------------------------------------------------------ #
+    #  import_project_excel                                                #
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    async def test_import_project_excel_invalid_format_raises(self, excel_service):
+        """Non-xlsx/xls file should raise ExcelFileException immediately."""
+        from app.core.exceptions import ExcelFileException
+        from unittest.mock import MagicMock
+
+        fake_file = MagicMock()
+        fake_file.filename = "allocations.csv"  # unsupported
+        fake_file.read = AsyncMock(return_value=b"col1,col2\n1,2")
+
+        with pytest.raises(ExcelFileException, match="פורמט קובץ לא נתמך"):
+            await excel_service.import_project_excel(fake_file, user="admin")
+
+    @pytest.mark.asyncio
+    async def test_import_project_excel_updates_allocations(
+        self, excel_service, test_items_collection, mock_auditor
+    ):
+        """import_project_excel should update items matching catalog+location."""
+        import io
+        from openpyxl import Workbook
+
+        # Seed an item to be updated
+        await test_items_collection.insert_one({
+            "catalog_number": "ALLOC-001",
+            "description": "Allocation Item",
+            "manufacturer": "AllocCo",
+            "location": "Zone-A",
+            "serial": "",
+            "current_stock": "10",
+            "warranty_expiry": "",
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
+        })
+
+        # Build a minimal xlsx using Hebrew column headers (as expected by ExcelParser)
+        wb = Workbook()
+        ws = wb.active
+        ws.append(['מק"ט', 'מיקום', 'פרויקט', 'כמות'])
+        ws.append(["ALLOC-001", "Zone-A", "ProjectX", 5])
+        buf = io.BytesIO()
+        wb.save(buf)
+        buf.seek(0)
+
+        fake_file = MagicMock()
+        fake_file.filename = "allocations.xlsx"
+        fake_file.read = AsyncMock(return_value=buf.read())
+
+        result = await excel_service.import_project_excel(fake_file, user="admin")
+        assert "updated" in result
+        # At least the return structure is correct
+        assert "total_groups" in result
+
+    # ------------------------------------------------------------------ #
+    #  has_changes                                                         #
+    # ------------------------------------------------------------------ #
+
+    def test_has_changes_detects_change(self):
+        existing = {"description": "old", "location": "A"}
+        new = {"description": "new", "location": "A"}
+        assert ExcelService.has_changes(existing, new, ["description", "location"]) is True
+
+    def test_has_changes_no_change(self):
+        existing = {"description": "same", "location": "B"}
+        new = {"description": "same", "location": "B"}
+        assert ExcelService.has_changes(existing, new, ["description", "location"]) is False
+
+    def test_has_changes_whitespace_normalised(self):
+        existing = {"description": "  trimmed  "}
+        new = {"description": "trimmed"}
+        assert ExcelService.has_changes(existing, new, ["description"]) is False
+
+    def test_has_changes_ignores_fields_not_in_new(self):
+        existing = {"description": "old", "location": "A"}
+        new = {"description": "old"}  # location not present in new
+        assert ExcelService.has_changes(existing, new, ["description", "location"]) is False
+
+    # ------------------------------------------------------------------ #
+    #  get_changes                                                         #
+    # ------------------------------------------------------------------ #
+
+    def test_get_changes_returns_diff(self):
+        existing = {"description": "before", "location": "X"}
+        new = {"description": "after", "location": "X"}
+        diff = ExcelService.get_changes(existing, new, ["description", "location"])
+        assert "description" in diff
+        assert diff["description"]["old"] == "before"
+        assert diff["description"]["new"] == "after"
+        assert "location" not in diff
+
+    def test_get_changes_empty_when_identical(self):
+        existing = {"description": "same"}
+        new = {"description": "same"}
+        diff = ExcelService.get_changes(existing, new, ["description"])
+        assert diff == {}
+
+    def test_get_changes_handles_missing_key_in_existing(self):
+        existing = {}
+        new = {"description": "new_value"}
+        diff = ExcelService.get_changes(existing, new, ["description"])
+        assert "description" in diff
+        assert diff["description"]["old"] == ""
+        assert diff["description"]["new"] == "new_value"

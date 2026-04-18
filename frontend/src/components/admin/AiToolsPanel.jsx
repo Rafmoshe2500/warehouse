@@ -6,8 +6,14 @@ import './AiToolsPanel.css';
 const AiToolsPanel = () => {
   const [retraining, setRetraining] = useState(false);
   const [result, setResult] = useState(null); // { success, message, metrics }
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleRetrain = async () => {
+  const handleRetrainClick = () => {
+    setShowConfirm(true);
+  };
+
+  const handleRetrainConfirm = async () => {
+    setShowConfirm(false);
     setRetraining(true);
     setResult(null);
     try {
@@ -40,7 +46,7 @@ const AiToolsPanel = () => {
 
         <button
           className={`atp-retrain-btn${retraining ? ' loading' : ''}`}
-          onClick={handleRetrain}
+          onClick={handleRetrainClick}
           disabled={retraining}
           data-testid="retrain-btn"
         >
@@ -62,6 +68,19 @@ const AiToolsPanel = () => {
           </div>
         )}
       </div>
+
+      {showConfirm && (
+        <div className="atp-confirm-overlay" onClick={() => setShowConfirm(false)}>
+          <div className="atp-confirm-modal" onClick={e => e.stopPropagation()} data-testid="retrain-confirm-modal">
+            <h3>אישור אימון מחדש</h3>
+            <p>פעולה זו תאמן מחדש את מודל הסיווג ועשויה לקחת מספר דקות. האם להמשיך?</p>
+            <div className="atp-confirm-actions">
+              <button className="atp-confirm-cancel" onClick={() => setShowConfirm(false)} data-testid="retrain-cancel-btn">ביטול</button>
+              <button className="atp-confirm-ok" onClick={handleRetrainConfirm} data-testid="retrain-confirm-btn">אימון</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

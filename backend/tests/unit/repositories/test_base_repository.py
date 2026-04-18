@@ -4,6 +4,7 @@ Tests the basic CRUD logic inherited by all repositories.
 """
 import pytest
 import pytest_asyncio
+from unittest.mock import AsyncMock, MagicMock
 from bson import ObjectId
 from app.db.repositories.base import BaseRepository
 from app.core.exceptions import InvalidItemIdException
@@ -115,3 +116,89 @@ class TestBaseRepository:
         
         total = await repository.count()
         assert total == 1
+
+
+# ── Exception / DB-failure paths ──────────────────────────────────────────────
+
+
+def _make_failing_repo(method_names: list) -> BaseRepository:
+    """Return a BaseRepository whose collection methods raise Exception('DB error')."""
+    mock_col = MagicMock()
+    mock_col.name = "test_collection"
+    for name in method_names:
+        setattr(mock_col, name, AsyncMock(side_effect=Exception("DB error")))
+    repo = BaseRepository.__new__(BaseRepository)
+    repo.collection = mock_col
+    return repo
+
+
+class TestBaseRepositoryExceptionPaths:
+    """All except blocks in BaseRepository must log and re-raise."""
+
+    @pytest.mark.asyncio
+    async def test_get_by_id_db_failure_raises(self):
+        repo = _make_failing_repo(["find_one"])
+        with pytest.raises(Exception, match="DB error"):
+            await repo.get_by_id(str(ObjectId()))
+
+    @pytest.mark.asyncio
+    async def test_get_all_db_failure_raises(self):
+        mock_col = MagicMock()
+        mock_col.name = "test_collection"
+        cursor = MagicMock()
+        cursor.sort.return_value = cursor
+        cursor.skip.return_value = cursor
+        cursor.limit.return_value = cursor
+        cursor.to_list = AsyncMock(side_effect=Exception("DB error"))
+        mock_col.find.return_value = cursor
+        repo = BaseRepository.__new__(BaseRepository)
+        repo.collection = mock_col
+        with pytest.raises(Exception, match="DB error"):
+            await repo.get_all()
+
+    @pytest.mark.asyncio
+    async def test_count_db_failure_raises(self):
+        repo = _make_failing_repo(["count_documents"])
+        with pytest.raises(Exception, match="DB error"):
+            await repo.count()
+
+    @pytest.mark.asyncio
+    async def test_create_db_failure_raises(self):
+        repo = _make_failing_repo(["insert_one"])
+        with pytest.raises(Exception, match="DB error"):
+            await repo.create({"name": "test"})
+
+    @pytest.mark.asyncio
+    async def test_update_db_failure_raises(self):
+        # update_one raises; find_one is never reached
+        mock_col = MagicMock()
+        mock_col.name = "test_collection"
+        mock_col.update_one = AsyncMock(side_effect=Exception("DB error"))
+        repo = BaseRepository.__new__(BaseRepository)
+        repo.collection = mock_col
+        with pytest.raises(Exception, match="DB error"):
+            await repo.update(str(ObjectId()), {"field": "value"})
+
+    @pytest.mark.asyncio
+    async def test_update_many_db_failure_raises(self):
+        repo = _make_failing_repo(["update_many"])
+        with pytest.raises(Exception, match="DB error"):
+            await repo.update_many({"type": "A"}, {"val": 0})
+
+    @pytest.mark.asyncio
+    async def test_delete_db_failure_raises(self):
+        repo = _make_failing_repo(["delete_one"])
+        with pytest.raises(Exception, match="DB error"):
+            await repo.delete(str(ObjectId()))
+
+    @pytest.mark.asyncio
+    async def test_delete_many_db_failure_raises(self):
+        repo = _make_failing_repo(["delete_many"])
+        with pytest.raises(Exception, match="DB error"):
+            await repo.delete_many({"tag": "tmp"})
+
+    @pytest.mark.asyncio
+    async def test_validate_object_id_invalid_raises(self):
+        repo = _make_failing_repo([])
+        with pytest.raises(InvalidItemIdException):
+            repo._validate_object_id("not-a-valid-objectid")

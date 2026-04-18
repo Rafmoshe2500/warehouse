@@ -34,11 +34,4 @@
     flex-shrink: 0;
 }
 
-.access-content {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    padding-bottom: 1.25rem;
-}
+

@@ -53,7 +53,11 @@ const QuizCard = ({ question, options, correctIndex, explanation }) => {
           בדוק תשובה
         </button>
       ) : (
-        <div className={`quiz-feedback ${isCorrect ? 'correct' : 'incorrect'}`}>
+        <div
+          className={`quiz-feedback ${isCorrect ? 'correct' : 'incorrect'}`}
+          role="alert"
+          aria-live="polite"
+        >
           <div className="quiz-feedback-header">
             {isCorrect ? (
               <><FiCheckCircle /> <span>תשובה נכונה!</span></>

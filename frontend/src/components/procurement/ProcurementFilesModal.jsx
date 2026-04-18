@@ -22,10 +22,9 @@ const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit =
       await procurementService.uploadFile(order.id, file);
       success('הקובץ הועלה בהצלחה');
       
-      // Ensure minimum animation display time (1500ms)
+      // Ensure minimum animation display time (1500ms) on success only
       const elapsedTime = Date.now() - uploadStartTime;
       const remainingTime = Math.max(0, 1500 - elapsedTime);
-      
       if (remainingTime > 0) {
         await new Promise(resolve => setTimeout(resolve, remainingTime));
       }
@@ -80,7 +79,7 @@ const ProcurementFilesModal = ({ isOpen, onClose, order, onFileChange, canEdit =
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content files-modal" onClick={e => e.stopPropagation()}>
         <div className="files-modal-header">
-          <h2>קבצים מצורפים - {order.catalog_number}</h2>
+          <h2>קבצים מצורפים - {order.emf_number || order.bom_vendor || 'הזמנה'}</h2>
           <button className="close-btn" onClick={onClose}>&times;</button>
         </div>
 

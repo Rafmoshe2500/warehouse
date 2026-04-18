@@ -204,3 +204,90 @@ class TestProcurementRoutes:
         assert "order_count" in data
         assert "total_spend" in data
         assert data["total_spend"] >= 0
+
+    # ------------------------------------------------------------------ #
+    #  File upload / download / delete                                     #
+    # ------------------------------------------------------------------ #
+
+    async def test_upload_file_to_order(self, async_client):
+        """POST /procurement/orders/{id}/files - Upload a file to an order."""
+        created = await async_client.post("/api/procurement/orders", json=_order_payload(
+            bom_items=[{
+                "item_id": 1, "catalog_number": "FILE-UPLOAD-ROUTE",
+                "manufacturer": "V", "description": "D", "quantity": 1
+            }]
+        ))
+        order_id = created.json()["id"]
+
+        res = await async_client.post(
+            f"/api/procurement/orders/{order_id}/files",
+            files={"file": ("test.pdf", b"%PDF-1.4 dummy content", "application/pdf")},
+        )
+        assert res.status_code == 200
+        data = res.json()
+        assert "file_id" in data
+        assert data["filename"] == "test.pdf"
+
+    async def test_upload_file_bad_extension(self, async_client):
+        """POST /procurement/orders/{id}/files - Unsupported extension returns 400."""
+        created = await async_client.post("/api/procurement/orders", json=_order_payload(
+            bom_items=[{
+                "item_id": 1, "catalog_number": "FILE-BAD-EXT",
+                "manufacturer": "V", "description": "D", "quantity": 1
+            }]
+        ))
+        order_id = created.json()["id"]
+
+        res = await async_client.post(
+            f"/api/procurement/orders/{order_id}/files",
+            files={"file": ("malware.exe", b"MZ dummy", "application/octet-stream")},
+        )
+        assert res.status_code == 400
+
+    async def test_delete_file_from_order(self, async_client):
+        """DELETE /procurement/orders/{id}/files/{file_id} - Remove an uploaded file."""
+        created = await async_client.post("/api/procurement/orders", json=_order_payload(
+            bom_items=[{
+                "item_id": 1, "catalog_number": "FILE-DELETE-ROUTE",
+                "manufacturer": "V", "description": "D", "quantity": 1
+            }]
+        ))
+        order_id = created.json()["id"]
+
+        # Upload file first
+        upload_res = await async_client.post(
+            f"/api/procurement/orders/{order_id}/files",
+            files={"file": ("to_delete.pdf", b"%PDF-1.4 delete me", "application/pdf")},
+        )
+        file_id = upload_res.json()["file_id"]
+
+        # Now delete
+        del_res = await async_client.delete(f"/api/procurement/orders/{order_id}/files/{file_id}")
+        assert del_res.status_code == 200
+
+        # Verify the file is gone from the order
+        order = await async_client.get(f"/api/procurement/orders/{order_id}")
+        assert len(order.json().get("files", [])) == 0
+
+    async def test_delete_file_not_found(self, async_client):
+        """DELETE /procurement/orders/{id}/files/{file_id} - 404 for nonexistent file."""
+        created = await async_client.post("/api/procurement/orders", json=_order_payload(
+            bom_items=[{
+                "item_id": 1, "catalog_number": "FILE-404",
+                "manufacturer": "V", "description": "D", "quantity": 1
+            }]
+        ))
+        order_id = created.json()["id"]
+
+        res = await async_client.delete(f"/api/procurement/orders/{order_id}/files/nonexistent_id")
+        assert res.status_code == 404
+
+    # ------------------------------------------------------------------ #
+    #  Validation errors                                                   #
+    # ------------------------------------------------------------------ #
+
+    async def test_create_order_missing_bom_items_returns_422(self, async_client):
+        """POST /procurement/orders - Missing required field returns 422."""
+        bad_payload = {"order_date": datetime.now(timezone.utc).isoformat(), "total_amount": 100}
+        res = await async_client.post("/api/procurement/orders", json=bad_payload)
+        assert res.status_code == 422

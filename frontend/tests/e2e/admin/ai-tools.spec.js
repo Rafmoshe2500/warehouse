@@ -43,6 +43,8 @@ test.describe('Admin - AI Tools Panel', () => {
     );
 
     await admin.retrainBtn.click();
+    // Confirm the dialog
+    await admin.retrainConfirmBtn.click();
 
     // Either the request succeeds and we see a result, or we get a toast
     try {
@@ -78,6 +80,8 @@ test.describe('Admin - AI Tools Panel', () => {
     await page.waitForTimeout(500);
 
     await admin.retrainBtn.click();
+    // Confirm the dialog
+    await admin.retrainConfirmBtn.click();
 
     // Should show error notification
     const toast = page.locator('.Toastify__toast--error, [class*="toast-error"], [class*="error"]');

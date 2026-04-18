@@ -1,8 +1,16 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { useAuth } from '../../context/AuthContext';
 import GuidePageLayout from './GuidePageLayout';
 
 const GuideAdmin = () => {
+  const { isAdmin } = useAuth();
+
+  if (!isAdmin) {
+    return <Navigate to="/guide" replace />;
+  }
+
   return (
     <GuidePageLayout>
       <section className="content-section">

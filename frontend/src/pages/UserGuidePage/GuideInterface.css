@@ -1,0 +1,407 @@
+/* InventoryTableGuide.css */
+
+/* === Breadcrumb === */
+.guide-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.guide-breadcrumb a {
+  color: var(--accent-primary, #60a5fa);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: opacity 0.2s;
+}
+
+.guide-breadcrumb a:hover {
+  opacity: 0.8;
+}
+
+.guide-breadcrumb .breadcrumb-separator {
+  color: var(--text-muted, #64748b);
+}
+
+.guide-breadcrumb .breadcrumb-current {
+  color: var(--text-muted, #64748b);
+}
+
+/* === Demo Table Container === */
+.demo-table-wrapper {
+  position: relative;
+  overflow-x: auto;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+  margin: 1.5rem 0 2rem;
+  background: var(--bg-primary, #0f172a);
+}
+
+.demo-table-note {
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 10px;
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.demo-table-note svg {
+  color: var(--accent-primary, #60a5fa);
+  flex-shrink: 0;
+}
+
+/* === Demo Table === */
+.demo-table {
+  width: 100%;
+  border-collapse: collapse;
+  direction: rtl;
+  font-size: 0.85rem;
+}
+
+.demo-table thead {
+  background: var(--bg-secondary, #1e293b);
+}
+
+.demo-table th {
+  padding: 0.7rem 0.8rem;
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-primary, #e2e8f0);
+  border-bottom: 2px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  white-space: nowrap;
+  position: relative;
+}
+
+.demo-table th.th-frozen {
+  background: var(--bg-secondary, #1e293b);
+  position: sticky;
+  right: 0;
+  z-index: 5;
+}
+/* Catalog number column (2nd frozen) sits just left of the checkbox column */
+.demo-table th.th-frozen:nth-child(2) {
+  right: 40px;
+}
+
+.demo-table th.th-checkbox {
+  width: 40px;
+  text-align: center;
+}
+
+.demo-table .filter-row td {
+  padding: 0.4rem;
+  background: var(--bg-tertiary, rgba(255, 255, 255, 0.02));
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.06));
+}
+
+.demo-table .filter-row input {
+  width: 100%;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  background: var(--bg-primary, #0f172a);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 4px;
+  color: var(--text-primary, #e2e8f0);
+}
+
+.demo-table td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+  color: var(--text-primary, #e2e8f0);
+  vertical-align: middle;
+  position: relative;
+}
+
+.demo-table td.td-frozen {
+  background: var(--bg-primary, #0f172a);
+  position: sticky;
+  right: 0;
+  z-index: 2;
+}
+/* Catalog number column (2nd frozen) sits just left of the checkbox column */
+.demo-table td.td-frozen:nth-child(2) {
+  right: 40px;
+}
+
+.demo-table td.td-checkbox {
+  text-align: center;
+  width: 40px;
+}
+
+.demo-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.demo-table tbody tr:hover {
+  background: var(--bg-tertiary, rgba(255, 255, 255, 0.02));
+}
+
+.demo-cell-editable {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0.2rem 0.3rem;
+  transition: background 0.2s;
+}
+
+.demo-cell-editable:hover {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.demo-cell-immutable {
+  color: var(--text-muted, #94a3b8);
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.demo-tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: rgba(139, 92, 246, 0.12);
+  color: #a78bfa;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-left: 0.3rem;
+}
+
+.demo-link-btn {
+  color: var(--accent-primary, #60a5fa);
+  background: none;
+  border: none;
+  cursor: default;
+  font-size: inherit;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* === New Item Row Demo === */
+.demo-new-row {
+  background: rgba(34, 197, 94, 0.04) !important;
+}
+
+.demo-new-row td {
+  border-bottom: 2px solid rgba(34, 197, 94, 0.15);
+}
+
+.demo-new-input {
+  width: 100%;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  background: var(--bg-secondary, #1e293b);
+  border: 1px dashed rgba(34, 197, 94, 0.4);
+  border-radius: 4px;
+  color: var(--text-primary);
+}
+
+.demo-action-btns {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.demo-action-btns button {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: none;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.demo-btn-save {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.demo-btn-cancel {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* === Context Menu Demo === */
+.demo-context-menu {
+  background: var(--bg-secondary, #1e293b);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 10px;
+  padding: 0.5rem;
+  min-width: 220px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  display: inline-block;
+}
+
+.demo-context-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text-primary, #e2e8f0);
+  transition: background 0.15s;
+  cursor: default;
+}
+
+.demo-context-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.demo-context-item.danger {
+  color: #ef4444;
+}
+
+.demo-context-divider {
+  height: 1px;
+  background: var(--border-color, rgba(255, 255, 255, 0.08));
+  margin: 0.3rem 0.5rem;
+}
+
+.demo-context-submenu {
+  padding-right: 1.8rem;
+}
+
+.demo-context-submenu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: var(--text-muted, #94a3b8);
+  cursor: default;
+}
+
+.demo-context-submenu-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* === Floating Toolbar Demo === */
+.demo-floating-toolbar {
+  display: inline-flex;
+  gap: 0.3rem;
+  background: var(--bg-secondary, #1e293b);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.demo-toolbar-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  background: transparent;
+  color: var(--text-primary, #e2e8f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: default;
+  transition: all 0.2s;
+}
+
+.demo-toolbar-btn.active {
+  color: var(--accent-primary, #60a5fa);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.demo-toolbar-btn.disabled {
+  opacity: 0.3;
+}
+
+/* === Summary Box === */
+.summary-box {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.06), rgba(139, 92, 246, 0.06));
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 14px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+}
+
+.summary-box h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary, #f1f5f9);
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: summary;
+}
+
+.summary-list li {
+  position: relative;
+  padding-right: 2.5rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-muted, #94a3b8);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.summary-list li::before {
+  counter-increment: summary;
+  content: counter(summary);
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--accent-primary, #3b82f6);
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* === Section Divider === */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-color, rgba(255, 255, 255, 0.1)), transparent);
+  margin: 2rem 0;
+}
+
+/* === Action Grid (2-col) === */
+.action-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+/* === Quiz Section === */
+.quiz-section-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* === Responsive === */
+@media (max-width: 900px) {
+  .demo-table-wrapper {
+    margin: 1rem -0.5rem;
+    border-radius: 8px;
+  }
+
+  .action-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

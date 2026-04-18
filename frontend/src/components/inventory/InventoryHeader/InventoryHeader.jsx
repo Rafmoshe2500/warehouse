@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { FiPlus, FiUpload, FiDownload, FiEdit2, FiTrash2, FiFilter } from 'react-icons/fi';
+import { FiPlus, FiUpload, FiDownload, FiEdit2, FiTrash2, FiFilter, FiX } from 'react-icons/fi';
 import Button from '../../common/Button/Button';
 import Spinner from '../../common/Spinner/Spinner';
 import ColumnToggle from '../ColumnToggle/ColumnToggle';
@@ -75,7 +75,7 @@ const InventoryHeader = ({
           <>
             <Button
               variant="secondary"
-              onClick={onBulkEdit}
+              onClick={() => onBulkEdit()}
               disabled={selectedItems.length === 0}
               className="btn-icon"
               title={selectedItems.length === 0 ? "סמן פריטים לעריכה" : "ערוך פריטים מסומנים"}
@@ -110,6 +110,17 @@ const InventoryHeader = ({
             onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
             className="global-search-input"
           />
+          {searchQuery && (
+            <button
+              className="search-clear-btn"
+              data-testid="search-clear-btn"
+              onClick={() => onSearch('')}
+              aria-label="נקה חיפוש"
+              type="button"
+            >
+              <FiX size={14} />
+            </button>
+          )}
         </div>
       </div>
     </div>

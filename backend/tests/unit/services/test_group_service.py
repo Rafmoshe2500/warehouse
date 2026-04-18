@@ -105,3 +105,61 @@ class TestGroupService:
         
         mock_repo.delete.assert_called_once_with("g_id")
         mock_auditor.log_delete_group.assert_called_once()
+
+    # ------------------------------------------------------------------ #
+    #  get_group_by_id                                                     #
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    async def test_get_group_by_id_found(self, group_service, mock_repo):
+        """get_group_by_id returns the group when it exists."""
+        mock_repo.get_by_id.return_value = {"id": "g_id", "name": "Existing Group"}
+        result = await group_service.get_group_by_id("g_id")
+        assert result["name"] == "Existing Group"
+
+    @pytest.mark.asyncio
+    async def test_get_group_by_id_not_found(self, group_service, mock_repo):
+        """get_group_by_id raises NotFoundException when group does not exist."""
+        mock_repo.get_by_id.return_value = None
+        with pytest.raises(NotFoundException):
+            await group_service.get_group_by_id("nonexistent_id")
+
+    # ------------------------------------------------------------------ #
+    #  get_group_by_name                                                   #
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    async def test_get_group_by_name_found(self, group_service, mock_repo):
+        """get_group_by_name returns the group when it exists."""
+        mock_repo.get_by_name.return_value = {"id": "g_id", "name": "Named Group"}
+        result = await group_service.get_group_by_name("Named Group")
+        assert result["name"] == "Named Group"
+
+    @pytest.mark.asyncio
+    async def test_get_group_by_name_not_found(self, group_service, mock_repo):
+        """get_group_by_name returns None when group does not exist."""
+        mock_repo.get_by_name.return_value = None
+        result = await group_service.get_group_by_name("ghost group")
+        assert result is None
+
+    # ------------------------------------------------------------------ #
+    #  search_groups                                                       #
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    async def test_search_groups_returns_results(self, group_service, mock_repo):
+        """search_groups delegates to repo.search and returns results."""
+        mock_repo.search.return_value = [
+            {"id": "g1", "name": "NetworkAdmins"},
+            {"id": "g2", "name": "NetworkOps"},
+        ]
+        results = await group_service.search_groups("Network")
+        assert len(results) == 2
+        mock_repo.search.assert_called_once_with("Network", 10)
+
+    @pytest.mark.asyncio
+    async def test_search_groups_empty(self, group_service, mock_repo):
+        """search_groups returns empty list when no match."""
+        mock_repo.search.return_value = []
+        results = await group_service.search_groups("zzznomatch")
+        assert results == []

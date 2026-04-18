@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import InventoryPage from './InventoryPage';
 import CatalogPage from '../CatalogPage/CatalogPage';
-import StaleItemsPage from '../StaleItemsPage/StaleItemsPage';
 import LogsPage from '../LogsPage/LogsPage';
 import './InventoryTabbedPage.css';
 
@@ -17,7 +16,7 @@ const InventoryTabbedPage = () => {
     <div className="inventory-tabbed-page">
       <div className="inventory-tab-content">
         {activeTab === 'current' && <InventoryPage isEmbedded={true} />}
-        {activeTab === 'stale' && <StaleItemsPage isEmbedded={true} />}
+        {activeTab === 'stale' && <InventoryPage isEmbedded={true} staleMode={true} />}
         {activeTab === 'catalog' && <CatalogPage isEmbedded={true} />}
         {activeTab === 'logs' && <LogsPage isEmbedded={true} />}
       </div>

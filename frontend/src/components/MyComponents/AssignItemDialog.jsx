@@ -63,6 +63,11 @@ const AssignItemDialog = ({ isOpen, onClose, onAssign, isAssigning }) => {
     setSelectedIds([]);
   };
 
+  const handleClose = () => {
+    setSelectedIds([]);
+    onClose();
+  };
+
   const handleSort = (key, direction) => {
     setSortConfig({ key, direction });
   };
@@ -72,7 +77,7 @@ const AssignItemDialog = ({ isOpen, onClose, onAssign, isAssigning }) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title="הוספת פריטים לאוסף"
       size="xl"
       className="assign-item-modal" // Custom class for overrides
@@ -89,7 +94,7 @@ const AssignItemDialog = ({ isOpen, onClose, onAssign, isAssigning }) => {
                 >
                     הוסף ({selectedIds.length}) פריטים
                 </Button>
-                <Button variant="ghost" onClick={onClose}>
+                <Button variant="ghost" onClick={handleClose}>
                     ביטול
                 </Button>
           </div>

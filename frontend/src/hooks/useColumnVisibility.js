@@ -11,22 +11,23 @@ import { useState, useEffect, useRef } from 'react';
 export const useColumnVisibility = (storageKey, columns) => {
   const [showFilter, setShowFilter] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState(() => {
-    // Load from localStorage or default to all visible
-    if (!storageKey) {
-      return columns.reduce((acc, col) => ({ ...acc, [col.key]: true }), {});
-    }
-    
+    // Default: all columns visible
+    const defaults = columns.reduce((acc, col) => ({ ...acc, [col.key]: true }), {});
+
+    if (!storageKey) return defaults;
+
     const stored = localStorage.getItem(storageKey);
     if (stored) {
       try {
-        return JSON.parse(stored);
+        const parsedStored = JSON.parse(stored);
+        // Bug #23: merge stored with defaults so newly added columns are visible
+        return { ...defaults, ...parsedStored };
       } catch (error) {
         console.error('Failed to parse stored columns:', error);
       }
     }
-    
-    // Default: all columns visible
-    return columns.reduce((acc, col) => ({ ...acc, [col.key]: true }), {});
+
+    return defaults;
   });
   
   const filterRef = useRef(null);

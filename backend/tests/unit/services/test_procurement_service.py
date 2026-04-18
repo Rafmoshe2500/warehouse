@@ -391,3 +391,112 @@ class TestProcurementService:
         )
         assert result["status"] == "waiting_shipment"
         assert result.get("waiting_shipment_at") is not None
+
+    # ------------------------------------------------------------------ #
+    #  download_file                                                       #
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    async def test_download_file_not_found(self, procurement_service, mock_admin_user):
+        """download_file raises 404 when the file does not exist on the order."""
+        from fastapi import HTTPException
+
+        created = await procurement_service.create_order(
+            _make_order_create(bom_items=[
+                BOMItem(item_id=1, catalog_number="DL-TEST",
+                        manufacturer="M", description="D", quantity=1)
+            ]),
+            mock_admin_user["username"],
+        )
+
+        with pytest.raises(HTTPException) as exc_info:
+            await procurement_service.download_file(created["id"], "nonexistent_file_id")
+        assert exc_info.value.status_code == 404
+
+    @pytest.mark.asyncio
+    async def test_download_file_success(self, procurement_service, mock_admin_user, monkeypatch):
+        """download_file returns file content when file exists."""
+        created = await procurement_service.create_order(
+            _make_order_create(bom_items=[
+                BOMItem(item_id=1, catalog_number="DL-OK",
+                        manufacturer="M", description="D", quantity=1)
+            ]),
+            mock_admin_user["username"],
+        )
+
+        # Add file metadata directly to order
+        file_meta = {
+            "file_id": "file_dl_ok",
+            "filename": "report.pdf",
+            "file_type": "application/pdf",
+            "file_size": 512,
+            "uploaded_at": datetime.now(timezone.utc),
+            "uploaded_by": "admin",
+            "s3_key": "some/key",
+            "local_path": "/tmp/report.pdf",
+        }
+        await procurement_service.repository.add_file_to_order(created["id"], file_meta)
+
+        mock_s3 = MagicMock()
+        mock_s3.download_file = AsyncMock(return_value=b"pdf_bytes")
+        monkeypatch.setattr(procurement_service, "s3_service", mock_s3)
+
+        content, filename, content_type = await procurement_service.download_file(
+            created["id"], "file_dl_ok"
+        )
+        assert content == b"pdf_bytes"
+        assert filename == "report.pdf"
+        assert content_type == "application/pdf"
+
+    # ------------------------------------------------------------------ #
+    #  get_monthly_summary                                                 #
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    async def test_get_monthly_summary_empty(self, procurement_service):
+        """get_monthly_summary returns valid structure with no orders."""
+        result = await procurement_service.get_monthly_summary()
+        assert isinstance(result, dict)
+
+    @pytest.mark.asyncio
+    async def test_get_monthly_summary_with_data(self, procurement_service, mock_admin_user):
+        """get_monthly_summary returns data after orders are created."""
+        await procurement_service.create_order(
+            _make_order_create(total_amount=500.0),
+            mock_admin_user["username"],
+        )
+        result = await procurement_service.get_monthly_summary()
+        assert isinstance(result, dict)
+
+    # ------------------------------------------------------------------ #
+    #  _validate_file                                                      #
+    # ------------------------------------------------------------------ #
+
+    def test_validate_file_bad_extension(self, procurement_service):
+        """_validate_file raises HTTP 400 for unsupported file extensions."""
+        from fastapi import HTTPException
+
+        bad_file = MagicMock(spec=UploadFile)
+        bad_file.filename = "malware.exe"
+
+        with pytest.raises(HTTPException) as exc_info:
+            procurement_service._validate_file(bad_file)
+        assert exc_info.value.status_code == 400
+
+    def test_validate_file_no_filename(self, procurement_service):
+        """_validate_file raises HTTP 400 when filename is empty."""
+        from fastapi import HTTPException
+
+        bad_file = MagicMock(spec=UploadFile)
+        bad_file.filename = ""
+
+        with pytest.raises(HTTPException) as exc_info:
+            procurement_service._validate_file(bad_file)
+        assert exc_info.value.status_code == 400
+
+    def test_validate_file_valid_extension_passes(self, procurement_service):
+        """_validate_file does not raise for allowed extensions."""
+        ok_file = MagicMock(spec=UploadFile)
+        ok_file.filename = "document.pdf"
+        # Should not raise
+        procurement_service._validate_file(ok_file)

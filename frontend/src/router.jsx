@@ -10,12 +10,12 @@ import { Spinner } from './components/common';
 const LoginPage = lazy(() => import('./pages/LoginPage/LoginPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage/DashboardPage'));
 const InventoryTabbedPage = lazy(() => import('./pages/InventoryPage/InventoryTabbedPage'));
-const AdminPage = lazy(() => import('./pages/AdminPage/AdminPage'));
 
 // Admin Panel pages
 const AccessControlPage = lazy(() => import('./pages/AdminPanel/AccessControlPage'));
-const UserManagement = lazy(() => import('./pages/AdminPanel/UserManagement')); // Kept for legacy or direct link safety
+const UserManagement = lazy(() => import('./pages/AdminPanel/UserManagement'));
 const AuditLogs = lazy(() => import('./pages/AdminPanel/AuditLogs'));
+const AiToolsPanel = lazy(() => import('./components/admin/AiToolsPanel'));
 const ProcurementPage = lazy(() => import('./pages/ProcurementPage/ProcurementPage'));
 const BomTemplatesPage = lazy(() => import('./pages/BomTemplatesPage/BomTemplatesPage'));
 
@@ -199,6 +199,14 @@ const PrivateRoute = ({ children }) => {
             element={
               <AdminRoute>
                 <BomTemplatesPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/ai"
+            element={
+              <AdminRoute>
+                <AiToolsPanel />
               </AdminRoute>
             }
           />

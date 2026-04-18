@@ -25,7 +25,7 @@ import HotspotMarker from '../../components/guide/HotspotMarker/HotspotMarker';
 import QuizCard from '../../components/guide/QuizCard/QuizCard';
 import ActionMapCard from '../../components/guide/ActionMapCard/ActionMapCard';
 import GuidePageLayout from './GuidePageLayout';
-import './ProcurementGuide.css';
+import './GuideProcurement.css';
 
 const GuideProcurement = () => {
   return (
@@ -224,6 +224,7 @@ const GuideProcurement = () => {
               <div className="demo-action-btn delete"><FiTrash2 /></div>
               <div className="demo-action-btn history"><FiClock /></div>
               <div className="demo-action-btn ship"><FiTruck /></div>
+              <div className="demo-action-btn done"><FiCheckCircle /></div>
             </div>
           </div>
         </div>

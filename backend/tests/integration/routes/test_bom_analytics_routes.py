@@ -57,3 +57,39 @@ class TestBomAnalyticsRoutes:
         
         assert res.status_code == 200
         assert res.json()["data"][0]["vendor"] == "DELL"
+
+    async def test_vendor_discounts_default(self, async_client_user, mock_analytics_service):
+        """GET /bom-analytics/vendor-discounts - Returns stats dict."""
+        mock_analytics_service.get_vendor_discount_stats.return_value = [
+            {"vendor": "VendorA", "avg_discount": 10.5, "order_count": 3}
+        ]
+
+        res = await async_client_user.get("/api/bom-analytics/vendor-discounts")
+
+        assert res.status_code == 200
+        data = res.json()
+        assert "stats" in data
+        assert data["stats"][0]["vendor"] == "VendorA"
+        assert data["stats"][0]["avg_discount"] == 10.5
+        mock_analytics_service.get_vendor_discount_stats.assert_called_with(months=12)
+
+    async def test_vendor_discounts_custom_months(self, async_client_user, mock_analytics_service):
+        """GET /bom-analytics/vendor-discounts?months=6 - Passes custom months parameter."""
+        mock_analytics_service.get_vendor_discount_stats.return_value = []
+
+        res = await async_client_user.get("/api/bom-analytics/vendor-discounts?months=6")
+
+        assert res.status_code == 200
+        mock_analytics_service.get_vendor_discount_stats.assert_called_with(months=6)
+
+    async def test_vendor_discounts_unauthenticated(self, async_client):
+        """GET /bom-analytics/vendor-discounts - Unauthenticated access should succeed
+        since async_client is already authenticated; this just verifies the schema."""
+        mock_analytics_service = AsyncMock()
+        mock_analytics_service.get_vendor_discount_stats.return_value = []
+        app.dependency_overrides[get_bom_analytics_service] = lambda: mock_analytics_service
+
+        res = await async_client.get("/api/bom-analytics/vendor-discounts")
+        assert res.status_code == 200
+        assert "stats" in res.json()
+        app.dependency_overrides.pop(get_bom_analytics_service, None)

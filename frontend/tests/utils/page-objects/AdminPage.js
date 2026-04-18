@@ -268,6 +268,10 @@ export class AdminPageObject {
     return this.page.locator('[data-testid="retrain-btn"]');
   }
 
+  get retrainConfirmBtn() {
+    return this.page.locator('[data-testid="retrain-confirm-btn"]');
+  }
+
   get retrainResult() {
     return this.page.locator('[data-testid="retrain-result"]');
   }

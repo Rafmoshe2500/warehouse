@@ -19,6 +19,7 @@ const CollectionDetails = () => {
     collection,
     items,
     isCollectionLoading,
+    isCollectionError,
     isItemsLoading,
     activeTab,
     setActiveTab,
@@ -42,22 +43,15 @@ const CollectionDetails = () => {
   const handleAssignItems = async (selectedIds) => {
     setIsAssigning(true);
     try {
-      // Loop execution (API is single item)
-      // We could use Promise.all but let's do sequential or parallel limited to avoid rate limits if many
-      const promises = selectedIds.map(itemId => 
-        collectionsService.addItem(id, { item_id: itemId })
-      );
-      
-      await Promise.all(promises);
-      
+      await collectionsService.bulkAddItem(id, { item_ids: selectedIds });
       showToast(`נוספו ${selectedIds.length} פריטים לאוסף`, 'success');
       setIsAssignDialogOpen(false);
       queryClient.invalidateQueries(['collectionItems', id]);
     } catch (error) {
         console.error(error);
         const msg = error.response?.data?.detail || 'שגיאה בהוספת פריטים';
-        // Check for specific duplicate error
-        if (msg.includes('already in collection')) {
+        queryClient.invalidateQueries(['collectionItems', id]);
+        if (typeof msg === 'string' && msg.toLowerCase().includes('already')) {
             showToast('חלק מהפריטים כבר קיימים באוסף זה', 'warning');
         } else {
             showToast(msg, 'error');
@@ -71,6 +65,15 @@ const CollectionDetails = () => {
     return <div className="flex justify-center items-center h-full"><Spinner size="lg" /></div>;
   }
 
+  if (isCollectionError) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-lg text-gray-500">שגיאה בטעינת האוסף</p>
+        <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>נסה שוב</Button>
+      </div>
+    );
+  }
+
   if (!collection) {
     return <div className="p-8 text-center text-lg text-gray-500">האוסף לא נמצא</div>;
   }
@@ -78,6 +81,14 @@ const CollectionDetails = () => {
   return (
     <div className="my-components-page" dir="rtl">
         
+        {/* Title and Back Button Row */}
+        <div className="collection-details-title-row">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/my-components')} className="collection-back-btn">
+                <FaArrowRight className="me-2" /> חזרה
+            </Button>
+            <h3 className="collection-details-name">{collection.name}</h3>
+        </div>
+
         {/* TABS */}
         <Tabs 
             tabs={[
@@ -87,14 +98,6 @@ const CollectionDetails = () => {
             activeTab={activeTab}
             onTabChange={setActiveTab}
         />
-        
-        {/* Title and Back Button Row */}
-        <div className="collection-details-title-row">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/my-components')} className="collection-back-btn">
-                <FaArrowRight className="ml-2" /> חזרה
-            </Button>
-            <h3 className="collection-details-name">{collection.name}</h3>
-        </div>
 
         {/* Main Content Area */}
         <div className="collection-details-body">

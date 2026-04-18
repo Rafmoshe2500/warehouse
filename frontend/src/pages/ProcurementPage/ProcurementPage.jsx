@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { FiPlus, FiSearch, FiX, FiGrid, FiList } from 'react-icons/fi';
-import { Button, Input, Pagination, ToastContainer, SkeletonOrderCards } from '../../components/common';
+import { Button, Input, Pagination, ToastContainer, SkeletonOrderCards, SkeletonTable } from '../../components/common';
 import ProcurementCards from '../../components/procurement/ProcurementCards';
 import ProcurementDataTable from '../../components/procurement/ProcurementDataTable';
 import ProcurementModal from '../../components/procurement/ProcurementModal';
@@ -124,6 +124,11 @@ const ProcurementPage = () => {
     setSearchTerm('');
     setSubmittedSearch('');
     setPage(1);
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.delete('search');
+      return next;
+    });
   };
 
   const handleTabChange = (tab) => {
@@ -156,7 +161,7 @@ const ProcurementPage = () => {
 
   const handleDelete = async (reason) => {
     try {
-      await procurementService.deleteOrder(modals.orderToDelete.id);
+      await procurementService.deleteOrder(modals.orderToDelete.id, reason);
       success('הזמנה נמחקה בהצלחה');
       modals.closeDeleteModal();
       invalidateOrders();
@@ -288,7 +293,7 @@ const ProcurementPage = () => {
           </div>
 
           {loading ? (
-            <SkeletonOrderCards count={8} />
+            viewMode === 'table' ? <SkeletonTable rows={8} /> : <SkeletonOrderCards count={8} />
           ) : (
             <>
               {viewMode === 'table' ? (
@@ -335,7 +340,7 @@ const ProcurementPage = () => {
       )}
       </div>
 
-      {hasPermission('compare_prices') && <AnalyticsStrip />}
+      {canCompare && <AnalyticsStrip />}
 
       {/* Order type selection (new orders only) */}
       <OrderTypeModal
@@ -367,7 +372,7 @@ const ProcurementPage = () => {
         onClose={modals.closeFilesModal}
         order={modals.selectedOrderForFiles}
         onFileChange={handleFileChange}
-        canEdit={canEdit}
+        canEdit={canEditOrder(modals.selectedOrderForFiles)}
       />
 
       <DeleteModal

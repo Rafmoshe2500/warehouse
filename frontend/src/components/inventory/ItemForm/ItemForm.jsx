@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../../common/Button/Button';
 import Input from '../../common/Input/Input'; // וודא שהנתיב נכון אצלך
+import { TARGET_SITES } from '../../../constants/sites';
 import './ItemForm.css';
 
 const ItemForm = ({ onSubmit, onCancel, initialData = {} }) => {
@@ -15,6 +16,7 @@ const ItemForm = ({ onSubmit, onCancel, initialData = {} }) => {
     warranty_expiry: initialData.warranty_expiry || '',
     reserved_stock: initialData.reserved_stock || '',
     purpose: initialData.purpose || '',
+    target_site: initialData.target_site || '',
     notes: initialData.notes || '',
   });
 
@@ -113,6 +115,21 @@ const ItemForm = ({ onSubmit, onCancel, initialData = {} }) => {
             onChange={handleChange}
             placeholder="0"
           />
+        </div>
+
+        <div className="form-group">
+          <label>אתר יעד</label>
+          <select
+            name="target_site"
+            value={formData.target_site}
+            onChange={handleChange}
+            className="item-form__select"
+          >
+            <option value="">בחר אתר...</option>
+            {TARGET_SITES.map(site => (
+              <option key={site} value={site}>{site}</option>
+            ))}
+          </select>
         </div>
 
         <div className="form-group">

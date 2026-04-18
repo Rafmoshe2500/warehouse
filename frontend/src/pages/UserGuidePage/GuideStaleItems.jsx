@@ -40,7 +40,7 @@ const GuideStaleItems = () => {
             <h3>עריכה ומחיקה</h3>
             <p>ניתן לבצע את כל פעולות העריכה והמחיקה ישירות מהטבלה:</p>
             <ul className="feature-list">
-              <li><FiCheckCircle className="list-icon" /> <strong>עריכה בתוך התא:</strong> לחצו על תא כדי לערוך ישירות</li>
+              <li><FiCheckCircle className="list-icon" /> <strong>עריכה בתוך התא:</strong> לחצו <strong>פעמיים</strong> על תא כדי לערוך ישירות</li>
               <li><FiCheckCircle className="list-icon" /> <strong>עריכה מרובה:</strong> סמנו מספר פריטים ועדכנו בבת אחת</li>
               <li><FiCheckCircle className="list-icon" /> <strong>מחיקה:</strong> מחיקת פריט בודד או מספר פריטים מסומנים</li>
               <li><FiCheckCircle className="list-icon" /> <strong>ביטול (Ctrl+Z):</strong> ביטול עריכה או מחיקה אחרונה</li>

@@ -12,8 +12,8 @@ const CollectionCard = ({ collection }) => {
   // Format permissions for display
   // Calculate counts from permissions array
   const permissions = collection.permissions || [];
-  const usersCount = permissions.filter(p => p.type === 'user').length;
-  const groupsCount = permissions.filter(p => p.type === 'group').length;
+  const usersCount = permissions.filter(p => p.type?.toLowerCase() === 'user').length;
+  const groupsCount = permissions.filter(p => p.type?.toLowerCase() === 'group').length;
   
   // Apply stripe color based on role
   const stripeClass = isOwner ? 'owner' : 'shared';
@@ -60,7 +60,7 @@ const CollectionCard = ({ collection }) => {
       
       <div className="card-footer">
         <span className="updated-text">
-            עודכן {new Date(collection.updated_at).toLocaleDateString()}
+            עודכן {collection.updated_at ? new Date(collection.updated_at).toLocaleDateString() : '-'}
         </span>
         <Button 
             variant="ghost" 

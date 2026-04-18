@@ -187,9 +187,6 @@
 
 .section-header {
   margin-bottom: 2rem;
-  border-left: 4px solid var(--guide-accent);
-  padding-left: 1.5rem; /* In RTL this is effectively padding-right visual, but keeping code standard */
-  border-left: none;
   border-right: 4px solid var(--guide-accent);
   padding-right: 1.5rem;
 }

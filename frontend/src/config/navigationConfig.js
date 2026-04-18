@@ -56,9 +56,9 @@ const navigationConfig = [
     path: '/admin',
     permission: 'admin',
     children: [
-      { id: 'users', label: 'ניהול משתמשים וקבוצות', icon: FiUsers, tabParam: 'users' },
-      { id: 'audit-logs', label: 'לוגים', icon: FiActivity, tabParam: 'logs' },
-      { id: 'ai', label: 'כלי AI', icon: FiCpu, tabParam: 'ai', permission: 'superAdmin' },
+      { id: 'users', label: 'ניהול משתמשים וקבוצות', icon: FiUsers, path: '/admin/users' },
+      { id: 'audit-logs', label: 'לוגים', icon: FiActivity, path: '/admin/audit' },
+      { id: 'ai', label: 'כלי AI', icon: FiCpu, path: '/admin/ai', permission: 'superAdmin' },
       { id: 'bom-templates', label: 'תבניות BOM', icon: FiClipboard, path: '/admin/bom-templates' },
     ],
   },

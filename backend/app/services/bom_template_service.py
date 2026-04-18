@@ -56,7 +56,7 @@ class BomTemplateService:
         }
         created = await self.repo.create(doc)
         logger.info("BOM template created: format_id=%s by %s", format_id, username)
-        return created
+        return self.repo._format_doc(created)
 
     async def update_template(self, template_id: str, data: dict, username: str) -> Optional[dict]:
         existing = await self.repo.get_by_id(template_id)

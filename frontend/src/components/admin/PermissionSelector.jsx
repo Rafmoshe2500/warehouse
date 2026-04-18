@@ -13,7 +13,7 @@ import './PermissionSelector.css';
  *  - מערכת:   admin
  */
 const PermissionSelector = ({ selectedPermissions = [], onChange }) => {
-  const { templates } = useBomTemplates();
+  const { templates, loading: vendorsLoading, error: vendorsError } = useBomTemplates();
 
   // Build VENDORS dynamically from BOM templates (hook provides fallback if API unavailable)
   const VENDORS = templates.map(t => ({ id: t.vendor_name.toLowerCase(), label: t.vendor_name }));
@@ -66,8 +66,12 @@ const PermissionSelector = ({ selectedPermissions = [], onChange }) => {
 
         <span className="ps-vendor-sep">|</span>
 
-        {/* ספדים ספציפיים */}
-        {VENDORS.map(v => {
+        {/* ספקים ספציפיים */}
+        {vendorsLoading && <span className="ps-vendor-loading">טוען ספקים...</span>}
+        {!vendorsLoading && VENDORS.length === 0 && (
+          <span className="ps-vendor-error" title={vendorsError?.message}>לא נטענו ספקים — ניתן להשתמש ב"כל הספקים"</span>
+        )}
+        {!vendorsLoading && VENDORS.map(v => {
           const perm = `procurement:${v.id}:${mode}`;
           const active = allSelected || has(perm);
           const implied = allSelected; // כלול בגלובלי

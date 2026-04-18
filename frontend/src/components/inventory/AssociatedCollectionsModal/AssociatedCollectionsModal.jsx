@@ -48,12 +48,12 @@ const AssociatedCollectionsModal = ({ isOpen, onClose, item }) => {
             <thead>
               <tr>
                 <th>שם האוסף/צוות</th>
-                <th>בעלים (ID)</th>
+                <th>בעלים</th>
               </tr>
             </thead>
             <tbody>
-              {collections.map((col, index) => (
-                <tr key={index}>
+              {collections.map((col) => (
+                <tr key={col.collection_id || col.collection_name}>
                   <td>{col.collection_name}</td>
                   <td className="ltr-text">{col.owner_id}</td>
                 </tr>

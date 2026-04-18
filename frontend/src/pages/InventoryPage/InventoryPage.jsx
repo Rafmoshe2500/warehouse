@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useItems } from '../../hooks/useItems';
@@ -30,7 +30,7 @@ import { TABLE_COLUMNS } from '../../constants/tableConfig';
 
 import './InventoryPage.css';
 
-const InventoryPage = ({ isEmbedded = false }) => {
+const InventoryPage = ({ isEmbedded = false, staleMode = false }) => {
   // 1. Core Hooks & State
   const { addToast, toasts, removeToast } = useToast();
   const { hasPermission } = useAuth();
@@ -38,28 +38,35 @@ const InventoryPage = ({ isEmbedded = false }) => {
   const modals = useInventoryModals();
   const location = useLocation();
   
-  // 2. Pagination & UI State
+  // 2. Stale-specific: days filter
+  const [days, setDays] = useState(30);
+  const debouncedDays = useDebounce(days, 400);
+
+  // 3. Pagination & UI State
   const { currentPage, itemsPerPage, goToPage, setItemsPerPage } = usePagination(1, 25);
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({});
-  const [sortConfig, setSortConfig] = useState({ key: 'updated_at', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'updated_at', direction: staleMode ? 'asc' : 'desc' });
   const [detailItem, setDetailItem] = useState(null);
   
   const [searchQuery, setSearchQuery] = useState(() => {
+    if (staleMode) return '';
     const params = new URLSearchParams(location.search);
     return params.get('search') || '';
   });
 
   // 3. Derived State
   const debouncedFilters = useDebounce(filters, 500);
+  const debouncedSearch = useDebounce(searchQuery, 400); // Bug #9: debounce search
 
   // 4. Query Params Construction
   const queryParams = {
     page: currentPage,
     limit: itemsPerPage,
-    search: searchQuery,
+    search: debouncedSearch,
     sort_by: sortConfig.key,
     sort_order: sortConfig.direction,
+    ...(staleMode && { stale_days: debouncedDays }),
     ...debouncedFilters
   };
 
@@ -71,13 +78,14 @@ const InventoryPage = ({ isEmbedded = false }) => {
   } = useItems(queryParams);
 
   // Auto-open detail panel when navigated from GlobalSearch with openItemId state
-  const autoOpenRef = useRef(false);
+  // Bug #8: track the last processed openItemId to allow re-navigation to different items
+  const autoOpenRef = useRef(null);
   useEffect(() => {
     const openItemId = location.state?.openItemId;
-    if (!openItemId || autoOpenRef.current || !items.length) return;
+    if (!openItemId || autoOpenRef.current === openItemId || !items.length) return;
     const found = items.find(i => i._id === openItemId);
     if (found) {
-      autoOpenRef.current = true;
+      autoOpenRef.current = openItemId;
       setDetailItem(found);
     }
   }, [items, location.state?.openItemId]);
@@ -91,10 +99,21 @@ const InventoryPage = ({ isEmbedded = false }) => {
       clearSelection
   } = useInventorySelection(items);
 
+  // Bug #17: clear selection when navigating to a different page
+  useEffect(() => {
+    clearSelection();
+  }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Bug #25: ref-based record-delete registration (replaces window.__tableRecordDelete)
+  const recordDeleteRef = useRef(null);
+  const onRegisterRecordDelete = useCallback((fn) => {
+    recordDeleteRef.current = fn;
+  }, []);
+
   const {
       visibleColumns,
       toggleColumn
-  } = useColumnVisibility('inventory_columns', TABLE_COLUMNS);
+  } = useColumnVisibility(staleMode ? 'stale_items_columns' : 'inventory_columns', TABLE_COLUMNS);
 
   const {
       uploadingExcel,
@@ -138,12 +157,22 @@ const InventoryPage = ({ isEmbedded = false }) => {
   const handleSaveItemModal = async (data) => {
     try {
       if (modals.editingItem) {
-        await updateItem(modals.editingItem._id, data);
+        // Bug #2: update each changed field individually (backend only accepts single-field PATCH)
+        const fieldsToUpdate = Object.keys(data).filter(
+          key => data[key] !== undefined && String(data[key] ?? '') !== String(modals.editingItem[key] ?? '')
+        );
+        await Promise.all(
+          fieldsToUpdate.map(field => updateItem(modals.editingItem._id, field, String(data[field] ?? '')))
+        );
         addToast('הפריט עודכן בהצלחה', 'success');
+      } else {
+        // Bug #3: missing create path
+        await createItem(data);
+        addToast('פריט נוצר בהצלחה', 'success');
       }
       modals.closeItemForm();
     } catch (err) {
-      const message = err.response?.data?.detail || 'שגיאה בעדכון';
+      const message = err.response?.data?.detail || 'שגיאה בשמירה';
       addToast(message, 'error');
     }
   };
@@ -166,9 +195,9 @@ const InventoryPage = ({ isEmbedded = false }) => {
         }
       }
 
-      // Record for undo (via global function exposed by ItemTable)
-      if (deletedItemsData.length > 0 && window.__tableRecordDelete) {
-        window.__tableRecordDelete(deletedItemsData, modals.isDeletingMultiple);
+      // Bug #25: use prop-based ref instead of window global
+      if (deletedItemsData.length > 0 && recordDeleteRef.current) {
+        recordDeleteRef.current(deletedItemsData, modals.isDeletingMultiple);
       }
 
       addToast('המחיקה בוצעה בהצלחה (Ctrl+Z לביטול)', 'success');
@@ -178,11 +207,14 @@ const InventoryPage = ({ isEmbedded = false }) => {
     }
   };
 
-  const handleBulkEditClick = () => {
-    if (selectedItems.length === 0) {
+  // Bug #15: accept optional itemIds from row-level actions to avoid stale closure
+  const handleBulkEditClick = (itemIds = null) => {
+    const items = itemIds ?? selectedItems;
+    if (items.length === 0) {
       addToast('יש לבחור פריטים לעריכה', 'warning');
       return;
     }
+    if (itemIds !== null) setSelectedItems(itemIds);
     modals.openBulkEdit();
   };
 
@@ -202,7 +234,10 @@ const InventoryPage = ({ isEmbedded = false }) => {
   const handleEditCell = async (itemId, field, value, isUndo = false) => {
     try {
       await updateItem(itemId, field, value, isUndo);
-      addToast('הפריט עודכן בהצלחה', 'success');
+      // Bug #14: don't show success toast on undo (undo handler shows its own toast)
+      if (!isUndo) {
+        addToast('הפריט עודכן בהצלחה', 'success');
+      }
     } catch (err) {
       addToast('שגיאה בעדכון הפריט', 'error');
     }
@@ -276,6 +311,7 @@ const InventoryPage = ({ isEmbedded = false }) => {
         ...debouncedFilters,
         sort_by: sortConfig.key,
         sort_order: sortConfig.direction,
+        ...(staleMode && { stale_days: days }),
         export_mode: mode,
         page: currentPage,
         limit: itemsPerPage
@@ -294,9 +330,30 @@ const InventoryPage = ({ isEmbedded = false }) => {
      clearSelection();
   };
   
-  const onAddToCollectionClick = (collection) => {
-      handleAddToCollection(collection, selectedItems, onAddToCollectionSuccess);
+  // Bug #6: accept optional itemIds from row-level actions (falls back to selection)
+  const onAddToCollectionClick = (collection, itemIds = null) => {
+      handleAddToCollection(collection, itemIds ?? selectedItems, onAddToCollectionSuccess);
   };
+
+  // Days filter element for stale mode
+  const daysFilter = staleMode ? (
+    <div className="days-filter">
+      <label>לא עודכנו למעלה מ-</label>
+      <input
+        type="number"
+        value={days}
+        onChange={(e) => {
+          // Bug #11: enforce minimum of 1
+          const v = Math.max(1, Number(e.target.value) || 1);
+          setDays(v);
+          goToPage(1);
+        }}
+        min="1"
+        className="days-input"
+      />
+      <span>ימים</span>
+    </div>
+  ) : null;
 
   return (
     <div className={isEmbedded ? "inventory-page-embedded" : "inventory-page"}>
@@ -304,25 +361,29 @@ const InventoryPage = ({ isEmbedded = false }) => {
         canEdit={canEdit}
         selectedItems={selectedItems}
         showFilters={showFilters}
-        uploadingExcel={uploadingExcel}
+        uploadingExcel={staleMode ? false : uploadingExcel}
         onFilterToggle={handleFilterToggle}
         onBulkEdit={handleBulkEditClick}
         onBulkDelete={() => modals.openDeleteConfirm(null, '', true)}
-        // Column Toggle Props
         allColumns={TABLE_COLUMNS}
         visibleColumns={Object.keys(visibleColumns).filter(k => visibleColumns[k])}
         onColumnToggle={toggleColumn}
-        extraContent={
-          <ViewModeToggle viewMode={viewMode} onChange={changeViewMode} />
+        extraContent={staleMode
+          ? daysFilter
+          : <ViewModeToggle viewMode={viewMode} onChange={changeViewMode} />
         }
         searchQuery={searchQuery}
         onSearch={handleSearch}
-        onUploadClick={handleStandardImportClick}
         onExportClick={handleExportRequest}
-        onAddClick={inlineAdd.startAdd}
-        onImportProjectsClick={handleProjectImportClick}
+        {...(!staleMode && {
+          onUploadClick: handleStandardImportClick,
+          onAddClick: inlineAdd.startAdd,
+          onImportProjectsClick: handleProjectImportClick,
+        })}
+        {...(staleMode && { hideImport: true, hideAdd: true })}
       />
 
+      {/* Bug #12: show ActiveFiltersBar in all modes, not just non-stale */}
       <ActiveFiltersBar
         filters={filters}
         searchQuery={searchQuery}
@@ -336,9 +397,8 @@ const InventoryPage = ({ isEmbedded = false }) => {
         canEdit={canEdit}
         isEmbedded={isEmbedded}
         queryParams={queryParams}
-        viewMode={viewMode}
-        viewConfig={viewConfig}
-        visibleColumns={Object.keys(visibleColumns).filter(k => visibleColumns[k])} // Pass array
+        {...(!staleMode && { viewMode, viewConfig })}
+        visibleColumns={Object.keys(visibleColumns).filter(k => visibleColumns[k])}
         selection={{
           selectedItems,
           setSelectedItems,
@@ -352,22 +412,24 @@ const InventoryPage = ({ isEmbedded = false }) => {
         onBulkEdit={handleBulkEditClick}
         onBulkDelete={() => modals.openDeleteConfirm(null, '', true)}
 
-        /* Inline Add Props */
-        isAdding={inlineAdd.isAdding}
-        newRowData={inlineAdd.newRowData}
-        onNewRowChange={inlineAdd.handleNewRowChange}
-        onSaveNew={inlineAdd.saveNewItem}
-        onCancelNew={inlineAdd.cancelAdd}
+        {...(!staleMode && {
+          isAdding: inlineAdd.isAdding,
+          newRowData: inlineAdd.newRowData,
+          onNewRowChange: inlineAdd.handleNewRowChange,
+          onSaveNew: inlineAdd.saveNewItem,
+          onCancelNew: inlineAdd.cancelAdd,
+        })}
 
         onShowToast={addToast}
         onRestoreItems={restoreItems}
         onShowCollections={openCollectionsModal} 
         userCollections={userCollections}
         onAddToCollection={onAddToCollectionClick}
-        onRowClick={setDetailItem}
+        {...(!staleMode && { onRowClick: setDetailItem })}
+        onRegisterRecordDelete={onRegisterRecordDelete}
       />
 
-      {detailItem && (
+      {!staleMode && detailItem && (
         <DetailPanel
           item={detailItem}
           onClose={() => setDetailItem(null)}
@@ -408,16 +470,21 @@ const InventoryPage = ({ isEmbedded = false }) => {
         fileInputRef={fileInputRef}
         showExportModal={modals.showExportModal}
         onCloseExport={modals.closeExport}
-        onUploadChange={onFileChange}
+        onUploadChange={staleMode ? () => {} : onFileChange}
         onExecuteExport={handleExecuteExport}
         totalItems={totalItems}
         currentPageItems={items.length}
-        uploading={uploadingExcel}
+        uploading={staleMode ? false : uploadingExcel}
       />
 
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
+};
+
+InventoryPage.propTypes = {
+  isEmbedded: PropTypes.bool,
+  staleMode: PropTypes.bool,
 };
 
 export default InventoryPage;

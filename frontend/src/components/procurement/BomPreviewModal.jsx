@@ -122,9 +122,11 @@ const DetailDrawer = ({ group, vendor, canEdit, onClose, onSaveEdits, orderId })
   const [localGroup, setLocalGroup] = useState(group);
 
   // Sync if parent passes a different group (user selected another card)
-  const prevGroupRef = useRef(group);
-  if (prevGroupRef.current !== group) {
-    prevGroupRef.current = group;
+  // Using state-based comparison (React-documented getDerivedStateFromProps pattern)
+  // so it survives StrictMode double renders correctly — unlike ref mutation.
+  const [prevGroupProp, setPrevGroupProp] = useState(group);
+  if (group !== prevGroupProp) {
+    setPrevGroupProp(group);
     setLocalGroup(group);
     setEditing(false);
     setEditMap({});

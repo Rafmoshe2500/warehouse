@@ -54,10 +54,12 @@ const DetailPanel = ({ item, onClose, onShowCollections }) => {
     setIsClosing(false);
   }, [item]);
 
-  // Close when clicking outside the panel
+  // Close when clicking outside the panel (but not inside a modal/portal)
   useEffect(() => {
     const handleMouseDown = (e) => {
       if (panelRef.current && !panelRef.current.contains(e.target)) {
+        // Don't close when interacting with a modal overlay or dialog
+        if (e.target.closest('.modal-overlay') || e.target.closest('[role="dialog"]')) return;
         handleClose();
       }
     };

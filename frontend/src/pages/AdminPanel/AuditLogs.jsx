@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowRight, FiSearch } from 'react-icons/fi';
@@ -32,17 +32,12 @@ const AuditLogs = ({ isEmbedded = false }) => {
 
   const { currentPage, itemsPerPage, goToPage, setItemsPerPage } = usePagination(1, 50);
 
-  useEffect(() => {
-    fetchLogs();
-  }, [currentPage, itemsPerPage]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
       const params = {
-        target_resource: 'user',
         page: currentPage,
-        limit: itemsPerPage
+        page_size: itemsPerPage
       };
       if (filters.action) params.action = filters.action;
       if (filters.actor) params.actor = filters.actor;
@@ -56,11 +51,18 @@ const AuditLogs = ({ isEmbedded = false }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, itemsPerPage, filters, error]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   const handleSearch = () => {
-    goToPage(1);
-    fetchLogs();
+    if (currentPage !== 1) {
+      goToPage(1); // useEffect on fetchLogs will re-run when currentPage changes
+    } else {
+      fetchLogs(); // already on page 1, fetch directly
+    }
   };
 
   const ACTION_KEYS = [
@@ -139,7 +141,7 @@ const AuditLogs = ({ isEmbedded = false }) => {
   );
 
   return (
-    <div className="audit-logs" data-testid="audit-logs">
+    <div className={isEmbedded ? 'audit-logs-embedded' : 'audit-logs'} data-testid="audit-logs">
       <ScrollableTableLayout
         header={headerContent}
         pagination={

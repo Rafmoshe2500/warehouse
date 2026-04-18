@@ -83,15 +83,13 @@ class ProcurementOrderCreate(ProcurementOrderBase):
 class ProcurementOrderUpdate(BaseModel):
     """Schema for updating procurement order"""
     order_date: Optional[datetime] = None
-    bom_items: Optional[List[BOMItem]] = None
+    bom_items: Optional[List[BOMItem]] = Field(None, min_length=1)
     total_amount: Optional[float] = Field(None, ge=0)
     status: Optional[ProcurementStatus] = None
     emf_number: Optional[str] = None
     received_bom: Optional[bool] = None
     bom_vendor: Optional[str] = None
     bom_data: Optional[dict] = None
-    bom_file_s3_key: Optional[str] = None
-    bom_filename: Optional[str] = None
 
 
 

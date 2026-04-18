@@ -77,7 +77,7 @@ const ProcurementModal = ({
   const [expandedItemId, setExpandedItemId] = useState(1);
   const [showEmfInput, setShowEmfInput] = useState(false);
   const { showToast } = useToast();
-  const { hasPricePermission, hasVendorAccess } = useAuth();
+  const { hasPricePermission, hasVendorAccess, isAdmin, isSuperAdmin } = useAuth();
   const { templates } = useBomTemplates();
   const showPrices = hasPricePermission();
 
@@ -90,9 +90,9 @@ const ProcurementModal = ({
     format: t.format_id,
   })), [templates]);
 
-  const canEdit = formData.bom_vendor
+  const canEdit = (isAdmin || isSuperAdmin) || (formData.bom_vendor
     ? hasVendorAccess(formData.bom_vendor.toLowerCase(), 'rw')
-    : false;
+    : false);
   const toastError = (msg) => showToast(msg, 'error');
 
   // BOM inline scanner (for manual re-scan within form)
@@ -166,7 +166,7 @@ const ProcurementModal = ({
     setShowEmfInput(false);
     setShowBomPreview(false);
     setExpandedItemId(1);
-  }, [initialData, isOpen, orderType, bomPrescanData]);
+  }, [initialData, isOpen, orderType, bomPrescanData, BOM_VENDORS]);
 
   // ── Auto-complete exact match ─────────────────────────────────────────────
   useEffect(() => {
@@ -209,7 +209,7 @@ const ProcurementModal = ({
   // ── BOM inline scan (manual flow only) ───────────────────────────────────
   const handleSelectVendor = (vendor) => { setBomVendor(vendor); setBomPhase('upload'); };
 
-  const handleBomFile = async (file) => {
+  const handleBomFile = useCallback(async (file) => {
     if (!file?.name.match(/\.(xlsx|xls)$/i)) {
       setBomScanError('יש להעלות קובץ Excel בלבד (.xlsx)');
       setBomPhase('error');
@@ -229,6 +229,8 @@ const ProcurementModal = ({
         bom_data: result,
         bom_items: newItems,
         total_amount: Math.round(totalPrice),
+        bom_file_s3_key: result.bom_file_s3_key || null,
+        bom_filename: result.bom_filename || null,
       }));
       if (unknown.length > 0) { setUnresolvedParts(unknown); setShowResolveModal(true); }
       setBomPhase('success');
@@ -237,12 +239,12 @@ const ProcurementModal = ({
       setBomScanError(err?.response?.data?.detail || err?.message || 'שגיאה בסריקת הקובץ');
       setBomPhase('error');
     }
-  };
+  }, [bomVendor]);
 
   const onBomFileInputChange = (e) => { const f = e.target.files?.[0]; if (f) handleBomFile(f); e.target.value = ''; };
   const onBomDragOver  = useCallback((e) => { e.preventDefault(); setBomDragging(true); }, []);
   const onBomDragLeave = useCallback(() => setBomDragging(false), []);
-  const onBomDrop      = useCallback((e) => { e.preventDefault(); setBomDragging(false); handleBomFile(e.dataTransfer.files?.[0]); }, [bomVendor]); // eslint-disable-line
+  const onBomDrop      = useCallback((e) => { e.preventDefault(); setBomDragging(false); handleBomFile(e.dataTransfer.files?.[0]); }, [handleBomFile]);
 
   const handleRetryBomUpload = () => { setBomPhase('upload'); setBomFileName(''); setBomScanError(''); };
   const handleRescanBom = () => {

@@ -15,7 +15,7 @@ export const useCollectionDetails = (collectionId) => {
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, itemIds: [], message: '' });
 
   // Fetch Collection Details
-  const { data: collection, isLoading: isCollectionLoading } = useQuery({
+  const { data: collection, isLoading: isCollectionLoading, isError: isCollectionError } = useQuery({
     queryKey: ['collection', collectionId],
     queryFn: () => collectionsService.getCollection(collectionId),
     enabled: !!collectionId
@@ -110,6 +110,7 @@ export const useCollectionDetails = (collectionId) => {
     collection,
     items,
     isCollectionLoading,
+    isCollectionError,
     isItemsLoading,
     activeTab,
     setActiveTab,

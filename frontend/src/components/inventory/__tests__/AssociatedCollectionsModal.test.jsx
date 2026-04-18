@@ -82,7 +82,7 @@ describe('AssociatedCollectionsModal', () => {
 
     await waitFor(() => {
       expect(screen.getByText('שם האוסף/צוות')).toBeInTheDocument();
-      expect(screen.getByText('בעלים (ID)')).toBeInTheDocument();
+      expect(screen.getByText('בעלים')).toBeInTheDocument();
     });
   });
 

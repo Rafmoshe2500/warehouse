@@ -125,7 +125,7 @@
   --z-modal: 110;
   --z-toast: 200;
   --z-tooltip: 300;
-  --z-global-search: 400;
+  --z-global-search: 1100;
 
   /* Animation Tokens */
   --transition-fast: 150ms ease;

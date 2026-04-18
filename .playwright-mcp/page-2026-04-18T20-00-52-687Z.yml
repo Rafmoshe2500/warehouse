@@ -1,0 +1,31 @@
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e7]:
+      - img [ref=e8]:
+        - generic [ref=e12]: "890"
+      - generic [ref=e13]:
+        - generic [ref=e14]: "890"
+        - generic [ref=e15]: Warehouse
+    - generic [ref=e16]:
+      - button "בחר ערכת נושא" [ref=e18] [cursor=pointer]:
+        - img [ref=e19]
+      - button "עבור למצב בהיר" [ref=e23] [cursor=pointer]:
+        - img [ref=e24]
+  - generic [ref=e31]:
+    - generic [ref=e32]:
+      - img [ref=e34]
+      - heading "מערכת ניהול מלאי" [level=1] [ref=e37]
+      - paragraph [ref=e38]: בחר אופן התחברות
+    - generic [ref=e39]:
+      - button "התחברות מקומית התחבר עם שם משתמש וסיסמה מקומיים" [ref=e40] [cursor=pointer]:
+        - img [ref=e42]
+        - generic [ref=e47]:
+          - heading "התחברות מקומית" [level=3] [ref=e48]
+          - paragraph [ref=e49]: התחבר עם שם משתמש וסיסמה מקומיים
+        - img [ref=e50]
+      - button "התחברות דומיינית התחבר דרך Active Directory" [ref=e52] [cursor=pointer]:
+        - img [ref=e54]
+        - generic [ref=e57]:
+          - heading "התחברות דומיינית" [level=3] [ref=e58]
+          - paragraph [ref=e59]: התחבר דרך Active Directory
+        - img [ref=e60]
