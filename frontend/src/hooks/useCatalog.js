@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { catalogService } from '../api/services';
+import { QUERY_KEYS } from '../lib/queryKeys';
 
 export const useCatalog = (queryParams = {}) => {
   const {
@@ -10,7 +11,7 @@ export const useCatalog = (queryParams = {}) => {
     refetch,
     isFetching
   } = useQuery({
-    queryKey: ['catalog', queryParams],
+    queryKey: QUERY_KEYS.catalog.list(queryParams),
     queryFn: async () => {
       const result = await catalogService.getCatalog(queryParams);
       return result;

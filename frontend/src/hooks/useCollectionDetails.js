@@ -1,9 +1,10 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import collectionsService from '../api/services/collectionsService';
 import itemService from '../api/services/itemService';
 import { useToast } from '../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
+import { QUERY_KEYS } from '../lib/queryKeys';
 
 export const useCollectionDetails = (collectionId) => {
   const navigate = useNavigate();
@@ -16,14 +17,14 @@ export const useCollectionDetails = (collectionId) => {
 
   // Fetch Collection Details
   const { data: collection, isLoading: isCollectionLoading, isError: isCollectionError } = useQuery({
-    queryKey: ['collection', collectionId],
+    queryKey: QUERY_KEYS.collections.details(collectionId),
     queryFn: () => collectionsService.getCollection(collectionId),
     enabled: !!collectionId
   });
 
   // Fetch Collection Items
   const { data: items = [], isLoading: isItemsLoading } = useQuery({
-    queryKey: ['collectionItems', collectionId],
+    queryKey: QUERY_KEYS.collections.items(collectionId),
     queryFn: () => collectionsService.getCollectionItems(collectionId),
     enabled: !!collectionId
   });
@@ -32,7 +33,7 @@ export const useCollectionDetails = (collectionId) => {
   const unassignMutation = useMutation({
     mutationFn: (itemId) => collectionsService.removeItem(collectionId, itemId),
     onSuccess: () => {
-      queryClient.invalidateQueries(['collectionItems', collectionId]);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.collections.items(collectionId) });
       showToast('הפריט הוסר מהאוסף בהצלחה', 'success');
     },
     onError: () => showToast('שגיאה בהסרת הפריט', 'error')
@@ -41,7 +42,7 @@ export const useCollectionDetails = (collectionId) => {
   const updateItemMutation = useMutation({
     mutationFn: ({ itemId, data }) => collectionsService.updateItem(collectionId, itemId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['collectionItems', collectionId]);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.collections.items(collectionId) });
       showToast('הפריט עודכן בהצלחה', 'success');
     },
     onError: () => showToast('שגיאה בעדכון הפריט', 'error')
@@ -50,7 +51,7 @@ export const useCollectionDetails = (collectionId) => {
   const bulkRemoveMutation = useMutation({
     mutationFn: (itemIds) => collectionsService.bulkRemoveItems(collectionId, itemIds),
     onSuccess: (data) => {
-      queryClient.invalidateQueries(['collectionItems', collectionId]);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.collections.items(collectionId) });
       showToast(`נמחקו ${data.deleted} פריטים בהצלחה`, 'success');
     },
     onError: () => showToast('שגיאה במחיקת פריטים', 'error')
@@ -96,7 +97,7 @@ export const useCollectionDetails = (collectionId) => {
   const handleBulkEditItems = async (itemIds, changes) => {
     try {
       await itemService.bulkUpdate(itemIds, changes);
-      queryClient.invalidateQueries(['collectionItems', collectionId]);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.collections.items(collectionId) });
       showToast(`עודכנו ${itemIds.length} פריטים בהצלחה`, 'success');
     } catch {
       showToast('שגיאה בעדכון הפריטים', 'error');

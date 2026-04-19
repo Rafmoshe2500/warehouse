@@ -1,13 +1,14 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import collectionsService from '../api/services/collectionsService';
+import { QUERY_KEYS } from '../lib/queryKeys';
 
 export const useMyComponents = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const { data: collections = [], isLoading, isError, refetch } = useQuery({
-    queryKey: ['collections'],
+    queryKey: QUERY_KEYS.collections.all,
     queryFn: collectionsService.getCollections
   });
 

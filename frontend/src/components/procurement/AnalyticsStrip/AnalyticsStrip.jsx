@@ -2,11 +2,12 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FiTrendingUp, FiClock, FiPackage, FiStar } from 'react-icons/fi';
 import procurementService from '../../../api/services/procurementService';
+import { QUERY_KEYS } from '../../../lib/queryKeys';
 import './AnalyticsStrip.css';
 
 const AnalyticsStrip = () => {
     const { data: summary } = useQuery({
-        queryKey: ['procurement-summary'],
+        queryKey: QUERY_KEYS.procurement.summary,
         queryFn: () => procurementService.getMonthlySummary(),
         staleTime: 5 * 60 * 1000,
         refetchOnWindowFocus: false

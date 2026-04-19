@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import bomTemplateService from '../api/services/bomTemplateService';
+import { QUERY_KEYS } from '../lib/queryKeys';
 
 // Hardcoded fallback templates — used when API is unavailable or DB not seeded
 const FALLBACK_TEMPLATES = [
@@ -10,8 +11,6 @@ const FALLBACK_TEMPLATES = [
   { format_id: 'cisco_quote', vendor_name: 'Cisco', description: 'Cisco Quote', is_active: true },
   { format_id: 'generic_first_col', vendor_name: 'Generic', description: 'Generic (first column)', is_active: true },
 ];
-
-const BOM_TEMPLATES_QUERY_KEY = ['bom-templates'];
 
 /**
  * Hook to fetch and manage BOM templates.
@@ -25,7 +24,7 @@ export default function useBomTemplates() {
   const queryClient = useQueryClient();
 
   const { data, isLoading: loading, error } = useQuery({
-    queryKey: BOM_TEMPLATES_QUERY_KEY,
+    queryKey: QUERY_KEYS.bomTemplates.all,
     queryFn: async () => {
       const result = await bomTemplateService.getAll();
       const fetched = result.templates || [];
@@ -39,7 +38,7 @@ export default function useBomTemplates() {
   const templates = data ?? FALLBACK_TEMPLATES;
 
   const invalidate = useCallback(
-    () => queryClient.invalidateQueries({ queryKey: BOM_TEMPLATES_QUERY_KEY }),
+    () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.bomTemplates.all }),
     [queryClient]
   );
 
