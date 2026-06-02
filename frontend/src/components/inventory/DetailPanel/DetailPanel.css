@@ -178,6 +178,66 @@
   word-break: break-word;
 }
 
+/* Editable field value — shows pointer cursor and subtle hover highlight */
+.detail-panel__field-value--editable {
+  cursor: text;
+  border-radius: var(--radius-sm);
+  padding: 2px 4px;
+  margin: -2px -4px;
+  transition: background var(--transition-fast);
+}
+
+.detail-panel__field-value--editable:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Edit input inside the detail panel */
+.detail-panel__edit-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-panel__edit-input {
+  width: 100%;
+  font-size: var(--text-sm);
+  font-family: inherit;
+  padding: 4px 6px;
+  border: 1px solid var(--accent-primary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.detail-panel__edit-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.detail-panel__edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.detail-panel__edit-btn.save {
+  background: #22c55e;
+  color: white;
+}
+
+.detail-panel__edit-btn.cancel {
+  background: var(--accent-danger);
+  color: white;
+}
+
 /* === Sections === */
 .detail-panel__section {
   padding: var(--space-3) var(--space-4);
@@ -192,6 +252,180 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.detail-panel__section-empty {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin: var(--space-1) 0 0;
+}
+
+/* === Project Allocations Tags === */
+.detail-panel__allocation-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.detail-panel__allocation-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full, 999px);
+  padding: 2px 8px;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.detail-panel__allocation-proj {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.detail-panel__allocation-qty {
+  background: var(--accent-primary);
+  color: #fff;
+  border-radius: var(--radius-full, 999px);
+  padding: 0 5px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* === Collection Name Tags === */
+.detail-panel__collection-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.detail-panel__collection-tag {
+  display: inline-block;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2px 8px;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* === Movements — collapsible === */
+.detail-panel__section--movements {
+  padding: 0;
+}
+
+.detail-panel__movements-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: right;
+  transition: background var(--transition-fast, 150ms ease), color var(--transition-fast, 150ms ease);
+}
+
+.detail-panel__movements-toggle:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.detail-panel__movements-count {
+  margin-inline-start: auto;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full, 999px);
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 18px;
+}
+
+.detail-panel__movements-chevron {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.detail-panel__movements-chevron--open {
+  transform: rotate(180deg);
+}
+
+/* Accordion body — grid trick for smooth height animation */
+.detail-panel__movements-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.detail-panel__movements-body--open {
+  grid-template-rows: 1fr;
+}
+
+.detail-panel__movements-inner {
+  overflow: hidden;
+  padding: 0 var(--space-4) 0;
+  transition: padding 0.3s ease;
+}
+
+.detail-panel__movements-body--open .detail-panel__movements-inner {
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+.detail-panel__movements {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.detail-panel__movement {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+
+.detail-panel__movement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 2px;
+}
+
+.detail-panel__movement-action {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.detail-panel__movement-actor {
+  font-size: var(--text-xs);
+  color: var(--accent-primary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.detail-panel__movement-changes {
+  font-size: 11px;
+  color: var(--text-secondary);
+  word-break: break-word;
+  margin-bottom: 2px;
+}
+
+.detail-panel__movement-time {
+  font-size: 10px;
+  color: var(--text-muted);
 }
 
 /* === Footer (Timestamps) === */

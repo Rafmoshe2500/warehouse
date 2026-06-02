@@ -120,7 +120,7 @@ const ProcurementModal = ({
     if (initialData) {
       const mappedInitialItems = (initialData.bom_items || []).map((item, idx) => {
         const correspondingGroup = initialData.bom_data?.groups?.[idx];
-        const alias = correspondingGroup?.main?.part_alias || item.product_name || '';
+        const alias = correspondingGroup?.main?.part_alias || item.part_alias || item.product_name || '';
         return { ...item, product_name: alias };
       });
 
@@ -378,6 +378,22 @@ const ProcurementModal = ({
     setFormData(prev => ({ ...prev, emf_number: '', status: 'waiting_bom_emf' }));
   };
 
+  const buildSubmitPayload = (baseData, status) => {
+    const normalizedItems = (baseData.bom_items || []).map(item => {
+      const alias = (item.product_name || '').trim();
+      return {
+        ...item,
+        part_alias: alias || item.part_alias || null,
+      };
+    });
+
+    return {
+      ...baseData,
+      status,
+      bom_items: normalizedItems,
+    };
+  };
+
 
   // ── Submit ────────────────────────────────────────────────────────────────
   const handleSubmit = async (e, submissionType = 'save') => {
@@ -390,7 +406,7 @@ const ProcurementModal = ({
     const statusToSubmit = formData.status;
     setLoading(true);
     try {
-      await onSubmit({ ...formData, status: statusToSubmit });
+      await onSubmit(buildSubmitPayload(formData, statusToSubmit));
     } finally {
       setLoading(false);
     }
@@ -400,7 +416,7 @@ const ProcurementModal = ({
     e.preventDefault();
     setLoading(true);
     try {
-      await onSubmit({ ...formData, status: newStatus });
+      await onSubmit(buildSubmitPayload(formData, newStatus));
     } finally {
       setLoading(false);
     }

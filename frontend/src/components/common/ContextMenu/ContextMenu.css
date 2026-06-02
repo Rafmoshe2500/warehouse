@@ -58,6 +58,11 @@
     color: var(--accent-danger);
 }
 
+.context-menu__item--cart:hover:not(:disabled) {
+    background: rgba(var(--accent-primary-rgb, 99, 102, 241), 0.1);
+    color: var(--accent-primary);
+}
+
 .context-menu__item:disabled {
     opacity: 0.5;
     cursor: not-allowed;

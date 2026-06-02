@@ -8,6 +8,7 @@ import { useInventoryModals } from '../../hooks/useInventoryModals';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useInlineAddItem } from '../../hooks/useInlineAddItem';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import excelService from '../../api/services/excelService';
 
 // New Hooks
@@ -26,14 +27,18 @@ import InventoryContent from '../../components/inventory/InventoryContent/Invent
 import InventoryModals from '../../components/inventory/InventoryModals/InventoryModals';
 import ExcelManager from '../../components/inventory/ExcelManager/ExcelManager';
 import ToastContainer from '../../components/common/Toast/ToastContainer';
-import { TABLE_COLUMNS } from '../../constants/tableConfig';
+import Modal from '../../components/common/Modal/Modal';
+import QuantityPopup from '../../components/cart/QuantityPopup/QuantityPopup';
+import { TABLE_COLUMNS, KEYBOARD_SHORTCUTS } from '../../constants/tableConfig';
 
 import './InventoryPage.css';
 
 const InventoryPage = ({ isEmbedded = false, staleMode = false }) => {
   // 1. Core Hooks & State
   const { addToast, toasts, removeToast } = useToast();
+  const [showShortcutsModal, setShowShortcutsModal] = useState(false);
   const { hasPermission } = useAuth();
+  const { addToCart } = useCart();
   const canEdit = hasPermission('inventory:rw');
   const modals = useInventoryModals();
   const location = useLocation();
@@ -48,6 +53,7 @@ const InventoryPage = ({ isEmbedded = false, staleMode = false }) => {
   const [filters, setFilters] = useState({});
   const [sortConfig, setSortConfig] = useState({ key: 'updated_at', direction: staleMode ? 'asc' : 'desc' });
   const [detailItem, setDetailItem] = useState(null);
+  const [quantityPopupItem, setQuantityPopupItem] = useState(null);
   
   const [searchQuery, setSearchQuery] = useState(() => {
     if (staleMode) return '';
@@ -89,6 +95,13 @@ const InventoryPage = ({ isEmbedded = false, staleMode = false }) => {
       setDetailItem(found);
     }
   }, [items, location.state?.openItemId]);
+
+  // Sync detailItem with latest data when items refresh (e.g., after an inline panel edit)
+  useEffect(() => {
+    if (!detailItem) return;
+    const updated = items.find(i => i._id === detailItem._id);
+    if (updated && updated !== detailItem) setDetailItem(updated);
+  }, [items]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 6. Custom Hooks Integration
   const {
@@ -335,6 +348,56 @@ const InventoryPage = ({ isEmbedded = false, staleMode = false }) => {
       handleAddToCollection(collection, itemIds ?? selectedItems, onAddToCollectionSuccess);
   };
 
+  // Cart: add selected items to cart
+  const handleAddToCart = useCallback(async (itemIds) => {
+    const targets = itemIds ?? selectedItems;
+    if (!targets.length) return;
+
+    const itemsToAdd = items.filter((i) => targets.includes(i._id));
+    const serialItems = itemsToAdd.filter((i) => i.serial && String(i.serial).trim());
+    const nonSerialItems = itemsToAdd.filter((i) => !i.serial || !String(i.serial).trim());
+
+    // Serial items — add immediately (qty forced to 1 server-side)
+    for (const item of serialItems) {
+      try {
+        await addToCart(item._id, 1);
+      } catch {
+        addToast(`שגיאה בהוספת ${item.serial} לעגלה`, 'error');
+      }
+    }
+
+    // Non-serial items — ask for quantity per item
+    for (const item of nonSerialItems) {
+      setQuantityPopupItem(item);
+      // Wait for the user to confirm/cancel via the popup
+      await new Promise((resolve) => {
+        const origSet = setQuantityPopupItem;
+        window.__cartResolve = resolve;
+      });
+    }
+
+    if (serialItems.length > 0) {
+      addToast(`${serialItems.length} פריטים סריאליים נוספו לעגלה`, 'success');
+    }
+  }, [selectedItems, items, addToCart, addToast]);
+
+  const handleQuantityConfirm = useCallback(async (qty) => {
+    const item = quantityPopupItem;
+    setQuantityPopupItem(null);
+    if (window.__cartResolve) { window.__cartResolve(); window.__cartResolve = null; }
+    try {
+      await addToCart(item._id, qty);
+      addToast(`${item.catalog_number} נוסף לעגלה`, 'success');
+    } catch {
+      addToast('שגיאה בהוספה לעגלה', 'error');
+    }
+  }, [quantityPopupItem, addToCart, addToast]);
+
+  const handleQuantityCancel = useCallback(() => {
+    setQuantityPopupItem(null);
+    if (window.__cartResolve) { window.__cartResolve(); window.__cartResolve = null; }
+  }, []);
+
   // Days filter element for stale mode
   const daysFilter = staleMode ? (
     <div className="days-filter">
@@ -375,6 +438,7 @@ const InventoryPage = ({ isEmbedded = false, staleMode = false }) => {
         searchQuery={searchQuery}
         onSearch={handleSearch}
         onExportClick={handleExportRequest}
+        onShowShortcuts={() => setShowShortcutsModal(true)}
         {...(!staleMode && {
           onUploadClick: handleStandardImportClick,
           onAddClick: inlineAdd.startAdd,
@@ -425,6 +489,7 @@ const InventoryPage = ({ isEmbedded = false, staleMode = false }) => {
         onShowCollections={openCollectionsModal} 
         userCollections={userCollections}
         onAddToCollection={onAddToCollectionClick}
+        onAddToCart={handleAddToCart}
         {...(!staleMode && { onRowClick: setDetailItem })}
         onRegisterRecordDelete={onRegisterRecordDelete}
       />
@@ -434,6 +499,16 @@ const InventoryPage = ({ isEmbedded = false, staleMode = false }) => {
           item={detailItem}
           onClose={() => setDetailItem(null)}
           onShowCollections={canEdit ? openCollectionsModal : null}
+          onEdit={handleEditCell}
+          canEdit={canEdit}
+        />
+      )}
+
+      {quantityPopupItem && (
+        <QuantityPopup
+          item={quantityPopupItem}
+          onConfirm={handleQuantityConfirm}
+          onCancel={handleQuantityCancel}
         />
       )}
       </div>
@@ -478,6 +553,23 @@ const InventoryPage = ({ isEmbedded = false, staleMode = false }) => {
       />
 
       <ToastContainer toasts={toasts} removeToast={removeToast} />
+
+      {/* Keyboard Shortcuts Modal */}
+      <Modal
+        isOpen={showShortcutsModal}
+        onClose={() => setShowShortcutsModal(false)}
+        title="קיצורי מקלדת"
+        size="small"
+      >
+        <div className="shortcuts-modal-grid">
+          {Object.entries(KEYBOARD_SHORTCUTS).map(([key, description]) => (
+            <div key={key} className="shortcuts-modal-row">
+              <kbd className="shortcuts-key">{key}</kbd>
+              <span className="shortcuts-description">{description}</span>
+            </div>
+          ))}
+        </div>
+      </Modal>
     </div>
   );
 };

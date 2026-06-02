@@ -29,16 +29,39 @@ export const FIELD_LABELS = {
   modified_count: 'כמות שורות שהושפעו',
   target_site: 'אתר יעד',
   collection_name: 'שם האוסף',
+  // Cart / Equipment Requisition
+  quantity: 'כמות',
+  is_serial: 'פריט סריאלי',
+  total_items: 'סה"כ פריטים',
+  serial_items: 'פריטים סריאליים',
+  non_serial_items: 'פריטים לא סריאליים',
+  serial_items_updated_in_inventory: 'עדכונים במחסן',
+  items_count: 'כמות פריטים',
+  // Procurement
+  amount: 'סכום',
+  total_amount: 'מחיר',
+  order_date: 'תאריך הזמנה',
+  created_by: 'נוצר ע"י',
+  received_emf: 'התקבל EMF',
+  received_bom: 'התקבל BOM',
+  filename: 'שם קובץ',
+  status: 'סטטוס',
 };
 
-export const PROCUREMENT_STATUS_OPTIONS = [
-  { value: 'waiting_bom_emf', label: 'מחכה ל-BOM ו-EMF' },
-  { value: 'waiting_bom', label: 'מחכה ל-BOM' },
-  { value: 'waiting_emf', label: 'מחכה ל-EMF' },
-  { value: 'waiting_order', label: 'מחכה שרכש ייצא' },
-  { value: 'ordered', label: 'רכש יצא' },
-  { value: 'received', label: 'רכש הגיע' }
-];
+export const PROCUREMENT_STATUS_LABELS = {
+  waiting_bom_emf:  'ממתין ל-BOM ו-EMF',
+  waiting_bom:      'ממתין ל-BOM',
+  waiting_emf:      'ממתין ל-EMF',
+  waiting_order:    'מחכה שרכש ייצא',
+  ordered:          'רכש יצא',
+  shipped:          'נשלח',
+  waiting_shipment: 'ממתין לשילוח',
+  received:         'התקבל',
+};
+
+export const PROCUREMENT_STATUS_OPTIONS = Object.entries(PROCUREMENT_STATUS_LABELS).map(
+  ([value, label]) => ({ value, label })
+);
 
 export const ACTION_TYPES = {
   CREATE: 'create',
@@ -86,6 +109,11 @@ export const ACTION_LABELS = {
   collection_delete: 'מחיקת אוסף',
   collection_item_add: 'שיוך לאוסף',
   collection_item_remove: 'הסרה מאוסף',
+  // Cart / Equipment Requisition
+  cart_item_add: 'הוספה לעגלה',
+  cart_item_remove: 'הסרה מעגלה',
+  cart_checkout: 'משיכת ציוד',
+  cart_expired: 'פקיעת תוקף עגלה',
 };
 
 export const ADMIN_ACTION_LABELS = {

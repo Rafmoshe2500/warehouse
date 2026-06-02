@@ -47,6 +47,14 @@ export const createItemService = (apiClient) => {
     },
 
     /**
+     * Get collections that contain this item
+     */
+    getItemCollections: async (itemId) => {
+      const response = await apiClient.get(API_ENDPOINTS.ITEM_COLLECTIONS(itemId));
+      return response.data;
+    },
+
+    /**
      * Create new item
      * @param {Object} itemData - Item data
      * @param {boolean} isUndo - Whether this is an undo operation

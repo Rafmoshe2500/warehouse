@@ -9,7 +9,9 @@ const BulkEditModal = ({ isOpen, onClose, onConfirm, selectedCount }) => {
   const [updates, setUpdates] = useState({
     purpose: { enabled: false, value: '' },
     notes: { enabled: false, value: '' },
-    target_site: { enabled: false, value: '' }
+    target_site: { enabled: false, value: '' },
+    current_stock: { enabled: false, value: '' },
+    warranty_expiry: { enabled: false, value: '' }
   });
 
   // Reset state whenever modal closes
@@ -18,7 +20,9 @@ const BulkEditModal = ({ isOpen, onClose, onConfirm, selectedCount }) => {
       setUpdates({
         purpose: { enabled: false, value: '' },
         notes: { enabled: false, value: '' },
-        target_site: { enabled: false, value: '' }
+        target_site: { enabled: false, value: '' },
+        current_stock: { enabled: false, value: '' },
+        warranty_expiry: { enabled: false, value: '' }
       });
     }
   }, [isOpen]);
@@ -41,6 +45,8 @@ const BulkEditModal = ({ isOpen, onClose, onConfirm, selectedCount }) => {
     if (updates.purpose.enabled) changes.purpose = updates.purpose.value;
     if (updates.notes.enabled) changes.notes = updates.notes.value;
     if (updates.target_site.enabled) changes.target_site = updates.target_site.value;
+    if (updates.current_stock.enabled && updates.current_stock.value !== '') changes.current_stock = Number(updates.current_stock.value);
+    if (updates.warranty_expiry.enabled) changes.warranty_expiry = updates.warranty_expiry.value;
 
     if (Object.keys(changes).length > 0) {
       onConfirm(changes);
@@ -52,7 +58,9 @@ const BulkEditModal = ({ isOpen, onClose, onConfirm, selectedCount }) => {
     setUpdates({
         purpose: { enabled: false, value: '' },
         notes: { enabled: false, value: '' },
-        target_site: { enabled: false, value: '' }
+        target_site: { enabled: false, value: '' },
+        current_stock: { enabled: false, value: '' },
+        warranty_expiry: { enabled: false, value: '' }
     });
     onClose();
   };
@@ -145,6 +153,46 @@ const BulkEditModal = ({ isOpen, onClose, onConfirm, selectedCount }) => {
                 value={updates.notes.value}
                 onChange={(e) => handleChange('notes', e.target.value)}
                 placeholder="הכנס הערה"
+            />
+        </div>
+
+        {/* Current Stock */}
+        <div className="bulk-field-row">
+            <div className="bulk-checkbox-wrapper">
+                <input
+                    type="checkbox"
+                    id="chk-stock"
+                    checked={updates.current_stock.enabled}
+                    onChange={() => handleToggle('current_stock')}
+                />
+                <label htmlFor="chk-stock">מלאי נוכחי</label>
+            </div>
+            <Input
+                type="number"
+                min="0"
+                disabled={!updates.current_stock.enabled}
+                value={updates.current_stock.value}
+                onChange={(e) => handleChange('current_stock', e.target.value)}
+                placeholder="הכנס כמות"
+            />
+        </div>
+
+        {/* Warranty Expiry */}
+        <div className="bulk-field-row">
+            <div className="bulk-checkbox-wrapper">
+                <input
+                    type="checkbox"
+                    id="chk-warranty"
+                    checked={updates.warranty_expiry.enabled}
+                    onChange={() => handleToggle('warranty_expiry')}
+                />
+                <label htmlFor="chk-warranty">תאריך אחריות</label>
+            </div>
+            <Input
+                type="date"
+                disabled={!updates.warranty_expiry.enabled}
+                value={updates.warranty_expiry.value}
+                onChange={(e) => handleChange('warranty_expiry', e.target.value)}
             />
         </div>
 

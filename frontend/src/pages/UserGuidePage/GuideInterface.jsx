@@ -75,6 +75,14 @@ const GuideInterface = () => {
         </div>
 
         <div className="guide-step">
+          <div className="step-number">02.1</div>
+          <div className="step-content">
+            <h3>שינוי רוחב עמודות בגרירה</h3>
+            <p>גררו את <strong>קצה העמודה השמאלי</strong> (בכותרת) לשינוי הרוחב שלה. הרוחב נשמר אוטומטית בדפדפן ומוחזר בפתיחה הבאה. לחיצה כפולה על ידית הגרירה מאפסת לברירת מחדל.</p>
+          </div>
+        </div>
+
+        <div className="guide-step">
           <div className="step-number">03</div>
           <div className="step-content">
             <h3>תפריט פעולות (Context Menu)</h3>
@@ -127,6 +135,28 @@ const GuideInterface = () => {
           <div className="step-content">
             <h3>רצועת פילטרים פעילים (חדש!)</h3>
             <p>כשמסננים, מופיעה רצועה עם <strong>צ'יפים</strong> של כל הפילטרים הפעילים. לחצו X על כל צ'יפ להסרה, או "נקה הכל" לאיפוס.</p>
+          </div>
+        </div>
+
+        <div className="guide-step">
+          <div className="step-number">08</div>
+          <div className="step-content">
+            <h3>מדדים ויזואליים בשורות</h3>
+            <p>שורות מקבלות תוספת צבעונית אוטומטית בהתאם למצב הפריט:</p>
+            <ul className="feature-list">
+              <li><FiAlertCircle className="list-icon" style={{color: 'var(--accent-danger)'}} /> <strong>מלאי אפס:</strong> רקע אדום עדין — הפריט אזל</li>
+              <li><FiAlertCircle className="list-icon" style={{color: 'var(--accent-warning)'}} /> <strong>אחריות פגה בקרוב (&lt;30 יום):</strong> רקע כתום עדין</li>
+              <li><FiAlertCircle className="list-icon" style={{color: 'var(--accent-danger)'}} /> <strong>אחריות פגה:</strong> רקע אדום בהיר</li>
+            </ul>
+            <p>הצביעה בולטת מספיק לזיהוי מהיר — אך עדינה מספיק שלא להפריע לקריאות.</p>
+          </div>
+        </div>
+
+        <div className="guide-step">
+          <div className="step-number">09</div>
+          <div className="step-content">
+            <h3>כפתור עזרת קיצורי מקלדת (?)</h3>
+            <p>כפתור <strong>?</strong> עגול בפינה הימנית-תחתונה של הטבלה פותח חלון עם כל קיצורי המקלדת הזמינים — בלי לצאת מהטבלה.</p>
           </div>
         </div>
       </section>
@@ -245,6 +275,8 @@ const GuideInterface = () => {
           <ActionMapCard icon={<FiCheckCircle />} elementName="בחירת הכל (Checkbox)" action="לחיצה על תיבת הסימון בכותרת בוחרת כל הפריטים בדף." useCase="לפני מחיקה מרובה או שיוך לאוסף." />
           <ActionMapCard icon={<FiArrowUp />} elementName="מיון לפי עמודה" action="לחיצה ממיינת A→Z. לחיצה נוספת — Z→A. חץ מציג כיוון נוכחי." useCase="לזהות פריטים עם מלאי הכי נמוך, או למיין לפי יצרן." />
           <ActionMapCard icon={<FiFilter />} elementName="שורת סינון" action="שדה טקסט בראש כל עמודה. מסנן תוך חצי שנייה. ניתן לסנן מספר עמודות בו-זמנית." useCase='חיפוש לפי מק"ט, יצרן, מיקום או כל שדה אחר.' />
+          <ActionMapCard icon={<FiGrid />} elementName='סינון "אתר יעד" (Dropdown)' action="שדה הסינון של עמודת אתר-יעד מציג רשימה של כל האתרים — בחרו מהרשימה במקום להקליד." useCase="לסנן לפי אתר ספציפי בדיוק." />
+          <ActionMapCard icon={<FiFilter />} elementName='סינון תאריך אחריות' action='שדה הסינון של עמודת "אחריות" הוא בורר תאריך — מציג פריטים עם תאריך מסוים ואילך.' useCase="לזהות פריטים שאחריותם פגה לפני תאריך מסוים." />
         </div>
       </section>
 
@@ -276,7 +308,7 @@ const GuideInterface = () => {
           <ActionMapCard icon={<FiMousePointer />} elementName="Checkbox בשורה" action="לחיצה על תיבת הסימון בוחרת את הפריט." useCase="לבחור פריטים לעריכה מרובה, מחיקה או שיוך." />
           <ActionMapCard icon={<FiCommand />} elementName="Ctrl + Click" action="מוסיף/מסיר מהבחירה ללא איבוד הקודמים." useCase="לבחור פריטים לא רצופים — פריט 2, 5 ו-8." />
           <ActionMapCard icon={<FiArrowDown />} elementName="Shift + Click" action="בוחר טווח רצוף מהשורה הראשונה לאחרונה." useCase="לבחור 20 פריטים רצופים." />
-          <ActionMapCard icon={<FiEdit />} elementName="עריכה מרובה (Bulk Edit)" action='קליק ימני → "עריכה". עדכון יעוד, הערות, אתר יעד לכולם בבת-אחת.' useCase="עדכון ל-50 פריטים במקום אחד-אחד." />
+          <ActionMapCard icon={<FiEdit />} elementName="עריכה מרובה (Bulk Edit)" action='קליק ימני → "עריכה". עדכון יעוד, הערות, אתר יעד, מלאי נוכחי ותאריך אחריות לכולם בבת-אחת.' useCase="עדכון ל-50 פריטים במקום אחד-אחד." />
           <ActionMapCard icon={<FiTrash2 />} elementName="מחיקה מרובה (Bulk Delete)" action='קליק ימני → "מחיקה". חלון אישור עם שדה סיבה. ניתן לבטל עם Ctrl+Z!' useCase="הסרת פריטים שהוצאו מהמלאי." />
         </div>
         <div className="tip-box highlight">

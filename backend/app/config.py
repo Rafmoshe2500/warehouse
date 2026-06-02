@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     # MongoDB
     MONGODB_URL: str
     DB_NAME: str = "warehouse"
+    DB_TEST: str = "warehouse_test"
     ENVIRONMENT: str = "production"
 
     # Security
@@ -36,6 +37,12 @@ class Settings(BaseSettings):
     ADFS_LOGIN_URL: str = "https://adfs.example.com/adfs/oauth2/token"
     ADFS_TOKEN_INFO_URL: str = "https://adfs.example.com/adfs/oauth2/tokeninfo"
     ADFS_VALIDATE_URL: str = "https://adfs.example.com/adfs/validate"
+
+    # Logging
+    LOG_LEVEL: str = "INFO"
+    # Audit logging options
+    # Set to False to disable logging of user login events
+    AUDIT_LOG_LOGIN: bool = True
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 

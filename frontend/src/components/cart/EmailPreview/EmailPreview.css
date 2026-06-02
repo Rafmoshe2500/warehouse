@@ -1,0 +1,145 @@
+.email-preview__overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-medium);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlayFade 0.15s ease;
+}
+
+@keyframes overlayFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.email-preview {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-round);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  width: 520px;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+  animation: popupSlide 0.15s ease;
+  overflow: hidden;
+}
+
+@keyframes popupSlide {
+  from { transform: translateY(-12px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+
+.email-preview__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.email-preview__title {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.email-preview__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.email-preview__close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* ── Hint ───────────────────────────────────────────────────────────────── */
+
+.email-preview__hint {
+  margin: 0;
+  padding: 0.65rem 1.25rem;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* ── Email text area ─────────────────────────────────────────────────────── */
+
+.email-preview__text {
+  flex: 1;
+  overflow-y: auto;
+  margin: 0;
+  padding: 1rem 1.25rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  direction: rtl;
+  text-align: right;
+  line-height: 1.7;
+}
+
+/* ── Actions ─────────────────────────────────────────────────────────────── */
+
+.email-preview__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.email-preview__btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.email-preview__btn--copy {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.email-preview__btn--copy:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.email-preview__btn--outlook {
+  background: var(--accent-primary);
+  color: #fff;
+}
+
+.email-preview__btn--outlook:hover {
+  filter: brightness(1.1);
+}

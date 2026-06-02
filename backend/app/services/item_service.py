@@ -119,7 +119,8 @@ class ItemService:
         # Skip logging if this is an undo operation (log created separately)
         if not is_undo:
             changes = {update.field: {"old": old_value, "new": update.value}}
-            await self.item_auditor.log_update(user, updated_item, changes, f"עדכון שדה '{update.field}'")
+            # translate detail message to English
+            await self.item_auditor.log_update(user, updated_item, changes, f"Update field '{update.field}'")
             
         # Update catalog
         if updated_item and updated_item.get("catalog_number"):

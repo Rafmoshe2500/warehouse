@@ -6,7 +6,9 @@ import { useTableKeyboard } from '../../../hooks/useTableKeyboard';
 import { useTableSelection } from '../../../hooks/useTableSelection';
 import { useCellEditing } from '../../../hooks/useCellEditing';
 import { useContextMenu } from '../../../hooks/useContextMenu';
+import { useColumnResize } from '../../../hooks/useColumnResize';
 import { TABLE_COLUMNS, IMMUTABLE_FIELDS } from '../../../constants/tableConfig';
+import { TARGET_SITES } from '../../../constants/sites';
 import { formatCellValue } from '../../../utils/formatters';
 import logService from '../../../api/services/logService';
 import { useAuth } from '../../../context/AuthContext';
@@ -37,6 +39,7 @@ const ItemTable = ({
   onShowCollections, 
   userCollections,
   onAddToCollection,
+  onAddToCart,
   onRowClick,
   viewMode = 'normal',
   viewConfig = {},
@@ -91,7 +94,7 @@ const ItemTable = ({
             target_resource: 'item',
             resource_id: catalogNumber,
             target_resource_name: catalogNumber,
-            details: `ביטול עריכה: ${details.field} מ-"${details.from}" ל-"${details.to}"`,
+            details: `Undo edit: ${details.field} from "${details.from}" to "${details.to}"`,
             changes: {
               [details.field]: {
                 old: details.from,
@@ -114,8 +117,8 @@ const ItemTable = ({
             resource_id: catalogNumbers,
             target_resource_name: catalogNumbers,
             details: details.isBulk 
-              ? `ביטול מחיקה של ${details.count} פריטים: ${catalogNumbers}`
-              : `ביטול מחיקת פריט: ${catalogNumbers}`
+              ? `Undo delete of ${details.count} items: ${catalogNumbers}`
+              : `Undo delete item: ${catalogNumbers}`
           });
         }
       } catch (error) {
@@ -138,7 +141,7 @@ const ItemTable = ({
             target_resource: 'item',
             resource_id: catalogNumber,
             target_resource_name: catalogNumber,
-            details: `שחזור עריכה: ${details.field} מ-"${details.from}" ל-"${details.to}"`,
+            details: `Redo edit: ${details.field} from "${details.from}" to "${details.to}"`,
             changes: {
               [details.field]: {
                 old: details.from,
@@ -180,8 +183,11 @@ const ItemTable = ({
   const {
     contextMenu,
     handleContextMenu: handleContextMenuOpen,
-    closeContextMenu
+    closeContextMenu,
+    openContextMenu
   } = useContextMenu();
+
+  const { getColumnWidth, startResize } = useColumnResize(columns);
 
   // Handle undo with toast notification
   const handleUndo = useCallback(async () => {
@@ -294,8 +300,15 @@ const ItemTable = ({
       }
     } else {
       // Regular click — open detail panel
+      const clickedTd = e.target.closest('td');
       if (onRowClick) {
         onRowClick(item);
+      }
+      // Bug 1: after the panel opens and the table shrinks, scroll the clicked column back into view
+      if (clickedTd) {
+        requestAnimationFrame(() => {
+          clickedTd.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+        });
       }
     }
   }, [items, isAdding, selectedItems, lastSelectedId, setSelectedItems, onSelectItem, onRowClick]);
@@ -315,16 +328,68 @@ const ItemTable = ({
     if (onFilterChange) onFilterChange({ ...filters, [key]: value });
   };
 
+  // Render the appropriate filter input for a column
+  const renderFilterInput = (col) => {
+    if (col.key === 'target_site') {
+      return (
+        <select
+          className="filter-select"
+          value={filters?.[col.key] || ''}
+          onChange={(e) => handleFilterChange(col.key, e.target.value)}
+        >
+          <option value="">הכל...</option>
+          {TARGET_SITES.map(site => (
+            <option key={site} value={site}>{site}</option>
+          ))}
+        </select>
+      );
+    }
+    if (col.type === 'date') {
+      return (
+        <Input
+          type="date"
+          value={filters?.[col.key] || ''}
+          onChange={(e) => handleFilterChange(col.key, e.target.value)}
+          title="סנן לפי תאריך (מ...)"
+        />
+      );
+    }
+    return (
+      <Input
+        type="text"
+        placeholder="סנן..."
+        value={filters?.[col.key] || ''}
+        onChange={(e) => handleFilterChange(col.key, e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
+      />
+    );
+  };
+
   // New row keydown
   const handleNewRowKeyDown = (e) => {
     if (e.key === 'Enter') onSaveNew();
     if (e.key === 'Escape') onCancelNew();
   };
 
-  // Context menu handler
+  // Context menu handler — only opens from container when rows/cells are already selected
   const handleContextMenu = (e) => {
-    handleContextMenuOpen(e, selectedItems.length > 0 || selectedCells.length > 0);
+    if (selectedItems.length > 0 || selectedCells.length > 0) {
+      handleContextMenuOpen(e, true);
+    } else {
+      e.preventDefault();
+    }
   };
+
+  // Row right-click — auto-select that row if nothing is selected, then open context menu
+  const handleRowContextMenu = useCallback((item, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (selectedItems.length === 0) {
+      if (setSelectedItems) setSelectedItems([item._id]);
+      setLastSelectedId(item._id);
+    }
+    openContextMenu(e.clientX, e.clientY);
+  }, [selectedItems, setSelectedItems, openContextMenu]);
 
   // Render cell helper
   const renderCell = useCallback((item, col) => {
@@ -426,6 +491,7 @@ const ItemTable = ({
                 key={col.key}
                 onClick={() => handleSort(col.key)}
                 className={`sortable-header col-${col.key} th-frozen ${sortConfig?.key === col.key ? 'active-sort' : ''}`}
+                style={{ width: getColumnWidth(col.key), minWidth: getColumnWidth(col.key) }}
               >
                 <div className="th-content">
                   {col.label}
@@ -435,6 +501,11 @@ const ItemTable = ({
                     )}
                   </span>
                 </div>
+                <div
+                  className="col-resize-handle"
+                  onMouseDown={(e) => startResize(e, col.key)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </th>
             ))}
             {scrollableColumns.map((col) => (
@@ -442,6 +513,7 @@ const ItemTable = ({
                 key={col.key}
                 onClick={() => handleSort(col.key)}
                 className={`sortable-header col-${col.key} ${sortConfig?.key === col.key ? 'active-sort' : ''}`}
+                style={{ width: getColumnWidth(col.key), minWidth: getColumnWidth(col.key) }}
               >
                 <div className="th-content">
                   {col.label}
@@ -451,6 +523,11 @@ const ItemTable = ({
                     )}
                   </span>
                 </div>
+                <div
+                  className="col-resize-handle"
+                  onMouseDown={(e) => startResize(e, col.key)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </th>
             ))}
             <th className="col-actions"></th>
@@ -461,24 +538,12 @@ const ItemTable = ({
               <td className="filter-cell-empty th-frozen"></td>
               {frozenColumns.map((col) => (
                 <td key={`filter-${col.key}`} className={`filter-cell col-${col.key} th-frozen`}>
-                  <Input
-                    type="text"
-                    placeholder="סנן..."
-                    value={filters?.[col.key] || ''}
-                    onChange={(e) => handleFilterChange(col.key, e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && e.target.blur()} 
-                  />
+                  {renderFilterInput(col)}
                 </td>
               ))}
               {scrollableColumns.map((col) => (
                 <td key={`filter-${col.key}`} className={`filter-cell col-${col.key}`}>
-                  <Input
-                    type="text"
-                    placeholder="סנן..."
-                    value={filters?.[col.key] || ''}
-                    onChange={(e) => handleFilterChange(col.key, e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                  />
+                  {renderFilterInput(col)}
                 </td>
               ))}
               <td className="filter-cell col-actions"></td>
@@ -544,6 +609,7 @@ const ItemTable = ({
                 isSelected={selectedItems.includes(item._id)}
                 onSelect={handleSelectItem}
                 onRowClick={handleRowClick}
+                onRowContextMenu={handleRowContextMenu}
                 frozenColumns={frozenColumns}
                 scrollableColumns={scrollableColumns}
                 renderCell={renderCell}
@@ -585,6 +651,7 @@ const ItemTable = ({
         onDelete={onBulkDelete}
         onAddToCollection={onAddToCollection}
         userCollections={userCollections}
+        onAddToCart={onAddToCart ? () => onAddToCart(selectedItems) : undefined}
       />
     </div>
   );

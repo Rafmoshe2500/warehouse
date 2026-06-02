@@ -34,6 +34,27 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+.shortcuts-circle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-primary);
+  background: transparent;
+  color: var(--accent-primary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.shortcuts-circle-btn:hover {
+  background: var(--accent-primary);
+  color: #fff;
+}
+
 .search-clear-btn {
   position: absolute;
   left: 0.5rem;

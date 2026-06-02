@@ -49,6 +49,12 @@ class AuditAction(str, Enum):
     UNDO = "undo"
     REDO = "redo"
 
+    # Cart / Equipment Requisition
+    CART_ITEM_ADD = "cart_item_add"
+    CART_ITEM_REMOVE = "cart_item_remove"
+    CART_CHECKOUT = "cart_checkout"
+    CART_EXPIRED = "cart_expired"
+
 
 class AuditLogCreate(BaseModel):
     """Schema for creating an audit log entry."""

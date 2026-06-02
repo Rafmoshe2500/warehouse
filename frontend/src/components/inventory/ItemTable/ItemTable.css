@@ -405,6 +405,27 @@ thead .th-frozen {
   outline: none;
 }
 
+/* Smart filter: select dropdown for applicable columns */
+.filter-select {
+  height: 25px;
+  padding: 0 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  background: var(--input-bg-focus);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--input-focus-shadow);
+  outline: none;
+}
+
 /* --- Column Sizing --- */
 .item-table th,
 .item-table td {
@@ -490,10 +511,29 @@ tbody tr.row-selected td.th-frozen {
 .sortable-header {
   cursor: pointer;
   transition: background-color 0.2s;
+  position: relative; /* needed for resize handle positioning */
 }
 
 .sortable-header:hover {
   background: var(--bg-tertiary);
+}
+
+/* Column resize handle */
+.col-resize-handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 5;
+  transition: background 0.15s;
+}
+
+.col-resize-handle:hover,
+.col-resize-handle:active {
+  background: var(--accent-primary);
+  opacity: 0.5;
 }
 
 .sortable-header .th-content {
@@ -723,4 +763,110 @@ tbody tr.row-selected td.th-frozen {
 /* Clickable rows cursor */
 .item-table tbody tr {
   cursor: pointer;
+}
+
+/* === Row Status Indicators === */
+/* Low stock (current_stock === 0) */
+tbody tr.row-low-stock:not(.row-selected) {
+  background-color: rgba(239, 68, 68, 0.07);
+}
+tbody tr.row-low-stock:not(.row-selected):hover {
+  background-color: rgba(239, 68, 68, 0.12);
+}
+tbody tr.row-low-stock:not(.row-selected) td.th-frozen {
+  background-color: rgba(30, 41, 59, 0.93) !important; /* bg-secondary blended */
+  box-shadow: inset 0 0 0 9999px rgba(239, 68, 68, 0.07);
+}
+tbody tr.row-low-stock:not(.row-selected):hover td.th-frozen {
+  box-shadow: inset 0 0 0 9999px rgba(239, 68, 68, 0.12);
+}
+
+/* Warranty expiring within 30 days */
+tbody tr.row-warranty-expiring:not(.row-selected) {
+  background-color: rgba(245, 158, 11, 0.07);
+}
+tbody tr.row-warranty-expiring:not(.row-selected):hover {
+  background-color: rgba(245, 158, 11, 0.12);
+}
+tbody tr.row-warranty-expiring:not(.row-selected) td.th-frozen {
+  box-shadow: inset 0 0 0 9999px rgba(245, 158, 11, 0.07);
+}
+tbody tr.row-warranty-expiring:not(.row-selected):hover td.th-frozen {
+  box-shadow: inset 0 0 0 9999px rgba(245, 158, 11, 0.12);
+}
+
+/* Warranty already expired */
+tbody tr.row-warranty-expired:not(.row-selected) {
+  background-color: rgba(239, 68, 68, 0.05);
+}
+tbody tr.row-warranty-expired:not(.row-selected):hover {
+  background-color: rgba(239, 68, 68, 0.10);
+}
+tbody tr.row-warranty-expired:not(.row-selected) td.th-frozen {
+  box-shadow: inset 0 0 0 9999px rgba(239, 68, 68, 0.05);
+}
+tbody tr.row-warranty-expired:not(.row-selected):hover td.th-frozen {
+  box-shadow: inset 0 0 0 9999px rgba(239, 68, 68, 0.10);
+}
+
+/* === Keyboard Shortcuts Help === */
+.shortcuts-help-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.shortcuts-help-btn:hover {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.shortcuts-modal-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shortcuts-modal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.shortcuts-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  padding: 3px 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.shortcuts-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
 }

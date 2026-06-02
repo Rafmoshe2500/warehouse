@@ -29,7 +29,7 @@ class ItemAuditor:
         
         if main_id and desc:
             return f"{main_id} - {desc}"
-        return main_id or desc or "פריט ללא מזהה"
+        return main_id or desc or "Item without identifier"
 
     async def log_creation(self, user: Dict[str, Any], item: Dict[str, Any]):
         """Logs the creation of a new item."""
@@ -44,7 +44,7 @@ class ItemAuditor:
             resource_id=str(item.get("_id")),
             target_resource_name=self._get_resource_name(item),
             changes=changes,
-            details="נוסף פריט חדש למלאי"
+            details="New item added to inventory"
         )
 
     async def log_update(self, user: Dict[str, Any], item: Dict[str, Any], changes: Dict[str, Any], details: str):
@@ -62,7 +62,7 @@ class ItemAuditor:
 
     async def log_deletion(self, user: Dict[str, Any], item: Dict[str, Any], reason: str):
         """Logs the deletion of an item."""
-        details = f"סיבת מחיקה: {reason}"
+        details = f"Delete reason: {reason}"
         await self.audit_service.log_user_action(
             action=AuditAction.ITEM_DELETE,
             actor=self._get_username(user),
@@ -83,7 +83,7 @@ class ItemAuditor:
             old_val = item.get(key, "")
             changes_log[key] = {"old": old_val, "new": new_val}
 
-        details = f"עדכון מרובה - {', '.join(description_parts)}"
+        details = f"Bulk update - {', '.join(description_parts)}"
         
         await self.audit_service.log_user_action(
             action=AuditAction.ITEM_UPDATE,
@@ -121,6 +121,6 @@ class ItemAuditor:
             target_resource="item",
             resource_id="BULK_IMPORT",
             target_resource_name="Excel Import Summary",
-            details=f"יבוא מאקסל: {added} נוספו, {updated} עודכנו",
+            details=f"Excel import: {added} added, {updated} updated",
             changes={"total_rows": total, "added": added, "updated": updated}
         )

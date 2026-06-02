@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
+import asyncio
 import logging
 import time
 from contextlib import asynccontextmanager
@@ -20,6 +21,36 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from app.core.limiter import limiter
 
+_CART_EXPIRY_INTERVAL_SECONDS = 300  # check every 5 minutes
+
+
+async def _cart_expiry_loop() -> None:
+    """Background coroutine: periodically expire stale carts and write audit logs."""
+    from app.db.repositories.cart_repository import CartRepository
+    from app.services.audit.cart_auditor import CartAuditor
+    from app.services.audit_service import AuditService
+    from app.services.cart_service import CartService
+    from app.db.repositories.items import ItemsRepository
+    from app.db.mongodb import MongoDB
+
+    while True:
+        try:
+            await asyncio.sleep(_CART_EXPIRY_INTERVAL_SECONDS)
+            cart_service = CartService(
+                cart_repo=CartRepository(),
+                items_repo=ItemsRepository(MongoDB.get_collection("inventory")),
+                auditor=CartAuditor(AuditService()),
+            )
+            count = await cart_service.expire_carts()
+            if count:
+                logger.info("Cart expiry task: expired %d cart(s)", count)
+        except asyncio.CancelledError:
+            logger.info("Cart expiry task cancelled — shutting down")
+            break
+        except Exception as exc:
+            logger.error("Cart expiry task error: %s", exc)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifecycle manager for the application."""
@@ -31,6 +62,11 @@ async def lifespan(app: FastAPI):
         # Create Indexes
         await MongoDB.create_indexes()
 
+        # Ensure TTL index on carts collection
+        from app.db.repositories.cart_repository import CartRepository
+        await CartRepository().ensure_ttl_index()
+        logger.info("✅ Cart TTL index ensured")
+
         # Load dynamic BOM templates from DB
         from app.services.bom_strategies import BomStrategyFactory
         await BomStrategyFactory.load_templates_from_db()
@@ -38,8 +74,19 @@ async def lifespan(app: FastAPI):
         collection = MongoDB.get_collection("inventory")
         count = await collection.count_documents({})
         logger.info(f"✅ MongoDB connected successfully. Total items: {count}")
-        
+
+        # Start background cart-expiry task
+        expiry_task = asyncio.create_task(_cart_expiry_loop())
+        logger.info("✅ Cart expiry background task started")
+
         yield
+
+        # Graceful shutdown
+        expiry_task.cancel()
+        try:
+            await expiry_task
+        except asyncio.CancelledError:
+            pass
         
     except Exception as e:
         logger.error(f"❌ Startup error: {e}")

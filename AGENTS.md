@@ -1,5 +1,3 @@
-הוספתי את ההנחיות החדשות בצורה מפורשת. סעיף הבדיקות עודכן כך שיאסור לחלוטין על כתיבת טסטים ל-Frontend (UI) וימקד את כל מאמצי הבדיקה אך ורק ב-Backend. בנוסף, הוספתי דרישה קשיחה לעדכון עמוד המדריך למשתמש (User Guide) בכל שינוי רלוונטי.
-
 הנה קובץ ה-`AGENTS.md` המעודכן שתוכל להטמיע בפרויקט:
 
 ```markdown
@@ -13,9 +11,9 @@
 
 ## 2. Testing Strategy (FULL STACK)
 
-- **Backend Continuous Testing:** All testing efforts must be focused EXCLUSIVELY on the Backend (Python/Pytest).
-- **Always Verify Tests:** Before finalizing any Backend code and Frontend code changes or new feature creation, you MUST check if corresponding Backend and Frontend tests exist.
-- **Update/Create Tests:** If existing Backend or Frontend logic is modified, update the tests to reflect the new logic. If a new Backend or Frontend feature is created, you MUST write accompanying unit or integration tests. Never leave new or modified Backend logic without test coverage.
+- **Backend Continuous Testing:** All testing efforts must be focused on the Backend (Python/Pytest) as the primary testing surface.
+- **Always Verify Tests:** Before finalizing any Backend **or** Frontend code changes or new feature creation, you MUST check if corresponding tests exist.
+- **Update/Create Tests:** If existing Backend or Frontend logic is modified, update the tests to reflect the new logic. If a new Backend or Frontend feature is created, you MUST write accompanying unit or integration tests. Never leave new or modified Backend or Frontend logic without test coverage.
 
 ## 3. Backend Architecture (Python, FastAPI, MongoDB)
 

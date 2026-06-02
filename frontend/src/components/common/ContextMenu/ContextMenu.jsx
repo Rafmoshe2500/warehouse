@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiCopy, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiCopy, FiEdit, FiTrash2, FiShoppingCart } from 'react-icons/fi';
 import './ContextMenu.css';
 
 /**
@@ -14,7 +14,8 @@ const ContextMenu = ({
     onCopy,
     onClose,
     onAddToCollection,
-    userCollections
+    userCollections,
+    onAddToCart,
 }) => {
     if (!position) return null;
 
@@ -65,6 +66,19 @@ const ContextMenu = ({
                 מחיקה ({selectedItemsCount})
             </button>
             
+            {/* Add to Cart */}
+            {onAddToCart && (
+                <button
+                    className="context-menu__item context-menu__item--cart"
+                    onClick={() => { onAddToCart(); onClose(); }}
+                    disabled={selectedItemsCount === 0}
+                    data-testid="context-menu-add-to-cart"
+                >
+                    <FiShoppingCart size={14} />
+                    הוסף לעגלה ({selectedItemsCount})
+                </button>
+            )}
+
             {/* Custom Submenus */}
             {onAddToCollection && (
                  <div className="context-menu__submenu-container">

@@ -3,9 +3,12 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { FiLogOut, FiUser, FiSun, FiMoon, FiLayers, FiSearch, FiChevronDown } from 'react-icons/fi';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
+import { useCart } from '../../../context/CartContext';
 import ThemeSelector from '../ThemeSelector/ThemeSelector';
 import Logo from '../Logo/Logo';
 import navigationConfig from '../../../config/navigationConfig';
+import CartIcon from '../../cart/CartIcon/CartIcon';
+import CartModal from '../../cart/CartModal/CartModal';
 import './TopBar.css';
 
 const getPageTitle = (pathname) => {
@@ -26,12 +29,14 @@ const getPageTitle = (pathname) => {
 const TopBar = ({ onOpenSearch }) => {
   const { user, logout } = useAuth();
   const { mode, toggleMode } = useTheme();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
   const userMenuRef = useRef(null);
   const themeSelectorRef = useRef(null);
 
@@ -67,6 +72,7 @@ const TopBar = ({ onOpenSearch }) => {
   }, [onOpenSearch]);
 
   return (
+    <>
     <header className="topbar" data-testid="topbar">
       <div className="topbar__container">
         {/* Logo */}
@@ -83,6 +89,9 @@ const TopBar = ({ onOpenSearch }) => {
 
         {/* Right Actions */}
         <div className="topbar__actions">
+          {/* Cart Icon */}
+          <CartIcon count={cartCount} onClick={() => setShowCartModal(true)} />
+
           {/* Search Trigger */}
           <button
             className="topbar__search-btn"
@@ -164,6 +173,11 @@ const TopBar = ({ onOpenSearch }) => {
         </div>
       </div>
     </header>
+
+    {showCartModal && (
+      <CartModal onClose={() => setShowCartModal(false)} />
+    )}
+  </>
   );
 };
 

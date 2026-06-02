@@ -21,6 +21,11 @@ vi.mock('../../../../context/ThemeContext', () => ({
   useTheme: () => ({ mode: 'dark', toggleMode: vi.fn(), variant: 'normal', setVariant: vi.fn() }),
 }));
 
+// Mock cart context
+vi.mock('../../../../context/CartContext', () => ({
+  useCart: () => ({ cartCount: 0 }),
+}));
+
 import AppLayout from '../AppLayout';
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });

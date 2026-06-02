@@ -1,23 +1,38 @@
 import React, { useState, useMemo } from 'react';
 import { FiEdit2, FiTrash2, FiClock, FiPaperclip, FiTruck, FiCheck, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
+import { PROCUREMENT_STATUS_LABELS as STATUS_LABELS } from '../../utils/constants';
 import './ProcurementDataTable.css';
 
 const VENDOR_META = {
-  NETAPP:    { color: '#a855f7', label: 'NetApp'    },
+  NETAPP:    { color: '#a855f7', label: 'NETAPP'    },
   HPE:       { color: '#22c55e', label: 'HPE'       },
   CISCO:     { color: '#f97316', label: 'Cisco'     },
   DELL:      { color: '#3b82f6', label: 'Dell'      },
   COMMVAULT: { color: '#0066cc', label: 'Commvault' },
 };
 
-const STATUS_LABELS = {
-  received:         'התקבל',
-  shipped:          'נשלח',
-  waiting_shipment: 'ממתין לשילוח',
-  waiting_bom_emf:  'ממתין ל-BOM ו-EMF',
-  waiting_emf:      'ממתין ל-EMF',
-  waiting_bom:      'ממתין ל-BOM',
+const pickOrderVendor = (order) => {
+  return (
+    order?.bom_vendor ||
+    order?.manufacturer ||
+    order?.vendor ||
+    order?.bom_data?.vendor ||
+    order?.bom_items?.find((item) => item?.manufacturer)?.manufacturer ||
+    ''
+  );
+};
+
+const resolveVendorLabel = (order) => {
+  const rawVendor = pickOrderVendor(order);
+  const normalizedVendor = typeof rawVendor === 'string' ? rawVendor.trim().toUpperCase() : '';
+  const mapped = VENDOR_META[normalizedVendor];
+  if (mapped) return { label: mapped.label, color: mapped.color, isMapped: true };
+
+  const fallbackLabel = normalizedVendor || rawVendor;
+  if (fallbackLabel) return { label: fallbackLabel, color: null, isMapped: false };
+
+  return { label: 'ידני', color: null, isMapped: false };
 };
 
 const fmtQty = (qty) => {
@@ -134,7 +149,7 @@ const ProcurementDataTable = ({
         </thead>
         <tbody>
           {sorted.map(order => {
-            const vendor = VENDOR_META[order.bom_vendor];
+            const vendor = resolveVendorLabel(order);
             const items = resolveDisplayItems(order);
             const isReceived = order.status === 'received';
             const canEditThis = canEditOrder ? canEditOrder(order) : canEdit;
@@ -151,13 +166,13 @@ const ProcurementDataTable = ({
 
                 {/* Vendor */}
                 <td className="pdt-td">
-                  {vendor ? (
+                  {vendor.isMapped ? (
                     <span className="pdt-vendor" style={{ color: vendor.color }}>
                       <span className="pdt-vendor-dot" style={{ background: vendor.color }} />
                       {vendor.label}
                     </span>
                   ) : (
-                    <span className="pdt-vendor pdt-vendor--manual">ידני</span>
+                    <span className="pdt-vendor pdt-vendor--manual">{vendor.label}</span>
                   )}
                 </td>
 

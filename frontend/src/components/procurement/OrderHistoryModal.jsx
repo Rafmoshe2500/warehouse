@@ -3,41 +3,8 @@ import Modal from '../common/Modal/Modal';
 import Spinner from '../common/Spinner/Spinner';
 import auditService from '../../api/services/auditService';
 import { useToast } from '../../hooks/useToast';
+import { ACTION_LABELS, FIELD_LABELS, PROCUREMENT_STATUS_LABELS as STATUS_LABELS } from '../../utils/constants';
 import './OrderHistoryModal.css';
-
-const ACTION_LABELS = {
-  'procurement_create': 'יצירת הזמנה',
-  'procurement_update': 'עדכון הזמנה',
-  'procurement_delete': 'מחיקת הזמנה',
-  'procurement_file_upload': 'העלאת קובץ',
-  'procurement_file_delete': 'מחיקת קובץ'
-};
-
-const FIELD_LABELS = {
-  'catalog_number': 'מק"ט',
-  'manufacturer': 'יצרן',
-  'description': 'תיאור',
-  'quantity': 'כמות',
-  'amount': 'סכום',
-  'total_amount': 'מחיר',
-  'order_date': 'תאריך הזמנה',
-  'created_at': 'תאריך יצירה',
-  'created_by': 'נוצר ע"י',
-  'status': 'סטטוס',
-  'received_emf': 'התקבל EMF',
-  'received_bom': 'התקבל BOM',
-  'filename': 'שם קובץ'
-};
-
-const STATUS_LABELS = {
-  'waiting_emf':      'מחכה ל-EMF',
-  'waiting_bom':      'מחכה ל-BOM',
-  'ordered':          'רכש יצא',
-  'received':         'רכש הגיע',
-  'waiting_bom_emf':  'ממתין ל-BOM ו-EMF',
-  'waiting_shipment': 'ממתין לשילוח',
-  'shipped':          'נשלח',
-};
 
 const OrderHistoryModal = ({ isOpen, onClose, orderId, orderNumber }) => {
   const [logs, setLogs] = useState([]);

@@ -34,9 +34,16 @@ const ACTION_CONFIG = {
   delete_all: { icon: FiTrash2, className: 'log-item--danger' },
   collection_item_add: { icon: FiPlus, className: 'log-item--success' },
   collection_item_remove: { icon: FiTrash2, className: 'log-item--danger' },
+  // Cart / Equipment Requisition
+  cart_item_add: { icon: FiPlus, className: 'log-item--success' },
+  cart_item_remove: { icon: FiTrash2, className: 'log-item--danger' },
+  cart_checkout: { icon: FiUpload, className: 'log-item--info' },
+  cart_expired: { icon: FiTrash2, className: 'log-item--danger' },
 };
 
 const getActionConfig = (action) => {
+  // Direct match first (for cart_ and collection_ prefixed actions)
+  if (ACTION_CONFIG[action]) return ACTION_CONFIG[action];
   // Normalize action (remove prefixes like item_, user_, procurement_)
   const normalizedAction = action.replace(/^(item_|user_|procurement_)/, '');
   return ACTION_CONFIG[normalizedAction] || { icon: FiEdit2, className: '' };
@@ -109,7 +116,7 @@ const LogTimeline = ({ logs }) => {
                     if (field === 'role') {
                       return ROLE_LABELS[value] || value;
                     }
-                    if (field === 'is_active') {
+                    if (field === 'is_active' || field === 'is_serial') {
                       return value ? 'כן' : 'לא';
                     }
                     if (['created_at', 'updated_at', 'last_login', 'warranty_expiry'].includes(field)) {

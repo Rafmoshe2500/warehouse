@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { FiPlus, FiUpload, FiDownload, FiEdit2, FiTrash2, FiFilter, FiX } from 'react-icons/fi';
+import { FiPlus, FiUpload, FiDownload, FiEdit2, FiTrash2, FiFilter, FiX, FiHelpCircle } from 'react-icons/fi';
 import Button from '../../common/Button/Button';
 import Spinner from '../../common/Spinner/Spinner';
 import ColumnToggle from '../ColumnToggle/ColumnToggle';
@@ -27,7 +27,8 @@ const InventoryHeader = ({
   hideImport = false,
   hideAdd = false,
   // Extra content slot (e.g. days filter)
-  extraContent
+  extraContent,
+  onShowShortcuts
 }) => {
   return (
     <div className="inventory-header">
@@ -98,6 +99,16 @@ const InventoryHeader = ({
         )}
         <div className="divider-vertical"></div>
         {extraContent}
+        {onShowShortcuts && (
+          <button
+            className="shortcuts-circle-btn"
+            onClick={onShowShortcuts}
+            title="קיצורי מקלדת"
+            aria-label="הצג קיצורי מקלדת"
+          >
+            <FiHelpCircle size={18} />
+          </button>
+        )}
       </div>
 
       <div className="header-search">

@@ -45,6 +45,7 @@ TEST_COLLECTIONS = {
     "groups": f"{TEST_COLLECTION_PREFIX}groups",
     "collections": f"{TEST_COLLECTION_PREFIX}collections",
     "collection_items": f"{TEST_COLLECTION_PREFIX}collection_items",
+    "carts": f"{TEST_COLLECTION_PREFIX}carts",
 }
 
 
@@ -69,7 +70,7 @@ async def mongo_client() -> AsyncGenerator[AsyncIOMotorClient, None]:
 @pytest_asyncio.fixture(scope="function")
 async def test_db(mongo_client: AsyncIOMotorClient):
     """Get test database instance."""
-    return mongo_client[settings.DB_NAME]
+    return mongo_client[settings.DB_TEST]
 
 
 # ========== Test Collection Factories ==========
@@ -130,6 +131,14 @@ async def test_collection_items_collection(test_db) -> AsyncGenerator[AsyncIOMot
     await collection.delete_many({})
 
 
+@pytest_asyncio.fixture(scope="function")
+async def test_carts_collection(test_db) -> AsyncGenerator[AsyncIOMotorCollection, None]:
+    """Get carts test collection, cleaned after each test."""
+    collection = test_db[TEST_COLLECTIONS["carts"]]
+    yield collection
+    await collection.delete_many({})
+
+
 # ========== Session Cleanup ==========
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
@@ -142,7 +151,7 @@ async def cleanup_test_collections():
     # Drop all test collections after session
     try:
         client = AsyncIOMotorClient(settings.MONGODB_URL)
-        db = client[settings.DB_NAME]
+        db = client[settings.DB_TEST]
         collection_names = await db.list_collection_names()
         for name in collection_names:
             if name.startswith(TEST_COLLECTION_PREFIX):

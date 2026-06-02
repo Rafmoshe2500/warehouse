@@ -1,24 +1,51 @@
 ﻿import React, { useState, memo } from 'react';
 import { FiEdit2, FiTrash2, FiClock, FiPaperclip, FiTruck, FiCheck, FiFileText } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
+import { PROCUREMENT_STATUS_LABELS as STATUS_LABELS } from '../../utils/constants';
 import './ProcurementCards.css';
 
 // -- Vendor color / label map --
 const VENDOR_META = {
-  NETAPP:    { color: '#a855f7', dot: '#a855f7', label: 'NetApp'    },
+  NETAPP:    { color: '#a855f7', dot: '#a855f7', label: 'NETAPP'    },
   HPE:       { color: '#22c55e', dot: '#22c55e', label: 'HPE'       },
   CISCO:     { color: '#f97316', dot: '#f97316', label: 'Cisco'     },
   DELL:      { color: '#3b82f6', dot: '#3b82f6', label: 'Dell'      },
   COMMVAULT: { color: '#0066cc', dot: '#0066cc', label: 'Commvault' },
 };
 
-const STATUS_LABELS = {
-  received:         'התקבל',
-  shipped:          'נשלח',
-  waiting_shipment: 'ממתין לשילוח',
-  waiting_bom_emf:  'ממתין ל-BOM ו-EMF',
-  waiting_emf:      'ממתין ל-EMF',
-  waiting_bom:      'ממתין ל-BOM',
+const pickOrderVendor = (order) => {
+  return (
+    order?.bom_vendor ||
+    order?.manufacturer ||
+    order?.vendor ||
+    order?.bom_data?.vendor ||
+    order?.bom_items?.find((item) => item?.manufacturer)?.manufacturer ||
+    ''
+  );
+};
+
+const resolveVendorMeta = (order) => {
+  const rawVendor = pickOrderVendor(order);
+  const normalizedVendor = typeof rawVendor === 'string' ? rawVendor.trim().toUpperCase() : '';
+  const mapped = VENDOR_META[normalizedVendor];
+  if (mapped) return { ...mapped, isMapped: true };
+
+  const fallbackLabel = normalizedVendor || rawVendor;
+  if (fallbackLabel) {
+    return {
+      label: fallbackLabel,
+      color: 'var(--text-muted)',
+      dot: 'var(--text-muted)',
+      isMapped: false,
+    };
+  }
+
+  return {
+    label: 'ידני',
+    color: 'var(--text-muted)',
+    dot: 'var(--text-muted)',
+    isMapped: false,
+  };
 };
 
 const VISIBLE_CHIPS = 4;
@@ -110,7 +137,7 @@ const OrderCard = memo(({
   onMarkAsOrdered, onMarkAsReceived,
   canEditThis = false, isAdmin = false, showPrices = true,
 }) => {
-  const vendor = VENDOR_META[order.bom_vendor];
+  const vendor = resolveVendorMeta(order);
   const isReceived = order.status === 'received';
 
   let statusLabel = STATUS_LABELS[order.status] || order.status;
@@ -126,13 +153,13 @@ const OrderCard = memo(({
 
       {/* Row 1: Header */}
       <div className="pc-header">
-        {vendor ? (
+        {vendor.isMapped ? (
           <span className="pc-vendor" style={{ color: vendor.color }}>
             <span className="pc-vendor-dot" style={{ background: vendor.dot }} />
             {vendor.label}
           </span>
         ) : (
-          <span className="pc-vendor pc-vendor--manual">ידני</span>
+          <span className="pc-vendor pc-vendor--manual">{vendor.label}</span>
         )}
 
         <span className={`pc-status pc-status--${order.status}`}>{statusLabel}</span>

@@ -31,6 +31,7 @@ const InventoryContent = ({
   onShowCollections, // New prop
   userCollections,
   onAddToCollection,
+  onAddToCart,
   onRowClick,
   onRegisterRecordDelete, // Bug #25: replaces window.__tableRecordDelete
 }) => {
@@ -99,6 +100,7 @@ const InventoryContent = ({
           onShowCollections={onShowCollections}
           userCollections={userCollections}
           onAddToCollection={onAddToCollection}
+          onAddToCart={onAddToCart}
           onRowClick={onRowClick}
           viewMode={viewMode}
           viewConfig={viewConfig}
